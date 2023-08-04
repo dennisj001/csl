@@ -1,0 +1,18 @@
+make static
+strip -o bin/csl bin/csl-gdb
+make all.xz
+cp ../csl.tar.xz ../csl.$1.tar.xz
+cp ../csl.$1.tar.xz /home/backup/csl.$1.tar.xz
+cp ../csl.$1.tar.xz /home/backup/archive/csl.$1.tar.xz
+cp ../csl.$1.tar.xz ~/Public/
+cp ../csl.$1.tar.xz  ~/ubackup/
+#cp ../csl.$1.tar.xz  ~/Documents/backup/
+cp ../csl.$1.tar.xz  ~/Programs/Programs2/forth/csl/backup/
+cp ../csl.$1.tar.xz  ~/Programs/Programs2/backup/
+mv ../csl.$1.tar.xz  ~/workspace/backup/
+ls -al /home/backup/csl.$1.tar.xz
+ls -al /home/backup/archive/csl.$1.tar.xz
+make _install
+cd ~/csl/
+csl
+

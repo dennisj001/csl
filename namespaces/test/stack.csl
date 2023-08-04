@@ -1,0 +1,5 @@
+5
+stack 7 7 7  3 ndrop stack 5 4 3 2 1 0 stack 3 stack pick intPrint 6 ndrop stack //pause
+: testpick s 1 2 1 pick dup nl p 2 _ndrop stack ; 
+testpick 1 sp0 _assert "\ntestpick : above line should read 1\n" ps //pause
+2 + 7 assertStkChk // stack checking

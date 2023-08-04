@@ -1,0 +1,38 @@
+#! /usr/local/bin/csl-gdb  -s
+
+using
+//verbosity 0 =
+: hi 1 6 + p ;
+: hey nl hi hi hi ; 
+verbosity 1 = 
+state
+version
+hey
+version
+nl 
+verbosity 1 =
+Int
+Lisp
+
+(define yfac (lambda (yy n) (if (< n 2) 1 (* n (yy yy (- n 1)))))) 
+(yfac yfac 10) nl
+(define yfacc (lambda (yyy n1) (if (< n1 2) (1) (* n1 (yyy yyy (- n1 1)))))) 
+(yfacc yfacc 10) nl
+(yfacc yfacc 7) nl //pause
+mem
+(define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
+(fibc 20)
+
+lispOff //pause
+optimizeOn
+Int
+: fac ( n  | rec1 ) 
+    rec1 1 = 
+    { n @ 1 > } { n @ rec1 @ * rec1 store n -- } while 
+    return rec1 @
+;
+7 fac dup p 5040 _assert0 
+pwi fac
+nl
+bye
+

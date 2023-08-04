@@ -1,0 +1,87 @@
+
+5
+C 
+: sp ; //stack pause ; 
+sp
+
+oPrintf ("\n%s\n%d\t%s","hello world! - parse this!?", 1234, "\tand this!")"\n\talso this!" ps //pause
+oPrintf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
+oPrintf ( "\n%s = %d\n\n", "Hello world!", 42 ) 
+oPrintf("\n%s\n\t","hello world! - parse this!?")"\n\talso this!" ps
+sp 
+C
+User
+: patoi ( s | i ) i libc.atoi (s) = libc.printf ( "\n %d", i ) return ( i @ ) ; "7" patoi dup p 7 _assert
+: patoi ( s | i ) i libc.atoi (s) = i @ p return ( i @ ) ; "7" patoi dup p 7 _assert
+Compiler
+: vckf ( n w ) 
+    { verbosity @ n @ > } { w @ wordRun } if2 
+;;
+: vckf1 ( w ) vckf ( 0 w @ ) ;; //_literal ) ;;
+vckf1 ( ' s find ) 
+C
+#if  1
+sp
+libc
+printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
+printf ( "\n%s\n\n", "hello world!\nparse this!\n" )"\n and this!\n" ps
+printf ( "\n%s\n\t", "hello world! - parse this!?" )"\t and this!" ps
+printf ( "\nHello world! = 0x%08x\n\n" 1234 ) 
+sp
+
+: tprintf oPrintf ( "\nHello world! = 0x%08x\n\n" 1234 ) ; tprintf
+: tprintf1 ( a b ) oPrintf ( a b) ;; 
+tprintf1 ("\nyes, Hello world! = 0x%08x", 1234 ) 
+: tprintf2 ( a b c ) oPrintf ( a b c) ;; 
+tprintf2 ("\nyes, Hello world! = 0x%08x : %s", 1234, "and more yet" ) 
+//'tprintf find wdiss
+//'tprintf1 find wdiss
+//pause
+sp
+nl
+"xc" var 
+xc 'e' = 
+sp
+xc @ dup emit 'e' _assert //sp
+sp "x" var x 'e' = sp '\n' emit '\t' emit x @ emit '\r' emit 'u' emit '\b' emit 'i' emit 
+"\nline above should read... \ni\te" ps //pause
+sp 
+#endif
+
+Shell
+: hio  if 1 p else 0 p endif ;
+' hio find wdiss
+1 hio 0 hio sp
+"Shell" notUsing
+Root
+: set ( _var val ) _var @ val @ = ;; //'set wdiss
+: get ( _var ) _var @ @ return tos ;; //'get wdiss
+"x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
+sp
+jcc8_Off
+String Shell Interpreter
+: $$ 
+    ""
+    { token dup ";" strcmp } 
+    { 
+        { dup "." strcmp } { strcat " " strcat } { strcat } if3
+    } 
+    while 
+    drop location "$$" ps dup nl ps nl _sh return
+;  // allows more than one shell command on a ';' separated line 
+'$$ find wdiss sp0
+"streol" 'getStringToEndOfLine find alias
+: $ streol _sh ;  
+
+bnOff
+: sp ; //stack pause ; sp
+#if 1 //doScript
+$$ls -al /usr/local ; $$ls -al . ; 
+//s pause
+$etc/script 
+$etc/lispScript 
+sp
+#endif
+lispOff
+
+2 + 7 assertStkChk // stack checking

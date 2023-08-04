@@ -1,0 +1,220 @@
+5
+"\nmath test\n" ddps
+C
+: sp ; //stack pause ; 
+
+Int
+: mt 6 ++  ; mt 7 _assert drop
+sp
+: mt1 8 -- ; mt1 7 _assert drop 
+sp
+: mta 1 5 + ++ ; mta 7 _assert
+: mt1a 9 1 - --  ; mt1a 7 _assert
+: mt2 ( n ) ++ n @ return tos ; 6 mt2 7 _assert 
+sp
+: mt3 ( n ) n @ ++ n @ 7 _assert ; 6 mt3 
+: mt4 ( n ) n @ ++ n @ 7 _assert ; 6 mt4 
+sp
+'mt5v var
+: mt5 mt5v 6 = mt5v @ ++ 7 _assert ; mt5
+sp
+C
+: t* ( a b ) a @ b @ * return tos ; 3 4 t* 12 _assert sp
+: t2+ ( a b ) a @ b @ + return tos ; 3 4 t2+ 7 _assert sp
+
+: t* ( a b c d ) a @ b @ c @ d @ * * * return tos ;  
+' t* find wdiss 
+1 2 3 4 t* 24 _assert
+sp
+: t4+ ( a b c d ) a @ b @ c @ d @ + + + return tos ;  
+//' t4+ find wdiss 
+1 2 3 4 t4+ 10 _assert
+sp
+: hi ( n ) n @ 2 / 2 / 2 / 2 / return tos ; 32 hi  
+2 _assert
+sp
+: hi ( n ) n @ 2 * 2 * 2 * 2 * return tos ; 2 hi 32 _assert  
+//' hi find wdiss
+sp
+: hi ( n ) 32 n @ / n @ / n @ / n @ / return tos ; 2 hi 2 _assert
+: hi ( n ) 2 n @ * n @ * n @ * n @ * return tos ; 2 hi 32 _assert
+//' hi find wdiss
+sp
+// test shift op equal
+: moe ( n m ) n m @ <<= n @ return tos ; 
+' moe find wdiss
+2 6 moe 128 "moe_assert1" assert 1 16 moe 65536 "moe_assert2" assert  
+: moe ( n m ) n m @ >>= n @ return tos ; 
+//' moe find wdiss
+128 6 moe 2 "moe_assert3" assert 65536 16 moe 1 "moe_assert3" assert 
+infixOn
+nl
+sp
+: moe ( n m ) n <<= m n return tos ; // infix variables are rvalues
+' moe find wdiss
+2 6 moe 128 _assert 1 16 moe 65536 _assert 
+: moe ( n m ) n >>= m n return tos ; 
+sp ' moe find wdiss sp
+128 6 moe 2 _assert 65536 16 moe 1 _assert 
+infixOff
+sp
+c_syntaxOn
+void cmoe ( n m ) { n <<= m ; p (n) ; return n ; }  cmoe ( 2 6 ) ; sp ; _assert0( 128 ) ; cmoe( 1 16 ) ; _assert( 65536 ) ; ps("\nshould show 128 65536\n") sp
+void cmoe ( n m ) { n >>= m ; n p ; return n ; } cmoe ( 128 6 ) ; _assert (2) ; cmoe ( 65536 16 ) ; _assert (1) ; "\nshould show 2 1\n" ps sp
+c_syntaxOff
+
+sp
+: moe ( n m ) n m @ *= n @ return tos ; 
+' moe find wdiss // s pause
+2 3 moe 6 _assert 
+nl 4 5 moe 20 _assert 
+: moe ( n m ) n m @ /= n @ return tos ; 
+' moe find wdiss 
+8 2 moe 4 _assert 
+nl 32 8 moe 4 _assert 
+: moe2 ( n ) n 2 /= n @ return tos ; 
+' moe2 find wdiss 
+8 moe2 4 _assert nl 32 moe2 16 _assert 
+: moe3 ( n m ) n m @ &= n @ return tos ; 
+// ' moe3 find wdiss 
+nl 2 3 moe3 2 "moe3_assert1" assert nl 5 7 moe3 5 "moe3_assert2" assert 
+sp
+nl : t64bitAdd ( n m ) n @ m @ + return tos ; hex 0x100000000 2 t64bitAdd 0x100000002 _assert
+: t64bitAdd2 ( n m ) 0x100000000 n @ + m @ + return tos ; "II.I" typeSignature
+'t64bitAdd2 find wdiss
+hex 1 2 t64bitAdd2 0x100000003 "t64bitAdd2_assert" assert 
+nl : t64bitSub ( n m ) n @ m @ - dup p return tos ; hex 0x100000002 0x100000000 t64bitSub 2 _assert
+: t64bitSub2 ( n m ) 0x100000003 n @ - m @ - return tos ; "II.I" typeSignature
+'t64bitSub2 find wdiss 
+2 1 t64bitSub2 0x100000000 hex "t64bitSub2_assert" assert 
+: t64bitSub3 ( n m ) 0x100000004 n @ - m @ - return tos ; 
+'t64bitSub3 find wdiss sp
+2 1 t64bitSub3 0x100000001 _assert 
+: t64bitSub3 ( n m ) 0x100000003 0x100000002 - 0x100000003 + n @ - m @ - return tos ;  
+'t64bitSub3 find wdiss 
+2 1 t64bitSub3 0x100000001 _assert 
+nl 789654321 9087654321 * dup p binary p decimal
+
+sp
+decimal
+: test1 ( n ) n n @ 3 + = n @ return tos ; //'test1 find wdiss 
+4 test1 7 _assert0 
+: test1 ( n ) n n @ 3 - = n @ return tos ; //'test1 find wdiss 
+10 test1 7 _assert0 
+: test1 ( n ) n n @ 3 * = n @ return tos ; //'test1 find wdiss 
+10 test1 30 _assert0 
+: test1 ( n ) n n @ 2 / = n @ return tos ; //'test1 find wdiss 
+10 test1 5 _assert0 
+: test1 ( n ) n n @ 3 mod = n @ return tos ; //'test1 find wdiss 
+5 test1 2 _assert0 
+: test1 ( n ) n n @ 3 & = n @ return tos ; //'test1 find wdiss 
+7 test1 3 _assert0 
+: test1 ( n ) n n @ 3 | = n @ return tos ; //'test1 find wdiss 
+4 test1 7 _assert0 
+: test1 ( n ) n n @ 3 << = n @ return tos ; //'test1 find wdiss 
+1 test1 8 _assert0 
+: test1 ( n ) n n @ 3 >> = n @ return tos ; //'test1 find wdiss 
+8 test1 1 _assert0 
+: test1 ( n m ) n n @ m @ + = n @ return tos ; //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m | a ) a n @ m @ + = a @ return tos ; //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m ) n n @ m @ - = n @ return tos ; //'test1 find wdiss 
+9 2 test1 7 _assert0 
+: test1 ( n m | a ) a n @ m @ - = a @ return tos ; //'test1 find wdiss 
+9 2 test1 7 _assert0 
+: test1 ( n m ) n n @ m @ + = n @ return tos ; //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m | a ) a n @ m @ + = a @ return tos ; //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m ) n n @ m @ * = n @ return tos ; //'test1 find wdiss 
+6 2 test1 12 _assert0 
+: test1 ( n m ) n n @ m @ << = n @ return tos ; //'test1 find wdiss 
+1 3 test1 8 _assert0 
+: test1 ( n m ) n n @ m @ >> = n @ return tos ;  //'test1 find wdiss 
+8 3 test1 1 _assert0 
+: test1 ( n m | a ) a n @ m @ * = a @ return tos ;  //'test1 find wdiss 
+6 2 test1 12 _assert0 
+: test1 ( n m ) n n @ m @ | = n @ return tos ;  //'test1 find wdiss 
+6 1 test1 7 _assert0 
+: test1 ( n m | a ) a n @ m @ | = a @ return tos ;  //'test1 find wdiss 
+6 1 test1 7 _assert0 
+: test1 ( n m ) n n @ m @ & = n @ return tos ;  //'test1 find wdiss 
+6 2 test1 2 _assert0 
+: test1 ( n m | a ) a n @ m @ & = a @ return tos ;  //'test1 find wdiss 
+6 2 test1 2 _assert0 
+: test1 ( n m ) n n @ m @ / = n @ return tos ;  //'test1 find wdiss 
+6 2 test1 3 _assert0 
+: test1 ( n m | a ) a n @ m @ / = a @ return tos ;  //'test1 find wdiss 
+6 2 test1 3 _assert0 
+: test1 ( n m ) n n @ m @ mod = n @ return tos ;  //'test1 find wdiss 
+5 3 test1 2 _assert0 
+: test1 ( n m | a ) a n @ m @ mod = a @ return tos ;  //'test1 find wdiss 
+5 3 test1 2 _assert0 
+: test1 ( n m | a ) a n @ m @ << = a @ return tos ;  //'test1 find wdiss 
+1 5 test1 32 _assert0 
+: test1 ( n m | a ) a n @ m @ >> = a @ return tos ;  //'test1 find wdiss 
+8 1 test1 4 _assert0 
+ 
+: test1 ( n ) n 3 += n @ return tos ;  //'test1 find wdiss 
+4 test1 7 _assert0 
+: test1 ( n ) n 3 -= n @ return tos ;  //'test1 find wdiss 
+10 test1 7 _assert0 
+: test1 ( n ) n 3 *= n @ return tos ;  //'test1 find wdiss 
+10 test1 30 _assert0 
+: test1 ( n ) n 2 /= n @ return tos ;  //'test1 find wdiss 
+10 test1 5 _assert0 
+//: test1 ( n ) n 3 mod= n @ return tos ;  //'test1 find wdiss 
+//5 test1 2 _assert0 
+: test1 ( n ) n 3 &= n @ return tos ;  //'test1 find wdiss 
+7 test1 3 _assert0 
+: test1 ( n ) n 3 |= n @ return tos ;  //'test1 find wdiss 
+4 test1 7 _assert0 
+: test1 ( n ) n 3 <<= n @ return tos ;  //'test1 find wdiss 
+1 test1 8 _assert0 
+: test1 ( n ) n 3 >>= n @ return tos ;  //'test1 find wdiss 
+8 test1 1 _assert0 
+: test1 ( n m ) n m @ += n @ return tos ;  //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m ) n m @ += n @ return tos ;  //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m ) n m @ -= n @ return tos ;  //'test1 find wdiss 
+9 2 test1 7 _assert0 
+: test1 ( n m ) n m @ -= n @ return tos ;  //'test1 find wdiss 
+9 2 test1 7 _assert0 
+: test1 ( n m ) n m @ += n @ return tos ;  //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m ) n m @ += n @ return tos ;  //'test1 find wdiss 
+6 2 test1 8 _assert0 
+: test1 ( n m ) n m @ *= n @ return tos ;  //'test1 find wdiss 
+6 3 test1 18 _assert0 
+: test1 ( n m ) n m @ <<= n @ return tos ;  //'test1 find wdiss 
+1 3 test1 8 _assert0 
+: test1 ( n m ) n m @ >>= n @ return tos ;  //'test1 find wdiss 
+8 3 test1 1 _assert0 
+: test1 ( n m ) n m @ *= n @ return tos ;  //'test1 find wdiss 
+6 2 test1 12 _assert0 
+: test1 ( n m ) n m @ |= n @ return tos ;  //'test1 find wdiss 
+6 1 test1 7 _assert0 
+: test1 ( n m ) n m @ |= n @ return tos ;  //'test1 find wdiss 
+6 1 test1 7 _assert0 
+: test1 ( n m ) n m @ &= n @ return tos ;  //'test1 find wdiss 
+6 4 test1 4 _assert0 
+: test1 ( n m ) n m @ &= n @ return tos ;  //'test1 find wdiss 
+6 2 test1 2 _assert0 
+: test1 ( n m ) n m @ /= n @ return tos ;  //'test1 find wdiss 
+6 2 test1 3 _assert0 
+: test1 ( n m ) n m @ /= n @ return tos ;  //'test1 find wdiss 
+6 3 test1 2 _assert0 
+//: test1 ( n m ) n m @ mod= n @ return tos ;  //'test1 find wdiss 
+//5 3 test1 2 _assert0 
+//: test1 ( n m ) n m @ mod= n @ return tos ;  //'test1 find wdiss 
+//5 3 test1 2 _assert0 
+: test1 ( n m ) n m @ <<= n @ return tos ;  //'test1 find wdiss 
+1 5 test1 32 _assert0 
+: test1 ( n m ) n m @ >>= n @ return tos ;  //'test1 find wdiss 
+8 1 test1 4 _assert0 
+
+
+2 + 7 assertStkChk // stack checking
+

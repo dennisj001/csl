@@ -1,0 +1,295 @@
+
+5
+#if 1 //_TestDone_ @ not // prevent including twice
+decimal
+: up using pause ;
+User
+sp0
+c_syntaxOn
+int64
+taa ( one two three )
+{
+    int64 four, five ;
+    four = one + two + three ;
+    five = one + two + three + four ;
+    p ( one ) ;
+    p ( two ) ;
+    p ( three ) ;
+    p ( five ) ;
+    nl () ;
+}
+taa ( 1 2 3 ) ;
+'taa find wdiss //pause
+c_syntaxOff
+//: tbb ( one two three | four five )
+: tbb ( one two three )
+    'four var  'five var
+    four one @ two @ three @ + + = 
+    five four @ four @ + = 
+    one @ p 
+    two @ p 
+    three @ p 
+    five @ p 
+    nl
+;
+1 2 3 tbb
+sp0
+: hi ( a b ) a @ b @ + p ; : hey ( a b ) a @ b @ hi a @ b @ hi a @ b @ hi ; 1 2 hey nl     
+C
+dscOn //verbosity 3 =
+: hi ( m x | n ) n m @ = n @ p return ( n @ ) ; 
+: hey ( m x | n ) n m @ = n @ 1 hi p n @ 1 hi p n @ 1 hi p return ( n @ ) ; 
+: heey ( m x | n ) n m @ = n @ 1 hey p n @ 1 hey p n @ 1 hey p return ( n @ ) ; 
+7 1 heey dup p 7 _assert verbosity 1 = //pause
+nl
+// demonstrate calling order of local variables
+: a123 ( one two three )
+
+    one @ p
+    two @ p
+    three @ p
+;
+1 2 3 a123 nl
+: a1234 ( one two three four )
+
+    one @ p
+    two @ p
+    three @ p
+    four @ p
+    //<dbg>
+;;
+a1234 ( 1 2 3 4 )
+sp0
+: hi ( a b ) a @ b @ + p ; : hey ( a b ) a @ b @ hi a @ b @ hi a @ b @ hi ; 1 2 hey       
+C
+dscOn //verbosity 3 =
+: hi ( m x | n ) n m @ = n @ p return ( n @ ) ; 
+: hey ( m x | n ) n m @ = n @ 1 hi p n @ 1 hi p n @ 1 hi p return ( n @ ) ; 
+: heey ( m x | n ) n m @ = n @ 1 hey p n @ 1 hey p n @ 1 hey p return n @ ; 
+7 1 heey dup p 7 _assert verbosity 1 = //pause
+
+// demonstrate calling order of local variables
+: a123 ( one two three )
+
+    one @ p
+    two @ p
+    three @ p
+;
+1 2 3 a123 nl
+: a1234 ( one two three four )
+
+    one @ p
+    two @ p
+    three @ p
+    four @ p
+;;
+a1234 ( 1 2 3 4 )
+sp0
+dscOn
+// nb. this is some of the oldest testing
+: hey ( n m | o q )
+	//nl "startHey" prints
+	o m @ = 	m @ o @ "hey_1_assert" assert
+	q n @ =  	n @ q @ "hey_2_assert" assert
+	n @ m @ o @ q @ + + + 1 + dup p 7 "hey_3_assert" assert
+	n @ m @ + o @ + q @ + 1 + dup p 7 "hey_4_assert" assert
+        //" after hey" ps 
+;
+' hey find wdiss 
+1 2 hey sp0 
+: hey1 ( a b ) a @ b @ hey ; 
+1 2 hey1 sp0
+: hey2 ( n m | o q ) 
+ 	//nl "startHey2" prints
+	m @ o store     m @ o @ _assert
+	n @ q store     n @ q @ _assert
+        n @ m @ hey1 
+	n @ m @ + o @ + q @ + 1 + dup p 7 _assert
+        //" afterHey2" prints
+;
+1 2 hey2 
+sp0
+
+nl "beforeHeey" prints nl
+
+: heey ( a b ) a @ b @ hey2 a @ b @ hey2 ;
+: heey2 ( a b ) a @ b @ heey a @ b @ heey ;
+: heeey2 ( a b ) a @ b @ heey2 a @ b @ heey2 ;
+: heeeey2 ( a b ) a @ b @ heeey2 a @ b @ heeey2 ;
+1 2 heey 
+1 2 heey2 
+1 2 heeeey2 
+nl "afterHeey" prints //pause
+sp0
+
+hex
+Class DLLNode
+DLLNodeAlloc
+: tna2x ( this | t1 )
+        t1 this =  
+        this p t1 p t1 @ p
+        nl "this = " ps this p nl nl "t1 @ = " ps t1 @ p nl "t1 = " ps t1 p
+        nl "done showing variables" ps nl
+	this.nodes [ 1 ].AfterReference 1 = 
+	this.nodes [ 3 ].BeforeReference 3 =
+	this.nodes [ 4 ].BeforeReference 4 =
+	this.nodes [ 2 ].AfterReference 2 = 
+	this.nodes [ 5 ].BeforeReference 5 =
+	this.nodes [ 6 ].BeforeReference 6 =
+	this.nodes [ 7 ].BeforeReference 7 =
+	t1 @ DLLNode.size @ 8 * dump 
+;
+DLLNodeAlloc "testA1" new sp0
+DLLNodeAlloc "testB1" new sp0
+nl "testA1 = " prints testA1 dup print nl tna2x //pause
+sp0
+Class DLLNode
+: sp0 ; //stack pause ;
+DLLNodeAlloc
+DLLNodeAlloc "testA2" new
+DLLNodeAlloc "testB2" new
+testA2.nodes [ 1 ].AfterReference 3 =
+testA2.nodes [ 3 ].BeforeReference 4 =
+testA2 32 dump
+testA2.nodes [ 1 ].AfterReference 3 =
+testA2.nodes [ 3 ].BeforeReference 4 =
+testA2.nodes [ 1 ].AfterReference @ p
+testA2.nodes [ 3 ].BeforeReference @ p
+sp0
+"before test" nl ps nl
+testA2.nodes [ 3 ].BeforeReference @ 4 using Logic.== { nl "array test ok" ps } { nl "array test error" ps } tf2 nl p
+
+testA2 32 dump
+testB2.nodes [ 1 ].AfterReference 5 =
+testB2.nodes [ 3 ].BeforeReference 6 =
+testB2 32 dump
+DLLNodeAlloc "testD" new 
+Root DObject 
+'testD find DObject dobject
+testD.a112.c1138 77 =
+"testC" 'testD find DObject.clone 
+testC.a112.c1138 @ dup p 77 _assert
+sp0
+User
+hex
+: _localsT ( t | t1 )
+        t p
+        t @ p
+        t1 p
+        t1 @ p
+        t1 t @ =
+        t1 @ p
+;
+
+: localsT ( t | t1 )
+        t p
+        t @ p
+        t1 p
+        t1 @ p
+        t1 t @ =
+        t1 @ p
+        t @ _localsT
+        t1 @ _localsT
+;
+
+1 localsT
+sp0
+Combinators User
+decimal
+"\n\ntesting nested locals" ps nl
+//: sp0 stack pause ;
+: goedel { (| n ) n 1 = n @ 6 + dup 7 _assert p } ix { (| m ) m 3 = m @ 4 + dup 7 _assert p } ix ; 
+sp0
+'goedel find wdiss
+nl "goedel :: " ps sp0 goedel sp0
+: goedel2 { (| n ) n 2 = n @ 5 + dup 7 "goedel2_1_assert" assert p } ix { (| n ) n @ p n 3 = n @ 4 + dup p 7 "goedel2_2_assert" assert } ix ;
+'goedel2 find wdiss
+nl "goedel2 :: " ps sp0 goedel2 sp0
+
+: goedel4 (| n ) 
+    nl "goedel4 :: " ps nl
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 "goedel4_1_assert" assert // junk 2
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 "goedel4_2_assert" assert } ix // junk 7
+        n @ 6 + 8 _assert 
+    } ix
+    { (| n ) 
+        n @ p 
+        n 3 =
+        n dup @ 4 + // n:rvalue = 7
+        dup dup 7 "goedel4_3_assert" assert // 7 7
+        p
+        = // store // junk 7
+        n @ p n @ 7 "goedel4_4_assert" assert // 7
+    } ix 
+    n @ dup p // 9
+    return tos
+; ".I" typeSignature
+' goedel4 find wdiss     
+sp0 9 goedel4 sp0 "goedel4_0_assert" assert //pause
+"\ngoedel4 :: output should have read : \n'junk' 2 'junk' 7 'junk' 7 7 9" ps //pause
+: goedel5 (| n ) 
+    nl "goedel5 :: " ps nl
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 "goedel5_1_assert" assert // junk 2 n should be garbage here
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 "goedel5_2_assert" assert } ix // junk 7 n should be garbage here
+        n @ 6 + 8 "goedel5_3_assert" assert 
+    } ix
+    { (| n ) 
+        n @ p // junk
+        n 3 = 
+        n @ 4 + n store 
+        n @ dup p 7 "goedel5_4_assert" assert // 7
+    } ix // n should be garbage here
+    n @ dup p
+    return tos
+; ".I" typeSignature
+9 sp0 goedel5 sp0 "goedel5_0_assert" assert 
+"\ngoedel5 :: output should read : junk' 2 'junk' 7 7 9" ps //pause
+//s pause
+: goedel6 (| n ) 
+    nl "goedel6 :: " ps nl
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 "goedel6_1_assert" assert // first n should be garbage here; second n 2
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 "goedel6_2_assert" assert } ix // first n should be garbage here; second 7
+        n @ 6 + 8 "goedel6_3_assert" assert 
+    } ix
+    { (| n ) 
+        n @ p 
+        n 3 = 
+        n dup @ 4 + = 
+        n @ dup p 7 "goedel6_4_assert" assert 
+    } ix // n should be garbage here
+    n @ dup p
+    return tos
+; ".I" typeSignature
+//' goedel6 find wdiss pause   
+9 sp0 goedel6 sp0 "goedel6_0_assert" assert
+"\ngoedel6 :: goedel6 output should read : \n'junk' 2 'junk' 7 7 'junk' 9" ps //pause
+
+: goedel7 (| n ) 
+    nl "goedel7 :: " ps nl
+    n 1 =
+    { 
+        'n var
+        n @ p n 2 = n @ dup p 2 "goedel7_1_assert" assert // first n should be garbage here; second n 2
+        { 'n var n @ p n 3 = n @ 4 + dup p 7 "goedel7_2_assert" assert } ix // first n should be garbage here; second 7
+        n @ 6 + 8 /
+    } ix
+    { 
+        n 3 = 
+        n 7 += 
+    } ix 
+    n @ 8 + dup p
+    return tos
+; ".I" typeSignature
+//' goedel7 find wdiss pause   
+nl "goedel7 :: " ps nl
+18 sp0 goedel7 sp0 "goedel7_0_assert" assert 
+"\ngoedel7 :: goedel7 output should read : \n'junk' 2 'junk' 7 18" ps //pause
+#endif
+
+2 + 7 assertStkChk // stack checking

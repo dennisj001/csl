@@ -1,0 +1,21 @@
+#make xz
+tar -c --xz --exclude=nbproject --exclude=.git --exclude=*.png --exclude=csl-gdb  --exclude=*.o -f csl.tar.xz * .init.csl
+cd src
+make xz
+cp csl.tar.xz csl.$1.tar.xz
+cp *.tar.xz ~j/backup
+cp *.tar.xz ~j/backup/archive
+cp *.tar.xz ~j/Public
+cp *.tar.xz ~j/ubackup 
+cp *.tar.xz ~j/Documents/backup/
+cp *.tar.xz ~j/Programs/Programs2/forth/csl/backup/
+cp *.tar.xz ~j/Programs/Programs2/backup/
+cp *.tar.xz ~j/workspace/backup/
+cp *.tar.xz ~/media/sda13/backup
+cp *.tar.xz ~j/Public/archive
+cp *.tar.xz ~j/Public/backup
+cp *.tar.xz ../../backup
+mv *.tar.xz ../../backup/archive
+ls -al ../../backup/csl.$1.tar.xz
+ls -al ../../backup/archive/csl.$1.tar.xz
+cd ..

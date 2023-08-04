@@ -1,0 +1,206 @@
+
+Int 
+5 
+bnOff dbgOff 
+scOn
+Root 
+#if 0
+'sp  purge
+: sp stack pause ;
+#else
+: sp ; //stack pause ;
+#endif
+sp
+dbOn 0 =
+User 
+: sp ; //stack pause ;
+1 opOn // this currently requires the optimization to be on to compile correctly 
+// verbosity 2 = 
+// echoOn
+User
+"Experimental" namespace
+C Bits Experimental 
+// constant folding optimization test
+: tx 4 2 / 5 + ; tx 7 _assert
+pwi tx
+Logic 
+// test constant folding
+: tx1 0 ! ! 8 2 / 2 / 3 & 4 | 1 + + ; 
+pwi tx1 
+tx1 7 _assert
+
+// namespaceTreeWithWords
+C
+sp
+// - tail recursion from http://c2.com/cgi/wiki?TailCallOptimization
+c_syntaxOn scOn
+int factoriali ( REG n | REG res )
+{
+    res = 1;
+    while ( n >= 2 )
+    {
+#if 0
+        res *= n-- ; 
+#elif 0
+        res *= (n--) ; 
+#elif 1
+        res = res * n-- ; 
+#else
+        res = res * (n--) ;
+#endif
+    }
+    return res;
+} prefix
+wdiss ( find ('factoriali)) ; //pause ; 
+factoriali (7) ; dup p 5040 _assert //pause //sp
+
+int 
+factorial ( REG n | REG rec )
+{
+       rec = 1;
+       while ( n >= 2 ) rec *= (n--) ;
+       return rec ;
+} 
+c_syntaxOff
+//pwi factorial
+7 factorial dup p 5040 _assert sp //pause
+
+: fac ( n  | rec ) 
+    rec 1 = 
+    { n @ 1 > } { n @ rec @ * rec store n -- } while 
+    return rec @
+;
+' fac find wdiss 
+7 fac dup p 5040 _assert //pause
+C
+: factorial ( int8 REG n | REG rec ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while return rec ;
+pwi factorial
+7 factorial dup p 5040 "factorial" assert1
+nl location "\nstarting Lisp\n stack is ..." ddps s
+sp //pause
+lcOn
+( define g23 ( lambda ( a b c ) ( a b c))) 
+(g23 + 3 4 ) (g23 / 14 2 ) 
+(define q1x0 (lambda (a0) (a0))) 
+((q1x0 /) 14 2)
+
+(define h01 (lambda (a) (a)))
+((h01 /) 14 2)
+
+(t4+ 1 2 3 1) 
+
+(define average (/\ ( n0 n1 )(/ ( + n0 n1 ) 2 )))
+tick average find wdiss //pause
+( average 52 102 ) " : should show 77" ps
+(+ 1 6)
+sp
+(define fib (lambda (n) ( ifElse (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))
+tick fib find wdiss 
+(fib 20) 
+//pause
+(define fib2 (lambda (n) (ifElse (< n 2) n (+ (fib2 (- n 1)) (fib2 (- n 2))))))
+(fib2 20)
+sp
+(if 1 7 2) (if 0 2 7)
+(+ 2 5)
+Lisp
+(define g ( /\ (a b c) (a b c) ) )
+(define h ( /\ (a b c) (a c b) ) ) 
+(define g1 (lambda (a1 b1 c1)(a1 b1 c1))) 
+(define g2 (/\(a b c)(a b c)))     
+(g1 + 3 4 )(g2 / 14 2 ) 
+( define j ( lambda ( a b c ) ( + a b c)))
+( define h ( lambda ( a b c ) ( + a b c)))
+( define k ( lambda ( a b ) ( + a b )))
+nl
+
+// from lisp.csl lines 58-59
+( k ( j 1 2 3 ) ( h 2 3 66 ) ) sp // 77 ...
+( + ( k ( j 1 2 3 ) ( h 2 3 66 ) ) ( + 698 2 ) ) // 777
+( + ( k ( j 1 2 3 ) ( h 2 3 59 ) ) 7 ) // 77
+( g + ( k ( j 1 2 ( h 2 3 ( k 59 4 ) ) ) 6 ) 0 ) // 77
+( - ( + 1 2 ( * 3 4 ) ( / 4 2 ) ( - 9 8 ) 10 770 787 34 ) 21 787 34 )  // == 777
+sp
+lcOff    
+// demo : interspersing C code with lisp compiled code
+C Compiler
+"\nbefore fib" ddps
+: _fib1 ( n ) { n @ 2 < } { n @  } { n @ 1 - _fib1 n @ 2 - _fib1 + } ifElse ;
+' _fib1 find wdiss
+20 _fib1 p
+sp
+state
+lcOn
+(define fibbc (lambda ( n ) (ifElse (< n 2) n (+ (fibbc (- n 1)) (fibbc (- n 2))))))
+tick fibbc find wdiss //pause // have to use 'tick' not ' - remember we are in the Lisp namespace
+(fibbc 20)
+sp
+(define fibcc (lambda ( n ) (ifElse (< n 2) n (+ (fibcc (- n 1)) (fibcc (- n 2))))))
+tick fibcc find wdiss // have to use 'tick' not ' - remember we are in the Lisp namespace
+(fibcc 20) 
+"\nafter fib" ddps nl
+nl location "\nending Lisp\n" ps s //ddps s
+
+sp
+lcOff
+Compiler C 
+: _fib2 dup 2 < ? : dup -- _fib2 swap 2 - _fib2 + ; 
+' _fib2 find wdiss sp0
+20 _fib2 nl dup p 6765 assert0 //pause
+: _fib1 ( n ) { n @ 2 < } { n @ } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse return tos ;
+//pwi _fib1 sp0
+20 _fib1 dup p 6765 _assert0 
+c_syntaxOn
+int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; } }
+//pwi _fib1c sp0
+_fib1c (20) dup p 6765 _assert0 
+c_syntaxOff
+: fibPTC? ( n | fn fn1 fn2 ) 
+    { fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
+    {   
+        fn1 fn2 @ = 
+        fn2 fn @ = 
+        fn fn1 @ fn2 @ + = 
+    }
+    for
+    return fn @
+;
+pwi fibPTC?
+20 fibPTC? dup p 6765 _assert0 
+//dscOff
+sp
+: fibPTC3? ( n | svn fn fn1 fn2 ) 
+    { svn n @ = fn 0 = fn1 0 = fn2 1 = } { n @ } { n n @ 1 - = } 
+    {   
+        fn1 fn2 @ = 
+        fn2 fn @ = 
+        fn fn1 @ fn2 @ + = 
+    }
+    for
+    svn @ p " : " ps fn @ p "," ps
+;
+sp
+c_syntaxOn
+int
+//fibPTC2? ( REG n | REG fn, REG fn1, REG fn2 )
+//fibPTC2? ( n | fn, fn1, fn2 )
+fibPTC2? ( n ) //| fn, fn1, fn2 )
+{
+    int fn, fn1, fn2 ;
+    for ( fn = 0, fn1 = 0, fn2 = 1 ; n ; n -- ) 
+    {   
+        fn1 = fn2 ;
+        fn2 = fn ;
+        fn = fn1 + fn2 ; 
+    }
+    return fn ;
+} //prefix
+pwi fibPTC2?
+fibPTC2? (20) dup p 6765 _assert 
+c_syntaxOff
+sp    
+
+sp
+Int
+2 + 7 assertStkChk // stack checking
+"test1" purgeWordName

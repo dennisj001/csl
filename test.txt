@@ -1,0 +1,5 @@
+: hi 1 2 + p ;
+: hey hi hi hi ;
+: heey hey hey hey ;
+: heeey heey heey heey ;
+heeey heeey
