@@ -575,7 +575,7 @@ typedef struct
     byte *LocalFrameStart, *AfterLocalFrame, *bp_First, *bp_Last, *PtrToJumpOffset, *PtrToJmpInsn, *CompiledAtAddress ;
     byte *TttnCode, *JccCode, *JccAddedCode, *TestCode, *CmpCode, *AfterCmpCode, *OriginalActualCodeStart, *CopiedToStart, *BI_StackPushRegisterCode, *SetccCode, * MovzxCode ;
     byte *CopiedToEnd, *CopiedToLogicJccCode, *ActualCopiedToJccCode, *JmpToAddress ;
-    Boolean SetccTtt, Ttt, SetccNegFlag, N, ResetFlag ;
+    Boolean SetccTtt, Ttt, SetccNegFlag, N ;
     Word * LogicCodeWord, *OurCombinator, *RegisterVariableControlWord ;
     GotoInfo * BI_Gi ;
     Rllafl * BI_Rllafl ;

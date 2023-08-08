@@ -371,7 +371,7 @@ CSL_C_ConditionalExpression ( )
             else if ( bi->TttnCode ) SetHere ( bi->TttnCode ) ;
             BI_SetTttN ( bi, ttt, negFlag, 0, jccType ) ;
             Compile_JccGotoInfo ( bi, jccType ) ;
-            BI_ResetLogicCode ( bi, 1 ) ;
+            BI_ResetLogicCode ( bi ) ;
         }
 #if 0        
         else

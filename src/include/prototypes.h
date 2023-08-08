@@ -175,8 +175,7 @@ void Compile_Set_DspReg_FromDataStackPointer(void);
 void Compile_Set_DataStackPointer_FromDspReg(void);
 /* src/basis/compiler/logic.c */
 void BI_SetTttN(BlockInfo *bi, Boolean ttt, Boolean n, byte *address, int jccType);
-void BI_ResetLogicCode(BlockInfo *bi, Boolean resetFlag);
-void Compiler_BI_ResetLogicCode(Compiler *compiler, Boolean resetFlag);
+void BI_ResetLogicCode(BlockInfo *bi);
 BlockInfo *Compiler_SetBiTttN(Compiler *compiler, Boolean ttt, Boolean n, int jccType);
 void BI_CompileRecord_CmpCode_Reg(BlockInfo *bi, int64 reg);
 int64 SetTttnJccGotoInfo_DoOr(BlockInfo *bi, Rllafl *r);

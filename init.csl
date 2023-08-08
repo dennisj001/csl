@@ -127,11 +127,11 @@ User
 "StartupMacros" namespace                           // create a namespace for string macros to be used 
 StartupMacros                                       // switch to that namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
-// "_startDirectory_" variable                      // created and set in CSL_ResetAll_Init
-//: namespaces _startDirectory_ @ ;                 // this line also works in place of the next line
+//"_startDirectory_" variable                       // already created and set in CSL_ResetAll_Init in basis/init.c
+: namespaces _startDirectory_ @ ;                   // this line also works in place of the next line
                                                     // '_startDirectory_' is a variable created in the function 
-                                                    // CSL_ResetAll_Init in the file init.c
-: namespaces "/usr/local/lib/csl/namespaces" ;      // our currently only ?!overloaded!? string macro allowing 
+                                                    // CSL_ResetAll_Init in the file basis/init.c
+//: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
                                                     // us to parameterize the startup; can be properly started 
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/csl"

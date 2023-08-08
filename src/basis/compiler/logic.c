@@ -1,7 +1,8 @@
 
 #include "../../include/csl.h"
 
-// 'setTtnn' is a notation from the intel manuals
+// logic needs improving!  cf. logic.png
+// 'setTttn' is a notation from the intel manuals
 
 void
 BI_SetTttN ( BlockInfo *bi, Boolean ttt, Boolean n, byte * address, int jccType )
@@ -18,24 +19,12 @@ BI_SetTttN ( BlockInfo *bi, Boolean ttt, Boolean n, byte * address, int jccType 
 // should be used only if we are sure we are done with the exiting logic
 
 void
-BI_ResetLogicCode ( BlockInfo *bi, Boolean resetFlag ) //, Boolean resetJccFlag )
+BI_ResetLogicCode ( BlockInfo *bi ) 
 {
     if ( bi )
     {
-        if ( resetFlag )
-        {
-            bi->Ttt = 0, bi->N = 0, bi->JccCode = 0, bi->TttnCode = 0, bi->SetccCode = 0, bi->TestCode = 0, bi->CmpCode = 0, bi->BI_Gi = 0 ;
-            if ( resetFlag == 2 ) bi->State |= BI_FINISHED ;
-            bi->ResetFlag = resetFlag ;
-        }
+        bi->Ttt = 0, bi->N = 0, bi->JccCode = 0, bi->TttnCode = 0, bi->SetccCode = 0, bi->TestCode = 0, bi->CmpCode = 0, bi->BI_Gi = 0 ;
     }
-}
-
-void
-Compiler_BI_ResetLogicCode ( Compiler * compiler, Boolean resetFlag )
-{
-    BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-    BI_ResetLogicCode ( bi, resetFlag ) ; //, Boolean resetJccFlag )
 }
 
 BlockInfo *
@@ -425,7 +414,7 @@ Compiler_Var_Compile_LogicTest ( Compiler * compiler )
             if ( r && ( ! ( rtrn & LT_ID ) ) && ( rtrn & ( LT_OR_PREVIOUS | LT_OR_NEXT | LT_AND_PREVIOUS | LT_AND_NEXT | LT_END_OF_BLOCK ) ) )
             {
                 BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-                BI_ResetLogicCode ( bi, 1 ) ;
+                BI_ResetLogicCode ( bi ) ;
                 BI_CompileRecord_CmpCode_Reg ( bi, ACC ) ;
                 return BI_Check_SetTttnJccGotoInfo ( bi, r, 1 ) ;
             }
@@ -501,6 +490,7 @@ Compile_GreaterThanOrEqual ( Compiler * compiler )
 }
 
 #if 0
+
 void
 Compile_LogicalAnd ( Compiler * compiler )
 {
@@ -513,6 +503,7 @@ Compile_LogicalAnd ( Compiler * compiler )
 }
 #endif
 #if 1
+
 void
 Compile_LogicalAnd ( Compiler * compiler )
 {
@@ -528,7 +519,7 @@ Compile_LogicalAnd ( Compiler * compiler )
     _Compile_JumpToDisp ( 7, 0 ) ;
     Compile_MoveImm_To_TOS ( R14, 0, 8 ) ;
     Compile_CMPI ( MEM, R14, 0, 0, 0 ) ;
-    if ( r && ( ! ( r->rtrn & LT_OR_NEXT )) || ( ( r->rtrn & LT_END_OF_BLOCK ) ) )
+    if ( r && ( ! ( r->rtrn & LT_OR_NEXT ) ) || ( ( r->rtrn & LT_END_OF_BLOCK ) ) )
         _BI_SetTttnJccGotoInfo ( bi, N_0, GI_JCC_TO_FALSE ) ;
 }
 #elif 0
@@ -566,6 +557,7 @@ Compile_LogicalAnd ( Compiler * compiler )
     bi->JccCode = 0 ;
 }
 #elif 1
+
 void
 Compile_LogicalAnd ( Compiler * compiler )
 {
@@ -831,7 +823,7 @@ CSL_LogicalAnd ( ) // and
     if ( CompileMode ) Compile_LogicalAnd ( _Compiler_ ) ;
     else
     {
-        LogicalAnd () ;
+        LogicalAnd ( ) ;
     }
 }
 

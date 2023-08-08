@@ -41,13 +41,27 @@ LC_Apply ( )
         {
             //if ( GetState ( lc, LC_COMPILE_MODE ) )
             {
-                SetState ( lc, LC_COMPILE_MODE, false ) ;
-                if ( Verbosity () > 1 )
+#if 0                
+                // LC could be fixed to compile function variables?!
+                if ( lfunction->W_LispAttributes & T_LISP_SYMBOL )
                 {
-                    _LO_PrintWithValue ( lc->Lread, "\nLC_Apply : lc->Lread = ", "", 0 ) ;
-                    CSL_Show_SourceCode_TokenLine ( lfunction, "LC_Debug : ", 0, lfunction->Name, "" ) ;
-                    iPrintf ( "\nCan't compile this define because \'%s\' is not a function/combinator. Function variables are not yet implemented?!", lfunction->Name ) ;
-                    iPrintf ( "\nHowever, it should run interpreted." ) ;
+                    _LO_Debug_Output ( lc->Lread, "Lread: " ) ;
+                    _LO_Debug_Output ( lfunction, "lfunction: " ) ;
+                    _LO_Debug_Output ( largs, "largs: " ) ;
+
+                    Pause ( ) ;
+                }
+                else
+#endif                    
+                {
+                    SetState ( lc, LC_COMPILE_MODE, false ) ;
+                    if ( Verbosity ( ) > 1 )
+                    {
+                        _LO_PrintWithValue ( lc->Lread, "\nLC_Apply : lc->Lread = ", "", 0 ) ;
+                        CSL_Show_SourceCode_TokenLine ( lfunction, "LC_Debug : ", 0, lfunction->Name, "" ) ;
+                        iPrintf ( "\nCan't compile this define because \'%s\' is not a function/combinator. Function variables are not yet implemented?!", lfunction->Name ) ;
+                        iPrintf ( "\nHowever, it should run interpreted." ) ;
+                    }
                 }
             }
         }
@@ -86,7 +100,7 @@ _LO_Apply ( )
 }
 
 void
-_Interpreter_LC_InterpretWord ( Interpreter *interp, ListObject *l0 )
+_Interpreter_LC_InterpretWord ( Interpreter *interp, ListObject * l0 )
 {
     Word * word = l0->Lo_CSL_Word ;
     if ( ! word ) word = l0 ;
@@ -103,7 +117,7 @@ _LO_CompileOrInterpret_One ( ListObject *l0, int64 functionFlag )
 }
 
 void
-LO_CompileOrInterpretArgs ( ListObject *largs )
+LO_CompileOrInterpretArgs ( ListObject * largs )
 {
     ListObject * arg ;
     for ( arg = _LO_First ( largs ) ; arg ; arg = _LO_Next ( arg ) )
@@ -114,7 +128,7 @@ LO_CompileOrInterpretArgs ( ListObject *largs )
 }
 
 void
-_LO_CompileOrInterpret ( ListObject *lfunction, ListObject *largs )
+_LO_CompileOrInterpret ( ListObject *lfunction, ListObject * largs )
 {
     ListObject *lfword = lfunction->Lo_CSL_Word ;
     if ( largs && lfword && ( lfword->W_MorphismAttributes & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED ) ) ) // ?!!? 2 arg op with multi-args : this is not a precise distinction yet : need more types ?!!?
@@ -138,7 +152,7 @@ _LO_CompileOrInterpret ( ListObject *lfunction, ListObject *largs )
 }
 
 ListObject *
-_LO_Do_FunctionBlock ( ListObject *lfunction, ListObject *largs )
+_LO_Do_FunctionBlock ( ListObject *lfunction, ListObject * largs )
 {
     LambdaCalculus *lc = _O_->OVT_LC ;
     ListObject *vReturn = nil, *lfargs = _LO_First ( largs ) ;
@@ -297,8 +311,9 @@ LC_InitForCombinator ( LambdaCalculus * lc )
 }
 
 #if 0
+
 void
-Arrays_DoArrayArgs_Lisp ( Word ** pl1, Word * l1, Word * arrayBaseObject, int64 objSize, Boolean saveCompileMode, Boolean *variableFlag )
+Arrays_DoArrayArgs_Lisp ( Word ** pl1, Word * l1, Word * arrayBaseObject, int64 objSize, Boolean saveCompileMode, Boolean * variableFlag )
 {
     do
     {
@@ -308,11 +323,12 @@ Arrays_DoArrayArgs_Lisp ( Word ** pl1, Word * l1, Word * arrayBaseObject, int64 
     *pl1 = l1 ;
 }
 #else
+
 void
-Arrays_DoArrayArgs_Lisp ( Word ** pl1, Word * l1, Word * arrayBaseObject, int64 objSize, Boolean saveCompileMode, Boolean *variableFlag )
+Arrays_DoArrayArgs_Lisp ( Word ** pl1, Word * l1, Word * arrayBaseObject, int64 objSize, Boolean saveCompileMode, Boolean * variableFlag )
 {
     byte * token ;
-    while ( l1 = LO_Next ( l1 ) ) 
+    while ( l1 = LO_Next ( l1 ) )
     {
         token = l1->Name ;
         if ( Do_NextArrayToken ( l1, token, arrayBaseObject, objSize, saveCompileMode, variableFlag ) ) break ;
@@ -322,17 +338,17 @@ Arrays_DoArrayArgs_Lisp ( Word ** pl1, Word * l1, Word * arrayBaseObject, int64 
 #endif
 
 void
-_LO_Apply_ArrayArg ( ListObject ** pl1, int64 *i )
+_LO_Apply_ArrayArg ( ListObject ** pl1, int64 * i )
 {
-    if (! _LC_->ArrayBaseObject )  _LC_->ArrayBaseObject = ( ( Word * ) ( LO_Previous ( *pl1 ) ) )->Lo_CSL_Word ;
-    if (! _LC_->BaseObject ) _LC_->BaseObject = _Context_->BaseObject ;
+    if ( ! _LC_->ArrayBaseObject ) _LC_->ArrayBaseObject = ( ( Word * ) ( LO_Previous ( *pl1 ) ) )->Lo_CSL_Word ;
+    if ( ! _LC_->BaseObject ) _LC_->BaseObject = _Context_->BaseObject ;
     _CSL_ArrayBegin ( 1, pl1, i ) ;
 }
 
 // compile mode on
 
 void
-_LO_Apply_NonMorphismArg ( ListObject ** pl1, int64 *i )
+_LO_Apply_NonMorphismArg ( ListObject ** pl1, int64 * i )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -348,8 +364,8 @@ _LO_Apply_NonMorphismArg ( ListObject ** pl1, int64 *i )
         {
             //Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
             byte reg = LispRegParameterOrder ( ( *i ) ++ ) ;
-            if ( word->StackPushRegisterCode ) SetHere (word->StackPushRegisterCode) ;
-            else if ( baseObject && baseObject->StackPushRegisterCode ) SetHere (baseObject->StackPushRegisterCode) ;
+            if ( word->StackPushRegisterCode ) SetHere ( word->StackPushRegisterCode ) ;
+            else if ( baseObject && baseObject->StackPushRegisterCode ) SetHere ( baseObject->StackPushRegisterCode ) ;
             Compile_Move_Reg_To_Reg ( reg, ACC, 0 ) ;
             if ( baseObject ) _Debugger_->SpecialPreHere = baseObject->Coding ;
             else _Debugger_->SpecialPreHere = here ;
@@ -358,7 +374,7 @@ _LO_Apply_NonMorphismArg ( ListObject ** pl1, int64 *i )
 }
 
 void
-_LC_Apply_Arg (ListObject ** pl1, int64 * i )
+_LC_Apply_Arg ( ListObject ** pl1, int64 * i )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -372,9 +388,9 @@ _LC_Apply_Arg (ListObject ** pl1, int64 * i )
         Set_CompileMode ( false ) ;
         l2 = LC_Eval ( l1, 0, 1 ) ;
         _Debugger_->SpecialPreHere = Here ;
-        Compiler_Word_SCHCPUSCA ( l2, 0 ) ; 
-        if ( ! l2 || ( l2->W_LispAttributes & T_NIL ) ) Compile_MoveImm_To_Reg ( LispRegParameterOrder (( *i ) ++ ), DataStack_Pop ( ), CELL_SIZE ) ;
-        else Compile_MoveImm_To_Reg ( LispRegParameterOrder (( *i ) ++ ), ( int64 ) * l2->Lo_PtrToValue, CELL_SIZE ) ;
+        Compiler_Word_SCHCPUSCA ( l2, 0 ) ;
+        if ( ! l2 || ( l2->W_LispAttributes & T_NIL ) ) Compile_MoveImm_To_Reg ( LispRegParameterOrder ( ( *i ) ++ ), DataStack_Pop ( ), CELL_SIZE ) ;
+        else Compile_MoveImm_To_Reg ( LispRegParameterOrder ( ( *i ) ++ ), ( int64 ) * l2->Lo_PtrToValue, CELL_SIZE ) ;
         DEBUG_SHOW ( l2, 1, 0 ) ;
     }
     else if ( ( l1->W_ObjectAttributes & NON_MORPHISM_TYPE ) ) _LO_Apply_NonMorphismArg ( pl1, i ) ;
@@ -386,7 +402,7 @@ _LC_Apply_Arg (ListObject ** pl1, int64 * i )
     {
         word = Compiler_CopyDuplicatesAndPush ( word, l1->W_RL_Index, l1->W_SC_Index ) ;
         DEBUG_SETUP ( word, 0 ) ;
-        _Compile_Move_StackN_To_Reg ( LispRegParameterOrder (( *i ) ++), 0, DSP, 0 ) ;
+        _Compile_Move_StackN_To_Reg ( LispRegParameterOrder ( ( *i ) ++ ), 0, DSP, 0 ) ;
         DEBUG_SHOW ( word, 1, 0 ) ;
     }
 done:
@@ -412,14 +428,14 @@ _LC_Apply_C_LtoR_ArgList ( LambdaCalculus * lc, ListObject * l0, Word * word )
         if ( ! svcm ) CSL_BeginBlock ( ) ;
         if ( word->W_MorphismAttributes & ( DLSYM_WORD | C_PREFIX ) ) Set_CompileMode ( true ) ;
         //_Debugger_->PreHere = Here ;
-        for ( i = 0, l1 = _LO_First ( l0 ) ; l1 ; l1 = LO_Next ( l1 ) ) _LC_Apply_Arg (&l1, &i ) ;
+        for ( i = 0, l1 = _LO_First ( l0 ) ; l1 ; l1 = LO_Next ( l1 ) ) _LC_Apply_Arg ( &l1, &i ) ;
         Set_CompileMode ( true ) ;
         _Debugger_->SpecialPreHere = Here ;
         //System V ABI : "%rax is used to indicate the number of vector arguments passed to a function requiring a variable number of arguments"
         if ( ( String_Equal ( word->Name, "printf" ) || ( String_Equal ( word->Name, "sprintf" ) ) ) ) Compile_MoveImm_To_Reg ( RAX, i, CELL ) ;
         word = Compiler_CopyDuplicatesAndPush ( word, word->W_RL_Index, word->W_SC_Index ) ;
         Word_Eval ( word ) ;
-        if ( word->W_MorphismAttributes & RAX_RETURN ) _Word_CompileAndRecord_PushReg (word, ACC, true , 0) ;
+        if ( word->W_MorphismAttributes & RAX_RETURN ) _Word_CompileAndRecord_PushReg ( word, ACC, true, 0 ) ;
         if ( ! svcm )
         {
             CSL_EndBlock ( ) ;
@@ -460,7 +476,7 @@ Word_CompileRun_C_ArgList ( Word * word ) // C protocol - x64 : left to right ar
         int64 svDs = GetState ( _CSL_, _DEBUG_SHOW_ ) ;
         DebugShow_Off ;
         cntx->BaseObject = 0 ; // nb! very important !! // but maybe shouldn't be done here -> Context_DoDotted_Post
-        l0 = LC_Read () ;
+        l0 = LC_Read ( ) ;
         SetState ( _CSL_, _DEBUG_SHOW_, svDs ) ;
         Set_CompileMode ( svcm ) ; // we must have the arguments pushed and not compiled for _LO_Apply_C_Rtl_ArgList which will compile them for a C_Rtl function
         _LC_Apply_C_LtoR_ArgList ( lc, l0, word ) ;
@@ -496,10 +512,10 @@ CompileLispBlock ( ListObject *args, ListObject * body )
     //else // nb. LISP_COMPILE_MODE : this state can change with some functions that can't be compiled yet
     if ( ( ! code ) || ( ! GetState ( lc, LC_COMPILE_MODE ) ) )
     {
-        SetHere (here) ; //recover the unused code space
+        SetHere ( here ) ; //recover the unused code space
         code = 0 ;
         word->W_LispAttributes &= ~ T_LISP_COMPILED_WORD ;
-        if ( Verbosity () > 1 )
+        if ( Verbosity ( ) > 1 )
         {
             AlertColors ;
             iPrintf ( "\nLisp can not compile this word yet : %s : -- interpreting ...\n ", _Word_SourceCodeLocation_pbyte ( word ) ) ;
