@@ -369,7 +369,7 @@ BigNum_MultiplyEqual ( )
     if ( CompileMode )
     {
         //Compile_MultiplyEqual ( _Context_->Compiler0 ) ;
-        Compile_X_OpEqual ( _Compiler_, BigNum_Multiply ) ; //MUL_OP ) ;
+        CO_X_OpEqual ( _Compiler_, BigNum_Multiply ) ; //MUL_OP ) ;
     }
     else
 #endif        

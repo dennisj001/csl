@@ -50,7 +50,7 @@ CSL_PlusEqual ( ) // +=
 {
     if ( CompileMode )
     {
-        Compile_X_OpEqual ( _Context_->Compiler0, CSL_Plus ) ; //ADD ) ;
+        CO_X_OpEqual ( _Context_->Compiler0, CSL_Plus ) ; //ADD ) ;
     }
     else
     {
@@ -68,7 +68,7 @@ CSL_MinusEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_X_OpEqual ( _Context_->Compiler0, CSL_Minus ) ; //SUB ) ;
+        CO_X_OpEqual ( _Context_->Compiler0, CSL_Minus ) ; //SUB ) ;
     }
     else
     {
@@ -104,7 +104,7 @@ CSL_MultiplyEqual ( ) // *=
     if ( CompileMode )
     {
         //Compile_MultiplyEqual ( _Context_->Compiler0 ) ;
-        Compile_X_OpEqual ( _Compiler_, CSL_Multiply ) ; //MUL_OP ) ;
+        CO_X_OpEqual ( _Compiler_, CSL_Multiply ) ; //MUL_OP ) ;
     }
     else
     {
@@ -141,7 +141,7 @@ CSL_DivideEqual ( ) // +=
     if ( CompileMode )
     {
         //Compile_DivideEqual ( _Context_->Compiler0 ) ;
-        Compile_X_OpEqual ( _Compiler_, CSL_Divide ) ; //DIV_OP ) ;
+        CO_X_OpEqual ( _Compiler_, CSL_Divide ) ; //DIV_OP ) ;
     }
     else
     {

@@ -50,7 +50,7 @@ CSL_BitWise_OrEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_X_OpEqual ( _Context_->Compiler0, CSL_BitWise_OR ) ; //OR ) ;
+        CO_X_OpEqual ( _Context_->Compiler0, CSL_BitWise_OR ) ; //OR ) ;
     }
     else
     {
@@ -82,7 +82,7 @@ CSL_BitWise_AndEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_X_OpEqual ( _Context_->Compiler0, CSL_BitWise_AND ) ; //AND ) ;
+        CO_X_OpEqual ( _Context_->Compiler0, CSL_BitWise_AND ) ; //AND ) ;
     }
     else
     {
@@ -113,7 +113,7 @@ CSL_BitWise_XorEqual ( ) // -=
 {
     if ( CompileMode )
     {
-        Compile_X_OpEqual ( _Context_->Compiler0, CSL_BitWise_XOR ) ; //XOR ) ;
+        CO_X_OpEqual ( _Context_->Compiler0, CSL_BitWise_XOR ) ; //XOR ) ;
     }
     else
     {
@@ -160,7 +160,7 @@ CSL_ShiftLeft_Equal ( ) // <<=
     if ( GetState ( compiler, BLOCK_MODE ) )
     {
         //Compile_X_Shift ( compiler, SHL, 0, 1 ) ;
-        Compile_X_OpEqual ( _Compiler_, CSL_ShiftLeft ) ;
+        CO_X_OpEqual ( _Compiler_, CSL_ShiftLeft ) ;
     }
     else
     {
@@ -178,7 +178,7 @@ CSL_ShiftRight_Equal ( ) // >>=
     if ( GetState ( _Context_->Compiler0, BLOCK_MODE ) )
     {
         //Compile_X_Shift ( _Context_->Compiler0, SHR, 0, 1 ) ;
-        Compile_X_OpEqual ( _Compiler_, CSL_ShiftRight ) ;
+        CO_X_OpEqual ( _Compiler_, CSL_ShiftRight ) ;
     }
     else
     {

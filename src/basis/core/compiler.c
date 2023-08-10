@@ -236,7 +236,7 @@ CompileOptimizeInfo_New ( uint64 type )
 }
 
 CompileOptimizeInfo *
-Compiler_CompileOptimizeInfo_PushNew ( Compiler * compiler )
+COInfo_PushNew ( Compiler * compiler )
 {
     CompileOptimizeInfo * coi = CompileOptimizeInfo_New ( COMPILER_TEMP ) ;
     if ( coi )
@@ -248,7 +248,7 @@ Compiler_CompileOptimizeInfo_PushNew ( Compiler * compiler )
 }
 
 CompileOptimizeInfo *
-Compiler_CompileOptimizeInfo_New ( Compiler * compiler, uint64 type )
+COInfo_New ( Compiler * compiler, uint64 type )
 {
     compiler->OptInfo = _CompileOptimizeInfo_New ( type ) ;
     return compiler->OptInfo ;
@@ -323,7 +323,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     _dllist_Init ( compiler->CurrentMatchList ) ;
     _dllist_Init ( compiler->RegisterParameterList ) ;
     _dllist_Init ( compiler->OptimizeInfoList ) ;
-    Compiler_CompileOptimizeInfo_PushNew ( compiler ) ;
+    COInfo_PushNew ( compiler ) ;
     //SetBuffersUnused ( 0 ) ;
     SetState ( compiler, VARIABLE_FRAME, false ) ;
     //OVT_MemListFree_CompilerTempObjects ( ) ;

@@ -13,7 +13,7 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
     bi->CopiedToStart = Here ;
     for ( left = bsize ; ( left > 0 ) ; srcAddress += isize )
     {
-        PeepHole_Optimize ( ) ;
+        CO_PeepHole_Optimize ( ) ;
         isize = _Udis_GetInstructionSize ( ud, srcAddress ) ;
         left -= isize ;
         CSL_AdjustDbgSourceCodeAddress ( srcAddress, Here ) ;

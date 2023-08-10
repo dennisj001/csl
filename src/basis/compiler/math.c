@@ -23,7 +23,7 @@ Compile_Plus ( Compiler * compiler )
 void
 Compile_Multiply ( Compiler * compiler )
 {
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ) ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag )
     {
@@ -53,7 +53,7 @@ _Compile_Divide ( Compiler * compiler, uint64 type )
 {
     Boolean reg ;
     // dividend in edx:eax, quotient/divisor in eax, remainder in edx
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ) ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag )
     {

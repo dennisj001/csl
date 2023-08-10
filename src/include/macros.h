@@ -281,7 +281,7 @@
 #define _SC_Global_On SetState ( _CSL_, GLOBAL_SOURCE_CODE_MODE, true )
 #define SC_Global_On if ( GetState ( _CSL_, DEBUG_SOURCE_CODE_MODE ) ) { _SC_Global_On ; }
 #define SC_Global_Off SetState ( _CSL_, GLOBAL_SOURCE_CODE_MODE, false )
-#define Compiler_OptimizerWordList_Reset( compiler ) List_Init ( _CSL_->CompilerWordList ) 
+#define COWordList_Reset( compiler ) List_Init ( _CSL_->CompilerWordList ) 
 #if 0
 #define Word_SetTsrliScwi( word, tsrli, scwi ) \
     if ( word )\

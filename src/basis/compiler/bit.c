@@ -44,7 +44,7 @@ CSL_TEST ( )
 void
 Compile_X_Group3 ( Compiler * compiler, int64 code ) //OP_1_ARG
 {
-    int64 optSetupFlag = Compiler_CheckOptimize (compiler, 0) ; //OP_1_ARG
+    int64 optSetupFlag = CO_CheckOptimize (compiler, 0) ; //OP_1_ARG
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag )
     {
@@ -67,7 +67,7 @@ Compile_X_Group3 ( Compiler * compiler, int64 code ) //OP_1_ARG
 void
 Compile_X_Shift ( Compiler * compiler, int64 op, Boolean stackFlag, Boolean opEqualFlag )
 {
-    int64 optSetupFlag = Compiler_CheckOptimize (compiler, 0) ; //OP_1_ARG
+    int64 optSetupFlag = CO_CheckOptimize (compiler, 0) ; //OP_1_ARG
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag )
     {

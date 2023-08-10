@@ -336,7 +336,7 @@ void
 Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Boolean ttt, Boolean n )
 {
     //Is_DebugOn_DBI ;
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ) ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
     Word *zero = CSL_WordList ( 0 ) ;
     //Stack_Push ( bi->LogicOpStack, (int64) zero ) ;
@@ -402,7 +402,6 @@ Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Boolean ttt, Boolean n )
 int64
 Compiler_Var_Compile_LogicTest ( Compiler * compiler )
 {
-    int64 rtrn ;
     if ( ( ! GetState ( compiler, LC_ARG_PARSING ) ) && C_SyntaxOn
         //&& ( ( compiler->PrefixWord && ( compiler->PrefixWord->W_MorphismAttributes & LOGIC_OPT ) ) || ( ! GetState ( compiler, ( DOING_A_PREFIX_WORD ) ) ) ) )
         && ( ( ! GetState ( compiler, ( DOING_A_PREFIX_WORD ) ) ) ) )

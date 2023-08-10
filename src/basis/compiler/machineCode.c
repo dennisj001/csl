@@ -592,7 +592,7 @@ _Compile_optInfo_X_Group1 ( Compiler * compiler, int64 op )
 void
 Compile_X_Group1 ( Compiler * compiler, int64 op )
 {
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ) ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
     if ( optSetupFlag == OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag )
@@ -672,7 +672,7 @@ _Compile_Group5 ( Boolean code, Boolean mod, Boolean rm, Boolean sib, int64 disp
 void
 Compile_X_Group5 ( Compiler * compiler, int64 op )
 {
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ) ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
     Word *one = CSL_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
@@ -791,7 +791,7 @@ Compile_Logical_X_Group1 ( Compiler * compiler, int64 op, Boolean ttt, Boolean n
 {
     BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
     if ( bi ) bi->State |= ( ( uint64 ) 1 << op ) ;
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ) ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     if ( optSetupFlag == OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag ) _Compile_X_Group1 ( op, REG, REG, ACC, OREG, 0, 0, CELL ) ;
     else

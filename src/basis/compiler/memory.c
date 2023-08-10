@@ -53,7 +53,7 @@ _Compile_Set_CAddress_WithRegValue_ThruReg ( byte * address, Boolean reg, Boolea
 void
 Compile_Peek (Compiler * compiler, Boolean stackReg , int64 size) // @
 {
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ) ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
     else if ( ! optSetupFlag )
     {
@@ -86,7 +86,7 @@ Compiler_ShowOptimizeArgs ( Compiler * compiler )
 void
 Compile_Store ( Compiler * compiler, int lvalueSize ) // !
 {
-    if ( GetState ( _CSL_, OPTIMIZE_ON ) ) Compile_X_Equal ( compiler, STORE, lvalueSize ) ;
+    if ( GetState ( _CSL_, OPTIMIZE_ON ) ) CO_X_Equal ( compiler, STORE, lvalueSize ) ;
     else // when optimize is off, eg with arrays
     {
         //DBI_ON ;
@@ -114,7 +114,7 @@ Compile_Poke ( Compiler * compiler, int lvalueSize ) // =
         CSL_ArrayModeOff_OptimizeOn ( ) ;
     }
 #endif    
-    if ( GetState ( _CSL_, OPTIMIZE_ON ) ) Compile_X_Equal ( compiler, EQUAL, lvalueSize ) ;
+    if ( GetState ( _CSL_, OPTIMIZE_ON ) ) CO_X_Equal ( compiler, EQUAL, lvalueSize ) ;
     else // when optimize is off, eg with arrays
     {
         int64 stackReg = DSP ;
@@ -152,7 +152,7 @@ Compile_AtEqual ( Boolean stackReg ) // !
 void
 Compile_Store ( Compiler * compiler, 0 ) // !
 {
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ), stackReg = DSP ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ), stackReg = DSP ;
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag )
     {
@@ -193,7 +193,7 @@ Compile_Store ( Compiler * compiler, 0 ) // !
 void
 Compile_Poke ( Compiler * compiler, 0 ) // =
 {
-    int64 optSetupFlag = Compiler_CheckOptimize ( compiler, 0 ), stackReg = DSP ;
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ), stackReg = DSP ;
     if ( optSetupFlag & OPTIMIZE_DONE ) return ;
     else if ( optSetupFlag )
     {
