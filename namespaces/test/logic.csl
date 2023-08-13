@@ -386,6 +386,7 @@ cOff
 C_Syntax
 pbAssert ( "\nn = 1\nn = 2\nn = 3\nn = 4\nn = 5\nn = 6" ) //pause 
 cOff 
+//pause
 2 + 7 assertStkChk sp // stack checking
 
 

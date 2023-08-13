@@ -517,7 +517,6 @@ Compile_LogicalAnd ( Compiler * compiler )
     Compile_MoveImm_To_TOS ( R14, 1, 8 ) ;
     _Compile_JumpToDisp ( 7, 0 ) ;
     Compile_MoveImm_To_TOS ( R14, 0, 8 ) ;
-    Compile_CMPI ( MEM, R14, 0, 0, 0 ) ;
     if ( r && ( ! ( r->rtrn & LT_OR_NEXT ) ) || ( ( r->rtrn & LT_END_OF_BLOCK ) ) )
         _BI_SetTttnJccGotoInfo ( bi, N_0, GI_JCC_TO_FALSE ) ;
 }

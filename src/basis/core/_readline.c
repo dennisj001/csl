@@ -233,7 +233,7 @@ Switch_LookAroundFor_Logic ( Rllafl * r, int64 inc )
                 if ( inc == 1 ) r->pparenlvl ++ ;
                 else
                 {
-//sob:
+                    //sob:
                     if ( -- r->mparenlvl < r->oparenlvl )
                     {
                         rtrn |= ( LT_START_OF_BLOCK ) ;
@@ -263,7 +263,7 @@ Switch_LookAroundFor_Logic ( Rllafl * r, int64 inc )
             case ')':
             {
                 lparenMark = 0 ;
-//eob:
+                //eob:
                 if ( inc == - 1 ) r->mparenlvl ++ ;
                 else if ( -- r->pparenlvl < r->oparenlvl )
                 {
@@ -309,11 +309,16 @@ Switch_LookAroundFor_Logic ( Rllafl * r, int64 inc )
                 if ( ! C_SyntaxOn ) goto done ;
                 else continue ;
             }
+            case ',':
+            {
+                if ( C_SyntaxOn ) goto done ;
+                //else fallthru ;
+            }
             case ';':
             {
                 //if ( inc == 1 ) rtrn |= ( LT_END_OF_BLOCK ) ; 
                 //else if ( inc == - 1 ) rtrn |= ( LT_START_OF_BLOCK ) ;
-                goto done ; 
+                goto done ;
             }
             case ' ':
             {
@@ -346,7 +351,7 @@ ReadLiner_LookAroundFor_Logic ( uint64 la_code )
     Switch_LookAroundFor_Logic ( r, - 1 ) ; //p = ( pnc + i ), la_code, 1, &mparenLevel, &pparenLevel ) ;
     if ( r->rtrn && ( Is_DebugOn || ( Verbosity ( ) & ( 1 << 4 ) ) ) )
         Print_Defined_LogicVariable ( r ) ;
-    return r ; 
+    return r ;
 }
 
 Rllafl *
@@ -372,7 +377,7 @@ Print_Defined_LogicVariable ( Rllafl * r )
     if ( r->rtrn )
     {
         byte * start = String_RemoveFinalNewline ( String_New ( r->nc - r->i, COMPILER_TEMP ) ) ;
-        byte * actual = String_RemoveFinalNewline ( String_New ( r->nc - (r->i / 2 ), COMPILER_TEMP ) ) ;
+        byte * actual = String_RemoveFinalNewline ( String_New ( r->nc - ( r->i / 2 ), COMPILER_TEMP ) ) ;
         iPrintf ( "\nDebug at : \'%s\' \n\t: \'%s\' : \n%s : ", start, actual, Context_Location ( ) ) ;
         if ( r->rtrn & LT_START_OF_BLOCK ) iPrintf ( " LT_START_OF_BLOCK" ) ;
         if ( r->rtrn & LT_OR_PREVIOUS ) iPrintf ( " LT_OR_PREVIOUS" ) ;
