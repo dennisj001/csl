@@ -13,7 +13,7 @@ CSL_Drop ( )
     {
         //Word * one = Compiler_WordStack ( - 1 ) ;
         Word * one = CSL_WordList ( 1 ) ;
-        if ( GetState ( _CSL_, OPTIMIZE_ON ) && one && ( one->StackPushRegisterCode ) ) SetHere (one->StackPushRegisterCode) ;
+        if ( GetState ( _CSL_, CO_ON ) && one && ( one->StackPushRegisterCode ) ) SetHere (one->StackPushRegisterCode) ;
         else _Compile_Stack_Drop ( DSP ) ;
     }
     else

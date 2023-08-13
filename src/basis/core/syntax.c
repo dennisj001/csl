@@ -303,7 +303,7 @@ CSL_IncDec ( int64 op ) // ++/--
             && ( nextWord->W_MorphismAttributes & ( CATEGORY_OP_ORDERED | CATEGORY_OP_UNORDERED | CATEGORY_OP_DIVIDE | CATEGORY_OP_EQUAL ) ) )
         {
             _CSL_WordList_PopWords ( 1 ) ; // because we are going to call the opWord in compilable order below 
-            if ( GetState ( compiler, ( C_INFIX_EQUAL | DOING_AN_INFIX_WORD | DOING_BEFORE_AN_INFIX_WORD ) ) && GetState ( _CSL_, OPTIMIZE_ON ) && CompileMode )
+            if ( GetState ( compiler, ( C_INFIX_EQUAL | DOING_AN_INFIX_WORD | DOING_BEFORE_AN_INFIX_WORD ) ) && GetState ( _CSL_, CO_ON ) && CompileMode )
             {
                 Do_IncDec_PostFixList ( currentWord, one ) ;
                 return ;
@@ -326,7 +326,7 @@ CSL_IncDec ( int64 op ) // ++/--
                 if ( ! GetState ( compiler, INFIX_LIST_INTERPRET ) )
                 {
                     _CSL_WordList_PopWords ( 1 ) ; // op
-                    if ( GetState ( _CSL_, OPTIMIZE_ON ) && ( ! two ) ) SetHere ( one->Coding ) ;
+                    if ( GetState ( _CSL_, CO_ON ) && ( ! two ) ) SetHere ( one->Coding ) ;
                     Do_IncDec_PostFixList ( currentWord, one ) ;
                     return ;
                 }

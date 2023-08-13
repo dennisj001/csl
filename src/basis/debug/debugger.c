@@ -324,7 +324,7 @@ Debugger_GetStateString ( Debugger * debugger )
     sprintf ( ( char* ) buffer, "%s : %s : %s",
         GetState ( debugger, DBG_STEPPING ) ? "Stepping" : ( CompileMode ? ( char* ) "Compiling" : ( char* ) "Interpreting" ),
         ( GetState ( _CSL_, INLINE_ON ) ? ( char* ) "InlineOn" : ( char* ) "InlineOff" ),
-        ( GetState ( _CSL_, OPTIMIZE_ON ) ? ( char* ) "OptimizeOn" : ( char* ) "OptimizeOff" )
+        ( GetState ( _CSL_, CO_ON ) ? ( char* ) "OptimizeOn" : ( char* ) "OptimizeOff" )
         ) ;
     buffer = String_New ( ( byte* ) buffer, TEMPORARY ) ;
 
@@ -641,7 +641,7 @@ Debugger_AutoMode ( Debugger * debugger )
 void
 Debugger_OptimizeToggle ( Debugger * debugger )
 {
-    if ( GetState ( _CSL_, OPTIMIZE_ON ) ) SetState ( _CSL_, OPTIMIZE_ON, false ) ;
+    if ( GetState ( _CSL_, CO_ON ) ) SetState ( _CSL_, CO_ON, false ) ;
     else CSL_OptimizeOn ( ) ;
     _CSL_SystemState_Print ( 0 ) ;
 }

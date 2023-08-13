@@ -7,8 +7,8 @@ Compile_Test ( Compiler * compiler )
 {
     if ( CheckOptimizeOperands ( compiler, 5 ) )
     {
-        _Compile_Test ( compiler->OptInfo->Optimize_Mod, compiler->OptInfo->Optimize_Reg,
-                compiler->OptInfo->Optimize_Rm, compiler->OptInfo->Optimize_Disp, compiler->OptInfo->Optimize_Imm ) ;
+        _Compile_Test ( compiler->OptInfo->CO_Mod, compiler->OptInfo->CO_Reg,
+                compiler->OptInfo->CO_Rm, compiler->OptInfo->CO_Disp, compiler->OptInfo->CO_Imm ) ;
     }
     else
     {
@@ -45,16 +45,16 @@ void
 Compile_X_Group3 ( Compiler * compiler, int64 code ) //OP_1_ARG
 {
     int64 optSetupFlag = CO_CheckOptimize (compiler, 0) ; //OP_1_ARG
-    if ( optSetupFlag & OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag & CO_DONE ) return ;
     else if ( optSetupFlag )
     {
         //_Compile_Group3 ( cell code, cell mod, cell rm, cell sib, cell disp, cell imm, cell size )
-        _Compile_Group3 ( code, compiler->OptInfo->Optimize_Mod,
-            compiler->OptInfo->Optimize_Rm, REX_W | MODRM_B, 0, compiler->OptInfo->Optimize_Disp, compiler->OptInfo->Optimize_Imm, 0 ) ;
-        if ( compiler->OptInfo->Optimize_Rm != DSP ) // if the result is not already tos
+        _Compile_Group3 ( code, compiler->OptInfo->CO_Mod,
+            compiler->OptInfo->CO_Rm, REX_W | MODRM_B, 0, compiler->OptInfo->CO_Disp, compiler->OptInfo->CO_Imm, 0 ) ;
+        if ( compiler->OptInfo->CO_Rm != DSP ) // if the result is not already tos
         {
-            if ( compiler->OptInfo->Optimize_Rm != ACC ) Compile_Move_Rm_To_Reg (ACC, compiler->OptInfo->Optimize_Rm,
-                compiler->OptInfo->Optimize_Disp , 0) ;
+            if ( compiler->OptInfo->CO_Rm != ACC ) Compile_Move_Rm_To_Reg (ACC, compiler->OptInfo->CO_Rm,
+                compiler->OptInfo->CO_Disp , 0) ;
             CSL_CompileAndRecord_PushAccum () ;
         }
     }
@@ -68,28 +68,28 @@ void
 Compile_X_Shift ( Compiler * compiler, int64 op, Boolean stackFlag, Boolean opEqualFlag )
 {
     int64 optSetupFlag = CO_CheckOptimize (compiler, 0) ; //OP_1_ARG
-    if ( optSetupFlag & OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag & CO_DONE ) return ;
     else if ( optSetupFlag )
     {
 #if 1       
         // _Compile_Group2 ( int64 mod, int64 regOpCode, int64 rm, int64 sib, cell disp, cell imm )
-        if ( compiler->OptInfo->OptimizeFlag & OPTIMIZE_IMM )
+        if ( compiler->OptInfo->OptimizeFlag & CO_IMM )
         {
-            _Compile_Group2 ( compiler->OptInfo->Optimize_Mod,
-                op, compiler->OptInfo->Optimize_Rm, IMM_B, 0, compiler->OptInfo->Optimize_Disp, compiler->OptInfo->Optimize_Imm ) ;
+            _Compile_Group2 ( compiler->OptInfo->CO_Mod,
+                op, compiler->OptInfo->CO_Rm, IMM_B, 0, compiler->OptInfo->CO_Disp, compiler->OptInfo->CO_Imm ) ;
         }
-        else //if ( ( compiler->OptInfo->Optimize_Imm == 0 ) && ( compiler->OptInfo->Optimize_Rm != ACC ) ) // this logic is prototype maybe not precise 
+        else //if ( ( compiler->OptInfo->CO_Imm == 0 ) && ( compiler->OptInfo->CO_Rm != ACC ) ) // this logic is prototype maybe not precise 
 #endif            
         {
             //DBI_ON ;
-            _Compile_Group2_CL ( compiler->OptInfo->Optimize_Mod, op, compiler->OptInfo->Optimize_Rm, 0, compiler->OptInfo->Optimize_Disp ) ;
-            //_Compile_Group2 ( compiler->OptInfo->Optimize_Mod, op, compiler->OptInfo->Optimize_Rm, 
-                //(( compiler->OptInfo->OptimizeFlag & OPTIMIZE_IMM ) ? IMM_B : 0), 0, compiler->OptInfo->Optimize_Disp, compiler->OptInfo->Optimize_Imm ) ;
+            _Compile_Group2_CL ( compiler->OptInfo->CO_Mod, op, compiler->OptInfo->CO_Rm, 0, compiler->OptInfo->CO_Disp ) ;
+            //_Compile_Group2 ( compiler->OptInfo->CO_Mod, op, compiler->OptInfo->CO_Rm, 
+                //(( compiler->OptInfo->OptimizeFlag & CO_IMM ) ? IMM_B : 0), 0, compiler->OptInfo->CO_Disp, compiler->OptInfo->CO_Imm ) ;
         }
-        if ( ( ! opEqualFlag ) && ( stackFlag && (( compiler->OptInfo->Optimize_Rm != DSP ) && ( compiler->OptInfo->Optimize_Rm != FP ) )) ) // if the result is not already tos
+        if ( ( ! opEqualFlag ) && ( stackFlag && (( compiler->OptInfo->CO_Rm != DSP ) && ( compiler->OptInfo->CO_Rm != FP ) )) ) // if the result is not already tos
         {
-            if ( compiler->OptInfo->Optimize_Rm != ACC ) 
-            Compile_Move_Rm_To_Reg (ACC, compiler->OptInfo->Optimize_Rm, compiler->OptInfo->Optimize_Disp , 0) ;
+            if ( compiler->OptInfo->CO_Rm != ACC ) 
+            Compile_Move_Rm_To_Reg (ACC, compiler->OptInfo->CO_Rm, compiler->OptInfo->CO_Disp , 0) ;
             CSL_CompileAndRecord_PushAccum () ;
         }
         //DBI_OFF ;

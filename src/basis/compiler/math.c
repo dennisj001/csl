@@ -24,16 +24,16 @@ void
 Compile_Multiply ( Compiler * compiler )
 {
     int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
-    if ( optSetupFlag & OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag & CO_DONE ) return ;
     else if ( optSetupFlag )
     {
         CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
         //_Compile_IMUL ( int8 mod, int8 reg, int8 rm, int8 sib, int64 disp, uint64 imm )
-        //optInfo->Optimize_Reg = ACC ; // emulate MUL
+        //optInfo->CO_Reg = ACC ; // emulate MUL
         Compiler_Word_SCHCPUSCA ( optInfo->opWord, 1 ) ;
-        _Compile_IMUL ( optInfo->Optimize_Mod, optInfo->Optimize_Reg, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, 0 ) ;
-        if ( optInfo->Optimize_Rm == DSP ) _Compile_Move_Reg_To_StackN (DSP, 0, optInfo->Optimize_Reg , 0) ;
-        else _Word_CompileAndRecord_PushReg (CSL_WordList (0), optInfo->Optimize_Reg, true , 0) ;
+        _Compile_IMUL ( optInfo->CO_Mod, optInfo->CO_Reg, optInfo->CO_Rm, 0, optInfo->CO_Disp, 0 ) ;
+        if ( optInfo->CO_Rm == DSP ) _Compile_Move_Reg_To_StackN (DSP, 0, optInfo->CO_Reg , 0) ;
+        else _Word_CompileAndRecord_PushReg (CSL_WordList (0), optInfo->CO_Reg, true , 0) ;
     }
     else
     {
@@ -54,13 +54,13 @@ _Compile_Divide ( Compiler * compiler, uint64 type )
     Boolean reg ;
     // dividend in edx:eax, quotient/divisor in eax, remainder in edx
     int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
-    if ( optSetupFlag & OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag & CO_DONE ) return ;
     else if ( optSetupFlag )
     {
         CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
         Compile_MoveImm ( REG, RDX, 0, 0, CELL ) ;
         // Compile_IDIV( mod, rm, controlFlag, sib, disp, imm, size )
-        Compile_IDIV ( optInfo->Optimize_Mod, optInfo->Optimize_Rm, ( ( optInfo->Optimize_Disp != 0 ) ? DISP_B : 0 ), 0, optInfo->Optimize_Disp, 0, 0 ) ;
+        Compile_IDIV ( optInfo->CO_Mod, optInfo->CO_Rm, ( ( optInfo->CO_Disp != 0 ) ? DISP_B : 0 ), 0, optInfo->CO_Disp, 0, 0 ) ;
         if ( type == MODULO ) reg = RDX ;
         else reg = ACC ;
         if ( reg != ACC ) Compile_Move_Reg_To_Reg ( ACC, reg, 0 ) ; // for consistency finally use RAX so optInfo can always count on rax as the pushed reg

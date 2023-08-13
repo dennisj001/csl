@@ -350,7 +350,7 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
     else if ( lispMode ) args = ( ListObject * ) args->Lo_List->Head ;
 #if 0 // use all reg vars ?? need to save regs before function calls and restore on return    
     Boolean rFlag = ScanParametersForREGvars ( ) ;
-    if ( ( ! rFlag ) && GetState ( _CSL_, OPTIMIZE_ON ) && ( ! ( Namespace_IsUsing ( ( byte* ) "BigNum" ) ) ) )
+    if ( ( ! rFlag ) && GetState ( _CSL_, CO_ON ) && ( ! ( Namespace_IsUsing ( ( byte* ) "BigNum" ) ) ) )
         regFlag = true ;
 #endif
 
@@ -392,7 +392,7 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
             if ( _String_EqualSingleCharString ( token, ')' ) ) break ;
             if ( String_Equal ( ( char* ) token, "REG" ) || String_Equal ( ( char* ) token, "REGISTER" ) )
             {
-                if ( GetState ( _CSL_, OPTIMIZE_ON ) ) regFlag = true ;
+                if ( GetState ( _CSL_, CO_ON ) ) regFlag = true ;
                 continue ;
             }
             if ( ( ! GetState ( _Context_, C_SYNTAX ) ) && ( _String_EqualSingleCharString ( token, '{' ) ) ||
@@ -427,7 +427,7 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
                 if ( lispMode ) lispAttributes |= T_LISP_SYMBOL ; // no ltype yet for _CSL_LocalWord
             }
             if ( regFlag == true )
-                //if ( ( regFlag == true ) || ((numberOfVariables < 4) && ( GetState ( _CSL_, OPTIMIZE_ON ) ) ) )
+                //if ( ( regFlag == true ) || ((numberOfVariables < 4) && ( GetState ( _CSL_, CO_ON ) ) ) )
             {
                 objectAttributes |= REGISTER_VARIABLE ;
                 numberOfRegisterVariables ++ ;

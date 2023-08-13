@@ -118,7 +118,7 @@ _CSL_RightBracket ( )
 {
     Compiler * compiler = _Compiler_ ;
     SetState ( compiler, COMPILE_MODE, true ) ;
-    compiler->SaveOptimizeState = GetState ( _CSL_, OPTIMIZE_ON ) ;
+    compiler->SaveOptimizeState = GetState ( _CSL_, CO_ON ) ;
 }
 
 void

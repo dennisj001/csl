@@ -184,7 +184,7 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     csl->OriginalInputLine = Buffer_DataCleared ( csl->OriginalInputLineB ) ;
     csl->SC_Buffer = Buffer_DataCleared ( csl->SourceCodeBuffer ) ;
     csl->TokenBuffer = Buffer_DataCleared ( csl->TokenB ) ;
-    SetState ( csl, CSL_RUN | OPTIMIZE_ON | INLINE_ON, true ) ;
+    SetState ( csl, CSL_RUN | CO_ON | INLINE_ON, true ) ;
 
     if ( Verbosity () > 2 ) iPrintf ( "\nSystem Memory is being reallocated.  " ) ;
 
@@ -273,13 +273,13 @@ CSL_New ( CSL * csl )
 void
 CSL_OptimizeOn ( )
 {
-    SetState ( _CSL_, OPTIMIZE_ON, true ) ;
+    SetState ( _CSL_, CO_ON, true ) ;
 }
 
 void
 _CSL_OptimizeOff ( )
 {
-    SetState ( _CSL_, OPTIMIZE_ON, false ) ;
+    SetState ( _CSL_, CO_ON, false ) ;
 }
 
 void

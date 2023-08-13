@@ -181,7 +181,7 @@ _CSL_ArrayBegin ( Boolean lispMode, Word **pl1, int64 *i )
     Interpreter * interp = cntx->Interpreter0 ;
     Lexer * lexer = cntx->Lexer0 ;
     Word * baseObject = cntx->BaseObject, *l1, * arrayBaseObject ;
-    Boolean saveCompileMode = GetState ( compiler, COMPILE_MODE ), svOpState = GetState ( _CSL_, OPTIMIZE_ON ) ;
+    Boolean saveCompileMode = GetState ( compiler, COMPILE_MODE ), svOpState = GetState ( _CSL_, CO_ON ) ;
     int64 objSize = 0 ;
     Boolean variableFlag = 0 ;
     byte * token ;
@@ -245,7 +245,7 @@ _CSL_ArrayBegin ( Boolean lispMode, Word **pl1, int64 *i )
             //SetState ( compiler, ARRAY_MODE, false ) ;
         }
     }
-    if ( ! variableFlag ) SetState ( _CSL_, OPTIMIZE_ON, svOpState ) ;
+    if ( ! variableFlag ) SetState ( _CSL_, CO_ON, svOpState ) ;
 #if 0    
     if ( ! _Context_StringEqual_PeekNextToken ( cntx, ( byte* ) "[", 0 ) )
     {

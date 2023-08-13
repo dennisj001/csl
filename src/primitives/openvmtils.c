@@ -16,7 +16,7 @@ OpenVmTil_ShowMachineCodeInstructions ( )
 void
 Ovt_Optimize ( )
 {
-    DataStack_Push (( int64 ) GetState ( _CSL_, OPTIMIZE_ON ) ? 1 : 0) ;
+    DataStack_Push (( int64 ) GetState ( _CSL_, CO_ON ) ? 1 : 0) ;
 }
 
 void

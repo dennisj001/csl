@@ -126,7 +126,7 @@ _CSL_GetSystemState_String0 ( byte * buf )
     if ( GetState ( _CSL_, TYPECHECK_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "optimize is " ) ;
-    if ( GetState ( _CSL_, OPTIMIZE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
+    if ( GetState ( _CSL_, CO_ON ) ) strcat ( ( char* ) buf, "on, " ) ;
     else strcat ( ( char* ) buf, "off, " ) ;
     strcat ( ( char* ) buf, "inlining is " ) ;
     if ( GetState ( _CSL_, INLINE_ON ) ) strcat ( ( char* ) buf, "on, " ) ;

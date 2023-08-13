@@ -156,7 +156,7 @@ DObject_Finish ( Word * word )
     Compiler * compiler = cntx->Compiler0 ;
     if ( ! ( word->W_MorphismAttributes & CPRIMITIVE ) )
     {
-        if ( GetState ( _CSL_, OPTIMIZE_ON ) ) SetState ( word, COMPILED_OPTIMIZED, true ) ;
+        if ( GetState ( _CSL_, CO_ON ) ) SetState ( word, COMPILED_OPTIMIZED, true ) ;
         if ( GetState ( _CSL_, INLINE_ON ) ) SetState ( word, COMPILED_INLINE, true ) ;
         if ( GetState ( _CSL_, JCC8_ON ) ) SetState ( word, W_JCC8_ON, true ) ;
         if ( GetState ( _Context_, INFIX_MODE ) ) SetState ( word, W_INFIX_MODE, true ) ;

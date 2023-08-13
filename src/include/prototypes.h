@@ -390,7 +390,7 @@ void CO_X_Equal(Compiler *compiler, int64 op, int lvalueSize);
 void CO_StandardArg(Word *word, Boolean reg, Boolean size, Boolean rvalueFlag, byte *setHere, Boolean setScaFlag);
 void CO_StackArgsToStandardRegs(Compiler *compiler);
 Boolean CO_CheckForRegisterVariable(Compiler *compiler, Boolean reg);
-void CO_PeepHole_Optimize_ForStackPopToReg(void);
+void CO_PeepHole_CO_ForStackPopToReg(void);
 void CO_PeepHole_Optimize(void);
 void CO_GetRmDispImm(CompileOptimizeInfo *optInfo, Word *word, int64 suggestedReg);
 void CO_Load_TOS(void);

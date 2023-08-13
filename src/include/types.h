@@ -474,7 +474,7 @@ typedef struct _WordData
 #define NestedObjects W_WordData->NestedObjects // used by Variable and LocalWord
 #define ObjectCode W_WordData->Coding // used by objects/class words
 #define W_OurLocation W_WordData->OurLocation
-#define StackPushRegisterCode W_WordData->StackPushRegisterCode // used by Optimize
+#define StackPushRegisterCode W_WordData->StackPushRegisterCode // used by CO
 #define W_OriginalCodeText W_WordData->WD_OriginalCodeText 
 //#define W_TokenEnd_ReadLineIndex W_WordData->CursorEndPosition 
 #define W_TokenStart_LineIndex W_WordData->TokenStart_LineIndex 
@@ -702,15 +702,15 @@ typedef struct
         } ;
     } ;
     int64 OptimizeFlag ;
-    int64 Optimize_Dest_RegOrMem ;
-    int64 Optimize_Mod ;
-    int64 Optimize_Reg ;
-    int64 Optimize_Rm ;
-    int64 Optimize_Disp ;
-    int64 Optimize_Imm ;
-    int64 Optimize_ImmSize ;
-    int64 Optimize_SrcReg ;
-    int64 Optimize_DstReg ;
+    int64 CO_Dest_RegOrMem ;
+    int64 CO_Mod ;
+    int64 CO_Reg ;
+    int64 CO_Rm ;
+    int64 CO_Disp ;
+    int64 CO_Imm ;
+    int64 CO_ImmSize ;
+    int64 CO_SrcReg ;
+    int64 CO_DstReg ;
     int64 UseReg ;
     union
     {

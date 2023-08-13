@@ -341,7 +341,7 @@ Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Boolean ttt, Boolean n )
     Word *zero = CSL_WordList ( 0 ) ;
     //Stack_Push ( bi->LogicOpStack, (int64) zero ) ;
     Compiler_Word_SCHCPUSCA ( zero, 1 ) ;
-    if ( optSetupFlag & OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag & CO_DONE ) return ;
     else
     {
         if ( optSetupFlag )
@@ -349,10 +349,10 @@ Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Boolean ttt, Boolean n )
             CompileOptimizeInfo * optInfo = compiler->OptInfo ;
             if ( bi->CmpCode ) SetHere ( bi->CmpCode ) ; // from DoVariable
             //else BI_SetTttN ( bi, ttt, n, 0, 0 ) ;
-            if ( optInfo->OptimizeFlag & OPTIMIZE_IMM )
+            if ( optInfo->OptimizeFlag & CO_IMM )
             {
                 int64 size ;
-                if ( optInfo->Optimize_Imm > 0xffffffff ) size = 8 ;
+                if ( optInfo->CO_Imm > 0xffffffff ) size = 8 ;
                 else size = 0 ;
                 SetHere ( zero->Coding ) ;
                 if ( ( optInfo->wordArg1->W_ObjectAttributes & ( LOCAL_VARIABLE | PARAMETER_VARIABLE ) )
@@ -360,12 +360,12 @@ Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Boolean ttt, Boolean n )
                 {
                     SetHere ( optInfo->wordArg1->Coding ) ;
                     bi->CmpCode = Here ;
-                    Compile_CMPI ( MEM, FP, LocalOrParameterVar_Disp ( optInfo->wordArg1 ), optInfo->Optimize_Imm, size ) ;
+                    Compile_CMPI ( MEM, FP, LocalOrParameterVar_Disp ( optInfo->wordArg1 ), optInfo->CO_Imm, size ) ;
                 }
                 else
                 {
                     bi->CmpCode = Here ;
-                    Compile_CMPI ( optInfo->Optimize_Mod, optInfo->Optimize_Reg, optInfo->Optimize_Disp, optInfo->Optimize_Imm, size ) ;
+                    Compile_CMPI ( optInfo->CO_Mod, optInfo->CO_Reg, optInfo->CO_Disp, optInfo->CO_Imm, size ) ;
                 }
             }
             else
@@ -374,8 +374,8 @@ Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Boolean ttt, Boolean n )
                 {
                     SetHere ( zero->Coding ) ; //WordList_SetCoding ( 0, Here ) ;
                     bi->CmpCode = Here ;
-                    Compile_CMP ( optInfo->Optimize_Dest_RegOrMem, optInfo->Optimize_Mod,
-                        optInfo->Optimize_Reg, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, CELL_SIZE ) ;
+                    Compile_CMP ( optInfo->CO_Dest_RegOrMem, optInfo->CO_Mod,
+                        optInfo->CO_Reg, optInfo->CO_Rm, 0, optInfo->CO_Disp, CELL_SIZE ) ;
                 }
             }
         }

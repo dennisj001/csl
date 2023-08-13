@@ -112,7 +112,7 @@ _Compile_Stack_PopToReg ( Boolean stackReg, Boolean reg )
 {
     _Compile_Move_StackN_To_Reg ( reg, stackReg, 0, 0 ) ;
     Compile_SUBI ( REG, stackReg, 0, sizeof (int64 ), 1 ) ;
-    CO_PeepHole_Optimize_ForStackPopToReg ( ) ; // this happens at least some times
+    CO_PeepHole_CO_ForStackPopToReg ( ) ; // this happens at least some times
 }
 
 void
@@ -157,7 +157,7 @@ _Compile_Stack_Dup ( Boolean stackReg )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
-    if ( optSetupFlag & OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag & CO_DONE ) return ;
     else
     {
         Word * one = CSL_WordList ( 1 ) ;

@@ -571,21 +571,21 @@ _Compile_optInfo_X_Group1 ( Compiler * compiler, int64 op )
 {
     CompileOptimizeInfo * optInfo = compiler->OptInfo ;
     Compiler_Word_SCHCPUSCA ( optInfo->opWord, 1 ) ;
-    if ( ( optInfo->OptimizeFlag & OPTIMIZE_IMM ) && optInfo->Optimize_Imm )
+    if ( ( optInfo->OptimizeFlag & CO_IMM ) && optInfo->CO_Imm )
     {
-        //int64 imm = optInfo->Optimize_Imm ;
+        //int64 imm = optInfo->CO_Imm ;
         Compiler_Word_SCHCPUSCA ( optInfo->opWord, 1 ) ;
-        _Compile_X_Group1_Immediate ( op, optInfo->Optimize_Mod,
-            optInfo->Optimize_Rm, optInfo->Optimize_Disp,
-            optInfo->Optimize_Imm, OperandSize ( optInfo->Optimize_Imm ) ) ; //( imm >= 0x100000000 ) ? CELL : ( ( imm >= 0x100 ) ? 4 : 1 ) ) ;
+        _Compile_X_Group1_Immediate ( op, optInfo->CO_Mod,
+            optInfo->CO_Rm, optInfo->CO_Disp,
+            optInfo->CO_Imm, OperandSize ( optInfo->CO_Imm ) ) ; //( imm >= 0x100000000 ) ? CELL : ( ( imm >= 0x100 ) ? 4 : 1 ) ) ;
     }
     else
     {
         //Compiler_Word_SCHCPUSCA (optInfo->opWord, 0) ;
 
-        _Compile_X_Group1 ( op, optInfo->Optimize_Dest_RegOrMem, optInfo->Optimize_Mod,
-            optInfo->Optimize_Reg, optInfo->Optimize_Rm, 0,
-            optInfo->Optimize_Disp, CELL_SIZE ) ;
+        _Compile_X_Group1 ( op, optInfo->CO_Dest_RegOrMem, optInfo->CO_Mod,
+            optInfo->CO_Reg, optInfo->CO_Rm, 0,
+            optInfo->CO_Disp, CELL_SIZE ) ;
     }
 }
 
@@ -594,20 +594,20 @@ Compile_X_Group1 ( Compiler * compiler, int64 op )
 {
     int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
-    if ( optSetupFlag == OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag == CO_DONE ) return ;
     else if ( optSetupFlag )
     {
         //DBI ;
         _Compile_optInfo_X_Group1 ( compiler, op ) ;
 #if 1        
         Compiler_SetBiTttN ( _Context_->Compiler0, TTT_ZERO, N_0, GI_JCC_TO_FALSE ) ;
-        if ( optInfo->Optimize_Rm == DSP ) // if the result is to a reg and not tos
+        if ( optInfo->CO_Rm == DSP ) // if the result is to a reg and not tos
         {
-            if ( optInfo->Optimize_Dest_RegOrMem == MEM ) return ; //_Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->Optimize_Reg ) ; //return ;
-            else if ( ( optInfo->Optimize_Dest_RegOrMem == REG ) && ( ! optInfo->xBetweenArg1AndArg2 ) ) _Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->Optimize_Reg, 0 ) ;
+            if ( optInfo->CO_Dest_RegOrMem == MEM ) return ; //_Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->CO_Reg ) ; //return ;
+            else if ( ( optInfo->CO_Dest_RegOrMem == REG ) && ( ! optInfo->xBetweenArg1AndArg2 ) ) _Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->CO_Reg, 0 ) ;
         }
-            //else if (( optInfo->wordArg1 ) && ( ! ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) ) ) _Word_CompileAndRecord_PushReg ( optInfo->COIW[0], optInfo->Optimize_Reg, true ) ; // 0 : ?!? should be the exact variable 
-        else _Word_CompileAndRecord_PushReg ( optInfo->COIW[0], optInfo->Optimize_Reg, true, 0 ) ; // 0 : ?!? should be the exact variable 
+            //else if (( optInfo->wordArg1 ) && ( ! ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) ) ) _Word_CompileAndRecord_PushReg ( optInfo->COIW[0], optInfo->CO_Reg, true ) ; // 0 : ?!? should be the exact variable 
+        else _Word_CompileAndRecord_PushReg ( optInfo->COIW[0], optInfo->CO_Reg, true, 0 ) ; // 0 : ?!? should be the exact variable 
         //DBI_OFF ;
 #endif
     }
@@ -675,17 +675,17 @@ Compile_X_Group5 ( Compiler * compiler, int64 op )
     int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
     Word *one = CSL_WordList ( 1 ) ; // assumes two values ( n m ) on the DSP stack 
-    if ( optSetupFlag & OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag & CO_DONE ) return ;
     else if ( optSetupFlag )
     {
-        if ( optInfo->OptimizeFlag & OPTIMIZE_IMM )
+        if ( optInfo->OptimizeFlag & CO_IMM )
         {
-            Compile_MoveImm_To_Reg ( ACC, optInfo->Optimize_Imm, CELL ) ;
-            optInfo->Optimize_Mod = REG ;
-            optInfo->Optimize_Rm = ACC ;
+            Compile_MoveImm_To_Reg ( ACC, optInfo->CO_Imm, CELL ) ;
+            optInfo->CO_Mod = REG ;
+            optInfo->CO_Rm = ACC ;
         }
         Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
-        _Compile_Group5 ( op, optInfo->Optimize_Mod, optInfo->Optimize_Rm, 0, optInfo->Optimize_Disp, 0 ) ;
+        _Compile_Group5 ( op, optInfo->CO_Mod, optInfo->CO_Rm, 0, optInfo->CO_Disp, 0 ) ;
     }
     else if ( one && one->W_ObjectAttributes & ( PARAMETER_VARIABLE | LOCAL_VARIABLE | NAMESPACE_VARIABLE ) ) // *( ( cell* ) ( TOS ) ) += 1 ;
     {
@@ -708,7 +708,7 @@ Compile_X_Group5 ( Compiler * compiler, int64 op )
         _Compile_Group5 ( op, MEM, DSP, 0, 0, 0 ) ;
     }
     Compiler_SetBiTttN ( _Context_->Compiler0, TTT_ZERO, N_0, 0 ) ;
-    _Word_CompileAndRecord_PushReg ( CSL_WordList ( 0 ), optInfo->Optimize_Reg, true, 0 ) ; // 0 : ?!? should be the exact variable 
+    _Word_CompileAndRecord_PushReg ( CSL_WordList ( 0 ), optInfo->CO_Reg, true, 0 ) ; // 0 : ?!? should be the exact variable 
 }
 
 // load reg with effective address of [ mod rm sib disp ]
@@ -792,7 +792,7 @@ Compile_Logical_X_Group1 ( Compiler * compiler, int64 op, Boolean ttt, Boolean n
     BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
     if ( bi ) bi->State |= ( ( uint64 ) 1 << op ) ;
     int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
-    if ( optSetupFlag == OPTIMIZE_DONE ) return ;
+    if ( optSetupFlag == CO_DONE ) return ;
     else if ( optSetupFlag ) _Compile_X_Group1 ( op, REG, REG, ACC, OREG, 0, 0, CELL ) ;
     else
     {
