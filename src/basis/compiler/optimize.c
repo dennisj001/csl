@@ -116,7 +116,7 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
             else if ( optInfo->wordn->W_MorphismAttributes & ( CATEGORY_OP_LOAD ) 
                 || ( ( ! ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) ) && ( GetState ( _Context_, (LISP_MODE) ) ) )  ) //( GetState ( _Context_, (INFIX_MODE|LISP_MODE) ) ) ) 
             {
-                optInfo->rvalue = 1 ; // ++ : for recursive peek constructions like @ @ and @ @ @ etc.
+                optInfo->rvalue ++ ; //: for recursive peek constructions like @ @ and @ @ @ etc.
                 continue ;
             }
             else

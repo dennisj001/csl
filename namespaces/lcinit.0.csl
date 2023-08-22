@@ -12,7 +12,7 @@
 (yfacc2 yfacc2 7)
 (yfacc2 yfacc2 20)
 lcOff
-"\n 20 factorial :: should show : 2432902008176640000" ps
+"\n 20 factorial :: should show : 2432902008176640000\n" ps
 //pause
 lcOn
 (define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2)))))) 
@@ -58,7 +58,7 @@ bnOff
       b
       (fib-iter (+ a b) a (- count 1))))
 (fib 30)     
-
+//pause
 (define (count-change amount)                                                                                                                         
   (cc amount 5)) 
 (define (cc amount kinds-of-coins)                                                                                                                        
@@ -76,8 +76,8 @@ bnOff
         ((= kinds-of-coins 3) 10)
         ((= kinds-of-coins 4) 25)
         ((= kinds-of-coins 5) 50))) 
-(count-change 100)     
-//(count-change 1000)     
+(count-change 100) // not compiled -- slow!!     
+//(count-change 1000) // impossible currently without TCO : tail call optimization    
 (define ( A x y) 
     (cond 
         (( = y 0 ) 0 )

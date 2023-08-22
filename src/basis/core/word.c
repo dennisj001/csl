@@ -28,9 +28,7 @@ Word_Morphism_Run ( Word * word )
     {
         Context_PreWordRun_Init ( _Context_, word ) ;
         _O_->DebugOutputFlag &= ~1 ;
-        //if ( GetState ( _LC_, LC_DEBUG_ON ) ) _Debugger_Disassemble ( _Debugger_, 0, (byte*) word->Definition, 128, 1 ) ;
-        if ( GetState ( _LC_, LC_DEBUG_ON ) || Is_DebugModeOn ) 
-            DEBUG_SETUP ( word, 0 ) ;
+        if ( GetState ( _LC_, LC_DEBUG_ON ) || Is_DebugModeOn ) DEBUG_SETUP ( word, 0 ) ;
         Block_Eval ( word->Definition ) ;
         Context_PostWordRun_Init ( _Context_, word ) ;
     }

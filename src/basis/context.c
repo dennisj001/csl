@@ -286,7 +286,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
 void
 CSL_ContextNew_IncludeFile ( byte * filename, int flispFlag )
 {
-    if ( Verbosity () ) iPrintf ( "\nincluding %s ... at %s\n", filename, Context_Location () ) ;
+    if ( Verbosity () ) iPrintf ( "\nincluding %s at %s ...\n", filename, Context_Location () ) ;
     _CSL_Contex_NewRun_3 ( _CSL_, _Context_IncludeFile, filename, 1, flispFlag ) ;
 }
 
