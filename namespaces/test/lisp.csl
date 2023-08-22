@@ -26,14 +26,23 @@ decimal
 ( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) 
 (+ 1 6) 
 ( - ( + 1 2 ( * 3 4 ) ( / 4 2 ) ( - 9 8 ) 10 770 ) 21 )  // == 777
-( define f ( lambda x ( + x 1 2 ) ) ) 
-tick f find wdiss //pause
+( + 1 2 4 ) 
+
+( define f ( lambda (a) ( + a 1 2 ) ) ) 
+//tick f find wdiss 
+pwi f
 ( f 4 )
-( begin ( define f ( lambda ( x ) ( + x 1 2 ) ) ) ( f 4 ) )
-( + 1 2 4 )
+//pause
+( define f1 ( lambda ( a b ) ( + a b ) ) ) 
+( f1 3 4 ) //pause
+( define (f2 a b ) ( + a b ) ) 
+( f2 3 4 ) //pause
+( begin ( define f ( lambda ( x y ) ( + x y ) ) ) ( f 4 3 ) ) ( f 4 3 ) 
+( begin ( define ( f x y ) ( + x y ) ) ) ( f 4 3 ) ) ( f 4 3 ) 
 
 ( - ( + 1 2 ( * 3 4 ) ( / 4 2 ) ( - 9 8 ) 10 770 ) 21 )  // == 777 
-( ( lambda ( x y ) ( + x y ) ) 3 4 )
+( ( lambda ( x y ) ( + x y ) ) 3 4 ) 
+//pause
 ( ( lambda ( x y z ) ( + x y z ) ) 3 4 70 ) // 77
 ( ( /\ ( x y z ) ( + x y z ) ) 3 4 70 ) 
 ( ( /\ ( x y z ) ( + x y z ) ) 3 4 70 ) 
@@ -45,7 +54,8 @@ tick f find wdiss //pause
 
 
 ( define x 7 )
-( begin ( define x 2 ) ( + x 5 ) ( define x 14 ) ( / x 2 ) )
+//ld: 
+//( begin ( define x 2 ) ( + x 5 ) ( define x 14 ) ( / x 2 ) ) // doesn't work yet ??
 ( begin ( define f0 ( /\ (x) ( + x 1 ) ) ) ( f0 6 ) )
 ( define f1 ( /\ (z) ( + z 1 ) ) ) 
 //tick f1 find wdiss //pause

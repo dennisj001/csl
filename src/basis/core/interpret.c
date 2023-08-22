@@ -120,7 +120,6 @@ Interpreter_DoInfixOrPrefixWord ( Interpreter * interp, Word * word )
             // nb! : for this to work you must turn prefix mode on - 'prefixOn'
             word = _Interpreter_DoPrefixWord ( cntx, interp, word ) ;
         }
-
         else return 0 ;
     }
     return word ;

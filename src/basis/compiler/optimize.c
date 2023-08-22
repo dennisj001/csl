@@ -77,6 +77,7 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
     for ( optInfo->node = optInfo->wordNode = dllist_First ( ( dllist* ) _CSL_->CSL_N_M_Node_WordList ), optInfo->node = dlnode_Next ( optInfo->node ) ;
         optInfo->node ; optInfo->node = optInfo->nextNode )
     {
+        //optInfo->rvalue = 0 ;
         optInfo->nextNode = dlnode_Next ( optInfo->node ) ;
         if ( dobject_Get_M_Slot ( ( dobject* ) optInfo->node, SCN_IN_USE_FLAG ) & SCN_IN_USE_FOR_OPTIMIZATION )
         {
@@ -112,9 +113,10 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
                 }
             }
             if ( optInfo->wordn->Definition == CSL_DoubleQuoteMacro ) continue ;
-            else if ( optInfo->wordn->W_MorphismAttributes & ( CATEGORY_OP_LOAD ) )
+            else if ( optInfo->wordn->W_MorphismAttributes & ( CATEGORY_OP_LOAD ) 
+                || ( ( ! ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) ) && ( GetState ( _Context_, (LISP_MODE) ) ) )  ) //( GetState ( _Context_, (INFIX_MODE|LISP_MODE) ) ) ) 
             {
-                optInfo->rvalue ++ ; // ++ : for recursive peek constructions like @ @ and @ @ @ etc.
+                optInfo->rvalue = 1 ; // ++ : for recursive peek constructions like @ @ and @ @ @ etc.
                 continue ;
             }
             else
@@ -148,9 +150,9 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
             optInfo->wordArg1 = optInfo->wordn ;
             optInfo->wordArg1Node = optInfo->node ;
             optInfo->wordArg1_rvalue = optInfo->rvalue ? optInfo->rvalue :
-                ( ( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE ) ) || GetState ( compiler, LISP_MODE ) )
+                (( GetState ( _Context_, ( C_SYNTAX | LISP_MODE ) ) ) //( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) )
                 && ( ! ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_EQUAL ) ) ) ) ; // rem : rvalue can be higher than 1 (cf. above for '@ @')
-            optInfo->rvalue = false ;
+            optInfo->rvalue = 0 ;
             if ( optInfo->wordArg1->W_ObjectAttributes & ( CONSTANT | LITERAL ) )
             {
                 optInfo->wordArg1_literal = true ;
@@ -164,16 +166,18 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
             optInfo->wordArg2 = optInfo->wordn ;
             optInfo->wordArg2Node = optInfo->node ;
             optInfo->wordArg2_rvalue = optInfo->rvalue ? optInfo->rvalue :
-                ( ( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE ) ) || GetState ( compiler, LISP_MODE ) )
+                ( ( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) )
                 && ( ! ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_STORE ) ) ) ) ; // rem : rvalue can be higher than 1 (cf. above for '@ @')
-            optInfo->rvalue = false ;
+            optInfo->rvalue = 0 ;
             if ( IsWordAttribute ( optInfo->wordArg2, W_ObjectAttributes, ( CONSTANT | LITERAL ) ) )
             {
                 optInfo->wordArg2_literal = true ;
                 optInfo->CO_Imm = optInfo->wordArg2->W_Value ;
             }
             //if ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_LOAD ) && ( ! ( GetState ( _Context_, INFIX_MODE ) ) ) ) optInfo->wordArg2_rvalue ++ ;
-            if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) ) && ( ! ( GetState ( _Context_, INFIX_MODE ) ) ) ) optInfo->wordArg2_rvalue ++ ;
+            if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) ) && ( ! ( GetState ( _Context_, INFIX_MODE ) ) ) ) 
+            //if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) ) ) //|| ( GetState ( _Context_, (INFIX_MODE|LISP_MODE) ) ) ) 
+                optInfo->wordArg2_rvalue ++ ;
             if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_1_ARG | CATEGORY_OP_STACK | CATEGORY_OP_LOAD ) ) ) break ;
         }
     }
@@ -989,7 +993,8 @@ CO_StandardArg ( Word * word, Boolean reg, Boolean size, Boolean rvalueFlag, byt
         while ( rvalueFlag -- ) Compile_Move_Rm_To_Reg ( reg, reg, 0, size ) ;
     }
     else _Compile_GetVarLitObj_LValue_To_Reg ( word, reg, size ) ;
-    word->StackPushRegisterCode = Here ; // we are not pushing this but in case we are just rewriting the code in the next arg ?
+    if ( ! (_LC_ && GetState ( _LC_, LC_APPLY ) ) ) 
+        word->StackPushRegisterCode = Here ; // we are not pushing this but in case we are just rewriting the code in the next arg ?
 }
 
 void

@@ -579,7 +579,7 @@ _LO_CSL ( )
     }
     _CSL_Namespace_NotUsing ( ( byte * ) "Lisp" ) ; // nb. don't use Lisp words when compiling csl
     SetState ( cntx, LC_CSL, true ) ;
-    SetState ( compiler, LISP_MODE, false ) ;
+    SetState ( _Context_, LISP_MODE, false ) ;
     _CSL_RecycleInit_CSL_N_M_Node_WordList ( _CSL_->CSL_N_M_Node_WordList, 1 ) ;
     CSL_WordList_PushWord ( _LO_CopyOne ( lfirst, DICTIONARY ) ) ;
     for ( ldata = _LO_Next ( lfirst ) ; ldata ; ldata = _LO_Next ( ldata ) )

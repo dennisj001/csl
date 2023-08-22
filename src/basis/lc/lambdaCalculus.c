@@ -273,7 +273,7 @@ _LC_ReadEvalPrint_ListObject ( int64 parenLevel, int64 continueFlag, uint64 item
     Compiler_Init ( compiler, 0 ) ; // we could be compiling a csl word as in oldLisp.csl
     int64 svTypeCheckState = GetState ( _CSL_, DBG_TYPECHECK_ON ) ;
     byte *svDelimiters = lexer->TokenDelimiters ;
-    SetState ( compiler, LISP_MODE, true ) ;
+    SetState ( _Context_, LISP_MODE, true ) ;
     compiler->InitHere = Here ;
     if ( ! parenLevel ) CSL_InitSourceCode ( _CSL_ ) ;
     else CSL_InitSourceCode_WithCurrentInputChar ( _CSL_, 1 ) ;
@@ -296,7 +296,7 @@ _LC_ReadEvalPrint_ListObject ( int64 parenLevel, int64 continueFlag, uint64 item
     _DspReg_ = svDsp ;
 
     if ( ! continueFlag ) Lexer_SetTokenDelimiters ( lexer, svDelimiters, 0 ) ;
-    SetState ( compiler, LISP_MODE, false ) ;
+    SetState ( _Context_, LISP_MODE, false ) ;
     SetState ( _CSL_, DBG_TYPECHECK_ON, svTypeCheckState ) ;
 }
 
@@ -329,14 +329,14 @@ void
 _LO_Repl ( )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    SetState ( compiler, LISP_MODE, true ) ;
+    SetState ( _Context_, LISP_MODE, true ) ;
     iPrintf ( "\ncsl lisp : type 'exit' or 'bye' to exit\n including init file :: './namespaces/compiler/lcinit.csl'\n" ) ;
     LC_ReadInitFile ( ( byte* ) "./namespaces/compiler/lcinit.csl" ) ;
     //iPrintf ( "\ncsl lisp : (type 'exit' or 'bye' to exit)\n including init file :: './namespaces/compiler/lcinit.0.csl'\n" ) ;
     //LC_ReadInitFile ( ( byte* ) "./namespaces/lcinit.0.csl" ) ;
     SetState ( _Context_, AT_COMMAND_LINE, true ) ;
     _Repl ( ( block ) LC_ReadEvalPrint_ListObject ) ;
-    SetState ( compiler, LISP_MODE, false ) ;
+    SetState ( _Context_, LISP_MODE, false ) ;
     LC_LispNamespacesOff ( ) ;
     iPrintf ( "\nleaving csl lisp : returning to csl interpreter\n" ) ;
 }

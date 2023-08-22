@@ -139,7 +139,7 @@ _LO_CompileOrInterpret ( ListObject *lfunction, ListObject * largs )
         while ( ( largs = _LO_Next ( largs ) ) )
         {
             _LO_CompileOrInterpret_One ( largs, 0 ) ; // two args first then op, then after each arg the operator : nb. assumes word can take unlimited args 2 at a time
-            _LO_CompileOrInterpret_One ( lfword, 0 ) ;
+            _LO_CompileOrInterpret_One ( lfword, 1 ) ;
         }
         SetState ( _CSL_, TYPECHECK_ON, svTcs ) ;
     }

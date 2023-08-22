@@ -685,7 +685,6 @@
 #define RETURN_TOS ( (uint64) 1 << 6 )
 //#define RETURN_ACCUM ( (uint64) 1 << 7 ) 
 #define LC_COMBINATOR_MODE ( (uint64) 1 << 8 )
-#define LISP_MODE ( (uint64) 1 << 9 )
 #define INFIX_MODE ( (uint64) 1 << 10 )
 #define RETURN_VAR ( (uint64) 1 << 11 )
 #define VARIABLE_FRAME ( (uint64) 1 << 12 )
@@ -738,6 +737,7 @@
 #define PAUSE_INTERPRET ( (uint64) 1 << 36 )
 #define TYPE_CAST ( (uint64) 1 << 37 )
 #define TDI_PARSING ( (uint64) 1 << 38 )
+#define LISP_MODE ( (uint64) 1 << 39 )
 
 #define NON_INLINABLE ( (uint64) 1 << 0 )
 #define DONE true
@@ -803,6 +803,8 @@
 #define LC_COND                 ( (uint64) 1 << 28 )
 #define LC_EVAL_PRINT                 ( (uint64) 1 << 29 )
 #define LC_EVAL_SYMBOL                 ( (uint64) 1 << 30 )
+#define LC_LAMBDA_EVAL                 ( (uint64) 1 << 31 )
+
 
 // LambdaBody states
 #define USED ( 1<< 0 )

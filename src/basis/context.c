@@ -253,7 +253,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
         {
             ReadLiner * rl = cntx->ReadLiner0 ;
             rl->Filename = String_New ( filename, STRING_MEM ) ;
-            if ( Verbosity () ) iPrintf ( "\nincluding %s ...\n", filename ) ;
+            //if ( Verbosity () ) iPrintf ( "\nincluding %s ...\n", filename ) ;
             cntx->ReadLiner0->InputFile = file ;
             ReadLine_SetRawInputFunction ( rl, ReadLine_GetNextCharFromString ) ;
             SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
@@ -286,6 +286,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
 void
 CSL_ContextNew_IncludeFile ( byte * filename, int flispFlag )
 {
+    if ( Verbosity () ) iPrintf ( "\nincluding %s ... at %s\n", filename, Context_Location () ) ;
     _CSL_Contex_NewRun_3 ( _CSL_, _Context_IncludeFile, filename, 1, flispFlag ) ;
 }
 

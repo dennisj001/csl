@@ -11,7 +11,10 @@
 (define (yfacc2 yyy n1) (if (< n1 2) 1 (* n1 (yyy yyy (- n1 1))))) 
 (yfacc2 yfacc2 7)
 (yfacc2 yfacc2 20)
+lcOff
+"\n 20 factorial :: should show : 2432902008176640000" ps
 //pause
+lcOn
 (define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2)))))) 
 pwi LispDefines.fibc
 "\nfibc 30 = " ps
@@ -135,5 +138,4 @@ bnOff
 "fib 30 =" ps (fib 30)
 #endif    
 //(load "namespaces/schemeTest2.csl")            
-#endif
 "csl : scheme/lisp : type \'x\' or \'exit\' or \'bye\' to exit ..." ps
