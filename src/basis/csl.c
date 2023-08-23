@@ -220,6 +220,10 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     CSL_ReadTables_Setup ( csl ) ;
     CSL_LexerTables_Setup ( csl ) ;
     csl->LC = 0 ;
+#if TCO    
+    csl->LC_EvalList_Cpu = CpuState_New ( T_CSL ) ;
+    csl->LC_Apply_Cpu = CpuState_New ( T_CSL ) ;
+#endif    
     csl->SC_QuoteMode = 0 ;
     csl->EndBlockWord = Finder_FindWord_InOneNamespace ( _Finder_, ( byte* ) "C_Syntax", ( byte* ) "}" ) ;
     csl->BeginBlockWord = Finder_FindWord_InOneNamespace ( _Finder_, ( byte* ) "Reserved", ( byte* ) "{" ) ;
@@ -413,16 +417,18 @@ CSL_PP_IncludeFileOnly_Off ( )
 void
 CSL_LC_DebugOn ( )
 {
-    LambdaCalculus * lc ;
-    if ( lc = _LC_ ) SetState ( lc, LC_DEBUG_ON, true ) ;
+    //LambdaCalculus * lc ;
+    //if ( lc = _LC_ ) 
+    SetState ( _LC_, LC_DEBUG_ON, true ) ;
     CSL_DebugOn ( ) ;
 }
 
 void
 CSL_LC_DebugOff ( )
 {
-    LambdaCalculus * lc ;
-    if ( lc = _LC_ ) SetState ( lc, LC_DEBUG_ON, false ) ;
+    //LambdaCalculus * lc ;
+    //if ( lc = _LC_ ) 
+    SetState ( _LC_, LC_DEBUG_ON, false ) ;
     CSL_DebugOff ( ) ;
 }
 

@@ -242,7 +242,9 @@ void
 LC_EvalPrint ( ListObject * lread )
 {
     LambdaCalculus * lc = _LC_ ;
-
+#if TCO
+    _CSL_->LC_EvalList_Cpu->State = 0 ;
+#endif    
     lc->L1 = LC_Eval ( lread, 0, 1 ) ;
     if ( lc = _LC_ ) // lambda calculus can be changed by eval
     {
@@ -252,6 +254,8 @@ LC_EvalPrint ( ListObject * lread )
         SetBuffersUnused ( 1 ) ;
         lc->ParenLevel = 0 ;
         lc->Sc_Word = 0 ;
+        //if ( Verbosity ( ) ) iPrintf ( "\n_LC_->EvalListDepth= %ld\n", _LC_->EvalListDepth ) ;
+        //_LC_->EvalListDepth = 0 ;
     }
     Compiler_Init ( _Context_->Compiler0, 0 ) ; // we could be compiling a csl word as in oldLisp.csl
 }

@@ -44,6 +44,14 @@ CSL_MachineCodePrimitive_AddWords ( CSL * csl )
     CSL_MachineCodePrimitive_NewAdd ( "<d:dbg>", CSL_WORD | CSL_ASM_WORD | RT_STEPPING_DEBUG, 0, 0, ( byte* ) _CSL_DebugRuntimeBreakpoint_IsDebugOn, - 1, "Debug", "Root" ) ;
     CSL_MachineCodePrimitive_NewAdd ( "<d1:dbg>", CSL_WORD | CSL_ASM_WORD | RT_STEPPING_DEBUG, 0, 0, ( byte* ) _CSL_DebugRuntimeBreakpoint_IsDebugLevel1, - 1, "Debug", "Root" ) ;
     CSL_MachineCodePrimitive_NewAdd ( "<d2:dbg>", CSL_WORD | CSL_ASM_WORD | RT_STEPPING_DEBUG, 0, 0, ( byte* ) _CSL_DebugRuntimeBreakpoint_IsDebugLevel2, - 1, "Debug", "Root" ) ;
+#if TCO    
+    DBI_ON ;
+    CSL_MachineCodePrimitive_NewAdd ( "lc_EvalList_restoreCpuState", CSL_WORD | CSL_ASM_WORD, 0, & csl->LC_Apply_RestoreCpuState, ( byte* ) Compile_CpuState_Restore, ( int64 ) csl->LC_Apply_Cpu, "System", "Root" ) ;
+    DBI_OFF ;
+    CSL_MachineCodePrimitive_NewAdd ( "lc_EvalList_saveCpuState", CSL_WORD | CSL_ASM_WORD, 0, & csl->LC_Apply_SaveCpuState, ( byte* ) Compile_CpuState_Save, ( int64 ) csl->LC_Apply_Cpu, "System", "Root" ) ;
+    CSL_MachineCodePrimitive_NewAdd ( "lc_EvalList_restoreCpuState", CSL_WORD | CSL_ASM_WORD, 0, & csl->LC_EvalList_RestoreCpuState, ( byte* ) Compile_CpuState_Restore, ( int64 ) csl->LC_EvalList_Cpu, "System", "Root" ) ;
+    CSL_MachineCodePrimitive_NewAdd ( "lc_EvalList_saveCpuState", CSL_WORD | CSL_ASM_WORD, 0, & csl->LC_EvalList_SaveCpuState, ( byte* ) Compile_CpuState_Save, ( int64 ) csl->LC_EvalList_Cpu, "System", "Root" ) ;
+#endif    
 }
 
 #if 0

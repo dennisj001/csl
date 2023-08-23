@@ -989,9 +989,9 @@ struct _CSL ;
 typedef struct _LambdaCalculus
 {
     uint64 State, DebuggerState, DebuggerSetupFlag ;
-    int64 DontCopyFlag, Loop, ParenLevel ;
+    int64 DontCopyFlag, Loop, ParenLevel, EvalListDepth ;
     Namespace *LispNamespace, *LispDefinesNamespace, *LispTempNamespace, *BackgroundNamespace ;
-    ListObject *Lread, *L0, *L1, *Lfirst, *Lfunction0, *Lfunction, *Lvalue, *Locals, *Largs0, *Largs, *Largs1, * Nil, *True, *FunctionParameters, *FunctionArgs ;
+    ListObject *Lread, *L0, *L1, *Lfirst, *LWord, *Lfunction0, *Lfunction, *Lvalue, *Locals, *Largs0, *Largs, *Largs1, * Nil, *True, *FunctionParameters, *FunctionArgs ;
     ListObject *LastInterpretedWord ;
     ByteArray * SavedCodeSpace ;
     uint64 ItemQuoteState, QuoteState ;
@@ -1007,6 +1007,8 @@ typedef struct _LambdaCalculus
     Boolean ApplyFlag, LetFlag, SavedTypeCheckState, IndentDbgPrint ;
     struct _CSL * OurCSL ;
     sigjmp_buf LC_JmpBuf ;
+    //Cpu EvalList_CpuState ;
+    block LC_SaveCpuState, LC_RestoreCpuState ;
 } LambdaCalculus ;
 typedef struct
 {
@@ -1060,6 +1062,10 @@ typedef struct _CSL
     dllist * CSL_N_M_Node_WordList ;
     SourceCodeInfo SCI ;
     sigjmp_buf JmpBuf0 ;
+#if TCO    
+    Cpu * LC_EvalList_Cpu, *LC_Apply_Cpu ;
+    block LC_EvalList_SaveCpuState, LC_EvalList_RestoreCpuState, LC_Apply_SaveCpuState, LC_Apply_RestoreCpuState ;
+#endif    
 } CSL, ContextSensitiveLanguage ;
 #define SC_Word SCI.SciWord
 #define SC_Buffer SCI.SciBuffer
@@ -1226,3 +1232,8 @@ typedef struct
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
 
+typedef struct
+{
+    int64 State ;
+    Cpu gtb_Cpu ;
+} GotoBuf ;

@@ -1,12 +1,12 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.938.020" ) 
+#define VERSION ((byte*) "0.938.038" ) 
 
-// inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry
+// inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // CT/Oop (Category Theory, Object Oriented Programming, Type Theory), 
-// Formal Language Theory (Panini, Chomsky) 
+// Formal Language Theory (Panini, Jiva Goswami, Chomsky) 
 // C/C++/C#, Lisp, RPN/Lag - Reverse Polish Notation - (Left Associative Grammar)
-// (especially Java, C#, retroforth, factor) 
+// (especially Java, C#, retroforth, factor), 
 // Automata Theory : State Machines, Push Down Automata (PDA), Turing Machines :: 
 // Also inspired by : Laws of Form, by G.S. Brown, Kurt Godel, etc.
 // csl : context sensitive language; C shell (extension) language, cx

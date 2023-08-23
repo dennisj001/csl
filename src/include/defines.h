@@ -4,6 +4,7 @@
 #define CLANG 0
 #define SIGJMP_BUF 0
 #define OLD_Setcc 1
+#define TCO 0
 #if CLANG
 #define NO_GLOBAL_REGISTERS 1 
 #else

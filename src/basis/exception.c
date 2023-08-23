@@ -394,11 +394,9 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
 void
 CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
 {
-    byte * b = Buffer_DataCleared ( _CSL_->ScratchB2 ) ;
     AlertColors ;
     _O_->ExceptionCode = exceptionCode ;
-    //printf ( "\n\nCSL_Exception at %s : %s\n", Context_Location ( ), message ) ;
-    //fflush ( stdout ) ;
+    iPrintf ( "\n\nCSL_Exception at %s : %s\n", Context_Location ( ), message ? message : (byte*) "") ;
     switch ( exceptionCode )
     {
         case CASE_NOT_LITERAL_ERROR:
@@ -418,6 +416,7 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
         }
         case OBJECT_SIZE_ERROR:
         {
+            byte * b = Buffer_DataCleared ( _CSL_->ScratchB2 ) ;
             sprintf ( ( char* ) b, "Exception : Warning : Class object size is 0. Did you declare 'size' for %s? ",
                 _Context_->CurrentlyRunningWord->ContainingNamespace->Name ) ;
             OpenVmTil_Throw ( b, 0, restartCondition, 1 ) ;

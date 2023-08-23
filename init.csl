@@ -500,7 +500,7 @@ doLisp 0 =
 dbgOff
 //lisp
 //scOn
-//dbgOn 
+dbgOn 
 //l9
 
 // ===================
@@ -645,3 +645,4 @@ basicT
 #endif
 ;d
 2 + 7 assertStkChk // stack checking
+lisp

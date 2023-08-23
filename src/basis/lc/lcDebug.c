@@ -77,6 +77,11 @@ LC_Debug_Output ( LambdaCalculus * lc )
                 _LO_PrintWithValue ( lc->L0, "LO_Cond : lc->L0 = ", "", 1 ) ;
                 break ;
             }
+            case LC_SUBSTITUTE:
+            {
+                _LO_PrintWithValue ( lc->FunctionParameters, "LO_Substitute : lc->FunctionParameters = ", "", 1 ), _LO_PrintWithValue ( lc->FunctionArgs, " : funcCallValues = ", "", 0 ) ;
+                break ;
+            }
             default: break ;
         }
     }
@@ -129,7 +134,7 @@ LC_Debug_Output ( LambdaCalculus * lc )
             }
             case LC_SUBSTITUTE:
             {
-                _LO_PrintWithValue ( lc->FunctionParameters, "LO_Substitute : lambdaParameters = ", "", 1 ), _LO_PrintWithValue ( lc->FunctionArgs, " : funcCallValues = ", "", 0 ) ;
+                _LO_PrintWithValue ( lc->FunctionParameters, "LO_Substitute : lc->FunctionParameters = ", "", 1 ), _LO_PrintWithValue ( lc->FunctionArgs, " : funcCallValues = ", "", 0 ) ;
                 break ;
             }
             case LO_DEFINE:

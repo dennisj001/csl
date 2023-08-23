@@ -1,104 +1,6 @@
 
 #include "../../include/csl.h"
 
-//===================================================================================================================
-//| _LO_Apply 
-//===================================================================================================================
-
-ListObject *
-LC_Apply ( )
-{
-    LambdaCalculus * lc = _LC_ ;
-    ListObject * l1 ;
-    ListObject *lfunction = lc->Lfunction, *largs = lc->Largs ;
-    Boolean applyFlag = lc->ApplyFlag ;
-    SetState ( lc, LC_APPLY, true ) ;
-    LC_Debug ( lc, LC_APPLY, 1 ) ;
-    if ( applyFlag && lfunction && ( ( lfunction->W_MorphismAttributes & ( CPRIMITIVE | CSL_WORD ) ) ||
-        ( lfunction->W_LispAttributes & ( T_LISP_COMPILED_WORD | T_LC_IMMEDIATE ) ) ) )
-    {
-        l1 = _LO_Apply ( ) ;
-    }
-    else if ( lfunction && ( lfunction->W_LispAttributes & T_LAMBDA ) && lfunction->Lo_LambdaBody )
-    {
-        // LambdaArgs, the formal args, are not changed by LO_Substitute (locals - lvals are just essentially 'renamed') and thus don't need to be copied
-        lc->FunctionParameters = lfunction->Lo_LambdaParameters, lc->FunctionArgs = largs ;
-        LC_Substitute ( ) ;
-        lc->Locals = largs ;
-        lc->L0 = lfunction->Lo_LambdaBody ;
-        l1 = LC_EvalList ( ) ;
-    }
-    else
-    {
-        //these cases seems common sense for what these situations should mean and seem to add something positive to the usual lisp/scheme semantics !?
-        if ( ! largs ) l1 = lfunction ;
-        else
-        {
-            LO_AddToHead ( largs, lfunction ) ;
-            l1 = largs ;
-        }
-        if ( ! ( lfunction->W_MorphismAttributes & COMBINATOR ) )
-        {
-            //if ( GetState ( lc, LC_COMPILE_MODE ) )
-            {
-#if 0                
-                // LC could be fixed to compile function variables?!
-                if ( lfunction->W_LispAttributes & T_LISP_SYMBOL )
-                {
-                    _LO_Debug_Output ( lc->Lread, "Lread: " ) ;
-                    _LO_Debug_Output ( lfunction, "lfunction: " ) ;
-                    _LO_Debug_Output ( largs, "largs: " ) ;
-
-                    Pause ( ) ;
-                }
-                else
-#endif                    
-                {
-                    SetState ( lc, LC_COMPILE_MODE, false ) ;
-                    if ( Verbosity ( ) > 1 )
-                    {
-                        _LO_PrintWithValue ( lc->Lread, "\nLC_Apply : lc->Lread = ", "", 0 ) ;
-                        CSL_Show_SourceCode_TokenLine ( lfunction, "LC_Debug : ", 0, lfunction->Name, "" ) ;
-                        iPrintf ( "\nCan't compile this define because \'%s\' is not a function/combinator. Function variables are not yet implemented?!", lfunction->Name ) ;
-                        iPrintf ( "\nHowever, it should run interpreted." ) ;
-                    }
-                }
-            }
-        }
-    }
-    lc->L1 = l1 ;
-    SetState ( lc, LC_APPLY, false ) ;
-    LC_Debug ( lc, LC_APPLY, 0 ) ;
-    return l1 ;
-}
-
-ListObject *
-_LO_Apply ( )
-{
-    LambdaCalculus * lc = _LC_ ;
-    SetState ( lc, LC_APPLY, true ) ;
-    ListObject *l1 = nil ;
-    ListObject *lfunction = lc->Lfunction, *largs = lc->Largs ;
-    //if ( ( ! largs ) && ( ( lfunction->W_MorphismAttributes & ( CPRIMITIVE | CSL_WORD ) ) || ( lfunction->W_LispAttributes & ( T_LC_IMMEDIATE ) )
-    if ( ( ! largs ) && ( lfunction->W_MorphismAttributes & ( CSL_WORD ) ) || ( lfunction->W_LispAttributes & ( T_LC_IMMEDIATE ) ) // allows for lisp.csl macros !? but better logic is probably available
-        || ( lfunction->W_LispAttributes & T_LISP_CSL_COMPILED ) )
-    {
-        Interpreter_DoWord ( _Context_->Interpreter0, lfunction->Lo_CSL_Word, lfunction->W_RL_Index, lfunction->W_SC_Index ) ;
-        l1 = nil ;
-    }
-    else if ( largs ) l1 = _LO_Do_FunctionBlock ( lfunction, largs ) ;
-    else
-    {
-        lc->ParenLevel -- ;
-        LO_CheckEndBlock ( ) ;
-        SetState ( lc, LC_COMPILE_MODE, false ) ;
-        l1 = lfunction ;
-    }
-    SetState ( lc, LC_APPLY, false ) ;
-    lc->L1 = l1 ;
-    return l1 ;
-}
-
 void
 _Interpreter_LC_InterpretWord ( Interpreter *interp, ListObject * l0 )
 {
@@ -162,7 +64,6 @@ _LO_Do_FunctionBlock ( ListObject *lfunction, ListObject * largs )
     if ( ! GetState ( lc, LC_INTERP_DONE ) )
     {
         LO_CheckEndBlock ( ) ;
-        //if ( dsp > _Dsp_ ) 
         _Compiler_->ReturnVariableWord = lfunction ;
         vReturn = LO_PrepareReturnObject ( ) ;
     }
@@ -199,6 +100,7 @@ LC_Substitute ( )
         funcParameters = _LO_Next ( funcParameters ) ;
         funcArgs = _LO_Next ( funcArgs ) ;
     }
+    LC_Debug ( lc, LC_SUBSTITUTE, 1 ) ;
 }
 
 ListObject *

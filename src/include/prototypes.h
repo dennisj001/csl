@@ -1939,8 +1939,6 @@ void _LO_Debug_Output(ListObject *l0, byte *descript);
 void LO_Debug_Output(ListObject *l0, byte *descript, int64 force);
 void LC_Debug_Output(LambdaCalculus *lc);
 /* src/basis/lc/apply.c */
-ListObject *LC_Apply(void);
-ListObject *_LO_Apply(void);
 void _Interpreter_LC_InterpretWord(Interpreter *interp, ListObject *l0);
 void _LO_CompileOrInterpret_One(ListObject *l0, int64 functionFlag);
 void LO_CompileOrInterpretArgs(ListObject *largs);
@@ -1964,9 +1962,6 @@ block CompileLispBlock(ListObject *args, ListObject *body);
 /* src/basis/lc/eval.c */
 Boolean LO_IsQuoted(ListObject *l0);
 ListObject *LC_Eval(ListObject *l0, ListObject *locals, Boolean applyFlag);
-ListObject *LC_EvalList(void);
-ListObject *_LC_EvalSymbol(void);
-ListObject *_LC_EvalList(void);
 /* src/basis/lc/read.c */
 ListObject *LC_Read(void);
 ListObject *_LO_Read_Do_LParen(void);

@@ -77,7 +77,6 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
     for ( optInfo->node = optInfo->wordNode = dllist_First ( ( dllist* ) _CSL_->CSL_N_M_Node_WordList ), optInfo->node = dlnode_Next ( optInfo->node ) ;
         optInfo->node ; optInfo->node = optInfo->nextNode )
     {
-        //optInfo->rvalue = 0 ;
         optInfo->nextNode = dlnode_Next ( optInfo->node ) ;
         if ( dobject_Get_M_Slot ( ( dobject* ) optInfo->node, SCN_IN_USE_FLAG ) & SCN_IN_USE_FOR_OPTIMIZATION )
         {
@@ -150,7 +149,7 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
             optInfo->wordArg1 = optInfo->wordn ;
             optInfo->wordArg1Node = optInfo->node ;
             optInfo->wordArg1_rvalue = optInfo->rvalue ? optInfo->rvalue :
-                (( GetState ( _Context_, ( C_SYNTAX | LISP_MODE ) ) ) //( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) )
+                (( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) ) 
                 && ( ! ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_EQUAL ) ) ) ) ; // rem : rvalue can be higher than 1 (cf. above for '@ @')
             optInfo->rvalue = 0 ;
             if ( optInfo->wordArg1->W_ObjectAttributes & ( CONSTANT | LITERAL ) )
@@ -174,10 +173,8 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
                 optInfo->wordArg2_literal = true ;
                 optInfo->CO_Imm = optInfo->wordArg2->W_Value ;
             }
-            //if ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_LOAD ) && ( ! ( GetState ( _Context_, INFIX_MODE ) ) ) ) optInfo->wordArg2_rvalue ++ ;
-            if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) ) && ( ! ( GetState ( _Context_, INFIX_MODE ) ) ) ) 
-            //if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) ) ) //|| ( GetState ( _Context_, (INFIX_MODE|LISP_MODE) ) ) ) 
-                optInfo->wordArg2_rvalue ++ ;
+            if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) ) 
+                && ( ! ( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) ) ) ) optInfo->wordArg2_rvalue ++ ;
             if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_1_ARG | CATEGORY_OP_STACK | CATEGORY_OP_LOAD ) ) ) break ;
         }
     }

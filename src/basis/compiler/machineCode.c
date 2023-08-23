@@ -920,7 +920,7 @@ _Compile_Call_ThruReg_TestAlignRSP ( Boolean thruReg )
     Compile_TEST_AL_ImmByte ( 0x8 ) ;
     Compile_Jcc ( TTT_ZERO, N_0, Here + 15, JCC8 ) ;
     Compile_CallThru_AdjustRSP ( thruReg, REG ) ;
-    _Compile_JumpToDisp ( 3, JMP8 ) ; // runtime
+    _Compile_JumpToDisp ( 3, JMP8 ) ; 
     _Compile_CallReg ( thruReg, REG ) ;
     //DBI_OFF ;
 }
