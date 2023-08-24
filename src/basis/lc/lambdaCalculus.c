@@ -101,7 +101,7 @@ _LO_New ( uint64 lispAttributes, uint64 morphismAttributes, uint64 objectAttribu
 }
 
 ListObject *
-_LO_First ( ListObject * l0 )
+LO_First ( ListObject * l0 )
 {
     if ( l0 && ( ! ( l0->W_LispAttributes & ( T_NIL ) ) ) )
     {
@@ -120,17 +120,6 @@ _LO_Last ( ListObject * l0 )
         else return l0 ;
     }
     return 0 ;
-}
-
-ListObject *
-_LO_Next ( ListObject * l0 )
-{
-    //if ( l0 && ( ! ( l0->W_LispAttributes & ( T_NIL ) ) ) )
-    {
-        ListObject * l1 = ( ListObject* ) dlnode_Next ( ( dlnode* ) l0 ) ;
-        return l1 ;
-    }
-    //return 0 ;
 }
 
 Word *
@@ -223,9 +212,9 @@ _LO_Copy ( ListObject * l0, uint64 allocType )
     if ( l0 )
     {
         if ( l0->W_LispAttributes & ( LIST | LIST_NODE ) ) lnew = LO_List_New ( allocType ) ;
-        for ( l1 = _LO_First ( l0 ) ; l1 ; l1 = lnext )
+        for ( l1 = LO_First ( l0 ) ; l1 ; l1 = lnext )
         {
-            lnext = _LO_Next ( l1 ) ;
+            lnext = LO_Next ( l1 ) ;
             lcopy = _LO_CopyOne ( l1, allocType ) ;
             if ( lnew ) LO_AddToTail ( lnew, lcopy ) ;
             else return lcopy ;
@@ -241,22 +230,16 @@ _LO_Copy ( ListObject * l0, uint64 allocType )
 void
 LC_EvalPrint ( ListObject * lread )
 {
-    LambdaCalculus * lc = _LC_ ;
-#if TCO
-    _CSL_->LC_EvalList_Cpu->State = 0 ;
-#endif    
-    lc->L1 = LC_Eval ( lread, 0, 1 ) ;
-    if ( lc = _LC_ ) // lambda calculus can be changed by eval
-    {
-        LO_Print ( lc->L1 ) ;
-        CSL_NewLine ( ) ;
-        SetState ( lc, LC_PRINT_ENTERED, false ) ;
-        SetBuffersUnused ( 1 ) ;
-        lc->ParenLevel = 0 ;
-        lc->Sc_Word = 0 ;
-        //if ( Verbosity ( ) ) iPrintf ( "\n_LC_->EvalListDepth= %ld\n", _LC_->EvalListDepth ) ;
-        //_LC_->EvalListDepth = 0 ;
-    }
+    _LC_->L1 = LC_Eval ( lread, 0, 1 ) ;
+     //if ( Verbosity ( )  ) iPrintf ( "EvalDepth = %ld : EvalListDepth= %ld\n", _LC_->EvalDepth, _LC_->EvalListDepth ) ;
+    _LC_->EvalDepth = 0 ;
+     _LC_->EvalListDepth = 0 ;
+    LO_Print ( _LC_->L1 ) ;
+    CSL_NewLine ( ) ;
+    SetState ( _LC_, LC_PRINT_ENTERED, false ) ;
+    SetBuffersUnused ( 1 ) ;
+    _LC_->ParenLevel = 0 ;
+    _LC_->Sc_Word = 0 ;
     Compiler_Init ( _Context_->Compiler0, 0 ) ; // we could be compiling a csl word as in oldLisp.csl
 }
 

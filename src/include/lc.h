@@ -1,6 +1,6 @@
 #define LO_Last( lo ) (ListObject*) dllist_Last ( (dllist*) lo->Lo_List )
 #define LO_Previous( lo ) ( ListObject* ) dlnode_Previous ( ( dlnode* ) lo )
-#define LO_Next( lo ) ( ListObject* ) dlnode_Next ( ( dlnode* ) lo )
+#define LO_Next( lo ) (( ListObject* ) dlnode_Next ( ( dlnode* ) lo ))
 #define LO_AddToTail( lo, lo1 ) dllist_AddNodeToTail ( (( ListObject * ) lo)->Lo_List, ( dlnode* ) (lo1) ) 
 #define LO_AddToHead( lo, lo1 ) dllist_AddNodeToHead ( (( ListObject * ) lo)->Lo_List, ( dlnode* ) (lo1) ) 
 #define LO_New( lType, object ) (ListObject *) DataObject_New (T_LC_NEW, 0, 0, 0, 0, lType, 0, (int64) object, 0, 0, 0 , -1)
@@ -28,6 +28,8 @@
 #define csl_cdr( lo ) dlnode_Next ( ( dlnode* ) lo )
 //#define lc_eval( lo ) LO_CopyOne ( LC_Eval ( lo, 0, 1) )
 #define lc_eval( lo ) LC_Eval ( lo, 0, 1) 
+#define _LO_Car( lo ) LO_First (lo)
+#define _LO_Cdr( lo ) LO_Next ( _LO_Car( lo ))
 
 
 

@@ -291,6 +291,8 @@ _ByteArray_AppendSpace_MakeSure ( ByteArray * ba, int64 size ) // size in bytes
             _O_->ReAllocations ++ ;
             //size = ( size > ( 100 * K ) ) ? size : ( 100 * K ) ;
             nba->NBA_DataSize *= ++ nba->Allocations ;
+            if ( nba->NBA_DataSize > 10 * M ) nba->NBA_DataSize = 10 * M ;
+            nba->NBA_DataSize = (size > nba->NBA_DataSize) ? size : nba->NBA_DataSize ;
             if ( Verbosity () > 2 ) NBA_PrintInfo ( nba ) ;
             ba = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ;
         }

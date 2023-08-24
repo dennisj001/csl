@@ -1889,9 +1889,8 @@ void _CSL_DebugRuntimeBreakpoint_IsDebugLevel2(void);
 /* src/basis/lc/lambdaCalculus.c */
 ListObject *_LO_New_RawStringOrLiteral(Lexer *lexer, byte *token, int64 value, int64 qidFlag, int64 tsrli, int64 scwi);
 ListObject *_LO_New(uint64 lispAttributes, uint64 morphismAttributes, uint64 objectAttributes, byte *name, byte *value, Word *word, uint64 allocType, Namespace *addToNs, int64 tsrli, int64 scwi);
-ListObject *_LO_First(ListObject *l0);
+ListObject *LO_First(ListObject *l0);
 ListObject *_LO_Last(ListObject *l0);
-ListObject *_LO_Next(ListObject *l0);
 Word *LC_FindWord(byte *name);
 Boolean LO_strcat(byte *buffer, byte *buffer2);
 void _LO_ListInit(ListObject *l0, uint64 allocType);
@@ -1962,6 +1961,7 @@ block CompileLispBlock(ListObject *args, ListObject *body);
 /* src/basis/lc/eval.c */
 Boolean LO_IsQuoted(ListObject *l0);
 ListObject *LC_Eval(ListObject *l0, ListObject *locals, Boolean applyFlag);
+ListObject *_LC_Eval(ListObject *l0);
 /* src/basis/lc/read.c */
 ListObject *LC_Read(void);
 ListObject *_LO_Read_Do_LParen(void);

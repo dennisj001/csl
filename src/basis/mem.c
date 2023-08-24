@@ -178,7 +178,7 @@ OVT_CalculateAndShow_TotalNbaAccountedMemAllocated ( OpenVmTil * ovt, int64 flag
     {
         int64 dsu = DataStack_Depth ( ) * sizeof (int64 ) ;
         int64 dsa = ( STACK_SIZE * sizeof (int64 ) ) - dsu ;
-        iPrintf ( "\nData Stack              InUse = %9d : Unused = %9d", dsu, dsa ) ;
+        iPrintf ( "\nData Stack              InUse = %9ld : Unused = %9ld", dsu, dsa ) ;
     }
     printf ( "\nTotal Accounted Mem     InUse = %9ld : Unused = %9ld",
         ovt->TotalNbaAccountedMemAllocated - ovt->TotalNbaAccountedMemRemaining, ovt->TotalNbaAccountedMemRemaining ) ;
@@ -194,16 +194,16 @@ _OVT_ShowMemoryAllocated ( OpenVmTil * ovt )
     int64 aleak = _OVT_CalculateShowMemList ( ovt ) ;
     int64 leak = mmaped - ( _OSMS_->RemainingAllocated + _OMS_->RemainingAllocated ) ;
     //leak = 10 ; // test
-    byte * leaks = ( byte* ) "\nleak?                            = %9d : ==  ( mmaped - ( _OSMS_->RemainingAllocated + _OMS_->RemainingAllocated )" ;
+    byte * leaks = ( byte* ) "\nleak?                            = %9ld : ==  ( mmaped - ( _OSMS_->RemainingAllocated + _OMS_->RemainingAllocated )" ;
     if ( leak ) iPrintf ( c_ad ( leaks ), leak ) ;
     else if ( vf ) iPrintf ( c_ud ( leaks ), leak ) ;
-    iPrintf ( "\nTotal Accounting errors       = %9d", aleak ) ;
-    iPrintf ( "\nTotal Actual leaks            = %9d", leak ) ;
-    iPrintf ( "\nNBA ReAllocations             = %9d", _O_->ReAllocations ) ;
+    iPrintf ( "\nTotal Accounting errors       = %9ld", aleak ) ;
+    iPrintf ( "\nTotal Actual leaks            = %9ld", leak ) ;
+    iPrintf ( "\nNBA ReAllocations             = %9ld", _O_->ReAllocations ) ;
     int64 wordSize = ( sizeof ( Word ) + sizeof ( WordData ) ) ;
-    iPrintf ( "\nWordsAllocated                = %9d : %-5d x %3d bytes", _O_->MemorySpace0->WordsAllocated * wordSize, _O_->MemorySpace0->WordsAllocated, wordSize ) ;
-    iPrintf ( "\nRecycledWordCount             = %9d : %-5d x %3d bytes", _O_->MemorySpace0->RecycledWordCount * wordSize, _O_->MemorySpace0->RecycledWordCount, wordSize ) ;
-    iPrintf ( "\nWordsInRecycling              = %9d : %-5d x %3d bytes\n", _O_->MemorySpace0->WordsInRecycling * wordSize, _O_->MemorySpace0->WordsInRecycling, wordSize ) ;
+    iPrintf ( "\nWordsAllocation               = %9ld : %-5ld x %3ld bytes", _O_->MemorySpace0->WordsAllocated * wordSize, _O_->MemorySpace0->WordsAllocated, wordSize ) ;
+    iPrintf ( "\nRecycledWordCount             = %9ld : %-5ld x %3ld bytes", _O_->MemorySpace0->RecycledWordCount * wordSize, _O_->MemorySpace0->RecycledWordCount, wordSize ) ;
+    iPrintf ( "\nWordsInRecycling              = %9ld : %-5ld x %3ld bytes\n", _O_->MemorySpace0->WordsInRecycling * wordSize, _O_->MemorySpace0->WordsInRecycling, wordSize ) ;
     Buffer_PrintBuffers ( ) ;
     if ( leak )
     {

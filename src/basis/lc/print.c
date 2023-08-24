@@ -137,9 +137,9 @@ _LO_PrintListToString ( LambdaCalculus * lc, ListObject * l0, int64 lambdaFlag, 
         {
             LC_sprintAString ( lc->buffer, "(" ) ;
             LO_strcat ( lc->outBuffer, lc->buffer ) ;
-            for ( l1 = _LO_First ( l0 ) ; l1 ; l1 = lnext )
+            for ( l1 = LO_First ( l0 ) ; l1 ; l1 = lnext )
             {
-                lnext = _LO_Next ( l1 ) ;
+                lnext = LO_Next ( l1 ) ;
                 _LO_PrintOneToString ( lc, l1, lambdaFlag, printValueFlag ) ;
             }
             LC_sprintAString ( lc->buffer, ")" ) ;

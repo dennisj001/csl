@@ -989,7 +989,7 @@ struct _CSL ;
 typedef struct _LambdaCalculus
 {
     uint64 State, DebuggerState, DebuggerSetupFlag ;
-    int64 DontCopyFlag, Loop, ParenLevel, EvalListDepth ;
+    int64 DontCopyFlag, Loop, ParenLevel, EvalListDepth, EvalDepth ;
     Namespace *LispNamespace, *LispDefinesNamespace, *LispTempNamespace, *BackgroundNamespace ;
     ListObject *Lread, *L0, *L1, *Lfirst, *LWord, *Lfunction0, *Lfunction, *Lvalue, *Locals, *Largs0, *Largs, *Largs1, * Nil, *True, *FunctionParameters, *FunctionArgs ;
     ListObject *LastInterpretedWord ;

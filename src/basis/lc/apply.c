@@ -22,7 +22,7 @@ void
 LO_CompileOrInterpretArgs ( ListObject * largs )
 {
     ListObject * arg ;
-    for ( arg = _LO_First ( largs ) ; arg ; arg = _LO_Next ( arg ) )
+    for ( arg = LO_First ( largs ) ; arg ; arg = LO_Next ( arg ) )
     {
         if ( GetState ( _O_->OVT_LC, LC_INTERP_DONE ) ) return ; // for LO_CSL
         _LO_CompileOrInterpret_One ( arg, 0 ) ; // research : how does CAttribute get set to T_NIL?
@@ -38,7 +38,7 @@ _LO_CompileOrInterpret ( ListObject *lfunction, ListObject * largs )
         Boolean svTcs = GetState ( _CSL_, TYPECHECK_ON ) ; // sometimes ok but for now off here
         SetState ( _CSL_, TYPECHECK_ON, false ) ; // sometimes ok but for now off here
         _LO_CompileOrInterpret_One ( largs, 0 ) ;
-        while ( ( largs = _LO_Next ( largs ) ) )
+        while ( ( largs = LO_Next ( largs ) ) )
         {
             _LO_CompileOrInterpret_One ( largs, 0 ) ; // two args first then op, then after each arg the operator : nb. assumes word can take unlimited args 2 at a time
             _LO_CompileOrInterpret_One ( lfword, 1 ) ;
@@ -57,7 +57,7 @@ ListObject *
 _LO_Do_FunctionBlock ( ListObject *lfunction, ListObject * largs )
 {
     LambdaCalculus *lc = _O_->OVT_LC ;
-    ListObject *vReturn = nil, *lfargs = _LO_First ( largs ) ;
+    ListObject *vReturn = nil, *lfargs = LO_First ( largs ) ;
     _LO_CompileOrInterpret ( lfunction, lfargs ) ;
     lc->ParenLevel -- ;
     // this is necessary in "lisp" mode : eg. if user hits return but needs to be clarified, refactored, maybe renamed, etc.
@@ -83,22 +83,22 @@ LC_Substitute ( )
         // no affect with a parenthesized list or just unparaenthesized parameters of the same number
         if ( funcParameters->W_LispAttributes & ( LIST | LIST_NODE ) )
         {
-            funcParameters = _LO_First ( funcParameters ) ; // can something like this work
-            if ( funcArgs->W_LispAttributes & ( LIST | LIST_NODE ) ) funcArgs = _LO_First ( funcArgs ) ;
+            funcParameters = LO_First ( funcParameters ) ; // can something like this work
+            if ( funcArgs->W_LispAttributes & ( LIST | LIST_NODE ) ) funcArgs = LO_First ( funcArgs ) ;
             //else Error ( "\nLO_Substitute : funcCallValues list structure doesn't match parameter list", QUIT ) ;
         }
         else if ( funcArgs->W_LispAttributes & ( LIST | LIST_NODE ) )
         {
-            funcArgs = _LO_First ( funcArgs ) ;
-            if ( funcParameters->W_LispAttributes & ( LIST | LIST_NODE ) ) funcParameters = _LO_First ( funcParameters ) ; // can something like this work
+            funcArgs = LO_First ( funcArgs ) ;
+            if ( funcParameters->W_LispAttributes & ( LIST | LIST_NODE ) ) funcParameters = LO_First ( funcParameters ) ; // can something like this work
             //else Error ( "\nLO_Substitute : funcCallValues list structure doesn't match parameter list", QUIT ) ;
         }
         // just preserve the name of the arg for the finder
         // so we now have the call values with the parameter names - parameter names are unchanged 
         // so when we eval/print these parameter names they will have the function calling values -- lambda calculus substitution - beta reduction
         funcArgs->Lo_Name = funcParameters->Lo_Name ;
-        funcParameters = _LO_Next ( funcParameters ) ;
-        funcArgs = _LO_Next ( funcArgs ) ;
+        funcParameters = LO_Next ( funcParameters ) ;
+        funcArgs = LO_Next ( funcArgs ) ;
     }
     LC_Debug ( lc, LC_SUBSTITUTE, 1 ) ;
 }
@@ -330,7 +330,7 @@ _LC_Apply_C_LtoR_ArgList ( LambdaCalculus * lc, ListObject * l0, Word * word )
         if ( ! svcm ) CSL_BeginBlock ( ) ;
         if ( word->W_MorphismAttributes & ( DLSYM_WORD | C_PREFIX ) ) Set_CompileMode ( true ) ;
         //_Debugger_->PreHere = Here ;
-        for ( i = 0, l1 = _LO_First ( l0 ) ; l1 ; l1 = LO_Next ( l1 ) ) _LC_Apply_Arg ( &l1, &i ) ;
+        for ( i = 0, l1 = LO_First ( l0 ) ; l1 ; l1 = LO_Next ( l1 ) ) _LC_Apply_Arg ( &l1, &i ) ;
         Set_CompileMode ( true ) ;
         _Debugger_->SpecialPreHere = Here ;
         //System V ABI : "%rax is used to indicate the number of vector arguments passed to a function requiring a variable number of arguments"

@@ -446,7 +446,7 @@ Root
 : license orpfile ( "./LICENSE" ) ;
 //license sp0
 Lisp OpenVmTil
-: lispOff "Lisp" notUsing "LispTemp" notUsing "LispDefines" notUsing ; //lcReset ;
+: lispOff "Lisp" notUsing "LispTemp" notUsing "LispDefines" notUsing freeLispSpace_All ; //lcReset ;
 : lispOn lcOn ;
 : ld: lcDbOn ; immediate // a debugWord has special behavior : doesn't interfere with optimization
 : ;ld lcDbOff ; immediate // a debugWord has special behavior : doesn't interfere with optimization
@@ -500,8 +500,9 @@ doLisp 0 =
 dbgOff
 //lisp
 //scOn
-dbgOn 
+//dbgOn 
 //l9
+//lisp
 
 // ===================
 #if Is_DebugOn forStarters ||
@@ -645,4 +646,4 @@ basicT
 #endif
 ;d
 2 + 7 assertStkChk // stack checking
-lisp
+//lisp

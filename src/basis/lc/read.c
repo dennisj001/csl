@@ -216,9 +216,9 @@ LO_SpliceAtTail ( ListObject * lnew, ListObject * l0 )
     ListObject * l1, *lnext ;
     if ( lnew )
     {
-        for ( l1 = _LO_First ( l0 ) ; l1 ; l1 = lnext )
+        for ( l1 = LO_First ( l0 ) ; l1 ; l1 = lnext )
         {
-            lnext = _LO_Next ( l1 ) ;
+            lnext = LO_Next ( l1 ) ;
             LO_AddToTail ( lnew, LO_CopyOne ( l1 ) ) ; // nb. LO_CopyOne is necessary here
         }
     }

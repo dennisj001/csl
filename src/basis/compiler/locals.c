@@ -354,11 +354,11 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
         regFlag = true ;
 #endif
 
-    while ( ( lispMode ? ( int64 ) ( args = _LO_Next ( args ) ) : 1 ) )
+    while ( ( lispMode ? ( int64 ) ( args = LO_Next ( args ) ) : 1 ) )
     {
         if ( lispMode )
         {
-            if ( args->W_LispAttributes & ( LIST | LIST_NODE ) ) args = _LO_First ( args ) ;
+            if ( args->W_LispAttributes & ( LIST | LIST_NODE ) ) args = LO_First ( args ) ;
             token = ( byte* ) args->Lo_Name ;
             CSL_AddStringToSourceCode ( _CSL_, token ) ;
         }
@@ -380,8 +380,8 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
             {
                 if ( lispMode )
                 {
-                    args = _LO_Next ( args ) ;
-                    if ( args->W_LispAttributes & ( LIST | LIST_NODE ) ) args = _LO_First ( args ) ;
+                    args = LO_Next ( args ) ;
+                    if ( args->W_LispAttributes & ( LIST | LIST_NODE ) ) args = LO_First ( args ) ;
                     token = ( byte* ) args->Lo_Name ;
                     CSL_AddStringToSourceCode ( _CSL_, token ) ;
                 }
