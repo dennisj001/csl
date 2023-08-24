@@ -21,8 +21,7 @@ LC_Eval ( ListObject *l0, ListObject *locals, Boolean applyFlag )
 ListObject *
 _LC_Eval ( ListObject *l0 )
 {
-    _LC_->L0 = l0 ;
-    if ( _LC_->L0 )
+    if ( _LC_->L0 = l0 )
     {
         //_LC_->L0 = LO_CopyOne ( _LC_->L0 ) ;
         _LC_->L1 = _LC_->L0 ; // default 
@@ -147,7 +146,7 @@ evalList:
                             LC_Substitute ( ) ;
                             _LC_->Locals = _LC_->Largs ;
                             _LC_->L0 = lfunction->Lo_LambdaBody ;
-                            goto evalList ;
+                            goto evalList ; // save stack
                         }
                         else
                         {
