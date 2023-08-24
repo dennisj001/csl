@@ -446,7 +446,7 @@ Root
 : license orpfile ( "./LICENSE" ) ;
 //license sp0
 Lisp OpenVmTil
-: lispOff "Lisp" notUsing "LispTemp" notUsing "LispDefines" notUsing freeLispSpace_All ; //lcReset ;
+: lispOff "Lisp" notUsing "LispTemp" notUsing "LispDefines" notUsing ; //lcReset ;
 : lispOn lcOn ;
 : ld: lcDbOn ; immediate // a debugWord has special behavior : doesn't interfere with optimization
 : ;ld lcDbOff ; immediate // a debugWord has special behavior : doesn't interfere with optimization
