@@ -276,7 +276,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
         {
             
             byte * buf = Buffer_DataCleared ( _CSL_->ScratchB1 ) ;
-            snprintf ( buf, BUFFER_SIZE, "\nError : _Context_IncludeFile : \"%s\" : not found! :: %s\n", filename ) ;
+            snprintf ( buf, BUFFER_SIZE, "\nError : _Context_IncludeFile : \"%s\" : not found!\n", (char*) filename ) ;
                 //_Context_Location ( ( Context* ) _CSL_->ContextStack->StackPointer [0] ) ) ;
             _Error ( buf, QUIT ) ;
         }

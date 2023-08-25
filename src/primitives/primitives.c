@@ -510,7 +510,7 @@ CPrimitive CPrimitives [] = {
     { "setDsp", 0, 0, 0, Rpn_SetDspReg, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "stackCheck", 0, 0, 0, DataStack_Check, 0, 0, 0, "Stack", "Root" },
 
-    { "lisp", 0, 0, 0, ( block ) LO_Repl, 0, 0, 0, "List", "Root" },
+    { "_lisp", 0, 0, 0, ( block ) LO_Repl, 0, 0, 0, "List", "Root" },
     { "_(", 0, 0, 0, ( block ) LC_ReadList, IMMEDIATE | KEYWORD, 0, 0, "List", "Root" },
     { "eval", 0, 0, 0, ( block ) List_Eval, IMMEDIATE | KEYWORD, 0, 0, "List", "Root" },
     { "printList", 0, 0, 0, ( block ) List_PrintWithValue, 0, 0, 0, "List", "Root" },

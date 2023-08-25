@@ -366,7 +366,7 @@ int64 CO_CheckOptimize(Compiler *compiler, int64 _specialReturn);
 CompileOptimizeInfo *CO_GetWordStackState(Compiler *compiler, Word *word);
 Word *CO_CheckForOpBetweenParentheses(CompileOptimizeInfo *optInfo, dlnode *snode);
 Word *CO_Logic_CheckForOpBetweenParentheses(CompileOptimizeInfo *optInfo);
-int64 CO(Compiler *compiler, Word *word);
+int64 Compiler_Optimize(Compiler *compiler, Word *word);
 void CO_SetStandardPreHere_ForDebugDisassembly(Compiler *compiler);
 void CO_SetupArgsToStandardLocations(Compiler *compiler);
 void CO_1Arg_W_RparenPrevOp(Compiler *compiler);
@@ -451,7 +451,7 @@ Symbol *Symbol_CompareName2(Symbol *symbol, byte *name, Namespace *ns);
 Symbol *_Symbol_CompareName(Symbol *symbol, byte *name);
 Symbol *Symbol_CompareName(Symbol *symbol, byte *name);
 /* src/basis/repl.c */
-void _Repl(block repl);
+void _Repl(Context *cntx, block repl);
 /* src/basis/core/syntax.c */
 void Interpret_DoParenthesizedValue(void);
 void Interpret_C_Block_EndBlock(byte *tokenToUse, Boolean insertFlag, Boolean controlBlock);
@@ -1904,7 +1904,8 @@ void LC_ReadEvalPrint_ListObject(void);
 void LC_ReadEvalPrint_AfterAFirstLParen(void);
 void LC_ReadEvalPrint(void);
 void LC_ReadInitFile(byte *filename);
-void _LO_Repl(void);
+void _LO_Repl0(Context *cntx, byte *initFilename);
+void LO_Repl0(Context *cntx, byte *initFilename);
 void LO_Repl(void);
 void LC_ReadList(void);
 void _LC_SaveDsp(LambdaCalculus *lc);

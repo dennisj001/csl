@@ -497,6 +497,9 @@ doLisp 0 =
     
 // ========controls===========
 
+Lisp
+: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
+Root
 dbgOff
 //lisp
 //scOn

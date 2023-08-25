@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.938.121" ) 
+#define VERSION ((byte*) "0.938.140" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // CT/Oop (Category Theory, Object Oriented Programming, Type Theory), 
@@ -10,10 +10,11 @@
 // Automata Theory : State Machines, Push Down Automata (PDA), Turing Machines :: 
 // Also inspired by : Laws of Form, by G.S. Brown, Kurt Godel, etc.
 // csl : context sensitive language; C shell (extension) language, cx
-// cfr : C, Forth, reason
-// cflr : C, Forth, Lisp, reason or compiler foundations research (and development)
+// cfr : C, Forth, reason or compiler foundations research (and development)
+// cflr : C, Forth, Lisp, reason
 // til : a toolkit for implementing languages (maybe even a compiler compiler) based on these ideas,
 // cfrtil : an old name for csl
+// !! this is only a prototype !!
 
 OpenVmTil * _O_ ;
 

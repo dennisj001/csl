@@ -1,5 +1,6 @@
 git add .
-git rm --cached *.o
+git rm --cached *.o csl.*
 git rm -r --cached nbproject	
+git rm -r --cached .qtc_clangd	
 git commit .
 git push

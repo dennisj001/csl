@@ -1,9 +1,9 @@
 #include "../include/csl.h"
 
 void
-_Repl ( block repl )
+_Repl ( Context * cntx, block repl )
 {
-    Lexer * lexer = _Context_->Lexer0 ;
+    Lexer * lexer = cntx->Lexer0 ;
     ReadLiner * rl = lexer->ReadLiner0 ;
 
     byte * snp = rl->NormalPrompt, *sap = rl->AltPrompt ;
@@ -19,15 +19,15 @@ _Repl ( block repl )
         rl->NormalPrompt = ( byte* ) "==> " ;
     }
     //SetState ( _O_->psi_PrintStateInfo, PSI_NEWLINE, true ) ;
-    SetState ( _Context_->System0, ADD_READLINE_TO_HISTORY, true ) ;
+    SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, true ) ;
     start:
-    while ( ! setjmp ( _Context_->JmpBuf0 ) )
+    while ( ! setjmp ( cntx->JmpBuf0 ) )
     {
         while ( ! GetState ( lexer, END_OF_FILE|END_OF_STRING) )
         {
             uint64 * svDsp = _DspReg_ ;
             //iPrintf ( "<= " ) ;
-            Context_DoPrompt (_Context_) ;
+            Context_DoPrompt (cntx) ;
             //LC_SaveStack ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
             ReadLine_GetLine () ;
             //if ( strstr ( ( char* ) rl->InputLineString, ".." ) || strstr ( ( char* ) rl->InputLineString, "bye" ) || strstr ( ( char* ) rl->InputLineString, "exit" )  || strstr ( ( char* ) rl->InputLineString, "x" ) ) 

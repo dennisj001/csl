@@ -39,7 +39,7 @@
 // and ARM cpu adjustments
 
 // get arg actual setup
-// convert arg setup to standard arg1=ACC, arg2=OREG (RCX)
+// convert arg setup to standard arg1=ACC, arg2=OREG (RCX) // ACC : accumulator reg ; OREG : operand reg
 // setup machine insn parameters 
 
 // standard locations are :: arg1=reg=ACC=RAX ; arg2=rm=OREG=RCX
@@ -52,7 +52,7 @@ CO_CheckOptimize ( Compiler * compiler, int64 _specialReturn )
     int64 specialReturn = _specialReturn ? _specialReturn : compiler->OptimizeForcedReturn ;
     if ( ( ! specialReturn ) && GetState ( _CSL_, CO_ON ) )
     {
-        _specialReturn = CO ( compiler, CSL_WordList ( 0 ) ) ;
+        _specialReturn = Compiler_Optimize ( compiler, CSL_WordList ( 0 ) ) ;
     }
     return _specialReturn ? _specialReturn : compiler->OptimizeForcedReturn ;
 }
@@ -236,7 +236,7 @@ CO_Logic_CheckForOpBetweenParentheses ( CompileOptimizeInfo * optInfo )
 
 // CO Compiler_Optimize
 int64
-CO ( Compiler * compiler, Word * word )
+Compiler_Optimize ( Compiler * compiler, Word * word )
 {
     if ( word )
     {

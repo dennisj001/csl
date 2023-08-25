@@ -231,9 +231,9 @@ void
 LC_EvalPrint ( ListObject * lread )
 {
     _LC_->L1 = LC_Eval ( lread, 0, 1 ) ;
-     //if ( Verbosity ( )  ) iPrintf ( "EvalDepth = %ld : EvalListDepth= %ld\n", _LC_->EvalDepth, _LC_->EvalListDepth ) ;
+    //if ( Verbosity ( )  ) iPrintf ( "EvalDepth = %ld : EvalListDepth= %ld\n", _LC_->EvalDepth, _LC_->EvalListDepth ) ;
     _LC_->EvalDepth = 0 ;
-     _LC_->EvalListDepth = 0 ;
+    _LC_->EvalListDepth = 0 ;
     LO_Print ( _LC_->L1 ) ;
     CSL_NewLine ( ) ;
     SetState ( _LC_, LC_PRINT_ENTERED, false ) ;
@@ -313,26 +313,44 @@ LC_ReadInitFile ( byte * filename )
 }
 
 void
-_LO_Repl ( )
+_LO_Repl0 ( Context * cntx, byte * initFilename )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
     SetState ( _Context_, LISP_MODE, true ) ;
     iPrintf ( "\ncsl lisp : type 'exit' or 'bye' to exit\n including init file :: './namespaces/compiler/lcinit.csl'\n" ) ;
-    LC_ReadInitFile ( ( byte* ) "./namespaces/compiler/lcinit.csl" ) ;
+    //if ( ! initFilename ) initFilename = ( byte* ) "namespaces/compiler/lcinit.csl" ; //
+    LC_ReadInitFile ( initFilename ) ;
     //iPrintf ( "\ncsl lisp : (type 'exit' or 'bye' to exit)\n including init file :: './namespaces/compiler/lcinit.0.csl'\n" ) ;
     //LC_ReadInitFile ( ( byte* ) "./namespaces/lcinit.0.csl" ) ;
     SetState ( _Context_, AT_COMMAND_LINE, true ) ;
-    _Repl ( ( block ) LC_ReadEvalPrint_ListObject ) ;
+    _Repl ( cntx, ( block ) LC_ReadEvalPrint_ListObject ) ;
     SetState ( _Context_, LISP_MODE, false ) ;
     LC_LispNamespacesOff ( ) ;
     iPrintf ( "\nleaving csl lisp : returning to csl interpreter\n" ) ;
 }
 
 void
-LO_Repl ( )
+LO_Repl0 ( Context * cntx, byte * initFilename )
+{
+    if ( ! initFilename ) initFilename = ( byte* ) "namespaces/compiler/lcinit.csl" ; //
+    _LO_Repl0 ( cntx, initFilename ) ;
+}
+
+#if 0
+void
+LO_Repl0 ( )
 {
     int64 * svDsp = _DspReg_ ;
     _CSL_Contex_NewRun_Block ( _CSL_, ( block ) _LO_Repl ) ;
+    _Set_DataStackPointers ( svDsp ) ;
+}
+#endif
+
+void
+LO_Repl ( )
+{
+    int64 * svDsp = _DspReg_ ;
+    byte * initFilename = ( byte* ) DataStack_Pop ( ) ;
+    _CSL_Contex_NewRun_1 ( _CSL_, (ContextFunction_1) LO_Repl0, initFilename ) ;
     _Set_DataStackPointers ( svDsp ) ;
 }
 
