@@ -138,4 +138,4 @@ bnOff
 "fib 30 =" ps (fib 30)
 #endif    
 //(load "namespaces/schemeTest2.csl")            
-"csl : scheme/lisp : type \'x\' or \'exit\' or \'bye\' to exit ..." ps
+"csl : scheme/lisp : type \'..\' or \'exit\' or \'bye\' to exit ..." ps

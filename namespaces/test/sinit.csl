@@ -1,25 +1,14 @@
-//_dbgOn 
-d: 5 // stack checking marker
-Root 
-jcc8_Off
-typecheckOn dbgTypecheckOn
-#if 0
-: sp stack pause ; 
-: include dup "\tincluding ..." printString printString stack pause _include ;
-#else
-: sp ; //stack pause ; 
-: include _include ; //dup "\tincluding ..." printString printString stack pause _include ;
-#endif
-// logOn
-verbosity 1 = 
+//_dbgOn ukseOn
+5 // stack checking marker
 Debug
 // higher debugLevel turns on more debugging
-: d0 debugLevel 0 = ; debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: d1 debugLevel 1 = ; debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: d2 debugLevel 1 = ; debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: d: _dbgOn d1 dbgSourceCodeOn ; immediate debugWord // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d0 debugLevel 0 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d1 debugLevel 1 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d2 debugLevel 2 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d: _dbgOn d0 dbgSourceCodeOn ; immediate debugWord // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
 : d1: _dbgOn d1 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 : d2: _dbgOn d2 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
+Root 
 "OptimizeOn" variable
 OptimizeOn 1 = 
 #if OptimizeOn @
@@ -27,9 +16,23 @@ optimizeOn inlineOn
 #else
 optimizeOff inlineOff
 #endif
+jcc8_Off
+typecheckOn dbgTypecheckOn
+: sp1 stack pause ;
+: sp0 ;
+#if 0
+: sp stack pause ; 
+: include dup "\tincluding ..." printString printString sp _include ;
+#else
+: sp ; //stack pause ; 
+: include _include ; //dup "\tincluding ..." printString printString stack pause _include ;
+#endif
+// logOn
+verbosity 1 = 
+sp
 Root 
-'find '_findUsing _findUsing alias immediate
-: findAny _findAny ; immediate
+'find '_findUsing _findUsing alias immediate 
+: findAny _findAny ; immediate 
 'tick ' _tick find alias immediate
 : ' _tick ; immediate
 'ndrop '_ndrop find alias immediate 
@@ -51,6 +54,7 @@ Io Int
 : p space intPrint ;
 '_hp 'hexIntPrint find alias
 : hp space _hp ;
+: dp space decimal intPrint ; 
 : print space intPrint ;
 "nl" ' newline find alias keyword
 : _logWrite "csl.log" logWrite ;
@@ -102,15 +106,13 @@ Root
 // === controls ===
 Root 
 dbgOff
-//dbgOn 
+dbgOn 
 
 User
 #if Is_DebugOn
 : mp mem pause ;
-: sp stack pause ;
 #else
 : mp ; //mem pause ;
-: sp ; //stack pause ;
 #endif
 sp
 Combinators
@@ -125,11 +127,11 @@ User
 "StartupMacros" namespace                           // create a namespace for string macros to be used 
 StartupMacros                                       // switch to that namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
-// "_startDirectory_" variable                      // created and set in CSL_ResetAll_Init
+//"_startDirectory_" variable                       // already created and set in CSL_ResetAll_Init in basis/init.c
 : namespaces _startDirectory_ @ ;                   // this line also works in place of the next line
                                                     // '_startDirectory_' is a variable created in the function 
-                                                    // CSL_ResetAll_Init in the file init.c
-//: namespaces "/usr/local/lib/csl/namespaces" ; // our currently only ?!overloaded!? string macro allowing 
+                                                    // CSL_ResetAll_Init in the file basis/init.c
+//: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
                                                     // us to parameterize the startup; can be properly started 
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/csl"
@@ -160,6 +162,8 @@ Compiler
 "compileWord" ' _compileWord find alias immediate
 "compileCall" ' _compileCall find alias immediate
 "swap" ' _swap find alias immediate
+"compilable" 'immediateOff find alias
+
 Interpreter 
 // core words 
 "{" ' begin find alias immediate keyword
@@ -173,6 +177,7 @@ Interpreter
 //: word ( name block ) name @ wordNew block @ _semi ;  // works but it is 10 bytes more code
 //'word find wdis //pause
 ":" { compileModeOn sourceCodeInit token wordNew begin } word // immediate // begin is not an immediate word
+: ;; ' ; find compileWord ' _prefix find compileWord ; immediate
 
 C
 : ;; semi _prefix ; immediate syntactic
@@ -194,11 +199,27 @@ type quad ; quad.size = 16 ;
 type Boolean ; Boolean.size = 1 ;
 type Pointer ; Pointer.size = 8 ;
 type block ; block.size = 8 ;
+C
+"Dlsym" namespace 
+Dlsym 
+"libc" namespace 
+libc
+dlsym: printf /lib/libc.so.6 ; void_return
+dlsym: strcmp /lib/libc.so.6 ; rax_return
+dlsym: sprintf /lib/libc.so.6 ; void_return
+dlsym: strcat /lib/libc.so.6 ; void_return
+//dlsym: _strlen /lib/libc.so.6 ; rax_return
+dlsym: memset /lib/libc.so.6 ; void_return
+dlsym: sscanf /lib/libc.so.6 ; void_return
+dlsym: atoi /lib/libc.so.6 ; rax_return
+//int strlen ( s ) { return _strlen ( s ); }
 c_syntaxOff
-sp
+Root  
+sp0
 System
+//: bnInit1 ( width ) width @ bnInit ; 
 : bigNumOff "BigNum" notUsing ;
-: bigNumOn BigNum 8 bnInit ;
+: bigNumOn BigNum 32 bnInit ;
 
 'bnOn 'bigNumOn find alias
 'bnOff 'bigNumOff find alias
@@ -215,18 +236,18 @@ bnOn
 : _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if ; 
 bnOff
 
-Compiler
+Compiler String
 scOn 
-: var: { token dup ";" strcmp } { _var } while drop ; immediate // nb : no quotation marks around variable names with var: ... ; 
-var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ; // _TestDone_ ; 
-: nstrcat: "" { token dup ";" strcmp } { strcat " " strcat } while drop ; immediate // nb : no quotation marks around names
+: var: { token dup ";var" strcmp } { _var } while drop ;  // nb : no quotation marks around variable names with var: ... ; 
+//'var: find wdis //pause
+var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ;var sp0 // _TestDone_ ; 
 "mod" 'modulo find alias
 
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
 : usingLast: { token dup ";" strcmp } { usingLast } while drop ; 
-notUsing: PrefixCombinators C Lisp ;
+notUsing: PrefixCombinators C Lisp ; sp0
 
 System
 "Black" 0 const
@@ -240,7 +261,7 @@ System
 "Default" 9 const
 //: netbeans Blue Default setDebugColors ; : nnb Blue Black setDebugColors ; // netbeans // nnb
 
-Root
+Root 
 "fr" 'fullRestart find alias
 "ri" 'restartInit find alias
 'purge 'purgeWordName find alias
@@ -251,15 +272,12 @@ System
 "T" 1 const
 "F" 0 const
 
-Debug
+Debug Macro
 // make immediate/word immediate - compile time versions of some words
 : _s stack ; 
 : s stack ; immediate
 'rdi 'recycleDebugInfo find alias
-C
-: logWrite ( str ) _logWrite nl str @ ps nl ;
-: logAppend ( str ) _logAppend nl str @ ps nl ;
-
+: rdim rdi mem ;
 Word 
 : code definition ;
 C
@@ -286,20 +304,24 @@ System
 'wi ' wdiss find alias
 : pwdiss tokenQID _findUsing wdiss ; // nb. a prefix function
 'pwi 'pwdiss find alias
-//pwi _wdiss
+//pwi wdiss //pause
 : fload ftoken include ;
 : sys mem namespaces words stack using in ; 
 'aw 'allWords find alias
 : stk stack ; //debugWord 
 : ti timerInit ;
 : ahalt stop ;
-: vb ( n ) verbosity n @ = ; : vb4 4 vb ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
+: vb ( n ) verbosity n @ = ;  : vb5 5 vb ; : vb4 4 vb ; : vb3 3 vb ; : vb2 2 vb ; : vb1 1 vb ; : vb0 0 vb ;
 : sOff vb1 inlineOff optimizeOff ;
 : sOn vb3 inlineOn optimizeOn ;
 "ahOn" ' addToHistoryOn find alias
 "ahOff" ' addToHistoryOff find alias
 : adps ( s ) alertColors s @ ps defaultColors ;
 : ddps ( s ) debugColors s @ ps defaultColors ;
+Debug C
+: logWrite ( str ) _logWrite nl str @ ps nl ;
+: logAppend ( str ) _logAppend nl str @ ps nl ;
+
 //#if Is_DebugOn
 dscOn 
 
@@ -312,12 +334,14 @@ dscOn
 : debugTest 1 2 + p debugTest1 ;
 
 : _assert1dbg ( n m str ) { n @ m @ != } { str @ ? str @ ps : drop "error" ps _info stack _pause } { debugTest } ifElse ; 
-: _assert1 ( n m str ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { str @ ps " : ok\n" ps nl } ifElse ; debugWord
+: _assert1 ( n m str ) { n @ m @ != } { nl location hex n @ p "!=" ps m @ p "<:" ps "Assert Inconsistency?!" adps _info _pause } { str @ ps " : ok\n" ps nl } ifElse ; debugWord
 : ctloc do> locationPush does> locationPrint <does ; immediate // compile time location
-: _assert0 ( n m ) { n @ m @ != } { nl location nl hex n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { } ifElse ; //{ str @ ps " : ok\n" ps nl } ifElse ; // no "ok" with this word
-: _assert ( n m ) nl  nl "_assert ::" ps { n @ m @ != } { n @ p "!=" ps m @ p "<:" ps "Error!" adps _info _pause } { " ok\n" ps nl } ifElse ; 
+: _assert0 ( n m ) { n @ m @ != } { nl location nl hex n @ p "!=" ps m @ p "<:" ps "Assert Inconsistency?!" adps stack _info _pause } if2 ; 
+//pwi _assert0 sp0 //{ str @ ps " : ok\n" ps nl } ifElse ; // no "ok" with this word
+: _assert ( n m ) nl  nl "_assert ::" ps { n @ m @ != } { n @ p "!=" ps m @ p "<:" ps "Assert Inconsistency?!" adps _info _pause } 
+    { " ok\n" ps nl } ifElse ; //pwi _assert sp0
 : assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info _pause } if ;
-: assert0 ( n m ) { n @ m @ != } { nl "error" ps _info _pause } if ; 
+: assert0 ( n m ) { n @ m @ != } { nl "error" ps _info stack _pause } if ; 
 "assert" ' _assert1 find alias debugWord
 'assert1 ' _assert1dbg find alias debugWord
 'assert1 ' _assert1 find alias debugWord
@@ -329,7 +353,7 @@ dscOn
         { 
             debugColors
             str "\n assertStkChk ::" = 
-            { n @ m @ == }
+            { n @ m @  == }
             { nl location ":" ps str @ ps "ok : " ps n @ p "==" ps m @ p nl } //stack pause } 
             { tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps n @ p "!=" ps m @ p nl stack pause nl } //quit } 
             ifElse 
@@ -343,14 +367,40 @@ dscOn
     } if2
     //stack pause
 ; 
-//' _assertStkChk find wdiss //pause
+//' _assertStkChk find wdiss sp0
 #if 0
 : assertStkChk "\n_assertStkChk : " ps _assertStkChk stack pause ; 
 #else
 : assertStkChk _assertStkChk ; //"\n_assertStkChk : " ps stack pause ; 
 #endif
+Root Io
+: Error "\nerror :" ps location pause ;
+cOn Root
+int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } 
+"hi" "hi" StringEqual != 0 ? noop : abort
+StringEqual ("hi" "hey") == 0 ? noop : abort
+Dlsym libc 
+void pbAssert ( argin ) 
+{
+    byte * pb = pbc ; 
+    if ( StringEqual ( pb, argin ) ) ps ( "\npbAssert : ok\n") ; 
+    else 
+    {   
+        int64 la = Strlen ( argin ), lp = Strlen ( pb ) ; //, pb = pbc ;
+        printf ( "\nargIn != pbc" ) ; 
+        ps ("\npbc :" ) ;
+        dump ( pbc, lp  ) ;
+        ps ("\nargIn :" ) ;
+        dump ( argin, la  ) ;
+        printf ( "\nStrlen ( argin ) = %d :: Strlen ( pbc ) = %d", la, lp ) ;
+        printf ( "\nargIn  = \'%s\' \n!= pbc = \'%s\'", argin, pb ) ; 
+        Error () ; 
+    }  
+    pbclr () ;
+} 
+cOff
 sp
-Root
+sp0
 User 
 : pause nl _pause ;
 : opOff optimizeOff inlineOff state ;
@@ -391,13 +441,15 @@ jcc8_Off
     nl { result file @ input 1 fread = input @ emit } { result @ 1 == } doWhile 
     file @ fclose
 ; prefix
-//'orpfile find wdiss //pause
+//'orpfile find wdiss sp0
 Root
 : license orpfile ( "./LICENSE" ) ;
-//license //pause
+//license sp0
 Lisp OpenVmTil
 : lispOff "Lisp" notUsing "LispTemp" notUsing "LispDefines" notUsing ; //lcReset ;
 : lispOn lcOn ;
+: ld: lcDbOn ; immediate // a debugWord has special behavior : doesn't interfere with optimization
+: ;ld lcDbOff ; immediate // a debugWord has special behavior : doesn't interfere with optimization
 postfixOn 
 Root
  
@@ -405,26 +457,32 @@ Root
 
 //================================================================================
 
-#if startupMacros
-stringMacrosOn
-#endif
 Root
 // rtw : recycle some test/debug words 
 : rtw "test" purgeAll "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
+: atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable "7" atoi 7 _assert sp0
+#if startupMacros
+stringMacrosOn
+#endif
 : tCSL "namespaces/ninit.csl" include ; // namespaces init
-: tc 1 ti lispOff tCSL rtw 1 time ;
+: tc 2 ti 1 ti lispOff tCSL rtw ;
 : x64 "namespaces/compiler/x64.csl" include ; 
 : bx "namespaces/test/bigNum.test.csl" include ;
 : TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbgOnVar @ } { sp } if2 ;; //pause ;;
 lispOff
 : mrm mem rdi mem ; 
 : mem2 verbosity 2 = mem verbosity 1 = ; 
-: typesInclude "namespaces/types.csl" include ;
-: minc vb2 _c_syntaxOn "/home/dennisj/csl-code/archive/maru-2.4/eval.c" include ;
-: minc2 vb2 cOn includesOnlyOn minc cOff includesOnlyOff ;
-// === controls ===
+//: typesInclude "namespaces/types.csl" include ;
+//: minc vb2 _c_syntaxOn "/home/dennisj/csl-code/archive/maru-2.4/eval.c" include ;
+//: minc2 vb2 cOn includesOnlyOn minc cOff includesOnlyOff ;
+//: mci "namespaces/compiler/machineCode.c" include ;
+: loT "namespaces/test/logic.csl" include ;
+: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
+: ppT preprocessorTest ;
+: bigNumTest "namespaces/test/bigNum.csl" include ;
+: bT bigNumTest ;
+// === startup extra controls ===
 Root 
-
 'todo 0 const  
 'doX64 1 const
 'doTX64 1 const
@@ -434,15 +492,23 @@ Root
 '_doDemo 1 const
 '_doTest 1 const
 doLisp 0 =
-'doLispTest var doLispTest 1 =
+'doLispTest var doLispTest 0 =
 'doBigNum 1 const 
     
-dbgOff
-//dbgOn 
-// === controls ===
+// ========controls===========
 
+Root
+: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
+
+dbgOff
+//lisp
+//scOn
+//dbgOn 
+//l9
+//lisp
+
+// ===================
 #if Is_DebugOn forStarters ||
-'doBigNum 1 const
 
 #if todo
 : _TODO ( str ) TODO ( str @ ) ;;
@@ -450,9 +516,7 @@ dbgOff
 #endif
 
 System C
-sp
-fload test.txt 
-//stack pause
+//fload test.txt 
 
 #if _doTest
 tc
@@ -466,12 +530,12 @@ doLispTest 0 =
 #endif
 
 #if _doDemo 
-demo 
+//demo 
+#else mem //pause
 #endif //dT0
 //rtw
 
 stringMacrosOff
-mem //pause
 
 #else // !Is_DebugOn : of course you can trim this file to your needs and put your extra init code maybe here if you like
 : mct "namespaces/compiler/machineCode.csl" include ;
@@ -482,17 +546,107 @@ Shell
 rtw
 
 'test 'tc find alias //nb! after rtw which removes all words "test", etc.
+
 #if forStarters 
 d: : hi0 ( n m ) n @ m @ - dup <dbg> p return tos ; pwi hi0 13 2 d: hi0 11 _assert
 #if 1
 : hi ( n m | x ) x n @ m @ - = x @ p return ( x @ ) ; pwi hi 13 2 hi 11 _assert
 cOn
 jcc8_On
-int fac5 ( REG n | REG facc )  {  facc = 1 ; while ( n > 1 )  { facc = facc * (n --) ; } return facc ; } 
+d: int fac5 ( REG n | REG facc )  {  facc = 1 ; while ( n > 1 )  { facc = facc * (n --) ; } return facc ; } 
 fac5 ( 7 ) ; p
 jcc8_Off
 pwi fac5    
 cOff
 #endif 
 #endif    
-2 + 7 assertStkChk // stack checking 
+
+#if 0
+lcOn
+(define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
+tick fibc find wdiss
+(fibc 20)
+lcOff sp0
+#endif
+#if 1 // fix me ??
+bnOn cOn 
+void ctof0 ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
+void ctof1 ( c ) { c *= 1.8 ; c += 32 ; nl ; p (c) ; } //ctof1 ( 11.41) ;
+cOff 
+: ctof ( c ) c 1.8 *=  c 32 += nl c @ p ; //11.41 ctof 
+: ftoc ( f ) f 32 -= f 1.8 /= f @ p ; //60 ftoc 
+#if 0
+bnOff
+: ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
+: ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
+#endif
+sp0
+#endif
+
+
+//tc demo lisp
+
+#if 0
+addToHistoryOn
+d: : hi 1 2 + p ; hi
+//"d: : hi 1 2 + p ; hi" addToHistory
+#endif
+
+//stringMacrosOff
+//mem
+//scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
+#if 0
+: fac ( int8 n  | int16 rec1 ) 
+    rec1 1 = 
+    { n @ 1 > } { n @ rec1 @ * rec1 store n -- } while 
+    return rec1 @
+;
+pwi fac
+7 fac dup p 5040 _assert0 
+#endif
+#if 0
+: iinc "./init.csl" include ;
+: interpT "namespaces/compiler/interpreter.csl" include ;
+: itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
+: classTest "namespaces/test/classTest.csl" include ;
+: arrayTest "namespaces/test/arrayTest.csl" include ;
+: localsTest "namespaces/test/localsTest.csl" include ;
+//: bigNumTest "namespaces/test/bigNum.csl" include ;
+: stackTest "namespaces/test/stack.csl" include ;
+: controlTest "namespaces/test/control.csl" include ;
+: objectTest "namespaces/test/dobject.csl" include ;
+: c_SyntaxTest "namespaces/compiler/c_syntax.csl" include ;
+: syntaxTest "namespaces/compiler/syntax.csl" include ;
+//: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
+: test "namespaces/test/test.csl" include ;
+: dT0 "namespaces/test/dev0.csl" include ;
+: dT2 "namespaces/test/dev2.csl" include ;
+: dT3 "namespaces/test/dev3.csl" include ;
+//: loT "namespaces/test/logic.csl" include ;
+: dT "namespaces/test/dev.csl" include ; inline
+: dT2 "namespaces/test/dev2.csl" include ;
+: mT "namespaces/test/math.csl" include ;
+: fT "namespaces/test/file.csl" include ;
+: sT "namespaces/compiler/syntax.csl" include ;
+: sysT "namespaces/test/system.csl" include ;
+: lispTest "namespaces/test/lisp.csl" include ;
+: oldL "namespaces/test/oldLisp.csl" include ;
+: stT stackTest ;
+//: bT bigNumTest ;
+: locT localsTest ;
+: aT arrayTest ;
+: cT classTest ;
+: cntT controlTest ;
+: oT objectTest ;
+: cST c_SyntaxTest ;
+//: ppT preprocessorTest ;
+: lT lispTest ;
+: basicT ppT loT bT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 ; //x64 ;
+basicT
+: itypes "namespaces/types.csl" include ;
+//itypes
+//cST
+#endif
+;d
+2 + 7 assertStkChk // stack checking
+//lisp

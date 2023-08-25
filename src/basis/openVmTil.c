@@ -14,7 +14,7 @@
 // cflr : C, Forth, Lisp, reason
 // til : a toolkit for implementing languages (maybe even a compiler compiler) based on these ideas,
 // cfrtil : an old name for csl
-// !! this is only a prototype !!
+// !! this is only a prototype : it is still rough in spots !!
 
 OpenVmTil * _O_ ;
 

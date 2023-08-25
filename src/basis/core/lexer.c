@@ -68,6 +68,7 @@ Lexer_ParseToken_ToWord ( Lexer * lexer, byte * token, int64 tsrli, int64 scwi )
     return word ;
 }
 
+// csl preprocessor - string (macros) defines only
 int64
 Lexer_StringMacros_Do ( Lexer * lexer )
 {
