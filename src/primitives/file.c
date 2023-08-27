@@ -62,7 +62,7 @@ File_Open ( )
     if ( file == NULL )
     {
         perror ( "\nFile_Open error : " ) ;
-        CSL_Quit ( ) ;
+        CSL_Quit () ;
     }
     else DataStack_Push (( int64 ) file) ;
 }
@@ -89,7 +89,7 @@ File_Read ( )
             if ( ferror ( file ) )
             {
                 perror ( "\nFile_Read error : " ) ;
-                CSL_Quit ( ) ;
+                CSL_Quit () ;
             }
         }
     }

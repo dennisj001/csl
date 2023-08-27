@@ -407,7 +407,7 @@ CPrimitive CPrimitives [] = {
     { "pause", 0, 0, 0, OpenVmTil_Pause, 0, 0, 0, "System", "Root" },
     { "_pause", 0, 0, 0, OpenVmTil_Pause, 0, 0, 0, "System", "Root" },
     { "registers", 0, 0, 0, _Debugger_CpuState_Show, 0, 0, 0, "System", "Root" },
-    { "lcOn", 0, 0, 0, (block) LC_On, 0, 0, 0, "System", "Root" },
+    { "lcOn", 0, 0, 0, LC_On, 0, 0, 0, "System", "Root" },
     { "lcOff", 0, 0, 0, ( block ) LC_LispNamespacesOff, 0, 0, 0, "System", "Root" },
     { "bnInit", 0, 0, 0, BigNum_Init, PREFIXABLE, 0, 0, "System", "Root" },
     { "pWidth", 0, 0, 0, BigNum_Set_PrintfWidth, 0, 0, 0, "System", "Root" },

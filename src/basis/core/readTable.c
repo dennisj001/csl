@@ -105,7 +105,7 @@ ReadTable_0x03 ( ReadLiner * rl ) //  <CTRL-C>
     {
         ReadTable_Zero ( rl ) ;
     }
-    else CSL_Quit ( ) ;
+    else CSL_Quit () ;
 }
 
 void

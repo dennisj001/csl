@@ -21,9 +21,9 @@ OVT_CheckThrowState ( int64 signal, int64 restartCondition )
 }
 
 // OVT_Throw and related functions should be rethought and/or cleaned up
-
+// this is still somewhat of a mess : just haven't take time to fix
 void
-OVT_Throw ( int signal, int64 restartCondition, Boolean pauseFlag )
+OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
 {
     sigjmp_buf * jb ;
     Word * eword ;
@@ -34,7 +34,7 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pauseFlag )
     }
     else
     {
-        _OpenVmTil_ShowExceptionInfo ( ) ;
+        if ( ! pausedFlag ) _OpenVmTil_ShowExceptionInfo ( ) ;
         if ( signal )
         {
             if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) || ( signal == SIGHUP ) ) OVT_Exit ( ) ;
@@ -52,7 +52,7 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pauseFlag )
                 {
                     jb = & _CSL_->JmpBuf0 ;
                     OpenVmTil_ShowExceptionInfo ( ) ;
-                    pauseFlag ++ ;
+                    pausedFlag ++ ;
                     OVT_SetRestartCondition ( _O_, ABORT ) ;
                 }
                 else OVT_SetRestartCondition ( _O_, INITIAL_START ) ;
@@ -72,11 +72,14 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pauseFlag )
             ( jb == & _CSL_->JmpBuf0 ) ? "reseting csl" : "restarting OpenVmTil",
             ( _O_->Signal == SIGSEGV ) ? ": SIGSEGV" : "", Context_Location ( ),
             ( eword ? ( eword->S_ContainingNamespace ? eword->S_ContainingNamespace->Name : ( byte* ) "" ) : ( byte* ) "" ), ( eword ? eword->Name : ( byte* ) "" ) ) ;
-        if ( pauseFlag && ( _O_->SignalExceptionsHandled < 2 ) && ( _O_->SigSegvs < 2 ) )
+        if ( ! pausedFlag )
         {
-            if ( OVT_Pause ( 0, _O_->SignalExceptionsHandled ) ) return ;
+            if ( ( _O_->SignalExceptionsHandled < 2 ) && ( _O_->SigSegvs < 2 ) )
+            {
+                if ( OVT_Pause ( 0, _O_->SignalExceptionsHandled ) ) return ;
+            }
+            else if ( _O_->SigSegvs < 3 ) _OVT_SimpleFinal_Key_Pause ( _O_, "OVT_Throw" ) ;
         }
-        else if ( _O_->SigSegvs < 3 ) _OVT_SimpleFinal_Key_Pause ( _O_, "OVT_Throw" ) ;
     }
 jump:
     _OVT_SigLongJump ( jb ) ;
@@ -223,7 +226,7 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
                     byte * msg = ( byte * ) "Quit to interpreter loop from pause?" ;
                     iPrintf ( "\n%s : 'q' to (q)uit : any other key to cancel%s", msg, c_gd ( "\n-> " ) ) ;
                     key = Key ( ) ;
-                    if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, CSL_Quit ( ) ;
+                    if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _CSL_Quit ( 1 ) ;
                     //goto done ;
                     break ;
                 }
@@ -337,7 +340,7 @@ OVT_SetRestartCondition ( OpenVmTil *ovt, int64 restartCondition )
 // OVT_Throw needs to be reworked ???
 
 void
-OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondition, int64 infoFlag )
+OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondition, int64 infoFlag, int64 pauseFlag )
 {
     _O_->ExceptionMessage = excptMessage ;
     _O_->Thrown = restartCondition ;
@@ -347,13 +350,13 @@ OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondi
     {
         if ( OpenVmTil_ShowExceptionInfo ( ) ) return ;
     }
-    OVT_Throw ( _O_->Signal, restartCondition, 1 ) ;
+    OVT_Throw ( _O_->Signal, restartCondition, pauseFlag ) ;
 }
 
 void
-_OpenVmTil_LongJmp_WithMsg ( int64 restartCondition, byte * msg )
+_OpenVmTil_LongJmp_WithMsg ( int64 restartCondition, byte * msg, int64 pauseFlag )
 {
-    OpenVmTil_Throw ( msg, 0, restartCondition, 0 ) ;
+    OpenVmTil_Throw ( msg, 0, restartCondition, 0, pauseFlag ) ;
 }
 
 void
@@ -396,22 +399,22 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
 {
     AlertColors ;
     _O_->ExceptionCode = exceptionCode ;
-    iPrintf ( "\n\nCSL_Exception at %s : %s\n", Context_Location ( ), message ? message : (byte*) "") ;
+    iPrintf ( "\n\nCSL_Exception at %s : %s\n", Context_Location ( ), message ? message : ( byte* ) "" ) ;
     switch ( exceptionCode )
     {
         case CASE_NOT_LITERAL_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Syntax Error : \"case\" only takes a literal/constant as its parameter after the block", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Syntax Error : \"case\" only takes a literal/constant as its parameter after the block", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case DEBUG_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Debug Error : User is not in debug mode", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Debug Error : User is not in debug mode", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case OBJECT_REFERENCE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Object Reference Error", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Object Reference Error", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case OBJECT_SIZE_ERROR:
@@ -419,107 +422,107 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
             byte * b = Buffer_DataCleared ( _CSL_->ScratchB2 ) ;
             sprintf ( ( char* ) b, "Exception : Warning : Class object size is 0. Did you declare 'size' for %s? ",
                 _Context_->CurrentlyRunningWord->ContainingNamespace->Name ) ;
-            OpenVmTil_Throw ( b, 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( b, 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case STACK_OVERFLOW:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Overflow", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Overflow", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case STACK_UNDERFLOW:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Underflow", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Underflow", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case STACK_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Error", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Stack Error", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case SEALED_NAMESPACE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : New words can not be added to sealed namespaces", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : New words can not be added to sealed namespaces", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case NAMESPACE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Namespace (Not Found?) Error", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Namespace (Not Found?) Error", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case SYNTAX_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Syntax Error", message, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Syntax Error", message, restartCondition, 1, 0 ) ;
             break ;
         }
         case NESTED_COMPILE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Nested Compile Error", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Nested Compile Error", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case COMPILE_TIME_ONLY:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Compile Time Use Only", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Compile Time Use Only", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case BUFFER_OVERFLOW:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Buffer Overflow", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Buffer Overflow", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case MEMORY_ALLOCATION_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Memory Allocation Error", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Memory Allocation Error", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case LABEL_NOT_FOUND_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Word not found. Misssing namespace qualifier?", 0, QUIT, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Word not found. Misssing namespace qualifier?", 0, QUIT, 1, 0 ) ;
             break ;
         }
         case NOT_A_KNOWN_OBJECT:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Not a known object", message, QUIT, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Not a known object", message, QUIT, 1, 0 ) ;
             break ;
         }
         case ARRAY_DIMENSION_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Array has no dimensions!?", 0, QUIT, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Array has no dimensions!?", 0, QUIT, 1, 0 ) ;
             break ;
         }
         case INLINE_MULTIPLE_RETURN_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Multiple return points in a inlined function", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Multiple return points in a inlined function", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case MACHINE_CODE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : in machine coding", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : in machine coding", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case VARIABLE_NOT_FOUND_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Variable not found error", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Variable not found error", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case USEAGE_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Useage Error", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Useage Error", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case FIX_ME_ERROR:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Fix Me", 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Fix Me", 0, restartCondition, 1, 0 ) ;
             break ;
         }
         case OUT_OF_CODE_MEMORY:
         {
-            OpenVmTil_Throw ( ( byte* ) "Exception : Out of Code Memory : Increase Code Memory Size for Startup!!", 0, INITIAL_START, 1 ) ;
+            OpenVmTil_Throw ( ( byte* ) "Exception : Out of Code Memory : Increase Code Memory Size for Startup!!", 0, INITIAL_START, 1, 0 ) ;
             break ;
         }
         default:
         {
-            OpenVmTil_Throw ( message, 0, restartCondition, 1 ) ;
+            OpenVmTil_Throw ( message, 0, restartCondition, 1, 0 ) ;
             break ;
         }
     }
@@ -529,37 +532,43 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
 void
 CSL_SystemBreak ( )
 {
-    _OpenVmTil_LongJmp_WithMsg ( BREAK, ( byte* ) "System.interpreterBreak : returning to main interpreter loop." ) ;
+    _OpenVmTil_LongJmp_WithMsg ( BREAK, ( byte* ) "System.interpreterBreak : returning to main interpreter loop.", 0 ) ;
+}
+
+void
+_CSL_Quit ( int64 pauseFlag )
+{
+    _OpenVmTil_LongJmp_WithMsg ( QUIT, ( byte* ) "Quit : Session Memory, temporaries, are reset.", pauseFlag ) ;
 }
 
 void
 CSL_Quit ( )
 {
-    _OpenVmTil_LongJmp_WithMsg ( QUIT, ( byte* ) "Quit : Session Memory, temporaries, are reset." ) ;
+    _CSL_Quit ( 0 ) ;
 }
 
 void
 CSL_Abort ( )
 {
-    _OpenVmTil_LongJmp_WithMsg ( ABORT, ( byte* ) "Abort : Session Memory and the DataStack are reset (as in a cold restart)." ) ;
+    _OpenVmTil_LongJmp_WithMsg ( ABORT, ( byte* ) "Abort : Session Memory and the DataStack are reset (as in a cold restart).", 0 ) ;
 }
 
 void
 CSL_DebugStop ( )
 {
-    _OpenVmTil_LongJmp_WithMsg ( STOP, ( byte* ) "Stop : Debug Stop. " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( STOP, ( byte* ) "Stop : Debug Stop. ", 0 ) ;
 }
 
 void
 CSL_ResetAll ( )
 {
-    _OpenVmTil_LongJmp_WithMsg ( RESET_ALL, ( byte* ) "ResetAll. " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( RESET_ALL, ( byte* ) "ResetAll. ", 0 ) ;
 }
 
 void
 CSL_Restart ( )
 {
-    _OpenVmTil_LongJmp_WithMsg ( RESTART, ( byte* ) "Restart. " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( RESTART, ( byte* ) "Restart. ", 0 ) ;
 }
 
 void
@@ -573,7 +582,7 @@ CSL_WarmInit ( )
 void
 CSL_RestartInit ( )
 {
-    _OpenVmTil_LongJmp_WithMsg ( RESET_ALL, ( byte* ) "Restart Init... " ) ;
+    _OpenVmTil_LongJmp_WithMsg ( RESET_ALL, ( byte* ) "Restart Init... ", 0 ) ;
 }
 
 void
@@ -581,7 +590,7 @@ CSL_FullRestart ( )
 {
     _O_->Signal = 0 ;
     SetState ( _O_, OVT_THROW, false ) ;
-    _OpenVmTil_LongJmp_WithMsg ( INITIAL_START, ( byte* ) "Full Initial Re-Start : ..." ) ;
+    _OpenVmTil_LongJmp_WithMsg ( INITIAL_START, ( byte* ) "Full Initial Re-Start : ...", 0 ) ;
 }
 
 void
@@ -591,7 +600,7 @@ CSL_FullRestartComplete ( )
     _O_->State = OVT_FRC ;
     iPrintf ( "\nHistory will be deleted with this FullRestartComplete... \n" ) ;
     //_O_->Verbosity = 0 ;
-    _OpenVmTil_LongJmp_WithMsg ( COMPLETE_INITIAL_START, ( byte* ) "Complete Initial Re-Start : ...\n" ) ;
+    _OpenVmTil_LongJmp_WithMsg ( COMPLETE_INITIAL_START, ( byte* ) "Complete Initial Re-Start : ...\n", 0 ) ;
 }
 
 void

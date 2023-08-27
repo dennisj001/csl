@@ -134,7 +134,7 @@ bnOff
 //"\nfib 30 =" ps (fib 30)
 #endif    
 #endif
-"\ncsl : scheme/lisp : type \'x\' or \'exit\' or \'bye\' to exit ...\n" ps
+"\ncsl : scheme/lisp : type \'x\' or \'exit\' to exit ...\n" ps
 
 #if 0 //lisp
 (defun (fib n)
