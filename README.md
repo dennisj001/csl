@@ -1,4 +1,4 @@
-CSL really has no grammar, just one word after another - like the language forth with namespaces ('vocabulary') changing the 'context' with some words being defined as operating infix or prefix. It may be more powerful and flexible than a context-sensitive language in the Chomsky hierarchy of language types. For me it's an exercise in language design, theoretical and applied computer science - a renamed outgrowth of openVm and openvmtil64. I originally designed this with the thought that it could be useful for natural language processing (NLP), language translation, ai, gaming, etc. and also for language design.
+CSL really has no grammar, just one word after another - like the language forth with namespaces ('vocabulary') changing the 'context' with some words being defined as operating infix or prefix. It may be considered syntactically more powerful and flexible than a context-sensitive language in the Chomsky hierarchy of language types, certainly it is Turing complete. For me it's an exercise in language design, theoretical and applied computer science - a renamed outgrowth of openVm and openvmtil64. I originally designed this with the thought that it could be useful for natural language processing (NLP), language translation, ai, gaming, audio, etc. and also for language design.
 
 openVm : Tookit for Implementing (and exploring) Languages - a bottom-up, optimizing native code vm, that is an extensible, contatenative, RPN, scripting language 
 
@@ -18,9 +18,9 @@ A minimal, extensible, cooperative, sustainable,  all level capable language - m
 
 *Currently working : * a concatenative, (forth like) interpreter with an optimizing native code x64, register machine, compiler, single instruction stepping x64 debugger (using udis for instruction disassembly) with breakpoints, classes - namespaces, interpreter, history and tab completion, bignums, nested locals, readline, raw readTable, lexical readTable, minimal C and lisp/scheme compiler
 
-*Current Focus and Direction* : 
-  # self-hosting : list objects and a lisp like eval, ometa/yacc/bison support : support for a midlevel language modeled after scheme/lisp/racket to support a higher level modeled after sml/ocaml/haskell and prolog/teyjus/hol + ometa/peg/yacc/bison for a sort of applied unified field theory of programming languages, similar in vision to *maru* by *VPRI-Ian Piumarta* ; we have a forth like system and we are adding c/lisp/scheme/smalltalk/prolog semantics and syntax.
-  # OS interface - linux/plan9/etc : file, terminal, gui, process/threads, audio, opengl, browsers, html5, flash, game engine, etc.
+*Current Visionary Focus and Direction* :
+  - self-hosting : list objects and a lisp like eval, ometa/yacc/bison support : support for a midlevel language modeled after scheme/lisp/racket to support a higher level modeled after sml/ocaml/haskell and prolog/teyjus/hol + ometa/peg/yacc/bison for a sort of applied unified field theory of programming languages, similar in vision to *maru* by *VPRI-Ian Piumarta* ; we have a forth like system and we are adding c/lisp/scheme/smalltalk/prolog semantics and syntax.
+  - OS interface - linux/plan9/etc : file, terminal, gui, process/threads, audio, opengl, browsers, html5, flash, game engine, etc.
 
 *Current focus (to do) : * minimal bootstrap, self-hosting, patterns/sets, logic, tail call, type checking, gui
 

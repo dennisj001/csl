@@ -41,4 +41,4 @@ bnOff lcOn
 "\n cond :: should show 7 7 7 7 7 11\n" ps
 //pause
 #endif
-//(load "./namespaces/lcinit.0.csl")
+(load "namespaces/lcinit.0.csl")

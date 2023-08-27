@@ -13,7 +13,7 @@ pwi fibcl
 "\nfibcl 20 = " ps
 (fibcl 20)
 //pause
-//(load "namespaces/lcinit.csl")
-(load "namespaces/lcinit.0.csl")
+(load "namespaces/lcinit.csl")
+//(load "namespaces/lcinit.0.csl")
 3 time // getTime
 

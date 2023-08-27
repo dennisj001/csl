@@ -497,9 +497,11 @@ doLisp 0 =
     
 // ========controls===========
 
-Lisp
-: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
 Root
+: lispInitNamespace "namespaces/compiler/lcinit.csl" ;
+: lisp lispInitNamespace _lisp ;  // demo of another way 
+//: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
+
 dbgOff
 //lisp
 //scOn

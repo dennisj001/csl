@@ -5,6 +5,7 @@ _Repl ( Context * cntx, block repl )
 {
     Lexer * lexer = cntx->Lexer0 ;
     ReadLiner * rl = lexer->ReadLiner0 ;
+    byte * token ;
 
     byte * snp = rl->NormalPrompt, *sap = rl->AltPrompt ;
     SetState ( _LC_, LC_REPL, true ) ;
@@ -31,9 +32,9 @@ _Repl ( Context * cntx, block repl )
             //LC_SaveStack ( ) ; // ?!? maybe we should do this stuff differently : literals are pushed on the stack by the interpreter
             ReadLine_GetLine () ;
             //if ( strstr ( ( char* ) rl->InputLineString, ".." ) || strstr ( ( char* ) rl->InputLineString, "bye" ) || strstr ( ( char* ) rl->InputLineString, "exit" )  || strstr ( ( char* ) rl->InputLineString, "x" ) ) 
-            if ( strstr ( ( char* ) rl->InputLineString, ".." ) || strstr ( ( char* ) rl->InputLineString, "bye" ) || strstr ( ( char* ) rl->InputLineString, "exit" ) ) 
+            if ( strstr ( ( char* ) rl->InputLineString, ".." ) || strstr ( ( char* ) rl->InputLineString, "exit" )  || strstr ( ( char* ) rl->InputLineString, "quit" ) || strstr ( ( char* ) rl->InputLineString, "bye" ) ) 
             {
-                Lexer_ReadToken ( _Lexer_ ) ;
+                token = Lexer_ReadToken ( _Lexer_ ) ;
                 goto done ;
             }
             repl ( ) ;
@@ -53,5 +54,6 @@ done:
     SetState ( _LC_, LC_REPL, false ) ;
     iPrintf ( "\n_Repl Exiting ... " ) ;
     DefaultColors ;
+    if (String_Equal ( token, "bye") ) OVT_Exit () ;
 }
 

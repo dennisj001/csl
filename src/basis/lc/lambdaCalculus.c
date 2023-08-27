@@ -316,7 +316,7 @@ void
 _LO_Repl0 ( Context * cntx, byte * initFilename )
 {
     SetState ( _Context_, LISP_MODE, true ) ;
-    iPrintf ( "\ncsl lisp : type 'exit' or 'bye' to exit\n including init file :: './namespaces/compiler/lcinit.csl'\n" ) ;
+    iPrintf ( "\ncsl lisp : type '..', 'exit', 'quit to exit lisp interpreter\n including init file :: './namespaces/compiler/lcinit.csl'\n" ) ;
     //if ( ! initFilename ) initFilename = ( byte* ) "namespaces/compiler/lcinit.csl" ; //
     LC_ReadInitFile ( initFilename ) ;
     //iPrintf ( "\ncsl lisp : (type 'exit' or 'bye' to exit)\n including init file :: './namespaces/compiler/lcinit.0.csl'\n" ) ;

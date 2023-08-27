@@ -18,9 +18,9 @@ A minimal, extensible, cooperative, sustainable,  all level capable language - m
 
 *Currently working : * a concatenative, (forth like) interpreter with an optimizing native code x64, register machine, compiler, single instruction stepping x64 debugger (using udis for instruction disassembly) with breakpoints, classes - namespaces, interpreter, history and tab completion, bignums, nested locals, readline, raw readTable, lexical readTable, minimal C and lisp/scheme compiler
 
-*Current Focus and Direction* : 
-  # self-hosting : list objects and a lisp like eval, ometa/yacc/bison support : support for a midlevel language modeled after scheme/lisp/racket to support a higher level modeled after sml/ocaml/haskell and prolog/teyjus/hol + ometa/peg/yacc/bison for a sort of applied unified field theory of programming languages, similar in vision to *maru* by *VPRI-Ian Piumarta* ; we have a forth like system and we are adding c/lisp/scheme/smalltalk/prolog semantics and syntax.
-  # OS interface - linux/plan9/etc : file, terminal, gui, process/threads, audio, opengl, browsers, html5, flash, game engine, etc.
+*Current Visionary Focus and Direction* :
+  - self-hosting : list objects and a lisp like eval, ometa/yacc/bison support : support for a midlevel language modeled after scheme/lisp/racket to support a higher level modeled after sml/ocaml/haskell and prolog/teyjus/hol + ometa/peg/yacc/bison for a sort of applied unified field theory of programming languages, similar in vision to *maru* by *VPRI-Ian Piumarta* ; we have a forth like system and we are adding c/lisp/scheme/smalltalk/prolog semantics and syntax.
+  - OS interface - linux/plan9/etc : file, terminal, gui, process/threads, audio, opengl, browsers, html5, flash, game engine, etc.
 
 *Current focus (to do) : * minimal bootstrap, self-hosting, patterns/sets, logic, tail call, type checking, gui
 

@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.938.140" ) 
+#define VERSION ((byte*) "0.938.152" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // CT/Oop (Category Theory, Object Oriented Programming, Type Theory), 
@@ -14,7 +14,7 @@
 // cflr : C, Forth, Lisp, reason
 // til : a toolkit for implementing languages (maybe even a compiler compiler) based on these ideas,
 // cfrtil : an old name for csl
-// !! this is only a prototype : it is still rough in spots !!
+// !! this is only a prototype : it is still rough in spots; it needs to be extended, improved, and rewritten (at least in some places) !!
 
 OpenVmTil * _O_ ;
 
