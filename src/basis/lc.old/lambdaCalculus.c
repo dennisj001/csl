@@ -199,9 +199,8 @@ _LO_CopyOne ( ListObject * l0, uint64 allocType )
         // nb. since we are coping the car/cdr are the same as the original so we must clear them else when try to add to the list and remove first it will try to remove from a wrong list so ...
         l1->S_Car = 0 ;
         l1->S_Cdr = 0 ;
-        if ( l0->W_LispAttributes & ( LIST | LIST_NODE ) ) l1->W_LispAttributes |= ( LIST | LIST_NODE ) ;
     }
-     return l1 ;
+    return l1 ;
 }
 
 // copy a whole list or a single node

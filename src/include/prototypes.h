@@ -1726,7 +1726,7 @@ void _LinuxInit(struct termios *savedTerminalAttributes);
 void LinuxInit(void);
 /* src/basis/exception.c */
 int64 OVT_CheckThrowState(int64 signal, int64 restartCondition);
-void OVT_Throw(int signal, int64 restartCondition, Boolean pauseFlag);
+void OVT_Throw(int signal, int64 restartCondition, Boolean pausedFlag);
 void _OpenVmTil_ShowExceptionInfo(void);
 int64 OpenVmTil_ShowExceptionInfo(void);
 void OVT_PauseInterpret(Context *cntx, byte key);

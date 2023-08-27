@@ -54,7 +54,7 @@ LC_Debug_Output ( LambdaCalculus * lc )
             }
             case LC_EVAL:
             {
-                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "LC_Eval : lc->L0 = ", "", 1 ) ; //, iPrintf ( "%s", lc->L0->Name ) ;
+                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "LC_Eval : l0 = ", "", 1 ) ; //, iPrintf ( "%s", lc->L0->Name ) ;
                 break ;
             }
             case LC_SPECIAL_FUNCTION:
@@ -64,22 +64,17 @@ LC_Debug_Output ( LambdaCalculus * lc )
             }
             case LC_EVAL_LIST:
             {
-                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "LC_EvalList : lc->L0 = ", "", 1 ) ;
+                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "LC_EvalList : l0 = ", "", 1 ) ;
                 break ;
             }
             case LC_EVAL_SYMBOL:
             {
-                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "_LC_EvalSymbol : lc->L0 = ", "", 1 ) ;
+                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "_LC_EvalSymbol : l0 = ", "", 1 ) ;
                 break ;
             }
             case LC_COND:
             {
                 _LO_PrintWithValue ( lc->L0, "LO_Cond : lc->L0 = ", "", 1 ) ;
-                break ;
-            }
-            case LC_SUBSTITUTE:
-            {
-                _LO_PrintWithValue ( lc->FunctionParameters, "LO_Substitute : lc->FunctionParameters = ", "", 1 ), _LO_PrintWithValue ( lc->FunctionArgs, " : funcCallValues = ", "", 0 ) ;
                 break ;
             }
             default: break ;
@@ -116,7 +111,7 @@ LC_Debug_Output ( LambdaCalculus * lc )
             {
                 if ( Here > lc->LC_Here ) compiled = true ;
                 lc->LC_Here = Here ;
-                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "LC_Eval : lc->L0 = ", "", 1 ) ;
+                if ( lc->L0 ) _LO_PrintWithValue ( lc->L0, "LC_Eval : l0 = ", "", 1 ) ;
                 else if ( lc->Lread ) _LO_PrintWithValue ( lc->Lread, "LC_Eval : lread = ", "", 1 ) ;
                 //if ( lc->L1 ) _LO_PrintWithValue ( lc->L1, " : l1 = ", "", 0 ), ( Compiling && compiled ) ? iPrintf ( " : Compiled" ) : 0 ;
                 //_LO_PrintWithValue ( lc->L1, " : l1 = ", "", 0 ), ( Compiling && compiled ) ? iPrintf ( " : Compiled" ) : 0 ;
@@ -134,7 +129,7 @@ LC_Debug_Output ( LambdaCalculus * lc )
             }
             case LC_SUBSTITUTE:
             {
-                _LO_PrintWithValue ( lc->FunctionParameters, "LO_Substitute : lc->FunctionParameters = ", "", 1 ), _LO_PrintWithValue ( lc->FunctionArgs, " : funcCallValues = ", "", 0 ) ;
+                _LO_PrintWithValue ( lc->FunctionParameters, "LO_Substitute : lambdaParameters = ", "", 1 ), _LO_PrintWithValue ( lc->FunctionArgs, " : funcCallValues = ", "", 0 ) ;
                 break ;
             }
             case LO_DEFINE:
@@ -155,7 +150,7 @@ LC_Debug_Output ( LambdaCalculus * lc )
             }
             case LC_SPECIAL_FUNCTION:
             {
-                _LO_PrintWithValue ( lc->L1, "LC_SpecialFuncion : lc->L1 = ", "", 1 ) ; 
+                _LO_PrintWithValue ( lc->L1, "LC_SpecialFuncion : l1 = ", "", 1 ) ; 
                 break ;
             }
             default: break ;

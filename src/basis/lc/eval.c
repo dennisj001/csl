@@ -1,10 +1,9 @@
 #include "../../include/csl.h"
 
 Boolean
-LO_IsQuoted ( ListObject *l0 )
+LO_IsQuoted ( ListObject *lo )
 {
-    _LC_->L0 = l0 ;
-    return (( _LC_->L0->State & QUOTED ) || ( ( _LC_->L0->State & QUASIQUOTED ) && ( ! ( _LC_->L0->State & ( UNQUOTED | UNQUOTE_SPLICE ) ) ) ) ) ;
+    return (( lo->State & QUOTED ) || ( ( lo->State & QUASIQUOTED ) && ( ! ( lo->State & ( UNQUOTED | UNQUOTE_SPLICE ) ) ) ) ) ;
 }
 
 // LC_Eval is bringing several functions into one : /// pre = 0.938.024 == ///
@@ -12,18 +11,18 @@ LO_IsQuoted ( ListObject *l0 )
 ListObject *
 LC_Eval ( ListObject *l0, ListObject *locals, Boolean applyFlag )
 {
-     _LC_->EvalDepth ++ ;
+    _LC_->EvalDepth ++ ;
     _LC_->ApplyFlag = applyFlag ;
     _LC_->Locals = locals ;
-     return _LC_Eval ( l0 ) ;
+    return _LC_Eval ( l0 ) ;
 }
 
 ListObject *
 _LC_Eval ( ListObject *l0 )
 {
-    if ( _LC_->L0 = l0 )
+    _LC_->L0 = l0 ;
+    if ( _LC_->L0 )
     {
-        //_LC_->L0 = LO_CopyOne ( _LC_->L0 ) ;
         _LC_->L1 = _LC_->L0 ; // default 
         SetState ( _LC_, LC_EVAL, true ) ;
 
@@ -33,55 +32,12 @@ _LC_Eval ( ListObject *l0 )
         if ( LO_IsQuoted ( _LC_->L0 ) ) return _LC_->L0 ;
         else
         {
-            if ( _LC_->L0->W_LispAttributes & T_LISP_SYMBOL )
-            {
-                if ( _LC_->L1 )
-                {
-                    LC_Debug ( _LC_, LC_EVAL_SYMBOL, 1 ) ;
-                    _LC_->LWord = LC_FindWord ( _LC_->L1->Name ) ;
-                    if ( _LC_->LWord )
-                    {
-                        _LC_->LWord->W_SC_Index = _LC_->L1->W_SC_Index ;
-                        _LC_->LWord->W_RL_Index = _LC_->L1->W_RL_Index ;
-                        if ( _LC_->LWord->W_LispAttributes & T_LAMBDA )
-                        {
-                            _LC_->Sc_Word = _LC_->L1 = _LC_->LWord ;
-                            _LC_->LWord->State = _LC_->L1->State ;
-                        }
-                        else if ( _LC_->LWord->W_LispAttributes & T_LC_DEFINE ) _LC_->L1 = ( ListObject * ) _LC_->LWord->Lo_Value ;
-                        else if ( ( _LC_->LWord->W_MorphismAttributes & ( CPRIMITIVE | CSL_WORD ) )
-                            || ( _LC_->LWord->W_ObjectAttributes & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | NAMESPACE_VARIABLE ) )
-                            || ( _LC_->LWord->W_LispAttributes & ( T_LISP_COMPILED_WORD ) ) )
-                        {
-                            _LC_->L1->Lo_Value = _LC_->LWord->W_Value ;
-                            _LC_->L1->Lo_CSL_Word = _LC_->LWord ;
-                            _LC_->L1->W_MorphismAttributes |= _LC_->LWord->W_MorphismAttributes ;
-                            _LC_->L1->W_ObjectAttributes |= _LC_->LWord->W_ObjectAttributes ;
-                            _LC_->L1->W_LispAttributes |= _LC_->LWord->W_LispAttributes ;
-                        }
-                        else
-                        {
-                            _LC_->LWord->State = _LC_->L1->State ;
-                            _LC_->L1 = _LC_->LWord ;
-                        }
-                        if ( ( CompileMode ) && LO_CheckBeginBlock ( ) ) _LO_CompileOrInterpret_One ( _LC_->L1, 0 ) ;
-                        if ( _LC_->LWord->W_MorphismAttributes & COMBINATOR ) LC_InitForCombinator ( _LC_ ) ;
-                        if ( ( ! ( _LC_->LWord->W_LispAttributes & T_LAMBDA ) ) )
-                        {
-                            _LC_->LWord->W_MySourceCodeWord = _LC_->Sc_Word ;
-                            _LC_->L1->W_MySourceCodeWord = _LC_->Sc_Word ;
-                        }
-                    }
-                }
-                _LC_->L1 = LO_CopyOne ( _LC_->L1 ) ;
-                LC_Debug ( _LC_, LC_EVAL_SYMBOL, 0 ) ;
-                return _LC_->L1 ;
-            }
-            else if ( _LC_->L0->W_LispAttributes & ( LIST | LIST_NODE ) )
+            if ( _LC_->L0->W_LispAttributes & ( LIST | LIST_NODE ) )
                 ///LC_EvalList ( )
             {
                 _LC_->EvalListDepth ++ ;
 evalList:
+                //SetState ( _LC_, LC_EVAL_LIST, true ) ;
                 LO_CheckEndBlock ( ) ;
                 LO_CheckBeginBlock ( ) ;
                 _LC_->ParenLevel ++ ;
@@ -110,8 +66,9 @@ evalList:
                                 lnext = LO_Next ( lnode ) ;
                                 //le = LC_Eval ( lnode, locals, _LC_->ApplyFlag ) ; // _LC_->Locals could be changed by eval
                                 _LC_->Locals = locals ; // _LC_->Locals could be changed by eval
-                                le = _LC_Eval ( lnode) ; 
-                                LO_AddToTail ( l1, LO_CopyOne ( le ) ) ;
+                                le = _LC_Eval ( lnode ) ;
+                                //LO_AddToTail ( l1, LO_CopyOne ( le ) ) ;
+                                LO_AddToTail ( l1, le ) ;
                             }
                         }
                         _LC_->Largs = l1 ;
@@ -151,7 +108,11 @@ evalList:
                         else
                         {
                             //these cases seems common sense for what these situations should mean and seem to add something positive to the usual lisp/scheme semantics !?
-                            if ( ! _LC_->Largs ) _LC_->L1 = lfunction ;
+                            if ( ! _LC_->Largs ) 
+                            {
+                                _LC_->L1 = lfunction ;
+                                //LC_Debug ( _LC_, LC_APPLY, 0 ) ;
+                            }
                             else
                             {
                                 LO_AddToHead ( _LC_->Largs, lfunction ) ;
@@ -161,14 +122,52 @@ evalList:
                         }
                         SetState ( _LC_, LC_APPLY, false ) ;
                         LC_Debug ( _LC_, LC_APPLY, 0 ) ;
-                        //return _LC_->L1 ;
-                        //break ;
                     }
                 }
-
                 LC_Debug ( _LC_, LC_EVAL_LIST, 0 ) ;
-                //return _LC_->L1 ;
-                //break ;
+                SetState ( _LC_, LC_EVAL_LIST, false ) ;
+            }
+            else if ( _LC_->L0->W_LispAttributes & T_LISP_SYMBOL )
+            {
+                if ( _LC_->L1 )
+                {
+                    LC_Debug ( _LC_, LC_EVAL_SYMBOL, 1 ) ;
+                    _LC_->LWord = LC_FindWord ( _LC_->L1->Name ) ;
+                    if ( _LC_->LWord )
+                    {
+                        _LC_->LWord->W_SC_Index = _LC_->L1->W_SC_Index ;
+                        _LC_->LWord->W_RL_Index = _LC_->L1->W_RL_Index ;
+                        if ( _LC_->LWord->W_LispAttributes & T_LAMBDA )
+                        {
+                            _LC_->Sc_Word = _LC_->L1 = _LC_->LWord ;
+                            _LC_->LWord->State = _LC_->L1->State ;
+                        }
+                        else if ( _LC_->LWord->W_LispAttributes & T_LC_DEFINE ) _LC_->L1 = ( ListObject * ) _LC_->LWord->Lo_Value ;
+                        else if ( ( _LC_->LWord->W_MorphismAttributes & ( CPRIMITIVE | CSL_WORD ) )
+                            || ( _LC_->LWord->W_ObjectAttributes & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | NAMESPACE_VARIABLE ) )
+                            || ( _LC_->LWord->W_LispAttributes & ( T_LISP_COMPILED_WORD ) ) )
+                        {
+                            _LC_->L1->Lo_Value = _LC_->LWord->W_Value ;
+                            _LC_->L1->Lo_CSL_Word = _LC_->LWord ;
+                            _LC_->L1->W_MorphismAttributes |= _LC_->LWord->W_MorphismAttributes ;
+                            _LC_->L1->W_ObjectAttributes |= _LC_->LWord->W_ObjectAttributes ;
+                            _LC_->L1->W_LispAttributes |= _LC_->LWord->W_LispAttributes ;
+                        }
+                        else
+                        {
+                            _LC_->LWord->State = _LC_->L1->State ;
+                            _LC_->L1 = _LC_->LWord ;
+                        }
+                        if ( ( CompileMode ) && LO_CheckBeginBlock ( ) ) _LO_CompileOrInterpret_One ( _LC_->L1, 0 ) ;
+                        if ( _LC_->LWord->W_MorphismAttributes & COMBINATOR ) LC_InitForCombinator ( _LC_ ) ;
+                        if ( ( ! ( _LC_->LWord->W_LispAttributes & T_LAMBDA ) ) )
+                        {
+                            _LC_->LWord->W_MySourceCodeWord = _LC_->Sc_Word ;
+                            _LC_->L1->W_MySourceCodeWord = _LC_->Sc_Word ;
+                        }
+                    }
+                }
+                LC_Debug ( _LC_, LC_EVAL_SYMBOL, 0 ) ;
             }
             else if ( GetState ( _LC_, LC_DEBUG_ON ) ) CSL_Show_SourceCode_TokenLine ( _LC_->L0, "LC_Debug : ", 0, _LC_->L0->Name, "" ) ;
         }
@@ -176,6 +175,7 @@ evalList:
         LC_Debug ( _LC_, LC_EVAL, 0 ) ;
     }
     _LC_->EvalDepth -- ;
+    _LC_->L1 = LO_CopyOne ( _LC_->L1 ) ;
     return _LC_->L1 ;
 }
 
