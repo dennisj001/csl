@@ -906,7 +906,6 @@ Compile_CallThru_AdjustRSP ( Boolean reg, Boolean regOrMem )
 void
 Compile_Call ( byte * address )
 {
-
     Compile_MoveImm_To_Reg ( CALL_THRU_REG, ( int64 ) address, CELL ) ;
     _Compile_CallReg ( CALL_THRU_REG, REG ) ;
 }

@@ -1,5 +1,30 @@
 #include "../../include/csl.h"
 
+//#define   LC_Debug( lc, state, flag ) 
+
+#if LC_FUNCTION_VARS
+
+void
+CSL_LC_FindWord ( )
+{
+    byte * name = ( byte * ) _DspReg_ [ 0 ] ;
+    _DspReg_ [ 0 ] = ( int64 ) LC_FindWord ( name ) ;
+}
+
+void
+Compile_CallFunctionVariable ( ListObject * lfunction )
+{
+    DBI_ON ;
+    _Compile_Stack_Push ( DSP, RAX, ( int64 ) lfunction->Name ) ;
+    Compile_Call ( ( byte* ) CSL_LC_FindWord ) ;
+    _Compile_Move_StackN_To_Reg ( RAX, DSP, 0, CELL ) ;
+    Compile_Move_Rm_To_Reg ( RAX, RAX, 0x88, CELL ) ; // 0x88 : Definition offset in Word
+    _Compile_CallReg ( RAX, REG ) ;
+    _Compile_Stack_PushReg ( DSP, RAX, CELL ) ;
+    DBI_OFF ;
+}
+#endif
+
 Boolean
 LO_IsQuoted ( ListObject *lo )
 {
@@ -56,22 +81,33 @@ evalList:
                     {
                         ListObject *lfunction = _LC_Eval ( lfirst ) ; //, _LC_->Locals, _LC_->ApplyFlag ) ;
                         _LC_->Largs0 = LO_Next ( lfirst ) ;
-                        /// _LC_EvalList ( )
-                        ListObject *l1 = 0, *lnode, *lnext, *le, *locals = _LC_->Locals ;
-                        if ( _LC_->Largs0 )
+#if 0                        
+                        _LC_EvalList ( ) ;
+#else                        
+
+                        //void  _LC_EvalList ( )
                         {
-                            l1 = LO_New ( LIST, 0 ) ;
-                            for ( lnode = _LC_->Largs0 ; lnode ; lnode = lnext )
+                            SetState ( _LC_, _LC_EVAL_LIST, true ) ;
+                            LC_Debug ( _LC_, _LC_EVAL_LIST, 1 ) ;
+                            ListObject *l1 = 0, *lnode, *lnext, *le, *locals = _LC_->Locals ;
+                            if ( _LC_->Largs0 )
                             {
-                                lnext = LO_Next ( lnode ) ;
-                                //le = LC_Eval ( lnode, locals, _LC_->ApplyFlag ) ; // _LC_->Locals could be changed by eval
-                                _LC_->Locals = locals ; // _LC_->Locals could be changed by eval
-                                le = _LC_Eval ( lnode ) ;
-                                //LO_AddToTail ( l1, LO_CopyOne ( le ) ) ;
-                                LO_AddToTail ( l1, le ) ;
+                                l1 = LO_New ( LIST, 0 ) ;
+                                for ( lnode = _LC_->Largs0 ; lnode ; lnode = lnext )
+                                {
+                                    lnext = LO_Next ( lnode ) ;
+                                    //le = LC_Eval ( lnode, locals, _LC_->ApplyFlag ) ; // _LC_->Locals could be changed by eval
+                                    _LC_->Locals = locals ; // _LC_->Locals could be changed by eval
+                                    le = _LC_Eval ( lnode ) ;
+                                    //LO_AddToTail ( l1, LO_CopyOne ( le ) ) ;
+                                    LO_AddToTail ( l1, le ) ;
+                                }
                             }
+                            _LC_->Largs = l1 ;
+                            LC_Debug ( _LC_, _LC_EVAL_LIST, 0 ) ;
+                            SetState ( _LC_, _LC_EVAL_LIST, false ) ;
                         }
-                        _LC_->Largs = l1 ;
+#endif                        
                         ///LC_Apply ( )
                         _LC_->Lfunction = lfunction ;
                         SetState ( _LC_, LC_APPLY, true ) ;
@@ -80,7 +116,7 @@ evalList:
                             ( lfunction->W_LispAttributes & ( T_LISP_COMPILED_WORD | T_LC_IMMEDIATE ) ) ) )
                         {
                             ///_LO_Apply ( )
-                            if ( ( ! _LC_->Largs ) && ( lfunction->W_MorphismAttributes & ( CSL_WORD ) ) || ( lfunction->W_LispAttributes & ( T_LC_IMMEDIATE ) ) // allows for lisp.csl macros !? but better logic is probably available
+                            if ( ( !_LC_->Largs ) && ( lfunction->W_MorphismAttributes & ( CSL_WORD ) ) || ( lfunction->W_LispAttributes & ( T_LC_IMMEDIATE ) ) // allows for lisp.csl macros !? but better logic is probably available
                                 || ( lfunction->W_LispAttributes & T_LISP_CSL_COMPILED ) )
                             {
                                 Interpreter_DoWord ( _Context_->Interpreter0, lfunction->Lo_CSL_Word, lfunction->W_RL_Index, lfunction->W_SC_Index ) ;
@@ -106,13 +142,11 @@ evalList:
                             goto evalList ; // save stack
                         }
                         else
+#if ! LC_FUNCTION_VARS                                
+                            //if ( ! LC_CompileMode )
                         {
                             //these cases seems common sense for what these situations should mean and seem to add something positive to the usual lisp/scheme semantics !?
-                            if ( ! _LC_->Largs ) 
-                            {
-                                _LC_->L1 = lfunction ;
-                                //LC_Debug ( _LC_, LC_APPLY, 0 ) ;
-                            }
+                            if ( ! _LC_->Largs ) _LC_->L1 = lfunction ;
                             else
                             {
                                 LO_AddToHead ( _LC_->Largs, lfunction ) ;
@@ -120,6 +154,26 @@ evalList:
                             }
                             if ( ! ( lfunction->W_MorphismAttributes & COMBINATOR ) ) SetState ( _LC_, LC_COMPILE_MODE, false ) ;
                         }
+                        //else
+#else
+                            {
+                                if ( ( ! ( GetState ( _LC_, _LC_EVAL_LIST ) ) ) && ( lfunction->W_LispAttributes & T_LISP_SYMBOL ) && ( GetState ( _LC_, LC_COMPILE_MODE ) ) )
+                                {
+                                    if ( ! ( lfunction->W_LispAttributes & T_LC_FUNCTION_VAR_DONE ) )
+                                    {
+                                        lfunction->W_LispAttributes |= ( T_LC_FUNCTION_VAR ) ;
+                                        //_LO_PrintWithValue ( _LC_->Lread, "LC_Apply : _LC_->Lread = ", "", 1 ) ;
+                                        //_LO_PrintWithValue ( lfunction, "LC_Apply : lfunction = ", "", 1 ) ;
+                                        //_LO_PrintWithValue ( _LC_->Largs, "LC_Apply : _LC_->Largs = ", "", 1 ) ;
+                                        //_LC_->L1 = _LO_Do_FunctionBlock ( ( ListObject * ) lfunction->S_Value, _LC_->Largs ) ;
+                                        LO_CompileOrInterpretArgs ( _LC_->Largs ) ;
+                                        lfunction = Compiler_CopyDuplicatesAndPush ( lfunction, - 1, - 1 ) ;
+                                        Compile_CallFunctionVariable ( lfunction ) ;
+                                        lfunction->W_LispAttributes |= ( T_LC_FUNCTION_VAR_DONE ) ;
+                                    }
+                                }
+                            }
+#endif
                         SetState ( _LC_, LC_APPLY, false ) ;
                         LC_Debug ( _LC_, LC_APPLY, 0 ) ;
                     }
@@ -179,3 +233,26 @@ evalList:
     return _LC_->L1 ;
 }
 
+void
+_LC_EvalList ( )
+{
+    SetState ( _LC_, _LC_EVAL_LIST, true ) ;
+    LC_Debug ( _LC_, _LC_EVAL_LIST, 1 ) ;
+    ListObject *l1 = 0, *lnode, *lnext, *le, *locals = _LC_->Locals ;
+    if ( _LC_->Largs0 )
+    {
+        l1 = LO_New ( LIST, 0 ) ;
+        for ( lnode = _LC_->Largs0 ; lnode ; lnode = lnext )
+        {
+            lnext = LO_Next ( lnode ) ;
+            //le = LC_Eval ( lnode, locals, _LC_->ApplyFlag ) ; // _LC_->Locals could be changed by eval
+            _LC_->Locals = locals ; // _LC_->Locals could be changed by eval
+            le = _LC_Eval ( lnode ) ;
+            //LO_AddToTail ( l1, LO_CopyOne ( le ) ) ;
+            LO_AddToTail ( l1, le ) ;
+        }
+    }
+    _LC_->Largs = l1 ;
+    LC_Debug ( _LC_, _LC_EVAL_LIST, 0 ) ;
+    SetState ( _LC_, _LC_EVAL_LIST, false ) ;
+}

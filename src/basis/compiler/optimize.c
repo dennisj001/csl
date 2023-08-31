@@ -46,6 +46,7 @@
 // for 2 arg ops : STACK_1= arg1 : STACK_0 = arg2 
 
 // CO Compiler_Optimize
+
 int64
 CO_CheckOptimize ( Compiler * compiler, int64 _specialReturn )
 {
@@ -112,8 +113,8 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
                 }
             }
             if ( optInfo->wordn->Definition == CSL_DoubleQuoteMacro ) continue ;
-            else if ( optInfo->wordn->W_MorphismAttributes & ( CATEGORY_OP_LOAD ) 
-                || ( ( ! ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) ) && ( GetState ( _Context_, (LISP_MODE) ) ) )  ) //( GetState ( _Context_, (INFIX_MODE|LISP_MODE) ) ) ) 
+            else if ( optInfo->wordn->W_MorphismAttributes & ( CATEGORY_OP_LOAD )
+                || ( ( ! ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) ) && ( GetState ( _Context_, ( LISP_MODE ) ) ) ) ) //( GetState ( _Context_, (INFIX_MODE|LISP_MODE) ) ) ) 
             {
                 optInfo->rvalue ++ ; //: for recursive peek constructions like @ @ and @ @ @ etc.
                 continue ;
@@ -149,7 +150,7 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
             optInfo->wordArg1 = optInfo->wordn ;
             optInfo->wordArg1Node = optInfo->node ;
             optInfo->wordArg1_rvalue = optInfo->rvalue ? optInfo->rvalue :
-                (( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) ) 
+                ( ( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) )
                 && ( ! ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_EQUAL ) ) ) ) ; // rem : rvalue can be higher than 1 (cf. above for '@ @')
             optInfo->rvalue = 0 ;
             if ( optInfo->wordArg1->W_ObjectAttributes & ( CONSTANT | LITERAL ) )
@@ -173,7 +174,7 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
                 optInfo->wordArg2_literal = true ;
                 optInfo->CO_Imm = optInfo->wordArg2->W_Value ;
             }
-            if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) ) 
+            if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_LOAD ) )
                 && ( ! ( GetState ( _Context_, ( C_SYNTAX | INFIX_MODE | LISP_MODE ) ) ) ) ) optInfo->wordArg2_rvalue ++ ;
             if ( IsWordAttribute ( optInfo->opWord, W_MorphismAttributes, ( CATEGORY_OP_1_ARG | CATEGORY_OP_STACK | CATEGORY_OP_LOAD ) ) ) break ;
         }
@@ -235,6 +236,7 @@ CO_Logic_CheckForOpBetweenParentheses ( CompileOptimizeInfo * optInfo )
 }
 
 // CO Compiler_Optimize
+
 int64
 Compiler_Optimize ( Compiler * compiler, Word * word )
 {
@@ -335,7 +337,7 @@ CO_2Args_CheckDo_Logic ( Compiler * compiler )
     if ( ( compiler->CombinatorLevel || ( compiler->BlockLevel > 1 ) ) &&
         ( optInfo->opWord->W_MorphismAttributes & LOGIC_OPT ) )
     {
-            return compiler->OptInfo->rtrn = CO_DONE ;
+        return compiler->OptInfo->rtrn = CO_DONE ;
     }
     return 0 ;
 }
@@ -359,7 +361,15 @@ CO_2Args_Or_WordArg1_Op ( Compiler * compiler )
             if ( ! CO_2Args_CheckDo_Logic ( compiler ) )
             {
                 optInfo->CO_Reg = ( ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) ? optInfo->wordArg1->RegToUse : ACC ) | REG_LOCK_BIT ;
-                if ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) SetHere ( optInfo->wordArg1->Coding ? optInfo->wordArg1->Coding : optInfo->wordArg2->Coding ) ;
+#if LC_FUNCTION_VARS
+                if ( optInfo->wordArg1->W_LispAttributes & T_LC_FUNCTION_VAR )
+                {
+                    compiler->OptInfo->rtrn = CO_DONE ;
+                    return ;
+                }
+                else
+#endif                
+                    if ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) SetHere ( optInfo->wordArg1->Coding ? optInfo->wordArg1->Coding : optInfo->wordArg2->Coding ) ;
                 else if ( optInfo->wordArg1->StackPushRegisterCode ) _Set_To_Here_Word_StackPushRegisterCode ( optInfo->wordArg1 ) ;
                 else
                 {
@@ -941,7 +951,7 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
             if ( ! ( srcWord->W_ObjectAttributes & REGISTER_VARIABLE ) )
             {
                 Compile_Move_Rm_To_Reg ( srcReg, FP, LocalOrParameterVar_Disp ( srcWord ), CELL ) ;
-                if ( srcWord && ( srcWord->W_ObjectAttributes & O_POINTER ) ) 
+                if ( srcWord && ( srcWord->W_ObjectAttributes & O_POINTER ) )
                     Compile_Move_Rm_To_Reg ( srcReg, srcReg, 0, lvalueSize ) ;
             }
             else srcReg = srcWord->RegToUse ;
@@ -990,7 +1000,7 @@ CO_StandardArg ( Word * word, Boolean reg, Boolean size, Boolean rvalueFlag, byt
         while ( rvalueFlag -- ) Compile_Move_Rm_To_Reg ( reg, reg, 0, size ) ;
     }
     else _Compile_GetVarLitObj_LValue_To_Reg ( word, reg, size ) ;
-    if ( ! (_LC_ && GetState ( _LC_, LC_APPLY ) ) ) 
+    if ( ! ( _LC_ && GetState ( _LC_, LC_APPLY ) ) )
         word->StackPushRegisterCode = Here ; // we are not pushing this but in case we are just rewriting the code in the next arg ?
 }
 

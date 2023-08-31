@@ -5,6 +5,7 @@
 #define SIGJMP_BUF 0
 #define OLD_Setcc 1
 #define TCO 0
+#define LC_FUNCTION_VARS 0
 #if CLANG
 #define NO_GLOBAL_REGISTERS 1 
 #else
@@ -441,6 +442,8 @@
 #define T_LISP_CSL_COMPILED         ( (uint64) 1 << 49 )
 #define T_LC_COMPILED               ( (uint64) 1 << 50 )
 #define T_LC_IMMEDIATE              ( (uint64) 1 << 51 )
+#define T_LC_FUNCTION_VAR           ( (uint64) 1 << 52 )
+#define T_LC_FUNCTION_VAR_DONE      ( (uint64) 1 << 53 )
 
 //#define   ( (uint64) 1 <<  )
 #define NEW_RUN_COMPOSITE 0
@@ -805,6 +808,7 @@
 #define LC_EVAL_PRINT                 ( (uint64) 1 << 29 )
 #define LC_EVAL_SYMBOL                 ( (uint64) 1 << 30 )
 #define LC_LAMBDA_EVAL                 ( (uint64) 1 << 31 )
+#define _LC_EVAL_LIST                          ( (uint64) 1 << 32 )
 
 
 // LambdaBody states

@@ -652,3 +652,11 @@ basicT
 ;d
 2 + 7 assertStkChk // stack checking
 //lisp
+#if 0
+lcOn
+(define yfacc (lambda (yyy n1) (if (< n1 2) (1) (* n1 (yyy yyy (- n1 1)))))) 
+pwi yfacc pause
+//(yfacc yfacc 20) 
+(yfacc yfacc 7) nl 
+lcOff
+#endif

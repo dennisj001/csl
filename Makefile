@@ -31,7 +31,7 @@ INCLUDES = src/include/machineCode.h src/include/defines.h src/include/types.h \
 	src/include/machineCodeMacros.h src/include/lisp.h
 	
 S9_INCLUDES = src/include/s9core.h src/include/s9ext.h	
-
+PROTOTYPES = src/include/prototypes.h
 OBJECTS = $(SOURCES:%.c=%.o) 
 #S9_OBJECTS = $(S9_SOURCES:%.c=%.o) 
 S9_OBJECTS = src/primitives/s9.o src/primitives/s9core.o
@@ -59,7 +59,7 @@ clean :
 	make src/include/prototypes.h
 	-rm bin/csl*
 
-src/include/prototypes.h : $(INCLUDES) #$(S9_INCLUDES)
+$(PROTOTYPES) : $(INCLUDES) #$(S9_INCLUDES)
 	cp src/include/_proto.h src/include/prototypes.h
 	#cp src/include/_proto.h src/include/s9_prototypes.h
 	cproto -o proto.h $(SOURCES)
@@ -67,6 +67,7 @@ src/include/prototypes.h : $(INCLUDES) #$(S9_INCLUDES)
 	#mv s9_proto.h src/include/s9_prototypes.h
 	mv proto.h src/include/prototypes.h
 	make oclean
+	make -j20
 
 csl : CFLAGS = $(CFLAGS_CORE)
 csl : $(INCLUDES) $(ALL_OBJECTS) #_csl_O3

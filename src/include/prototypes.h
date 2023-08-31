@@ -1961,9 +1961,10 @@ ListObject *_LC_Apply_C_LtoR_ArgList(LambdaCalculus *lc, ListObject *l0, Word *w
 Word *Word_CompileRun_C_ArgList(Word *word);
 block CompileLispBlock(ListObject *args, ListObject *body);
 /* src/basis/lc/eval.c */
-Boolean LO_IsQuoted(ListObject *l0);
+Boolean LO_IsQuoted(ListObject *lo);
 ListObject *LC_Eval(ListObject *l0, ListObject *locals, Boolean applyFlag);
 ListObject *_LC_Eval(ListObject *l0);
+void _LC_EvalList(void);
 /* src/basis/lc/read.c */
 ListObject *LC_Read(void);
 ListObject *_LO_Read_Do_LParen(void);
@@ -1995,6 +1996,7 @@ void LO_Print(ListObject *l0);
 ListObject *LC_SpecialFunction(void);
 ListObject *_LO_Define_Scheme(ListObject *idNode);
 ListObject *_LO_Define_Lisp(ListObject *idNode);
+ListObject *LC_Define_Finish(Word *word, ListObject *value);
 ListObject *_LO_MakeLambda(ListObject *lfirst);
 ListObject *LC_Lambda(void);
 ListObject *LC_Macro(void);

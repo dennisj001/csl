@@ -32,11 +32,10 @@ LC_SpecialFunction ( )
 //===================================================================================================================
 
 // scheme 'define : ( define ( func args) funcBody )
-
 ListObject *
 _LO_Define_Scheme ( ListObject * idNode )
 {
-    ListObject *value, *l1, *value1, *l2, *lnext ;
+    ListObject *value, *value1, *l2, *lnext ; 
     Word * word, *idLo ;
     SetState ( _CSL_, _DEBUG_SHOW_, 1 ) ;
     if ( ( idNode->W_LispAttributes & ( LIST | LIST_NODE ) ) ) // scheme 'define : ( define ( func args) funcBody )
@@ -55,6 +54,7 @@ _LO_Define_Scheme ( ListObject * idNode )
         }
         value1->W_LispAttributes |= ( LIST | LIST_NODE ) ;
         LO_AddToHead ( value, value1 ) ;
+        //locals1 = value1 ;
         lambda = _LO_Read_DoToken ( "lambda", 0, - 1, - 1 ) ;
         LO_AddToHead ( value, lambda ) ;
     }
@@ -74,22 +74,7 @@ _LO_Define_Scheme ( ListObject * idNode )
     }
     else value = _LO_Copy ( value, LISP ) ; // this value object should now become part of LISP non temporary memory
     _LC_->Lvalue = value ;
-    SetState ( _CSL_, _DEBUG_SHOW_, false ) ;
-    word->Lo_Value = ( uint64 ) value ; // used by eval
-    word->W_LispAttributes |= ( T_LC_DEFINE | T_LISP_SYMBOL ) ;
-    word->State |= LC_DEFINED ;
-
-    // the value was entered into the LISP memory, now we need a temporary carrier for LO_Print : yes, apparently, but why?
-    l1 = DataObject_New ( T_LC_NEW, 0, word->Name, word->W_MorphismAttributes,
-        word->W_ObjectAttributes, word->W_LispAttributes, 0, ( int64 ) value, 0, LISP, - 1, - 1 ) ; // all words are symbols
-    l1->W_LispAttributes |= ( T_LC_DEFINE | T_LISP_SYMBOL ) ;
-    l1->W_OriginalCodeText = word->W_OriginalCodeText = _LC_->LC_SourceCode ;
-    if ( LC_CompileMode ) l1->W_SC_WordList = word->W_SC_WordList = _LC_->Lambda_SC_WordList ;
-    SetState ( _LC_, ( LC_DEFINE_MODE ), false ) ;
-    _CSL_FinishWordDebugInfo ( l1 ) ;
-    _Word_Finish ( l1 ) ;
-    LC_Debug ( _LC_, LO_DEFINEC, 0 ) ;
-    return l1 ;
+    return LC_Define_Finish ( word, value ) ;
 }
 
 // (define fn ( lambda ( args ) ( fnbody) ) ) 
@@ -141,6 +126,13 @@ _LO_Define_Lisp ( ListObject * idNode )
         }
         else value = _LO_Copy ( value, LISP ) ; // this value object should now become part of LISP non temporary memory
     }
+    return LC_Define_Finish ( word, value ) ;
+}    
+    
+ListObject *
+LC_Define_Finish ( Word * word, ListObject *value )
+{
+    ListObject * l1 ;
     SetState ( _CSL_, _DEBUG_SHOW_, false ) ;
     word->Lo_Value = ( uint64 ) value ; // used by eval
     word->W_LispAttributes |= ( T_LC_DEFINE | T_LISP_SYMBOL ) ;
@@ -389,7 +381,7 @@ LO_Cond ( )
                 // we have determined test and sequence
                 // either return result or find next condClause
                 //if ( LC_DEFINE_DBG ) CSL_Show_SourceCode_TokenLine ( test, "LC_Debug : ", 0, test->Name, "" ) ;
-                testResult = _LC_Eval ( test ) ;//, locals, 1 ) ;
+                testResult = _LC_Eval ( test ) ; //, locals, 1 ) ;
                 testValue = ( testResult && ( testResult->Lo_Value ) ) ;
                 //LO_Debug_Output ( test, "LO_Cond : test = " ) ;
                 //LO_Debug_Output ( sequence, "LO_Cond : sequence = " ) ;
