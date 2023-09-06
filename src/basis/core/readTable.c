@@ -105,7 +105,7 @@ ReadTable_0x03 ( ReadLiner * rl ) //  <CTRL-C>
     {
         ReadTable_Zero ( rl ) ;
     }
-    else CSL_Quit () ;
+    else CSL_Quit ( ) ;
 }
 
 void
@@ -336,7 +336,20 @@ ReadTable_Tilde ( ReadLiner * rl ) // '~' - Delete
 void
 ReadTable_BackSpace ( ReadLiner * rl ) // '\b' 127
 {
-    ReadLine_SetCursorPosition ( rl, rl->CursorPosition - 1 ) ;
+    //if ( rl->InputLine [ rl->CursorPosition] == 0 ) rl->CursorPosition -- , rl->EndPosition = rl->CursorPosition ; 
+    //if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ; // ??
+    byte * il = _ReadLine_String_FormattingRemoved ( rl ) ; //String_FormattingRemoved (rl->InputLineString, TEMPORARY) ;
+    ReadLine_InputLine_Clear ( rl ) ;
+    strncpy ( rl->InputLine, il, BUFFER_IX_SIZE ) ;
+    rl->InputLineString = rl->InputLine ;
+    //if ( rl->InputLine [ rl->CursorPosition] == 0 ) rl->CursorPosition --  ;
+    //ReadLine_SetCursorPosition ( rl, rl->CursorPosition - 1 ) ;
+    //if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ; // ??
+    //if ( rl->EndPosition > rl->CursorPosition ) rl->EndPosition = rl->CursorPosition ; // ??
+    //rl->InputLine [rl->CursorPosition] = 0 ;
+    //ReadLine_ClearAndShowLineWithCursor ( rl ) ;
+    //rl->InputLine [ -- rl->CursorPosition] = 0 ;
     ReadLine_DeleteChar ( rl ) ;
+    ReadLine_ClearAndShowLineWithCursor ( rl ) ;
 }
 

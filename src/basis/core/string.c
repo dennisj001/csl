@@ -570,7 +570,7 @@ String_InsertCharacter ( CString into, int64 position, byte character )
     strcat ( ( char* ) b, &into [ position ] ) ;
     strcpy ( into, ( CString ) b ) ;
 }
-
+#if 1
 byte *
 String_FormattingRemoved ( byte * str, int64 allocType )
 {
@@ -587,6 +587,22 @@ String_FormattingRemoved ( byte * str, int64 allocType )
     ns = String_New ( bf, allocType ) ;
     return ns ;
 }
+#else
+byte *
+String_RemoveFormatting ( byte * str )
+{
+    int i,j ;
+    byte * b = Buffer_DataCleared ( _CSL_->TabCompletion ) ;
+    for (i =0, j = 0 ; str[i] ; i++, j++)
+    {
+        if (str [i] == ESC ) { i++ ; while ( str [i++] != 'm' ) ; }
+        if ( str[i] ) b[j] = str[i] ;
+    }
+    b[j] = 0 ;
+    return b ;
+}
+#endif
+
 // insert istr into str slot ( startOfSlot, endOfSlot ) in buffer
 
 void
@@ -940,20 +956,6 @@ _String_HighlightTokenInputLine ( byte * nvw, Boolean lef, int64 leftBorder, int
     SetState ( _Debugger_, DBG_OUTPUT_INSERTION | DBG_OUTPUT_SUBSTITUTION, false ) ;
 
     return nvw ;
-}
-
-byte *
-String_RemoveFormatting ( byte * str )
-{
-    int i,j ;
-    byte * b = Buffer_DataCleared ( _CSL_->TabCompletion ) ;
-    for (i =0, j = 0 ; str[i] ; i++, j++)
-    {
-        if (str [i] == ESC ) { i++ ; while ( str [i++] != 'm' ) ; }
-        if ( str[i] ) b[j] = str[i] ;
-    }
-    b[j] = 0 ;
-    return b ;
 }
 
 int64

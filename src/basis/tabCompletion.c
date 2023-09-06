@@ -6,12 +6,12 @@ RL_TabCompletion_Run ( ReadLiner * rl, Word * rword, Word * nextWord )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     tci->StartFlag = 0 ;
-        if ( ! nextWord ) nextWord = TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ; // new
+    if ( ! nextWord ) nextWord = TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ; // new
     if ( nextWord )
     {
         byte * fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, nextWord ) ;
         RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
-        tci->NextWord =  0 ; //TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ;  //nextWord ; // wrap around
+        tci->NextWord = 0 ; //TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ;  //nextWord ; // wrap around
     }
     else tci->NextWord = ( Word * ) dllist_First ( tci->OriginalContainingNamespace->S_SymbolList ) ; //tci->NextWord->S_ContainingNamespace->S_SymbolList ) ;
 }
@@ -107,6 +107,7 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     //_ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
     _ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, slotEnd, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
     ReadLine_Set_ReadIndex ( rl, rl->CursorPosition ) ;
+    rl->EndPosition = rl->CursorPosition ;
 }
 
 byte *
@@ -151,7 +152,8 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
             if ( Is_NamespaceType ( piw ) )
             {
                 //if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
-                if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, String_RemoveFormatting(tci->Identifier) ) ) ) tci->RunWord = tci->OriginalWord ;
+                //if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, String_RemoveFormatting(tci->Identifier) ) ) ) tci->RunWord = tci->OriginalWord ;
+                if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, String_FormattingRemoved ( tci->Identifier, TEMPORARY ) ) ) ) tci->RunWord = tci->OriginalWord ;
                 else if ( wf = Finder_FindWord_AnyNamespace ( _Finder_, tci->Identifier ), ( wf && ( wf->ContainingNamespace == piw ) ) ) tci->RunWord = tci->OriginalWord = wf ;
                 else tci->RunWord = ( Word* ) dllist_First ( ( dllist* ) piw->Lo_List ) ;
                 tci->OriginalContainingNamespace = piw ;
@@ -210,7 +212,7 @@ _TabCompletion_Compare ( Word * word )
         {
             d0 ( if ( String_Equal ( twn, "rsp" ) ) iPrintf ( "got it" ) ) ;
             slst = Strlen ( ( CString ) searchToken ), sltwn = Strlen ( twn ) ;
-            if ( ! slst ) 
+            if ( ! slst )
             {
                 // except .. We don't want to jump down into a lower namespace here. ??
                 if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) )
@@ -221,7 +223,7 @@ _TabCompletion_Compare ( Word * word )
                 }
                 else return false ;
             }
-            else  //if ( ! gotOne )
+            else //if ( ! gotOne )
             {
                 //tci->WordWrapCount = 8 ;
                 switch ( tci->WordWrapCount )

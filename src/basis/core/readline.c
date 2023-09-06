@@ -485,7 +485,7 @@ Boolean
 _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
 {
     ReadLiner * rl = ReadLine_Copy ( rl0, COMPILER_TEMP ) ;
-    Word * word = CSL_WordList ( 0 );
+    Word * word = CSL_WordList ( 0 ) ;
     int64 iz, ib, index = word->W_RL_Index + Strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
     byte c ;
     for ( ib = false, iz = false ; 1 ; iz = false )
@@ -511,7 +511,7 @@ Boolean
 _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
 {
     ReadLiner * rl = ReadLine_Copy ( rl0, COMPILER_TEMP ) ;
-    Word * word = CSL_WordList ( 0 );
+    Word * word = CSL_WordList ( 0 ) ;
     if ( word )
     {
         int64 iz, ib, index = word->W_RL_Index + Strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
@@ -744,6 +744,51 @@ ReadLine_CheckForLocalVariables ( ReadLiner * rl )
 void
 ReadLine_ShowInfo ( ReadLiner * rl )
 {
-    if ( _ReadLiner_->Filename ) 
+    if ( _ReadLiner_->Filename )
         iPrintf ( "\nReadLiner Show :: %s : %d.%d :: \n%s", rl->Filename, rl->LineNumber, rl->CursorPosition, rl->InputLine ) ;
 }
+
+byte *
+_ReadLine_String_FormattingRemoved ( ReadLiner * rl )
+#if 0
+{
+    byte *str = rl->InputLineString, * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
+    int64 i, j, cp ;
+    for ( i = rl->CursorPosition - 1, j = 0 ; str [i] ; i -- )
+    {
+        if ( ( str[i] == 'm' ) && ( str[i - 6] == '[' ) && ( str[i - 7] == ESC ) ) //&& ( str[i - 11] == '\\' )) && ( str[i - 10] == '\\' )&& ( str[i - 11] == '\\' ))
+        {
+            cp = rl->CursorPosition ;
+            for ( i -- ; str[i] != ESC ; i -- ) if ( cp < i ) rl->CursorPosition -- ;
+            //if ( cp < i-- ) rl->CursorPosition -- ;
+        }
+        else bf [j ++] = str[i] ;
+    }
+    ns = String_New ( bf, TEMPORARY ) ;
+    return ns ;
+}
+#else
+{
+    byte *str = rl->InputLine, * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
+    int64 i, j ; //, cp = (rl->CursorPosition > rl->EndPosition) ? rl->CursorPosition : rl->EndPosition ;
+    //rl->CursorPosition = cp ;
+    rl->InputLineString = rl->InputLine ;
+    for ( i = 0, j = 0 ; str [i] ; i ++ )
+    {
+        if ( str[i] == ESC )
+        {
+            do
+            {
+                rl->CursorPosition -- ;
+                rl->EndPosition -- ;
+                if ( str[i] == 'm' ) break ;
+            }
+            while ( i++ ) ;
+        }
+        else bf [j ++] = str[i] ;
+    }
+    ns = String_New ( bf, TEMPORARY ) ;
+    return ns ;
+}
+#endif
+
