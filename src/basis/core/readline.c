@@ -637,15 +637,14 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     if ( rl->InputKeyedCharacter != '\t' )
     {
-        if ( GetState ( rl, TAB_WORD_COMPLETION ) )
+        if ( GetState ( rl, TAB_WORD_COMPLETION|TAB_COMPLETION_CHANGE_STATE ) )
         {
-            SetState ( rl, TAB_WORD_COMPLETION, false ) ;
-            if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->TrialWord ) )
+            SetState ( rl, TAB_COMPLETION_CHANGE_STATE, true ) ;
+            if ( ( rl->InputKeyedCharacter == 32 ) && ( tci->RunWord ) ) // 32 : ' ' ; <space>
             {
                 TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-                RL_TC_StringInsert_AtCursor ( rl, tci->TrialWord->Name ) ;
-                ReadLiner_SetLastChar ( ' ' ) ; // _Printf does a ReadLiner_SetLastChar ( 0 )
-
+                RL_TC_StringInsert_AtCursor ( rl, tci->RunWord->Name ) ;
+                //ReadLiner_SetLastChar ( ' ' ) ; // _Printf does a ReadLiner_SetLastChar ( 0 )
             }
             else if ( rl->InputKeyedCharacter == '\r' ) rl->InputKeyedCharacter = '\n' ; // leave line as is and append a space instead of '\r'
         }
@@ -665,6 +664,11 @@ _ReadLine_GetLine ( ReadLiner * rl, byte c )
         else ReadLine_Set_KeyedChar ( rl, c ), c = 0 ;
         if ( ( ! csl_returnValue ) && AtCommandLine ( rl ) ) _ReadLine_TabCompletion_Check ( rl ) ;
         _CSL_->ReadLine_FunctionTable [ _CSL_->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
+        if ( GetState ( rl, TAB_COMPLETION_CHANGE_STATE ) )
+        {
+            SetState ( rl, TAB_COMPLETION_CHANGE_STATE, false ) ;
+            SetState ( rl, TAB_WORD_COMPLETION, false ) ;
+        }
         SetState ( rl, ANSI_ESCAPE, false ) ;
     }
     return rl->InputKeyedCharacter ;
@@ -674,6 +678,7 @@ byte
 ReadLine_GetLine ( )
 {
     ReadLiner * rl = _ReadLiner_ ;
+
     return _ReadLine_GetLine ( rl, 0 ) ;
 }
 
@@ -688,6 +693,7 @@ ReadLine_NextChar ( ReadLiner * rl )
             SetState ( rl, STRING_MODE, false ) ; // only good once
             return nchar ;
         }
+
         else _ReadLine_GetLine ( rl, 0 ) ; // get a line of characters
         //else rl->LineNumber ++, _ReadLine_GetLine ( rl, 0 ) ; // get a line of characters
         ReadLine_Set_ReadIndex ( rl, 0 ) ;
@@ -702,6 +708,7 @@ ReadLine_NextNonPunctCharAfterEndOfString ( ReadLiner * rl )
     byte * rlp = & rl->InputLine [ rl->ReadIndex ] ;
     while ( *( rlp ++ ) != '"' ) ;
     while ( IsPunct ( *( rlp ++ ) ) ) ;
+
     return *rlp ;
 }
 
@@ -710,6 +717,7 @@ ReadLine_AreWeAtNewlineAfterSpaces ( ReadLiner * rl )
 {
     int64 i = ReadLiner_PeekSkipSpaces ( rl ) ;
     if ( _ReadLine_PeekOffsetChar ( rl, i ) == '\n' ) return true ;
+
     return false ;
 }
 
@@ -738,12 +746,14 @@ ReadLine_CheckForLocalVariables ( ReadLiner * rl )
     }
     while ( i ++, c != '\n' ) ;
     ReadLine_Set_ReadIndex ( rl, si ) ;
+
     return result ;
 }
 
 void
 ReadLine_ShowInfo ( ReadLiner * rl )
 {
+
     if ( _ReadLiner_->Filename )
         iPrintf ( "\nReadLiner Show :: %s : %d.%d :: \n%s", rl->Filename, rl->LineNumber, rl->CursorPosition, rl->InputLine ) ;
 }
@@ -752,7 +762,7 @@ byte *
 _ReadLine_String_FormattingRemoved ( ReadLiner * rl )
 {
     byte *str = rl->InputLine, * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
-    int64 i, j, ep = rl->EndPosition ; 
+    int64 i, j, ep = rl->EndPosition ;
     //rl->InputLineString = rl->InputLine ;
     for ( i = 0, j = 0 ; str [i] ; i ++ )
     {
@@ -764,7 +774,7 @@ _ReadLine_String_FormattingRemoved ( ReadLiner * rl )
                 rl->EndPosition -- ;
                 if ( str[i] == 'm' ) break ;
             }
-            while ( i++ <= ep ) ;
+            while ( i ++ <= ep ) ;
         }
         else bf [j ++] = str[i] ;
     }

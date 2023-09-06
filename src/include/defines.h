@@ -678,6 +678,7 @@
 #define END_OF_STRING ( (uint64) 1 << 9 )
 #define STRING_MODE ( (uint64) 1 << 10 )
 #define ADD_TO_HISTORY ( (uint64) 1 << 11 )
+#define TAB_COMPLETION_CHANGE_STATE ( (uint64) 1 << 12 )
 
 // compiler flags
 #define COMPILE_MODE ( (uint64) 1 << 0 )

@@ -1,6 +1,9 @@
 
 #include "../include/csl.h"
 
+Boolean cli ;
+int lic, csl_returnValue = 0 ;
+
 void
 OpenVmTil_Verbosity ( )
 {
@@ -169,8 +172,6 @@ OVT_Ok ( )
 }
 
 
-Boolean cli ;
-int lic, csl_returnValue = 0 ;
 
 #if 0
 int s9_main ( int argc, char **argv ) ;

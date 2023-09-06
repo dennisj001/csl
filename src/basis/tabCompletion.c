@@ -101,7 +101,7 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     {
         Clear_Terminal_Line ( ) ;
         ReadLine_InputLine_Clear ( rl ) ;
-        Strncpy ( rl->InputLineString, _String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ), BUFFER_SIZE ) ;
+        Strncpy ( rl->InputLineString, _String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ), slotStart ) ;
     }
     ReadLine_SetCursorPosition ( rl, newCursorPos ) ;
     //_ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
@@ -117,6 +117,7 @@ TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int64 start )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     tci->TokenLastChar = ReadLine_LastCharOfLastToken_FromPos ( rl, start ) ;
     tci->TokenFirstChar = ReadLine_FirstCharOfToken_FromLastChar ( rl, tci->TokenLastChar ) ;
+    tci->StringFirstChar = String_FirstCharOfString_FromPosOfLastChar ( rl->InputLine, tci->TokenLastChar ) ;
     tci->TokenLength = tci->TokenLastChar - tci->TokenFirstChar + 1 ; // zero array start
     Strncpy ( b, & rl->InputLine [ tci->TokenFirstChar ], tci->TokenLength ) ;
     b [ tci->TokenLength ] = 0 ;

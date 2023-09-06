@@ -68,6 +68,17 @@ String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int64 pos )
 }
 
 int64
+String_FirstCharOfString_FromPosOfLastChar ( byte * s, int64 pos )
+{
+    int64 i ;
+    for ( i = pos - 1; i ; i -- )
+    {
+        if ( _Lexer_IsCharDelimiter ( _Context_->Lexer0, s [i] ) ) break ;
+    }
+    return _Lexer_IsCharDelimiter ( _Context_->Lexer0, s [i] ) ? i + 1 : i ; // nb. we could have 'break' becuase i == 0 - beginning of line
+}
+
+int64
 String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int64 pos )
 {
     int64 i ;
@@ -111,9 +122,20 @@ String_LastCharOfLastToken_FromPos ( byte * s, int64 pos )
     if ( ( spaces && ( ! dotFlag ) ) || ( dotFlag > 1 ) ) return pos ;
     return i ;
 }
-
+#if 0
 int64
 String_FirstTokenDelimiter_FromPos ( byte * s, int64 pos )
+{
+    int64 i, flag = 0 ;
+    for ( i = pos ; 1 ; i ++ )
+    {
+        if ( ! _Lexer_IsCharDelimiter ( _Context_->Lexer0, s[ i ] ) ) flag = 1 ;
+        if ( flag && _Lexer_IsCharDelimiter ( _Context_->Lexer0, s[ i ] ) ) break ;
+    }
+    return i ;
+}
+
+String_FirstTokenDelimiterOrDot_FromPos ( byte * s, int64 pos )
 {
     int64 i, flag = 0 ;
     for ( i = pos ; 1 ; i ++ )
@@ -123,7 +145,7 @@ String_FirstTokenDelimiter_FromPos ( byte * s, int64 pos )
     }
     return i ;
 }
-
+#endif
 Boolean
 String_IsReverseTokenQualifiedID ( byte * s, int64 pos )
 {

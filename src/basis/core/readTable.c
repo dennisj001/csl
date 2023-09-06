@@ -72,19 +72,6 @@ ReadTable_Default ( ReadLiner * rl )
 void
 ReadTable_LParen ( ReadLiner * rl )
 {
-#if MARU || MARU_2_4 || MARU_NILE
-    if ( ( rl->InputFile != stdin ) && _CSL_->InNamespace )
-    {
-        if ( String_Equal ( ( CString ) _CSL_->InNamespace->s_Symbol.S_Name, "Maru" ) )
-        {
-            ungetc ( rl->InputKeyedCharacter, rl->InputFile ) ;
-            Maru_RawReadFlag = 1 ;
-            imaru_nile ( ) ;
-            Maru_RawReadFlag = 0 ;
-            return ;
-        }
-    }
-#endif    
     ReadTable_Default ( rl ) ;
 }
 
@@ -346,31 +333,34 @@ ReadTable_BackSpace ( ReadLiner * rl )
 #else // experimental
 {
     if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ;
-    if ( rl->InputLine[rl->CursorPosition - 1] != '.' )
+    if ( GetState ( rl, TAB_WORD_COMPLETION ) )
     {
-        int64 cp = rl->CursorPosition, slids ;
-        TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-        memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
-        byte *ids, * id = TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
-        if ( tci->TokenFirstChar ) tci->PreviousIdentifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
-        Word * w = CSL_FindInAnyNamespace ( String_FormattingRemoved ( tci->PreviousIdentifier ) ) ;
-        if ( w )
+        if ( rl->InputLine[rl->CursorPosition - 1] != '.' )
         {
-            ReadLine_InputLine_Clear ( rl ) ;
-            byte * fnql = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, w ) ;
-            strcpy ( rl->InputLine, fnql ) ;
-            strcat ( rl->InputLine, "." ) ;
-            ids = String_FormattingRemoved ( id ) ;
-            rl->CursorPosition = cp + ( slids = strlen ( ids ) ) ; // don't add   "."
-            strncat ( rl->InputLine, ids, slids - 1 ) ;
+            int64 cp = rl->CursorPosition, slids ;
+            TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
+            memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
+            byte *ids, * id = TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
+            if ( tci->TokenFirstChar ) tci->PreviousIdentifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
+            Word * w = CSL_FindInAnyNamespace ( String_FormattingRemoved ( tci->PreviousIdentifier ) ) ;
+            if ( w )
+            {
+                //ReadLine_InputLine_Clear ( rl ) ;
+                byte * fnql = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, w ) ;
+                strcpy ( &rl->InputLine[tci->StringFirstChar], fnql ) ;
+                strcat ( &rl->InputLine[tci->StringFirstChar], "." ) ;
+                ids = String_FormattingRemoved ( id ) ;
+                rl->CursorPosition = cp + ( slids = strlen ( ids ) ) ; // don't add   "."
+                strncat ( rl->InputLine, ids, slids - 1 ) ;
+            }
+            else
+            {
+                byte * il = _ReadLine_String_FormattingRemoved ( rl ) ;
+                strncpy ( &rl->InputLine[tci->StringFirstChar], il, BUFFER_IX_SIZE ) ;
+                rl->CursorPosition = strlen ( il ) ;
+            }
+            rl->InputLineString = rl->InputLine ;
         }
-        else
-        {
-            byte * il = _ReadLine_String_FormattingRemoved ( rl ) ;
-            strncpy ( rl->InputLine, il, BUFFER_IX_SIZE ) ;
-            rl->CursorPosition = strlen ( il ) ;
-        }
-        rl->InputLineString = rl->InputLine ;
     }
     ReadLine_DeleteChar ( rl ) ;
 }
