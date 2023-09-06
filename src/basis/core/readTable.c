@@ -334,22 +334,45 @@ ReadTable_Tilde ( ReadLiner * rl ) // '~' - Delete
 }
 
 void
-ReadTable_BackSpace ( ReadLiner * rl ) // '\b' 127
+ReadTable_BackSpace ( ReadLiner * rl )
+#if 0
 {
-    //if ( rl->InputLine [ rl->CursorPosition] == 0 ) rl->CursorPosition -- , rl->EndPosition = rl->CursorPosition ; 
-    //if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ; // ??
-    byte * il = _ReadLine_String_FormattingRemoved ( rl ) ; //String_FormattingRemoved (rl->InputLineString, TEMPORARY) ;
+    byte * il = _ReadLine_String_FormattingRemoved ( rl ) ;
     ReadLine_InputLine_Clear ( rl ) ;
     strncpy ( rl->InputLine, il, BUFFER_IX_SIZE ) ;
     rl->InputLineString = rl->InputLine ;
-    //if ( rl->InputLine [ rl->CursorPosition] == 0 ) rl->CursorPosition --  ;
-    //ReadLine_SetCursorPosition ( rl, rl->CursorPosition - 1 ) ;
-    //if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ; // ??
-    //if ( rl->EndPosition > rl->CursorPosition ) rl->EndPosition = rl->CursorPosition ; // ??
-    //rl->InputLine [rl->CursorPosition] = 0 ;
-    //ReadLine_ClearAndShowLineWithCursor ( rl ) ;
-    //rl->InputLine [ -- rl->CursorPosition] = 0 ;
     ReadLine_DeleteChar ( rl ) ;
-    ReadLine_ClearAndShowLineWithCursor ( rl ) ;
 }
+#else // experimental
+{
+    if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ;
+    if ( rl->InputLine[rl->CursorPosition - 1] != '.' )
+    {
+        int64 cp = rl->CursorPosition, slids ;
+        TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
+        memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
+        byte *ids, * id = TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
+        if ( tci->TokenFirstChar ) tci->PreviousIdentifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
+        Word * w = CSL_FindInAnyNamespace ( String_FormattingRemoved ( tci->PreviousIdentifier ) ) ;
+        if ( w )
+        {
+            ReadLine_InputLine_Clear ( rl ) ;
+            byte * fnql = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, w ) ;
+            strcpy ( rl->InputLine, fnql ) ;
+            strcat ( rl->InputLine, "." ) ;
+            ids = String_FormattingRemoved ( id ) ;
+            rl->CursorPosition = cp + ( slids = strlen ( ids ) ) ; // don't add   "."
+            strncat ( rl->InputLine, ids, slids - 1 ) ;
+        }
+        else
+        {
+            byte * il = _ReadLine_String_FormattingRemoved ( rl ) ;
+            strncpy ( rl->InputLine, il, BUFFER_IX_SIZE ) ;
+            rl->CursorPosition = strlen ( il ) ;
+        }
+        rl->InputLineString = rl->InputLine ;
+    }
+    ReadLine_DeleteChar ( rl ) ;
+}
+#endif
 

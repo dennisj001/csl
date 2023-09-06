@@ -572,11 +572,11 @@ String_InsertCharacter ( CString into, int64 position, byte character )
 }
 #if 1
 byte *
-String_FormattingRemoved ( byte * str, int64 allocType )
+_String_FormattingRemoved ( byte * str, int64 allocType )
 {
     byte * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
     int64 i, j ;
-    for ( i = 0, j = 0 ; str [i] ; i++ )
+    for ( i = 0, j = 0 ; str && (str [i]) ; i++ )
     {
         if ( str[i] == ESC )
         {
@@ -586,6 +586,11 @@ String_FormattingRemoved ( byte * str, int64 allocType )
     }
     ns = String_New ( bf, allocType ) ;
     return ns ;
+}
+byte *
+String_FormattingRemoved ( byte * str  )
+{
+    return _String_FormattingRemoved ( str, TEMPORARY ) ;
 }
 #else
 byte *
@@ -608,7 +613,7 @@ String_RemoveFormatting ( byte * str )
 void
 String_InsertStringIntoStringSlot ( byte * str, int64 startOfSlot, int64 endOfSlot, byte * istr, int64 outStrMaxSize ) // size in bytes
 {
-    byte * sfr = String_FormattingRemoved ( str, COMPILER_TEMP ); 
+    byte * sfr = _String_FormattingRemoved ( str, COMPILER_TEMP ); 
     byte * b = Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
     int64 slsfr = Strlen ( sfr ) ;
     int64 slis = Strlen ( istr ) ;

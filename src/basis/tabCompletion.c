@@ -101,7 +101,7 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     {
         Clear_Terminal_Line ( ) ;
         ReadLine_InputLine_Clear ( rl ) ;
-        Strncpy ( rl->InputLineString, String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ), BUFFER_SIZE ) ;
+        Strncpy ( rl->InputLineString, _String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ), BUFFER_SIZE ) ;
     }
     ReadLine_SetCursorPosition ( rl, newCursorPos ) ;
     //_ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
@@ -111,7 +111,7 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
 }
 
 byte *
-_TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int64 start )
+TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int64 start )
 {
     byte * b = Buffer_DataCleared ( _CSL_->TabCompletion ) ;
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
@@ -134,9 +134,9 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
     SetState ( rl, TAB_WORD_COMPLETION, true ) ;
     strcpy ( ( CString ) _CSL_->OriginalInputLine, ( CString ) rl->InputLineString ) ; // we use this extra buffer at ReadLine_TC_StringInsert_AtCursor
-    tci->Identifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
+    tci->Identifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
     tci->DotSeparator = ReadLine_IsThereADotSeparator ( rl, tci->TokenFirstChar - 1 ) ;
-    if ( tci->TokenFirstChar ) tci->PreviousIdentifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
+    if ( tci->TokenFirstChar ) tci->PreviousIdentifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
     if ( ( tci->EndDottedPos = ReadLine_IsLastCharADot ( rl, _ReadLine_CursorPosition ( rl ) ) ) ) //ReadLine_IsDottedToken ( rl ) )
     {
         tci->SearchToken = ( byte * ) "" ; // everything matches
@@ -146,14 +146,14 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     else tci->SearchToken = tci->Identifier ? tci->Identifier : ( byte* ) "" ;
     if ( tci->DotSeparator )
     {
-        tci->PreviousIdentifier = _TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->DotSeparator - 1 ) ; // TokenStart refers to start of 'Identifier'
+        tci->PreviousIdentifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->DotSeparator - 1 ) ; // TokenStart refers to start of 'Identifier'
         if ( tci->PreviousIdentifier && ( piw = CSL_FindInAnyNamespace ( tci->PreviousIdentifier ) ) )
         {
             if ( Is_NamespaceType ( piw ) )
             {
                 //if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
                 //if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, String_RemoveFormatting(tci->Identifier) ) ) ) tci->RunWord = tci->OriginalWord ;
-                if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, String_FormattingRemoved ( tci->Identifier, TEMPORARY ) ) ) ) tci->RunWord = tci->OriginalWord ;
+                if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, String_FormattingRemoved ( tci->Identifier ) ) ) ) tci->RunWord = tci->OriginalWord ;
                 else if ( wf = Finder_FindWord_AnyNamespace ( _Finder_, tci->Identifier ), ( wf && ( wf->ContainingNamespace == piw ) ) ) tci->RunWord = tci->OriginalWord = wf ;
                 else tci->RunWord = ( Word* ) dllist_First ( ( dllist* ) piw->Lo_List ) ;
                 tci->OriginalContainingNamespace = piw ;

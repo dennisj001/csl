@@ -750,29 +750,10 @@ ReadLine_ShowInfo ( ReadLiner * rl )
 
 byte *
 _ReadLine_String_FormattingRemoved ( ReadLiner * rl )
-#if 0
-{
-    byte *str = rl->InputLineString, * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
-    int64 i, j, cp ;
-    for ( i = rl->CursorPosition - 1, j = 0 ; str [i] ; i -- )
-    {
-        if ( ( str[i] == 'm' ) && ( str[i - 6] == '[' ) && ( str[i - 7] == ESC ) ) //&& ( str[i - 11] == '\\' )) && ( str[i - 10] == '\\' )&& ( str[i - 11] == '\\' ))
-        {
-            cp = rl->CursorPosition ;
-            for ( i -- ; str[i] != ESC ; i -- ) if ( cp < i ) rl->CursorPosition -- ;
-            //if ( cp < i-- ) rl->CursorPosition -- ;
-        }
-        else bf [j ++] = str[i] ;
-    }
-    ns = String_New ( bf, TEMPORARY ) ;
-    return ns ;
-}
-#else
 {
     byte *str = rl->InputLine, * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
-    int64 i, j ; //, cp = (rl->CursorPosition > rl->EndPosition) ? rl->CursorPosition : rl->EndPosition ;
-    //rl->CursorPosition = cp ;
-    rl->InputLineString = rl->InputLine ;
+    int64 i, j, ep = rl->EndPosition ; 
+    //rl->InputLineString = rl->InputLine ;
     for ( i = 0, j = 0 ; str [i] ; i ++ )
     {
         if ( str[i] == ESC )
@@ -783,12 +764,11 @@ _ReadLine_String_FormattingRemoved ( ReadLiner * rl )
                 rl->EndPosition -- ;
                 if ( str[i] == 'm' ) break ;
             }
-            while ( i++ ) ;
+            while ( i++ <= ep ) ;
         }
         else bf [j ++] = str[i] ;
     }
     ns = String_New ( bf, TEMPORARY ) ;
     return ns ;
 }
-#endif
 
