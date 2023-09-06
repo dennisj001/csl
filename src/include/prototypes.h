@@ -530,7 +530,7 @@ void _Lexer_ParseHex(Lexer *lexer, byte *token);
 void _Lexer_ParseDecimal(Lexer *lexer, byte *token);
 void Lexer_ParseObject(Lexer *lexer, byte *token);
 byte *Parse_Macro(int64 type);
-Word *Lexer_ParseTerminatingMacro(Lexer *lexer, byte termChar, Boolean evalFlag);
+byte *Lexer_ParseTerminatingMacro(Lexer *lexer, byte termChar, Boolean stringFlag);
 int64 _CSL_ParseQid_Token(byte *token0);
 void _CSL_SingleQuote(void);
 void CSL_CheckDo_KeywordOperand(void);

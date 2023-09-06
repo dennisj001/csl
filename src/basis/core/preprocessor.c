@@ -333,7 +333,7 @@ CSL_PP_Define ( )
     CSL_Word_New ( ) ;
     CSL_BeginBlock ( ) ;
 
-    byte c = Lexer_NextPrintChar ( _Lexer_ ) ;
+    byte c = _ReadLine_PeekOffsetChar ( rl, 0 ), c1  = _ReadLine_PeekOffsetChar ( rl, 1 ) ;
     if ( ( c == '(' ) )
     {
         Lexer_ReadToken ( _Lexer_ ) ;
@@ -341,7 +341,7 @@ CSL_PP_Define ( )
         locals = true ;
     }
     else locals = false ;
-    if ( ( c != '\n' ) && ( ( c != '/' ) && ( Lexer_NextPrintChar ( _Lexer_ ) != '/' ) ) ) // newline or comment
+    if ( ( c != '\n' ) &&( !  (( c == '/' ) && ( c1 == '/' ) ) ) ) //Lexer_NextPrintChar ( _Lexer_ ) == '/' ) ) ) ) // newline or comment
     {
         SetState ( interp, PREPROCESSOR_DEFINE, true ) ;
         if ( ! locals )
@@ -349,7 +349,7 @@ CSL_PP_Define ( )
             byte * b = Buffer_DataCleared ( _CSL_->Preprocessor ) ;
             strncpy ( b, &rl->InputLine [ rl->ReadIndex ], BUFFER_SIZE ) ;
             String_RemoveFinalNewline ( b ) ;
-            if ( b[0] == 0 ) strncat ( ( char* ) b, "1 \n", BUFFER_SIZE ) ;
+            if ( b[0] == 0 ) strncat ( ( char* ) b, "1 \n", BUFFER_SIZE ) ; // 1 : set the default value as true (1) : eg. #define _ARRAY_H (namespaces/test/arrayTest.csl line 7)
             else strncat ( ( char* ) b, " \n", BUFFER_SIZE ) ;
             macroStr = String_New ( b, DICTIONARY ) ;
         }

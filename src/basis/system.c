@@ -56,6 +56,7 @@ CSL_Dlsym ( )
 {
     byte * sym = Lexer_ReadToken ( _Context_->Lexer0 ) ;
     byte * lib = _Lexer_LexNextToken_WithDelimiters ( _Context_->Lexer0, 0, 1, 0, 1, LEXER_ALLOW_DOT ) ;
+    if ( lib[0] == '\"' ) lib = Lexer_ParseTerminatingMacro (_Lexer_, '\"', 1) ; ; //Interpreter_InterpretAToken ( _Interpreter_, lib, -1, -1 ) ;
     byte * semi = Lexer_ReadToken ( _Context_->Lexer0 ) ; // drop the semi
     Word * word = Dlsym ( sym, lib ) ;
     _Word_Finish ( word ) ;

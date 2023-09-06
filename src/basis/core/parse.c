@@ -262,8 +262,8 @@ Parse_Macro ( int64 type )
     return value ;
 }
 
-Word *
-Lexer_ParseTerminatingMacro ( Lexer * lexer, byte termChar, Boolean evalFlag )
+byte *
+Lexer_ParseTerminatingMacro (Lexer * lexer, byte termChar, Boolean stringFlag )
 {
     ReadLiner * rl = _ReadLiner_ ;
     byte * token ;
@@ -271,7 +271,7 @@ Lexer_ParseTerminatingMacro ( Lexer * lexer, byte termChar, Boolean evalFlag )
     if ( ( ! ( GetState ( _Compiler_, ( COMPILE_MODE | ASM_MODE | LC_ARG_PARSING | LC_CSL ) ) ) ) && ( ! GetState ( _CSL_, SOURCE_CODE_STARTED ) ) )
         CSL_InitSourceCode_WithCurrentInputChar ( _CSL_, 0 ) ;
     _CSL_->SC_QuoteMode = true ;
-    start :
+start:
     do
     {
         lexer->TokenInputByte = ReadLine_NextChar ( rl ) ;
@@ -287,14 +287,13 @@ Lexer_ParseTerminatingMacro ( Lexer * lexer, byte termChar, Boolean evalFlag )
     if ( Lexer_StringMacros_Do ( lexer ) ) goto start ;
     if ( termChar == '\"' )
     {
-        word = _Lexer_ParseToken_ToWord ( lexer, token, - 1, - 1 ) ;
-        if ( evalFlag )
+        if ( stringFlag )
         {
-            Word_Eval ( word ) ;
-            word = 0 ;
+            token[ strlen ( token ) - 1 ] = 0 ;
+            return &token [1] ;
         }
     }
-    return word ;
+    return token ; 
 }
 
 int64
@@ -324,7 +323,7 @@ _CSL_ParseQid_Token ( byte * token0 )
                 ns = word ;
                 _Context_SetAsQidInNamespace ( ns ) ;
             }
-            //else if ( word && ( nst = word->W_ObjectAttributes & ( token0 ? ( NAMESPACE_TYPE | THIS ) : ( C_TYPE | C_CLASS | NAMESPACE | THIS ) ) ) )
+                //else if ( word && ( nst = word->W_ObjectAttributes & ( token0 ? ( NAMESPACE_TYPE | THIS ) : ( C_TYPE | C_CLASS | NAMESPACE | THIS ) ) ) )
             else if ( word && ( nst & ( token0 ? ( THIS ) : ( C_TYPE | C_CLASS | STRUCT | OBJECT | THIS ) ) ) )
             {
                 ns = word ;
@@ -366,7 +365,7 @@ _CSL_SingleQuote ( )
     ReadLiner * rl = cntx->ReadLiner0 ;
     Compiler * compiler = cntx->Compiler0 ;
     Word *word, * sqWord = CSL_WordList ( 0 ) ; //single quote word
-    byte buffer [5], *buf = buffer  ;
+    byte buffer [5], *buf = buffer ;
     byte c0, c1, c2 ;
     uint64 charLiteral = 0 ;
 
@@ -381,23 +380,24 @@ _CSL_SingleQuote ( )
         c0 = _ReadLine_GetNextChar ( rl ) ;
         c1 = _ReadLine_GetNextChar ( rl ) ;
         buffer[0] = '\'' ;
-        buffer[1] = c0, _CSL_AppendCharToSourceCode ( _CSL_, c0 ) ; 
+        buffer[1] = c0, _CSL_AppendCharToSourceCode ( _CSL_, c0 ) ;
         if ( c0 == '\\' )
         {
-            
+
             c2 = _ReadLine_GetNextChar ( rl ) ; // the closing '\''
             if ( c1 == 't' ) charLiteral = 0x9 ;
             else if ( c1 == 'n' ) charLiteral = 0xa ;
             else if ( c1 == 'r' ) charLiteral = 0xd ;
             else if ( c1 == 'b' ) charLiteral = 0x8 ;
-            buffer[2] = c1, _CSL_AppendCharToSourceCode ( _CSL_, c1 ) ;  ;
+            buffer[2] = c1, _CSL_AppendCharToSourceCode ( _CSL_, c1 ) ;
+            ;
             buffer[3] = '\'', _CSL_AppendCharToSourceCode ( _CSL_, '\'' ) ; // c3
             buffer[4] = 0 ;
         }
         else
         {
             charLiteral = c0 ;
-            buffer[2] = '\'', _CSL_AppendCharToSourceCode ( _CSL_, '\'' ) ;  // c2
+            buffer[2] = '\'', _CSL_AppendCharToSourceCode ( _CSL_, '\'' ) ; // c2
             buffer[3] = 0 ;
         }
         CSL_WordLists_PopWord ( ) ; // pop the "'" token
@@ -409,7 +409,7 @@ _CSL_SingleQuote ( )
     {
         if ( ( ! Compiling ) && ( ! ( GetState ( compiler, DOING_CASE ) ) ) ) CSL_InitSourceCode_WithName ( _CSL_, lexer->OriginalToken, 0 ) ;
         byte * token = ( byte* ) _CSL_ParseQid_Token ( 0 ) ;
-        DataStack_Push (( int64 ) token) ;
+        DataStack_Push ( ( int64 ) token ) ;
         if ( ( ! AtCommandLine ( rl ) ) && ( ! GetState ( _CSL_, SOURCE_CODE_STARTED ) ) )
             CSL_InitSourceCode_WithName ( _CSL_, token, 0 ) ;
     }
@@ -421,8 +421,12 @@ CSL_CheckDo_KeywordOperand ( )
 {
     Compiler * compiler = _Compiler_ ;
     Word * word ;
-    byte * token = Lexer_ReadToken ( _Lexer_ ) ; // remember this was a peeked word
-    if ( token[0] == '\"' ) word = Lexer_ParseTerminatingMacro ( _Lexer_, '\"', 0 ) ;
+    byte *token1, * token = Lexer_ReadToken ( _Lexer_ ) ; // remember this was a peeked word
+    if ( token[0] == '\"' )
+    {
+        token1 = Lexer_ParseTerminatingMacro (_Lexer_, '\"', 0 ) ;
+        word = Lexer_ParseToken_ToWord ( _Lexer_, token1, - 1, - 1 ) ;
+    }
     else
     {
         word = Interpreter_InterpretAToken ( _Interpreter_, token, - 1, - 1 ) ;

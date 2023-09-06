@@ -199,19 +199,23 @@ type quad ; quad.size = 16 ;
 type Boolean ; Boolean.size = 1 ;
 type Pointer ; Pointer.size = 8 ;
 type block ; block.size = 8 ;
+//cOff
+//: clib "/lib/libc.so.6" ;
+//cOn
 C
 "Dlsym" namespace 
 Dlsym 
+#define LIBC "/lib/libc.so.6"
 "libc" namespace 
 libc
-dlsym: printf /lib/libc.so.6 ; void_return
-dlsym: strcmp /lib/libc.so.6 ; rax_return
-dlsym: sprintf /lib/libc.so.6 ; void_return
-dlsym: strcat /lib/libc.so.6 ; void_return
-//dlsym: _strlen /lib/libc.so.6 ; rax_return
-dlsym: memset /lib/libc.so.6 ; void_return
-dlsym: sscanf /lib/libc.so.6 ; void_return
-dlsym: atoi /lib/libc.so.6 ; rax_return
+dlsym: printf LIBC ; void_return
+dlsym: strcmp LIBC ; rax_return
+dlsym: sprintf LIBC ; void_return
+dlsym: strcat LIBC ; void_return
+//dlsym: _strlen LIBC ; rax_return
+dlsym: memset LIBC ; void_return
+dlsym: sscanf LIBC ; void_return
+dlsym: atoi LIBC ; rax_return
 //int strlen ( s ) { return _strlen ( s ); }
 c_syntaxOff
 Root  

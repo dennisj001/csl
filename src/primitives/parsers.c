@@ -91,14 +91,16 @@ CSL_ParseObject ( )
 void
 CSL_DoubleQuoteMacro ( )
 {
-    Lexer_ParseTerminatingMacro ( _Lexer_, '\"', 1 ) ;
+    byte * token = Lexer_ParseTerminatingMacro ( _Lexer_, '\"', 0 ) ;
+    Word * word = _Lexer_ParseToken_ToWord ( _Lexer_, token, - 1, - 1 ) ;
+    Word_Eval ( word ) ;
 }
 
 void
 _CSL_Word_ClassStructure_PrintData ( Word * typedefWord0, byte * dataBits )
 {
-    Word * typedefWord = Word_UnAlias ( typedefWord0 ) ; 
-    iPrintf ( "\n\t%16s :: size = %d :: at : 0x%016lx", typedefWord->Name, 
+    Word * typedefWord = Word_UnAlias ( typedefWord0 ) ;
+    iPrintf ( "\n\t%16s :: size = %d :: at : 0x%016lx", typedefWord->Name,
         ( int64 ) _CSL_VariableValueGet ( typedefWord->Name, ( byte* ) "size" ), dataBits ) ; //CSL_GetAndSet_ObjectByteSize ( tdsci->Tdsci_Field_Type_Namespace ),
     if ( typedefWord && dataBits ) Object_PrintStructuredData ( dataBits, typedefWord ) ;
 }
