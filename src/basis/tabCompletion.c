@@ -2,13 +2,18 @@
 #include "../include/csl.h"
 
 void
-RL_TabCompletion_Run ( ReadLiner * rl, Word * rword )
+RL_TabCompletion_Run ( ReadLiner * rl, Word * rword, Word * nextWord )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     tci->StartFlag = 0 ;
-    Word * nextWord = TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ; // new
-    if ( nextWord ) tci->NextWord = nextWord ; // wrap around
-    else tci->NextWord = (Word *) dllist_First ( tci->OriginalContainingNamespace->S_SymbolList ) ; //tci->NextWord->S_ContainingNamespace->S_SymbolList ) ;
+        if ( ! nextWord ) nextWord = TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ; // new
+    if ( nextWord )
+    {
+        byte * fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, nextWord ) ;
+        RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
+        tci->NextWord =  0 ; //TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ;  //nextWord ; // wrap around
+    }
+    else tci->NextWord = ( Word * ) dllist_First ( tci->OriginalContainingNamespace->S_SymbolList ) ; //tci->NextWord->S_ContainingNamespace->S_SymbolList ) ;
 }
 
 TabCompletionInfo *
@@ -96,12 +101,12 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     {
         Clear_Terminal_Line ( ) ;
         ReadLine_InputLine_Clear ( rl ) ;
-        Strncpy ( rl->InputLineString, String_FormattingRemoved (_CSL_->OriginalInputLine, COMPILER_TEMP ), BUFFER_SIZE ) ;
+        Strncpy ( rl->InputLineString, String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ), BUFFER_SIZE ) ;
     }
     ReadLine_SetCursorPosition ( rl, newCursorPos ) ;
     //_ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
     _ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, slotEnd, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
-    ReadLine_Set_ReadIndex ( rl, rl->CursorPosition ) ; 
+    ReadLine_Set_ReadIndex ( rl, rl->CursorPosition ) ;
 }
 
 byte *
@@ -145,7 +150,8 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
         {
             if ( Is_NamespaceType ( piw ) )
             {
-                if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
+                //if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, tci->Identifier ) ) ) tci->RunWord = tci->OriginalWord ;
+                if ( ( tci->OriginalWord = _Finder_FindWord_InOneNamespace ( _Finder_, piw, String_RemoveFormatting(tci->Identifier) ) ) ) tci->RunWord = tci->OriginalWord ;
                 else if ( wf = Finder_FindWord_AnyNamespace ( _Finder_, tci->Identifier ), ( wf && ( wf->ContainingNamespace == piw ) ) ) tci->RunWord = tci->OriginalWord = wf ;
                 else tci->RunWord = ( Word* ) dllist_First ( ( dllist* ) piw->Lo_List ) ;
                 tci->OriginalContainingNamespace = piw ;
@@ -204,17 +210,18 @@ _TabCompletion_Compare ( Word * word )
         {
             d0 ( if ( String_Equal ( twn, "rsp" ) ) iPrintf ( "got it" ) ) ;
             slst = Strlen ( ( CString ) searchToken ), sltwn = Strlen ( twn ) ;
-            if ( ! slst ) // we match anything when user ends with a dot ( '.' ) ...
+            if ( ! slst ) 
             {
                 // except .. We don't want to jump down into a lower namespace here. ??
-                if ( ( tw->ContainingNamespace != tci->OriginalContainingNamespace ) || ( tw->ContainingNamespace == _CSL_->Namespaces ) )
+                if ( ( tw->ContainingNamespace == tci->OriginalContainingNamespace ) )
+                    //|| ( tw->ContainingNamespace == _CSL_->Namespaces ) )
+                    //if ( ( tw->ContainingNamespace != tci->OriginalContainingNamespace ) || ( tw->ContainingNamespace == _CSL_->Namespaces ) )
                 {
                     gotOne = true ; //1 ;
                 }
                 else return false ;
             }
-            else
-            //if ( ! gotOne )
+            else  //if ( ! gotOne )
             {
                 //tci->WordWrapCount = 8 ;
                 switch ( tci->WordWrapCount )
@@ -281,7 +288,7 @@ _TabCompletion_Compare ( Word * word )
                 RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
                 tci->FoundCount ++ ;
                 if ( tci->FoundCount > tci->MaxFoundCount ) tci->MaxFoundCount = tci->FoundCount ;
-                if ( Verbosity () > 4 )
+                if ( Verbosity ( ) > 4 )
                 {
                     //if ( tci->FoundWrapCount )
                     {
@@ -316,9 +323,9 @@ TC_Tree_Map ( TabCompletionInfo * tci, MapFunction mf, Word * wordi )
             {
                 nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
                 if ( kbhit ( ) ) return 0 ; //must be here else could loop forever !?
-                if ( rword = (Word*) mf ( ( Symbol* ) word ) ) goto doReturn ;
+                if ( rword = ( Word* ) mf ( ( Symbol* ) word ) ) goto doReturn ;
             }
-            if ( rword = (Word*) mf ( ( Symbol* ) ns ) ) goto doReturn ;
+            if ( rword = ( Word* ) mf ( ( Symbol* ) ns ) ) goto doReturn ;
             ns = nextNs ;
         }
 doReturn:
@@ -335,7 +342,7 @@ doReturn:
         if ( rword != tci->LastFoundWord ) break ;
     }
     //if ( (int64) rword == 1 ) return 0 ;
-        //_Printf ("") ;
+    //_Printf ("") ;
     //if ( rword ) tci->LastFoundWord = rword ;
     return rword ;
 }

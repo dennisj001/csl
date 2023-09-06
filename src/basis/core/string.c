@@ -942,6 +942,20 @@ _String_HighlightTokenInputLine ( byte * nvw, Boolean lef, int64 leftBorder, int
     return nvw ;
 }
 
+byte *
+String_RemoveFormatting ( byte * str )
+{
+    int i,j ;
+    byte * b = Buffer_DataCleared ( _CSL_->TabCompletion ) ;
+    for (i =0, j = 0 ; str[i] ; i++, j++)
+    {
+        if (str [i] == ESC ) { i++ ; while ( str [i++] != 'm' ) ; }
+        if ( str[i] ) b[j] = str[i] ;
+    }
+    b[j] = 0 ;
+    return b ;
+}
+
 int64
 _IsString ( byte * address, int64 maxLength )
 {

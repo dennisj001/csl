@@ -201,7 +201,7 @@ void
 ReadLine_TabWordCompletion ( ReadLiner * rl )
 {
     if ( ! GetState ( rl, TAB_WORD_COMPLETION ) ) RL_TabCompletionInfo_Init ( rl ) ;
-    RL_TabCompletion_Run ( rl, rl->TabCompletionInfo0->NextWord ) ; //? rl->TabCompletionInfo0->NextWord : rl->TabCompletionInfo0->RunWord ) ; // the main workhorse here
+    RL_TabCompletion_Run ( rl, 0, rl->TabCompletionInfo0->NextWord ) ; //? rl->TabCompletionInfo0->NextWord : rl->TabCompletionInfo0->RunWord ) ; // the main workhorse here
 }
 
 void

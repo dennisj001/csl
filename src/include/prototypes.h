@@ -1386,7 +1386,7 @@ void Interpret_String(byte *str);
 void _CSL_Interpret(CSL *csl);
 void CSL_InterpreterRun(void);
 /* src/basis/tabCompletion.c */
-void RL_TabCompletion_Run(ReadLiner *rl, Word *rword);
+void RL_TabCompletion_Run(ReadLiner *rl, Word *rword, Word *nextWord);
 TabCompletionInfo *TabCompletionInfo_New(uint64 allocType);
 byte *ReadLiner_GenerateFullNamespaceQualifiedName(ReadLiner *rl, Word *w);
 int64 _TC_FindPrevious_NamespaceQualifiedIdentifierStart(TabCompletionInfo *tci, byte *s, int64 pos);
@@ -1557,6 +1557,7 @@ byte *_String_Get_ReadlineString_ToEndOfLine(void);
 Boolean IsPunct(byte b);
 int64 String_FindStrnCmpIndex(byte *str, byte *name0, int64 index, int64 wlen, int64 inc);
 byte *_String_HighlightTokenInputLine(byte *nvw, Boolean lef, int64 leftBorder, int64 tokenStart, byte *token, byte *token0, int64 rightBorder, Boolean ref);
+byte *String_RemoveFormatting(byte *str);
 int64 _IsString(byte *address, int64 maxLength);
 byte *IsString(byte *address);
 byte *String_CheckForAtAdddress(byte *address, Colors *c1, Colors *c2);

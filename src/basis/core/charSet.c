@@ -163,6 +163,7 @@ CharSet_Init ( CharSet *cset, int64 size, byte * initString )
     //memcpy ( cset, (char*) CharTable, sizeof ( CharTable ) ) ; //size ) ;
     for ( i = 0 ; initString [i] ; i ++ ) cset [ initString [ i ] ] |= CHAR_DELIMITER ;
     cset [0] |= CHAR_DELIMITER ; // default 0 is always a delimiter
+    //cset [ESC] |= CHAR_DELIMITER ; // default 0 is always a delimiter
     return cset ;
 }
 

@@ -9,7 +9,7 @@ _Interpreter_Init ( Interpreter * interp )
 }
 
 void
-Interpreter_Init ( Interpreter * interp )
+Interpreter_Init ( Interpreter * interp ) 
 {
     _Interpreter_Init ( interp ) ;
 }
