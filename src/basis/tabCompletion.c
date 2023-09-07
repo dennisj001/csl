@@ -101,7 +101,8 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     {
         Clear_Terminal_Line ( ) ;
         ReadLine_InputLine_Clear ( rl ) ;
-        Strncpy ( rl->InputLineString, _String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ), slotStart ) ;
+        byte * sfr = _String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ) ;
+        Strncpy ( rl->InputLineString, sfr, slotStart ) ;
     }
     ReadLine_SetCursorPosition ( rl, newCursorPos ) ;
     //_ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier

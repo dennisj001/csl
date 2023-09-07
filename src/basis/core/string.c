@@ -648,7 +648,6 @@ String_InsertStringIntoStringSlot ( byte * str, int64 startOfSlot, int64 endOfSl
     {
         //iPrintf ( "\n...Insert... before :: str = \'%s\' : insert at %d to %d istr = \'%s\' :: at %s",
         //    str, startOfSlot, endOfSlot, istr, Context_Location ( ) ) ;
-        //Strcpy ( b, str ) ;
         Strcpy ( b, sfr ) ;
         Strcpy ( & b [ startOfSlot ], istr ) ; // watch for overlapping ??
         //Strcat ( b, &str [ endOfSlot ] ) ;

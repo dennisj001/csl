@@ -95,24 +95,28 @@ ReadLiner_IsDone ( ReadLiner * rl )
 }
 
 void
-_ReadLine_MoveInputStartToLineStart ( int64 fromPosition, int64 lineUpFlag )
+_ReadLine_MoveInputStartToLineStart ( int64 fromPosition) //, int64 lineUpFlag )
 {
     // nb. this is *necessary* when user scrolls up with scrollbar in eg. konsole and then hits up/down arrow
-    int64 n, columns = GetTerminalWidth ( ) ;
-    if ( fromPosition && columns && lineUpFlag )
+    //if ( lineUpFlag )
     {
-        n = ( fromPosition ) / ( columns ) ;
-        if ( ( fromPosition % columns ) < 2 ) n -- ; // nb : ?? -- i don't understand this but it works
-        if ( n ) Cursor_Up ( n ) ; //_Printf ( "\r%c[%dA", ESC, n ) ; // move n lines up 
+        int64 n, columns = GetTerminalWidth ( ) ;
+        if ( fromPosition && columns )
+        {
+            n = ( fromPosition ) / ( columns ) ;
+            if ( ( fromPosition % columns ) < 2 ) n -- ; // nb : ?? -- i don't understand this but it works
+            if ( n ) Cursor_Up ( n ) ; //_Printf ( "\r%c[%dA", ESC, n ) ; // move n lines up 
+        }
+        return ;
     }
-    else iPrintf ( "\r" ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
+    iPrintf ( "\r" ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
     //_Printf ( "\r%c[2K", ESC ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
 }
 
 void
 ReadLine_ClearCurrentTerminalLine ( ReadLiner * rl, int64 fromPosition )
 {
-    _ReadLine_MoveInputStartToLineStart ( fromPosition + PROMPT_LENGTH + 1, 0 ) ; // 1 : zero array indexing
+    _ReadLine_MoveInputStartToLineStart ( fromPosition + PROMPT_LENGTH + 1 ) ; // 1 : zero array indexing
     Clear_Terminal_Line ( ) ;
 }
 
@@ -302,7 +306,7 @@ ReadLine_ClearAndShowLine ( ReadLiner * rl )
 void
 _ReadLine_ShowCursor ( ReadLiner * rl, byte * prompt )
 {
-    _ReadLine_MoveInputStartToLineStart ( rl->EndPosition + PROMPT_LENGTH + 1, 0 ) ;
+    _ReadLine_MoveInputStartToLineStart ( rl->EndPosition + PROMPT_LENGTH + 1 ) ;
     byte saveChar = rl->InputLine [ rl->CursorPosition ] ; // set up to show cursor at end of new word
     rl->InputLine [ rl->CursorPosition ] = 0 ; // set up to show cursor at end of new word
     _ReadLine_Show ( rl, prompt ) ;
@@ -479,33 +483,6 @@ _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )
     }
     return false ;
 }
-#if 0 // 0.908.300
-
-Boolean
-_Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
-{
-    ReadLiner * rl = ReadLine_Copy ( rl0, COMPILER_TEMP ) ;
-    Word * word = CSL_WordList ( 0 ) ;
-    int64 iz, ib, index = word->W_RL_Index + Strlen ( word->Name ), sd = _Stack_Depth ( _Context_->Compiler0->BlockStack ) ;
-    byte c ;
-    for ( ib = false, iz = false ; 1 ; iz = false )
-    {
-        c = rl->InputLine [ index ++ ] ;
-        if ( ! c ) return false ;
-        if ( ( c == ';' ) && ( ! GetState ( _Context_, C_SYNTAX ) ) ) return true ;
-        if ( c == '}' )
-        {
-            if ( -- sd <= 1 ) return true ;
-            ib = 1 ; // b : bracket
-            continue ;
-        }
-        if ( ( c == '/' ) && ( rl->InputLine [ index ] == '/' ) ) CSL_CommentToEndOfLine ( ) ;
-        else if ( ib && ( c > ' ' ) && ( c != ';' ) ) return false ;
-    }
-    return false ;
-}
-
-#else
 
 Boolean
 _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
@@ -542,7 +519,6 @@ _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
     }
     return false ;
 }
-#endif
 
 byte
 ReadLine_Set_KeyedChar ( ReadLiner * rl, byte c )
@@ -637,13 +613,16 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     if ( rl->InputKeyedCharacter != '\t' )
     {
-        if ( GetState ( rl, TAB_WORD_COMPLETION|TAB_COMPLETION_CHANGE_STATE ) )
+        if ( GetState ( rl, TAB_WORD_COMPLETION | TAB_COMPLETION_CHANGE_STATE ) )
         {
             SetState ( rl, TAB_COMPLETION_CHANGE_STATE, true ) ;
-            if ( ( rl->InputKeyedCharacter == 32 ) && ( tci->RunWord ) ) // 32 : ' ' ; <space>
+            //if ( ( rl->InputKeyedCharacter == 32 ) && ( tci->RunWord ) ) // 32 : ' ' ; <space>
+            if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->RunWord || tci->TrialWord ) ) // 32 : ' ' ; <space>
             {
-                TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-                RL_TC_StringInsert_AtCursor ( rl, tci->RunWord->Name ) ;
+                Word * w ;
+                if ( tci->TrialWord ) w = tci->TrialWord ; 
+                else w = tci->RunWord ;
+                RL_TC_StringInsert_AtCursor ( rl, w->Name ) ;
                 //ReadLiner_SetLastChar ( ' ' ) ; // _Printf does a ReadLiner_SetLastChar ( 0 )
             }
             else if ( rl->InputKeyedCharacter == '\r' ) rl->InputKeyedCharacter = '\n' ; // leave line as is and append a space instead of '\r'
@@ -664,11 +643,7 @@ _ReadLine_GetLine ( ReadLiner * rl, byte c )
         else ReadLine_Set_KeyedChar ( rl, c ), c = 0 ;
         if ( ( ! csl_returnValue ) && AtCommandLine ( rl ) ) _ReadLine_TabCompletion_Check ( rl ) ;
         _CSL_->ReadLine_FunctionTable [ _CSL_->ReadLine_CharacterTable [ rl->InputKeyedCharacter ] ] ( rl ) ;
-        if ( GetState ( rl, TAB_COMPLETION_CHANGE_STATE ) )
-        {
-            SetState ( rl, TAB_COMPLETION_CHANGE_STATE, false ) ;
-            SetState ( rl, TAB_WORD_COMPLETION, false ) ;
-        }
+        if ( GetState ( rl, TAB_COMPLETION_CHANGE_STATE ) ) SetState ( rl, ( TAB_COMPLETION_CHANGE_STATE | TAB_WORD_COMPLETION ), false ) ;
         SetState ( rl, ANSI_ESCAPE, false ) ;
     }
     return rl->InputKeyedCharacter ;
@@ -759,12 +734,12 @@ ReadLine_ShowInfo ( ReadLiner * rl )
 }
 
 byte *
-_ReadLine_String_FormattingRemoved ( ReadLiner * rl )
+_ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
 {
     byte *str = rl->InputLine, * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
     int64 i, j, ep = rl->EndPosition ;
     //rl->InputLineString = rl->InputLine ;
-    for ( i = 0, j = 0 ; str [i] ; i ++ )
+    for ( i = start, j = 0 ; str [i] ; i ++ )
     {
         if ( str[i] == ESC )
         {

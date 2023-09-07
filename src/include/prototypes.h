@@ -953,7 +953,7 @@ void ReadLiner_CommentToEndOfLine(ReadLiner *rl);
 int64 ReadLiner_PeekSkipSpaces(ReadLiner *rl);
 void ReadLiner_Done(ReadLiner *rl);
 Boolean ReadLiner_IsDone(ReadLiner *rl);
-void _ReadLine_MoveInputStartToLineStart(int64 fromPosition, int64 lineUpFlag);
+void _ReadLine_MoveInputStartToLineStart(int64 fromPosition);
 void ReadLine_ClearCurrentTerminalLine(ReadLiner *rl, int64 fromPosition);
 void ReadLine_SetInputLine(ReadLiner *rl, byte *buffer);
 void ReadLine_InputLine_Clear(ReadLiner *rl);
@@ -1018,7 +1018,7 @@ byte ReadLine_NextNonPunctCharAfterEndOfString(ReadLiner *rl);
 Boolean ReadLine_AreWeAtNewlineAfterSpaces(ReadLiner *rl);
 Boolean ReadLine_CheckForLocalVariables(ReadLiner *rl);
 void ReadLine_ShowInfo(ReadLiner *rl);
-byte *_ReadLine_String_FormattingRemoved(ReadLiner *rl);
+byte *_ReadLine_String_FormattingRemoved(ReadLiner *rl, int64 start);
 /* src/basis/core/dataStack.c */
 uint64 DataStack_Pop(void);
 void DataStack_Push(int64 value);

@@ -324,7 +324,7 @@ void
 ReadTable_BackSpace ( ReadLiner * rl )
 #if 0
 {
-    byte * il = _ReadLine_String_FormattingRemoved ( rl ) ;
+    byte * il = _ReadLine_String_FormattingRemoved (rl, 0) ;
     ReadLine_InputLine_Clear ( rl ) ;
     strncpy ( rl->InputLine, il, BUFFER_IX_SIZE ) ;
     rl->InputLineString = rl->InputLine ;
@@ -355,7 +355,7 @@ ReadTable_BackSpace ( ReadLiner * rl )
             }
             else
             {
-                byte * il = _ReadLine_String_FormattingRemoved ( rl ) ;
+                byte * il = _ReadLine_String_FormattingRemoved (rl, 0 ) ; //tci->StringFirstChar ) ; //0) ;
                 strncpy ( &rl->InputLine[tci->StringFirstChar], il, BUFFER_IX_SIZE ) ;
                 rl->CursorPosition = strlen ( il ) ;
             }
