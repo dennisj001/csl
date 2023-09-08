@@ -69,7 +69,7 @@ _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( TabCompletionInfo * tci, by
         l = String_LastCharOfLastToken_FromPos ( s, pos ) ;
         if ( ! last ) tci->TokenLastChar = last = l ;
         if ( ( last == pos ) && ( s [last] <= ' ' ) && ( last != _ReadLine_CursorPosition ( _Context_->ReadLiner0 ) ) ) return last ;
-        f = String_FirstCharOfToken_FromPosOfLastChar ( s, l ) ;
+        f = String_FirstCharOfToken_FromPos ( s, l ) ;
         if ( f > 0 ) dot = String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( s, f - 1 ) ;
         else break ;
     }
@@ -108,7 +108,7 @@ TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int64 start )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     tci->TokenLastChar = ReadLine_LastCharOfLastToken_FromPos ( rl, start ) ;
     tci->TokenFirstChar = ReadLine_FirstCharOfToken_FromLastChar ( rl, tci->TokenLastChar ) ;
-    tci->StringFirstChar = String_FirstCharOfString_FromPosOfLastChar ( rl->InputLine, tci->TokenLastChar ) ;
+    tci->StringFirstChar = String_FirstCharOfString_FromPos ( rl->InputLine, tci->TokenLastChar ) ;
     tci->TokenLength = tci->TokenLastChar - tci->TokenFirstChar + 1 ; // zero array start
     Strncpy ( b, & rl->InputLine [ tci->TokenFirstChar ], tci->TokenLength ) ;
     b [ tci->TokenLength ] = 0 ;

@@ -57,7 +57,7 @@ String_IsLastCharADot ( byte * s, int64 pos )
 }
 
 int64
-String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int64 pos )
+String_FirstCharOfToken_FromPos ( byte * s, int64 pos )
 {
     int64 i ;
     for ( i = pos ; i ; i -- )
@@ -68,7 +68,7 @@ String_FirstCharOfToken_FromPosOfLastChar ( byte * s, int64 pos )
 }
 
 int64
-String_FirstCharOfString_FromPosOfLastChar ( byte * s, int64 pos )
+String_FirstCharOfString_FromPos ( byte * s, int64 pos )
 {
     int64 i ;
     for ( i = pos - 1; i ; i -- )
@@ -88,7 +88,7 @@ String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int64 pos )
         {
             if ( s [i] == '.' )
             {
-                if ( s [i - 1] == '.' ) return i - 1 ; // deal with the unique case of the dot, '.', token in the Class namespace 
+                if ( s [i - 1] == '.' ) continue ; //return i - 1 ; // deal with the unique case of the dot, '.', token in the Class namespace 
                 else return i ;
             }
         }
@@ -96,6 +96,18 @@ String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int64 pos )
     }
     return 0 ;
 }
+// ESC char ( 0x27 ) marks the beginning of an color adjust line for NOT_USING namespaces
+byte *
+String_FirstEscapeCharFromPos ( byte *str, int64 pos )
+{
+    int64 i ;
+    for ( i = pos ; str [i] ; i ++ )
+    {
+        if ( str[i] == ESC ) return &str[i] ;
+    }
+    return 0 ;
+}
+
 // reverse parsing
 
 byte
@@ -152,7 +164,7 @@ String_IsReverseTokenQualifiedID ( byte * s, int64 pos )
     //int64 lastChar = ReadLine_LastCharOfLastToken_FromPos ( rl, rl->ReadIndex ) ;
     int64 lastChar = String_LastCharOfLastToken_FromPos ( s, pos ) ;
     //int64 firstChar = ReadLine_FirstCharOfToken_FromLastChar ( rl, lastChar ) ;
-    int64 firstChar = String_FirstCharOfToken_FromPosOfLastChar ( s, lastChar ) ;
+    int64 firstChar = String_FirstCharOfToken_FromPos ( s, lastChar ) ;
     //return ReadLine_IsThereADotSeparator ( rl, firstChar - 1 ) ;
     return String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( s, firstChar ) ;
 }

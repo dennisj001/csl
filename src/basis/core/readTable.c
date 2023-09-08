@@ -334,7 +334,7 @@ ReadTable_BackSpace ( ReadLiner * rl )
 {
     if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ;
     //if ( GetState ( rl, TAB_WORD_COMPLETION ) )
-    if ( ReadLine_InputLine_FirstEscapeChar ( rl ) )
+    if ( ReadLine_InputLine_FirstEscapeChar ( rl, 0 ) )
     {
         if ( rl->InputLine[rl->CursorPosition - 1] != '.' )
         {

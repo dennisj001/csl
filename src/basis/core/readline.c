@@ -95,7 +95,7 @@ ReadLiner_IsDone ( ReadLiner * rl )
 }
 
 void
-_ReadLine_MoveInputStartToLineStart ( int64 fromPosition) //, int64 lineUpFlag )
+_ReadLine_MoveInputStartToLineStart ( int64 fromPosition ) //, int64 lineUpFlag )
 {
     // nb. this is *necessary* when user scrolls up with scrollbar in eg. konsole and then hits up/down arrow
     //if ( lineUpFlag )
@@ -202,7 +202,7 @@ ReadLine_Copy ( ReadLiner * rl0, uint64 type )
 }
 
 void
-ReadLine_TabWordCompletion ( ReadLiner * rl ) 
+ReadLine_TabWordCompletion ( ReadLiner * rl )
 {
     if ( ! GetState ( rl, TAB_WORD_COMPLETION ) ) RL_TabCompletionInfo_Init ( rl ) ;
     RL_TabCompletion_Run ( rl, 0, rl->TabCompletionInfo0->NextWord ) ; //? rl->TabCompletionInfo0->NextWord : rl->TabCompletionInfo0->RunWord ) ; // the main workhorse here
@@ -411,7 +411,7 @@ ReadLine_IsLastCharADot ( ReadLiner * rl, int64 pos )
 int64
 ReadLine_FirstCharOfToken_FromLastChar ( ReadLiner * rl, int64 pos )
 {
-    return String_FirstCharOfToken_FromPosOfLastChar ( rl->InputLine, pos ) ;
+    return String_FirstCharOfToken_FromPos ( rl->InputLine, pos ) ;
 }
 
 int64
@@ -616,14 +616,22 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
         if ( GetState ( rl, TAB_WORD_COMPLETION | TAB_COMPLETION_CHANGE_STATE ) )
         {
             SetState ( rl, TAB_COMPLETION_CHANGE_STATE, true ) ;
-            //if ( ( rl->InputKeyedCharacter == 32 ) && ( tci->RunWord ) ) // 32 : ' ' ; <space>
-            if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->RunWord || tci->TrialWord ) ) // 32 : ' ' ; <space>
+            if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->RunWord || tci->TrialWord ) )
             {
-                Word * w ;
-                if ( tci->TrialWord ) w = tci->TrialWord ; 
-                else w = tci->RunWord ;
-                RL_TC_StringInsert_AtCursor ( rl, w->Name ) ;
-                //ReadLiner_SetLastChar ( ' ' ) ; // _Printf does a ReadLiner_SetLastChar ( 0 )
+                if ( tci->StringFirstChar )
+                {
+                    byte * s = String_FirstEscapeCharFromPos ( &rl->InputLine[tci->StringFirstChar], 0 ) ;
+                    byte * s1 = String_FormattingRemoved ( s ) ;
+                    RL_TC_StringInsert_AtCursor ( rl, s1 ) ;
+                }
+                else
+                {
+                    Word * w ;
+                    if ( tci->TrialWord ) w = tci->TrialWord ;
+                    else w = tci->RunWord ;
+                    RL_TC_StringInsert_AtCursor ( rl, w->Name ) ;
+                    //ReadLiner_SetLastChar ( ' ' ) ; // _Printf does a ReadLiner_SetLastChar ( 0 )
+                }
             }
             else if ( rl->InputKeyedCharacter == '\r' ) rl->InputKeyedCharacter = '\n' ; // leave line as is and append a space instead of '\r'
         }
@@ -758,16 +766,11 @@ _ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
 }
 
 // ESC char ( 0x27 ) marks the beginning of an color adjust line for NOT_USING namespaces
+
 byte *
-ReadLine_InputLine_FirstEscapeChar ( ReadLiner * rl )
+ReadLine_InputLine_FirstEscapeChar ( ReadLiner * rl, int64 start )
 {
     byte *str = rl->InputLine ;
-    int64 i, j, ep = rl->EndPosition ;
-    //rl->InputLineString = rl->InputLine ;
-    for ( i = 0, j = 0 ; str [i] ; i ++ )
-    {
-        if ( str[i] == ESC ) return &str[i] ;
-    }
-    return 0 ;
+    return String_FirstEscapeCharFromPos ( str, start ) ;
 }
 
