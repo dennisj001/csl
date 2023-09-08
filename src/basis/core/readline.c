@@ -757,3 +757,17 @@ _ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
     return ns ;
 }
 
+// ESC char ( 0x27 ) marks the beginning of an color adjust line for NOT_USING namespaces
+byte *
+ReadLine_InputLine_FirstEscapeChar ( ReadLiner * rl )
+{
+    byte *str = rl->InputLine ;
+    int64 i, j, ep = rl->EndPosition ;
+    //rl->InputLineString = rl->InputLine ;
+    for ( i = 0, j = 0 ; str [i] ; i ++ )
+    {
+        if ( str[i] == ESC ) return &str[i] ;
+    }
+    return 0 ;
+}
+

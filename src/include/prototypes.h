@@ -1019,6 +1019,7 @@ Boolean ReadLine_AreWeAtNewlineAfterSpaces(ReadLiner *rl);
 Boolean ReadLine_CheckForLocalVariables(ReadLiner *rl);
 void ReadLine_ShowInfo(ReadLiner *rl);
 byte *_ReadLine_String_FormattingRemoved(ReadLiner *rl, int64 start);
+byte *ReadLine_InputLine_FirstEscapeChar(ReadLiner *rl);
 /* src/basis/core/dataStack.c */
 uint64 DataStack_Pop(void);
 void DataStack_Push(int64 value);
