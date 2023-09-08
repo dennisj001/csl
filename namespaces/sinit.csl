@@ -199,27 +199,32 @@ type quad ; quad.size = 16 ;
 type Boolean ; Boolean.size = 1 ;
 type Pointer ; Pointer.size = 8 ;
 type block ; block.size = 8 ;
+//cOff
+//: clib "/lib/libc.so.6" ;
+//cOn
 C
 "Dlsym" namespace 
 Dlsym 
+#define LIBC "/lib/libc.so.6"
 "libc" namespace 
 libc
-dlsym: printf /lib/libc.so.6 ; void_return
-dlsym: strcmp /lib/libc.so.6 ; rax_return
-dlsym: sprintf /lib/libc.so.6 ; void_return
-dlsym: strcat /lib/libc.so.6 ; void_return
-//dlsym: _strlen /lib/libc.so.6 ; rax_return
-dlsym: memset /lib/libc.so.6 ; void_return
-dlsym: sscanf /lib/libc.so.6 ; void_return
-dlsym: atoi /lib/libc.so.6 ; rax_return
+dlsym: printf LIBC ; void_return
+dlsym: strcmp LIBC ; rax_return
+dlsym: sprintf LIBC ; void_return
+dlsym: strcat LIBC ; void_return
+//dlsym: _strlen LIBC ; rax_return
+dlsym: memset LIBC ; void_return
+dlsym: sscanf LIBC ; void_return
+dlsym: atoi LIBC ; rax_return
 //int strlen ( s ) { return _strlen ( s ); }
 c_syntaxOff
 Root  
 sp0
 System
 //: bnInit1 ( width ) width @ bnInit ; 
-: bigNumOff "BigNum" notUsing ;
-: bigNumOn BigNum 32 bnInit ;
+//: bigNumOff "BigNum" notUsing ;
+//: bigNumOn BigNum 32 bnInit ;
+//d: : bigNumOn do> 32 BigNum.bnInit does> BigNum <does ;
 
 'bnOn 'bigNumOn find alias
 'bnOff 'bigNumOff find alias
@@ -498,7 +503,9 @@ doLisp 0 =
 // ========controls===========
 
 Root
-: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
+: lispInitNamespace "namespaces/compiler/lcinit.csl" ;
+: lisp lispInitNamespace _lisp ;  // demo of another way 
+//: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
 
 dbgOff
 //lisp
@@ -561,92 +568,10 @@ cOff
 #endif 
 #endif    
 
-#if 0
-lcOn
-(define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
-tick fibc find wdiss
-(fibc 20)
-lcOff sp0
-#endif
-#if 1 // fix me ??
-bnOn cOn 
-void ctof0 ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
-void ctof1 ( c ) { c *= 1.8 ; c += 32 ; nl ; p (c) ; } //ctof1 ( 11.41) ;
-cOff 
-: ctof ( c ) c 1.8 *=  c 32 += nl c @ p ; //11.41 ctof 
-: ftoc ( f ) f 32 -= f 1.8 /= f @ p ; //60 ftoc 
-#if 0
-bnOff
-: ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
-: ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
-#endif
-sp0
-#endif
-
-
 //tc demo lisp
-
-#if 0
-addToHistoryOn
-d: : hi 1 2 + p ; hi
-//"d: : hi 1 2 + p ; hi" addToHistory
-#endif
 
 //stringMacrosOff
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
-#if 0
-: fac ( int8 n  | int16 rec1 ) 
-    rec1 1 = 
-    { n @ 1 > } { n @ rec1 @ * rec1 store n -- } while 
-    return rec1 @
-;
-pwi fac
-7 fac dup p 5040 _assert0 
-#endif
-#if 0
-: iinc "./init.csl" include ;
-: interpT "namespaces/compiler/interpreter.csl" include ;
-: itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
-: classTest "namespaces/test/classTest.csl" include ;
-: arrayTest "namespaces/test/arrayTest.csl" include ;
-: localsTest "namespaces/test/localsTest.csl" include ;
-//: bigNumTest "namespaces/test/bigNum.csl" include ;
-: stackTest "namespaces/test/stack.csl" include ;
-: controlTest "namespaces/test/control.csl" include ;
-: objectTest "namespaces/test/dobject.csl" include ;
-: c_SyntaxTest "namespaces/compiler/c_syntax.csl" include ;
-: syntaxTest "namespaces/compiler/syntax.csl" include ;
-//: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
-: test "namespaces/test/test.csl" include ;
-: dT0 "namespaces/test/dev0.csl" include ;
-: dT2 "namespaces/test/dev2.csl" include ;
-: dT3 "namespaces/test/dev3.csl" include ;
-//: loT "namespaces/test/logic.csl" include ;
-: dT "namespaces/test/dev.csl" include ; inline
-: dT2 "namespaces/test/dev2.csl" include ;
-: mT "namespaces/test/math.csl" include ;
-: fT "namespaces/test/file.csl" include ;
-: sT "namespaces/compiler/syntax.csl" include ;
-: sysT "namespaces/test/system.csl" include ;
-: lispTest "namespaces/test/lisp.csl" include ;
-: oldL "namespaces/test/oldLisp.csl" include ;
-: stT stackTest ;
-//: bT bigNumTest ;
-: locT localsTest ;
-: aT arrayTest ;
-: cT classTest ;
-: cntT controlTest ;
-: oT objectTest ;
-: cST c_SyntaxTest ;
-//: ppT preprocessorTest ;
-: lT lispTest ;
-: basicT ppT loT bT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 ; //x64 ;
-basicT
-: itypes "namespaces/types.csl" include ;
-//itypes
-//cST
-#endif
 ;d
 2 + 7 assertStkChk // stack checking
-//lisp

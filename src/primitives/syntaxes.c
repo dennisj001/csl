@@ -55,6 +55,17 @@ CSL_C_Syntax_On ( )
     //CSL_TypeCheckOn ( ) ;
 }
 
+void
+CSL_BigNum_On ()
+{
+    //Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
+    BigNum_Init () ;
+}
+void
+CSL_BigNum_Off ()
+{
+    Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "BigNum" ) ;
+}
 // switch to the default forth, postfix mode
 
 void

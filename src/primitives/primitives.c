@@ -409,7 +409,10 @@ CPrimitive CPrimitives [] = {
     { "registers", 0, 0, 0, _Debugger_CpuState_Show, 0, 0, 0, "System", "Root" },
     { "lcOn", 0, 0, 0, LC_On, 0, 0, 0, "System", "Root" },
     { "lcOff", 0, 0, 0, ( block ) LC_LispNamespacesOff, 0, 0, 0, "System", "Root" },
-    { "bnInit", 0, 0, 0, BigNum_Init, PREFIXABLE, 0, 0, "System", "Root" },
+    { "bigNumOn", 0, 0, 0, CSL_BigNum_On, 0, 0, 0, "System", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
+    { "bigNumOff", 0, 0, 0, CSL_BigNum_Off, 0, 0, 0, "System", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
+    { "bnInit", 0, 0, 0, BigNum_Init, 0, 0, 0, "System", "Root" },
+    { "_bnInit", 0, 0, 0, _BigNum_Init, PREFIXABLE, 0, 0, "System", "Root" },
     { "pWidth", 0, 0, 0, BigNum_Set_PrintfWidth, 0, 0, 0, "System", "Root" },
     { "pPrecision", 0, 0, 0, BigNum_Set_PrintfPrecision, 0, 0, 0, "System", "Root" },
     { "internalBitPrecision", 0, 0, 0, BigNum_Set_InternalBitPrecision, 0, 0, 0, "System", "Root" },

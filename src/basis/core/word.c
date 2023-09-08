@@ -27,7 +27,7 @@ Word_Morphism_Run ( Word * word )
     if ( word )
     {
         Context_PreWordRun_Init ( _Context_, word ) ;
-        _O_->DebugOutputFlag &= ~1 ;
+        _O_->DebugOutputFlag &= ~ 1 ;
         if ( GetState ( _LC_, LC_DEBUG_ON ) || Is_DebugModeOn ) DEBUG_SETUP ( word, 0 ) ;
         Block_Eval ( word->Definition ) ;
         Context_PostWordRun_Init ( _Context_, word ) ;
@@ -45,7 +45,9 @@ _Word_Eval ( Word * word )
         DEBUG_SETUP ( word, 0 ) ;
         if ( ( word->W_MorphismAttributes & IMMEDIATE ) || ( ! CompileMode ) )
         {
+            SetState ( _Context_, RUN_MODE, true ) ;
             Word_Morphism_Run ( word ) ;
+            SetState ( _Context_, RUN_MODE, false ) ;
         }
         else _Word_Compile ( word ) ;
         DEBUG_SHOW ( word, 0, 0 ) ;
@@ -162,9 +164,9 @@ _Word_Add ( Word * word, int64 addToInNs, Namespace * addToNs )
     Namespace * ins = 0, *ns ;
     if ( word->S_ContainingNamespace )
     {
-        if ( Verbosity () > 1 ) iPrintf ( "\n_Word_Add at %s : Can't add existing word = %s from namespace %s to a new namespace??\n so we are making a copy", 
-            Context_Location (), word->Name, word->S_ContainingNamespace->Name ) ;
-        dlnode_Remove ( (dlnode * ) word ) ;
+        if ( Verbosity ( ) > 1 ) iPrintf ( "\n_Word_Add at %s : Can't add existing word = %s from namespace %s to a new namespace??\n so we are making a copy",
+            Context_Location ( ), word->Name, word->S_ContainingNamespace->Name ) ;
+        dlnode_Remove ( ( dlnode * ) word ) ;
     }
     if ( addToNs ) Namespace_DoAddWord ( addToNs, word ) ;
     else if ( addToInNs )
@@ -175,7 +177,7 @@ _Word_Add ( Word * word, int64 addToInNs, Namespace * addToNs )
             Namespace_DoAddWord ( ins, word ) ;
         }
     }
-    if ( Verbosity () > 3 )
+    if ( Verbosity ( ) > 3 )
     {
         ns = addToNs ? addToNs : ins ;
         if ( ns )
@@ -185,7 +187,7 @@ _Word_Add ( Word * word, int64 addToInNs, Namespace * addToNs )
         }
     }
 
-    if ( (Is_DbiOn || Is_DebugOn) && ( ( addToInNs || addToNs ) ) ) //&& word->S_ContainingNamespace ) )//&& String_Equal ("bt", word->Name) )
+    if ( ( Is_DbiOn || Is_DebugOn ) && ( ( addToInNs || addToNs ) ) ) //&& word->S_ContainingNamespace ) )//&& String_Equal ("bt", word->Name) )
     {
         //_Printf ( c_ad ( "\n_Word_Add : %s.%s = %lx : at %s\n" ),
         _Printf ( "\n_Word_Add : %s.%s = %lx : at %s",
@@ -200,7 +202,7 @@ _Word_Allocate ( uint64 allocType )
     int64 size = ( sizeof ( Word ) + sizeof ( WordData ) ) ;
     word = ( Word* ) DLList_CheckRecycledForAllocation ( _O_->RecycledWordList, size ) ;
     if ( word ) OVT_RecyclingAccounting ( OVT_RA_RECYCLED ) ; //{ _O_->MemorySpace0->RecycledWordCount ++ ; _O_->MemorySpace0->WordsInRecycling -- ; }
-    else 
+    else
     {
         word = ( Word* ) Mem_Allocate ( size, allocType ) ;
         word->S_WAllocType = allocType ;
@@ -281,23 +283,23 @@ Word_PrintOffset ( Word * word, int64 offset, int64 totalOffset )
                 name, baseObject->Name, baseObject->W_Value, offset, totalOffset, baseObject->W_Value + totalOffset ) ;
         }
         else
-        {   
+        {
             byte * typeName ;
             if ( word->W_ObjectAttributes & O_POINTER )
             {
                 byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-                snprintf ( buffer, BUFFER_SIZE, "* %s", word->TypeNamespace ? word->TypeNamespace->Name: (byte*) "" ) ;
+                snprintf ( buffer, BUFFER_SIZE, "* %s", word->TypeNamespace ? word->TypeNamespace->Name : ( byte* ) "" ) ;
                 typeName = buffer ;
             }
-            else typeName = word->TypeNamespace ? word->TypeNamespace->Name : ( byte* ) ""  ;
+            else typeName = word->TypeNamespace ? word->TypeNamespace->Name : ( byte* ) "" ;
             totalOffset = cntx->Compiler0->AccumulatedOptimizeOffsetPointer ? *cntx->Compiler0->AccumulatedOptimizeOffsetPointer : - 1 ;
-            iPrintf ( 
-            "\n\'%s\' = object field :: type = %s : size = %ld : base object = \'%s\' : address = 0x%lx : field offset = 0x%lx : total offset  = 0x%lx : :-> address = 0x%lx",
+            iPrintf (
+                "\n\'%s\' = object field :: type = %s : size = %ld : base object = \'%s\' : address = 0x%lx : field offset = 0x%lx : total offset  = 0x%lx : :-> address = 0x%lx",
                 name, typeName,
                 word->CompiledDataFieldByteSize,
                 baseObject ? String_ConvertToBackSlash ( baseObject->Name, 0 ) : ( byte* ) "",
                 baseObject ? baseObject->W_Value : 0, //(baseObject && ( ! C_SyntaxOn ) ) ? baseObject->W_Value : baseObject,
-                word->WD_Offset, totalOffset, baseObject ? ( baseObject->W_Value + totalOffset ) : (offset + totalOffset) ) ; //( byte* ) - 1 ) ;
+                word->WD_Offset, totalOffset, baseObject ? ( baseObject->W_Value + totalOffset ) : ( offset + totalOffset ) ) ; //( byte* ) - 1 ) ;
         }
         if ( Is_DebugModeOn ) DefaultColors ;
     }
@@ -333,7 +335,7 @@ Word_Info ( Word * word )
 void
 Word_Print ( Word * word, Word * scWord, Boolean flag )
 {
-    if ( word ) 
+    if ( word )
     {
         if ( flag ) _Debugger_Locals_ShowALocal ( _Debugger_->cs_Cpu, word, scWord ) ;
         else iPrintf ( "\n%s", Word_Info ( word ) ) ;
@@ -374,8 +376,8 @@ _Word_ShowSourceCode ( Word * word0 )
         }
         else scd = ( byte* ) "C Primitive" ;
         name = c_gd ( word->Name ) ;
-        if ( Is_DebugOn && GetState ( _Debugger_, DBG_STEPPING ) && ( ! GetState ( _Debugger_, DBG_UDIS )) ) return ;
-        iPrintf ( "\nSourceCode for %s.%s :> \n%s", 
+        if ( Is_DebugOn && GetState ( _Debugger_, DBG_STEPPING ) && ( ! GetState ( _Debugger_, DBG_UDIS ) ) ) return ;
+        iPrintf ( "\nSourceCode for %s.%s :> \n%s",
             word->S_ContainingNamespace ? word->S_ContainingNamespace->Name : ( byte* ) "", name, scd ) ;
     }
 }
@@ -515,7 +517,7 @@ _Word_Show_NamespaceStackWords ( Word * scWord, int64 flag )
     Stack * stack = scWord->NamespaceStack ? scWord->NamespaceStack : _Compiler_->LocalsCompilingNamespacesStack ;
     for ( i = 0, n = Stack_Depth ( stack ) ; i < n ; i ++ )
     {
-        Namespace * ns = ( Namespace* ) _Stack_N ( stack, i ) ; 
+        Namespace * ns = ( Namespace* ) _Stack_N ( stack, i ) ;
         _Namespace_PrintWords ( ns, scWord, flag ) ;
     }
 }

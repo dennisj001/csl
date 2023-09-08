@@ -74,6 +74,7 @@
 #define CompileModeOff Set_CompileMode ( false ) 
 #define CompileModeOn Set_CompileMode ( true ) 
 #define Compiling CompileMode
+#define RunMode GetState ( _Context_, RUN_MODE )
 #define ImmediateWord( word) (word->W_MorphismAttributes & IMMEDIATE)
 #define CPrimitiveWord( word) (word->W_MorphismAttributes & CPRIMITIVE)
 

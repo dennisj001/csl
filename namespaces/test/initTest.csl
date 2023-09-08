@@ -29,6 +29,7 @@ sp
 : mT "namespaces/test/math.csl" include ;
 : fT "namespaces/test/file.csl" include ;
 : sT "namespaces/compiler/syntax.csl" include ;
+: nT "namespaces/test/namespace.csl" include ;
 : sysT "namespaces/test/system.csl" include ;
 : lispTest "namespaces/test/lisp.csl" include ;
 : oldL "namespaces/test/oldLisp.csl" include ;
@@ -45,12 +46,12 @@ sp
 C
 : sp ; //stack pause ; sp
 #if 1 //doX64
-: basicT ppT loT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 ; //x64 ;
+: basicT ppT loT nT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 ; //x64 ;
 //: basicT ppT loT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST x64 ; //x64 ;
 #elif 1 //doTX64
-: basicT bT ppT loT cT mT aT locT fT oT cntT lT sT sysT interpT stT dT0 x64 ; //cST dT0 x64 ; //x64 ;
+: basicT bT ppT loT nT cT mT aT locT fT oT cntT lT sT sysT interpT stT dT0 x64 ; //cST dT0 x64 ; //x64 ;
 #else
-: basicT ppT loT cT mT aT bT locT fT oT cntT lT sT sysT interpT stT cST dT0 ;
+: basicT ppT loT nT cT mT aT bT locT fT oT cntT lT sT sysT interpT stT cST dT0 nT ;
 //: basicT ppT loT cT mT aT bT locT fT oT     cntT lT sT sysT dT0 ; //interpT stT cST dT0 ;
 #endif
 : _basicT bT mT cntT lT fT sysT  ;

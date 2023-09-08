@@ -110,7 +110,7 @@ BigNum_StateShow ( )
 
 //static mpfr_t *result ;
 void
-_BigNum_Init ( int64 precision )
+_bigNum_Init ( int64 precision )
 {
     mpfr_free_cache ( ) ;
     _Context_->System0->BigNum_Printf_Width = 2 ;
@@ -123,8 +123,16 @@ void
 BigNum_Init ( )
 {
     //int64 w = DataStack_Pop ( ) ;
+    _bigNum_Init ( 32 ) ;
+    Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
+}
+
+void
+_BigNum_Init ( )
+{
+    //int64 w = DataStack_Pop ( ) ;
     int64 p = DataStack_Pop ( ) ;
-    _BigNum_Init ( p ) ;
+    _bigNum_Init ( p ) ;
     Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
 }
 

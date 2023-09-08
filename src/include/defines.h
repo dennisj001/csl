@@ -743,6 +743,7 @@
 #define TYPE_CAST ( (uint64) 1 << 37 )
 #define TDI_PARSING ( (uint64) 1 << 38 )
 #define LISP_MODE ( (uint64) 1 << 39 )
+#define RUN_MODE ( (uint64) 1 << 40 )
 
 #define NON_INLINABLE ( (uint64) 1 << 0 )
 #define DONE true

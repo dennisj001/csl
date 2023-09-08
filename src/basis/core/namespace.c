@@ -48,17 +48,35 @@ _Namespace_AddToNamespacesTail ( Namespace * ns )
     dllist_AddNodeToTail ( _CSL_->Namespaces->W_List, ( dlnode* ) ns ) ;
 }
 
+#if 0
 void
 Namespace_Do_Namespace ( Namespace * ns )
 {
     Context * cntx = _Context_ ;
-    //if ( GetState ( cntx, IS_FORWARD_DOTTED ) ) Compiler_Save_Qid_BackgroundNamespace ( cntx->Compiler0 ) ;
-    if ( ( ! CompileMode ) || GetState ( cntx, C_SYNTAX | LISP_MODE ) ) _Namespace_Do_Namespace ( ns ) ;
+    if ( GetState ( cntx, IS_FORWARD_DOTTED ) ) Compiler_Save_Qid_BackgroundNamespace ( cntx->Compiler0 ) ;
+    //if ( ( ! CompileMode ) || GetState ( cntx, C_SYNTAX | LISP_MODE ) ) _Namespace_Do_Namespace ( ns ) ;
     else if ( ( ! GetState ( cntx, IS_FORWARD_DOTTED ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
     {
-        _Compile_C_Call_1_Arg ( ( byte* ) _Namespace_Do_Namespace, ( int64 ) ns ) ;
+        //_Compile_C_Call_1_Arg ( ( byte* ) 
+        _Namespace_Do_Namespace ( ns ) ;
     }
 }
+//#else
+void
+Namespace_Do_Namespace ( Namespace * ns )
+{
+    Context * cntx = _Context_ ;
+    //if ( CompileMode && ( ( ! GetState ( cntx, IS_FORWARD_DOTTED ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) ) )
+    if ( ( ! GetState ( cntx, IS_FORWARD_DOTTED ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
+    {
+        _Namespace_Do_Namespace ( ns ) ;
+        //_Compile_C_Call_1_Arg ( ( byte* ) 
+        //return ;
+    }
+    //else   //if ( GetState ( cntx, IS_FORWARD_DOTTED ) ) Compiler_Save_Qid_BackgroundNamespace ( cntx->Compiler0 ) ;
+    else if ( ( ! CompileMode ) || GetState ( cntx, C_SYNTAX | LISP_MODE ) ) _Namespace_Do_Namespace ( ns ) ;
+}
+#endif
 
 void
 _Context_ClearQidInNamespace ( Context * cntx )
@@ -144,15 +162,15 @@ _CSL_IsContainingNamespace ( byte * name, byte * namespaceName )
 }
 
 void
-_Namespace_Do_Namespace ( Namespace * ns )
+Namespace_Do_Namespace ( Namespace * ns )
 {
     Context * cntx = _Context_ ;
-    if ( ! Lexer_IsTokenForwardDotted ( cntx->Lexer0 ) ) _Namespace_ActivateAsPrimary ( ns ) ; //Namespace_SetState ( ns, USING ) ; //
-    else
+    if ( GetState ( cntx, IS_FORWARD_DOTTED )  ) 
     {
         Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ;
-        _CSL_Namespace_QidInNamespaceSet ( ns ) ;
+        //_CSL_Namespace_QidInNamespaceSet ( ns ) ;
     }
+    else  _Namespace_ActivateAsPrimary ( ns ) ; //Namespace_SetState ( ns, USING ) ; //
     if ( ! GetState ( cntx->Compiler0, ( LC_ARG_PARSING | ARRAY_MODE ) ) ) cntx->BaseObject = 0 ;
 }
 
@@ -661,7 +679,7 @@ TypeNamespace_Get ( Word * w )
     Namespace * ns ;
     if ( w->TypeNamespace ) return w->TypeNamespace ;
 #if 0    
-    //else if ( w->TypeNamespaceName && ( ( ns = Namespace_Find ( w->TypeNamespaceName ) ) && ( ns->W_ObjectAttributes & ( STRUCT | C_TYPE | C_CLASS ) ) ) )
+        //else if ( w->TypeNamespaceName && ( ( ns = Namespace_Find ( w->TypeNamespaceName ) ) && ( ns->W_ObjectAttributes & ( STRUCT | C_TYPE | C_CLASS ) ) ) )
     else if ( w->TypeNamespaceName && ( ( ns = Namespace_Find ( w->TypeNamespaceName ) ) && ( ns->W_ObjectAttributes & ( STRUCTURE_TYPE ) ) ) )
         return ns ; //Word_UnAlias ( ns ) ;
 #endif    
@@ -674,17 +692,17 @@ TypeNamespace_Set ( Word * w, Namespace * ns )
 #if 0    
     Namespace * tns ;
     if ( tns = TypeNamespace_Get ( w ) ) w->TypeNamespace = tns ;
-    else 
+    else
 #endif        
-    w->TypeNamespace = ns ;
+        w->TypeNamespace = ns ;
 }
 #else
 
 Namespace *
-TypeNamespace_Get ( Word * object ) 
-{ 
-    if ( object ->TypeNamespace ) return object->TypeNamespace ; 
-    else return object->ContainingNamespace ; 
+TypeNamespace_Get ( Word * object )
+{
+    if ( object ->TypeNamespace ) return object->TypeNamespace ;
+    else return object->ContainingNamespace ;
 }
 
 void
