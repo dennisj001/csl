@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.938.700" ) 
+#define VERSION ((byte*) "0.938.720" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // CT/Oop (Category Theory, Object Oriented Programming, Type Theory), 
@@ -90,7 +90,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     ovt->LispSpaceSize = 1 * M ;
     ovt->LispTempSize = 1 * M ;
     ovt->LispCopySize = 1 * M ;
-    ovt->CompilerTempObjectsSize = 2 * allocSize ;
+    ovt->CompilerTempObjectsSize = 1 * M ; //2 * allocSize ;
     ovt->BufferSpaceSize = allocSize ; //35 * ( sizeof ( Buffer ) + BUFFER_SIZE ) ;
     ovt->MachineCodeSize = allocSize ;
     ovt->StringSpaceSize = allocSize ;
@@ -100,7 +100,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     ovt->DataStackSize = 8 * K ; //1 * MB ; //8 * MB ;
     ovt->TempObjectsSize = 200 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
     ovt->WordRecylingSize = 1 * K * ( sizeof (Word ) + sizeof (WordData ) ) ; //50 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
-    ovt->SessionObjectsSize = 50 * K ;
+    ovt->SessionObjectsSize = 1 * M ; //50 * K ;
 
     _OpenVmTil_Init ( ovt ) ;
     Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;

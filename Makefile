@@ -56,7 +56,7 @@ oclean :
 clean : 
 	make oclean
 	touch src/include/defines.h
-	make src/include/prototypes.h
+	make -j20 src/include/prototypes.h
 	-rm bin/csl*
 
 $(PROTOTYPES) : $(INCLUDES) #$(S9_INCLUDES)
