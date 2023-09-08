@@ -30,18 +30,14 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
     Stack_Init ( rl->TciNamespaceStack ) ;
     Stack * nsStk = rl->TciNamespaceStack ;
     Namespace *ns ;
-    byte * nsName, *c_gdDot = 0 ; //( CString ) c_dd ( "." ) ;
-    int64 i, dot = 0, notUsing = 0 ; //, strlenUnAdorned = 0 ; //, ow = 0 ;
+    byte * nsName, *c_gdDot = 0 ;
+    int64 i, dot = 0, notUsing = 0 ;
 
     String_Init ( b0 ) ;
     for ( ns = ( Is_NamespaceType ( w ) ? w : w->ContainingNamespace ) ; ns ; ns = ns->ContainingNamespace ) // && ( tw->ContainingNamespace != _O_->CSL->Namespaces ) )
     {
-        if ( ns->State & NOT_USING )
-        {
-            notUsing = 1 ;
-        }
+        if ( ns->State & NOT_USING ) notUsing = 1 ;
         _Stack_Push ( nsStk, ( int64 ) ( ( ns->State & NOT_USING ) ? c_gd ( ns->Name ) : ( ns->Name ) ) ) ;
-        //strlenUnAdorned += strlen ( ns->Name ) ;
     }
     if ( notUsing ) c_gdDot = ( byte* ) c_gd ( "." ) ;
     for ( i = Stack_Depth ( nsStk ) ; i ; i -- )
@@ -49,21 +45,15 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
         nsName = ( byte* ) _Stack_Pop ( nsStk ) ;
         if ( nsName )
         {
-            strcat ( ( char* ) b0, ( char* ) nsName ) ; //( CString ) notUsing ? c_dd ( nsName ) : nsName ) ;
-            if ( i > 1 )
-            {
-                strcat ( ( char* ) b0, "." ) ; //( CString ) notUsing ? ( CString ) c_ddDot : ( CString ) "." ) ;
-            }
+            strcat ( ( char* ) b0, ( char* ) nsName ) ;
+            if ( i > 1 ) strcat ( ( char* ) b0, "." ) ; 
         }
     }
-    //if ( ( ! Is_NamespaceType ( w ) ) && ( ! String_Equal ( nsName, w->Name ) ) )
-    if ( ! Is_NamespaceType ( w ) ) //&& ( ! String_Equal ( nsName, w->Name ) ) )
+    if ( ! Is_NamespaceType ( w ) )
     {
         if ( ! dot ) strncat ( ( CString ) b0, ( CString ) notUsing ? ( CString ) c_gdDot : ( CString ) ".", BUFFER_IX_SIZE ) ;
         strncat ( ( char* ) b0, notUsing ? ( char* ) c_gd ( w->Name ) : ( char* ) w->Name, BUFFER_IX_SIZE ) ; // namespaces are all added above
-        //strlenUnAdorned += strlen ( w->Name ) ;
     }
-    //ReadLine_SetCursorPosition ( rl, strlenUnAdorned ) ;
     return b0 ;
 }
 
@@ -128,6 +118,15 @@ TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int64 start )
 // nb. the notation (function names) around parsing in tab completion is based in 'reverse parsing' - going back in the input line from the cursor position
 
 void
+_TabCompletionInfo_InitInfo ( TabCompletionInfo * tci )
+{
+    tci->WordWrapCount = 0 ;
+    tci->ComparedWordCount = 0 ;
+    tci->StartFlag = 0 ;
+    tci->FoundWrapCount = 0 ;
+}
+
+void
 RL_TabCompletionInfo_Init ( ReadLiner * rl )
 {
     Namespace * piw ;
@@ -187,14 +186,10 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     }
     if ( ! tci->OriginalContainingNamespace ) tci->OriginalContainingNamespace = _CSL_->Namespaces ;
     tci->OriginalRunWord = tci->RunWord ;
-    tci->WordWrapCount = 0 ;
-    tci->WordCount = 0 ;
-    tci->StartFlag = 0 ;
-    //srand ( time (0) ) ;
-    tci->FoundMarker = rand ( ) ;
-    tci->FoundWrapCount = 0 ;
     _Context_->NlsWord = 0 ;
     tci->NextWord = tci->RunWord ;
+    //_TabCompletionInfo_InitInfo ( tci ) ;
+    tci->FoundMarker = rand ( ) ;
 }
 
 Word *
@@ -204,7 +199,7 @@ _TabCompletion_Compare ( Word * word )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     byte * searchToken ;
     int64 gotOne = 0, slst, sltwn, strOpRes = - 1 ;
-    tci->WordCount ++ ;
+    tci->ComparedWordCount ++ ;
     if ( word )
     {
         searchToken = tci->SearchToken ;
@@ -292,13 +287,17 @@ _TabCompletion_Compare ( Word * word )
                 RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
                 tci->FoundCount ++ ;
                 if ( tci->FoundCount > tci->MaxFoundCount ) tci->MaxFoundCount = tci->FoundCount ;
-                if ( Verbosity ( ) > 4 )
+                static int flag ;
+                if ( ( Verbosity ( ) > 4 ) || flag )
                 {
+                    ( flag || ( _O_->Verbosity > 4 ) ) ? ( flag = 0 ) : ( flag = 1 ) ;
+                    _O_->Verbosity = 1 ; 
                     //if ( tci->FoundWrapCount )
                     {
-                        iPrintf ( " [ Search = \'%s\' : FoundWrapCount = %d : WordWrapCount = %d : WordCount = %d : Found List Length = %d : Max List Length = %d ]",
-                            ( tci->RunWord ? tci->RunWord->Name : tci->Identifier ), tci->FoundWrapCount, tci->WordWrapCount, tci->WordCount, tci->FoundCount, tci->MaxFoundCount ) ;
-                    }
+                        iPrintf ( " [ Search = \'%s\' : WordWrapCount = %d : ComparedWordCount = %d : FoundCount = %d : MaxFoundCount = %d : FoundWrapCount = %d ]",
+                            ( tci->RunWord ? tci->RunWord->Name : tci->Identifier ), tci->WordWrapCount, tci->ComparedWordCount, tci->FoundCount, tci->MaxFoundCount, tci->FoundWrapCount ) ;
+                        _TabCompletionInfo_InitInfo ( tci ) ;
+                   }
                 }
                 return word ; //true ;
             }

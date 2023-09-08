@@ -202,7 +202,7 @@ ReadLine_Copy ( ReadLiner * rl0, uint64 type )
 }
 
 void
-ReadLine_TabWordCompletion ( ReadLiner * rl )
+ReadLine_TabWordCompletion ( ReadLiner * rl ) 
 {
     if ( ! GetState ( rl, TAB_WORD_COMPLETION ) ) RL_TabCompletionInfo_Init ( rl ) ;
     RL_TabCompletion_Run ( rl, 0, rl->TabCompletionInfo0->NextWord ) ; //? rl->TabCompletionInfo0->NextWord : rl->TabCompletionInfo0->RunWord ) ; // the main workhorse here
@@ -391,7 +391,7 @@ ReadLine_DeleteChar ( ReadLiner * rl )
 {
     byte * b = Buffer_DataCleared ( _CSL_->ScratchB2 ) ;
     if ( -- rl->EndPosition < 0 ) rl->EndPosition = 0 ;
-    if ( rl->CursorPosition > rl->EndPosition )// shouldn't ever be greater but this will be more robust
+    if ( rl->CursorPosition > rl->EndPosition )
     {
         if ( -- rl->CursorPosition < 0 ) _ReadLine_CursorToStart ( rl ) ;
     }

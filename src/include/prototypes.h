@@ -1393,6 +1393,7 @@ byte *ReadLiner_GenerateFullNamespaceQualifiedName(ReadLiner *rl, Word *w);
 int64 _TC_FindPrevious_NamespaceQualifiedIdentifierStart(TabCompletionInfo *tci, byte *s, int64 pos);
 void RL_TC_StringInsert_AtCursor(ReadLiner *rl, byte *strToInsert);
 byte *TabCompletionInfo_GetAPreviousIdentifier(ReadLiner *rl, int64 start);
+void _TabCompletionInfo_InitInfo(TabCompletionInfo *tci);
 void RL_TabCompletionInfo_Init(ReadLiner *rl);
 Word *_TabCompletion_Compare(Word *word);
 Word *TC_Tree_Map(TabCompletionInfo *tci, MapFunction mf, Word *wordi);
