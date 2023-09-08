@@ -618,7 +618,7 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
             SetState ( rl, TAB_COMPLETION_CHANGE_STATE, true ) ;
             if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->RunWord || tci->TrialWord ) )
             {
-                if ( tci->StringFirstChar )
+                if ( tci->PreviousIdentifier )
                 {
                     byte * s = String_FirstEscapeCharFromPos ( &rl->InputLine[tci->StringFirstChar], 0 ) ;
                     byte * s1 = String_FormattingRemoved ( s ) ;
