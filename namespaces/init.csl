@@ -1,5 +1,6 @@
 //_dbgOn ukseOn
 5 // stack checking marker
+scOn 
 Debug
 // higher debugLevel turns on more debugging
 : d0 debugLevel 0 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization

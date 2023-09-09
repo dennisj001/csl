@@ -517,14 +517,16 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
     if ( ! scWord )
     {
         if ( ( _LC_ && _LC_->Sc_Word ) && word && ( word->W_MySourceCodeWord == _LC_->Sc_Word ) ) scWord = _LC_->Sc_Word ;
+        //if ( ! scWord ) scWord = _CSL_->SC_Word ;
     }
     scs = scWord ? scWord->W_OriginalCodeText : 0 ;
     if ( ( ! scs ) && useScFlag )
     {
         scWord = Get_SourceCodeWord ( word ) ;
         scs = scWord ? scWord->W_OriginalCodeText : 0 ;
-    }
-    if ( scs && ( word || token0 ) )
+     }
+    // if no scs we use il : by design : it works!
+    if ( word || token0 )
     {
         byte *token = ( word ? word->Name : token0 ), * token1, *token2 ;
         int64 slt, index, index0 ;
@@ -535,7 +537,7 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
         else token1 = token0 ;
         token2 = String_ConvertToBackSlash ( token1, 0 ) ;
         slt = Strlen ( token2 ) ;
-        index0 = scs ? word->W_SC_Index : rlIndex ; //word->W_SC_Index ;
+        index0 = scs ? word->W_SC_Index : rlIndex ; 
         if ( debugger->w_AliasOf )
         {
             token2 = word->Name ;
@@ -576,6 +578,7 @@ CSL_PrepareDbgShowInfoString ( Word * word, byte* token, int64 twAlreayUsed )
         //tw = Debugger_TerminalLineWidth ( debugger ) ; // 139 ; //139 : nice width :: Debugger_TerminalLineWidth ( debugger ) ; 
         tvw = tw - ( ( twAlreayUsed > fel ) ? ( twAlreayUsed - fel ) : fel ) ; //subtract the formatting chars which don't add to visible length
         cc_line = DBG_PrepareShowInfoString ( 0, word, token, il, tvw, word ? word->W_RL_Index : _Lexer_->TokenStart_ReadLineIndex, 0 ) ; //tvw, tvw/2 ) ;// sc : source code ; scwi : source code word index
+        //cc_line = DBG_PrepareShowInfoString ( word, word, token, il, tvw, word ? word->W_RL_Index : _Lexer_->TokenStart_ReadLineIndex, 0 ) ; //tvw, tvw/2 ) ;// sc : source code ; scwi : source code word index
     }
     return cc_line ;
 }

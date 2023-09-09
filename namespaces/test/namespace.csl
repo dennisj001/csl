@@ -1,4 +1,5 @@
 5
+scOn dscOn
 Root 
 : hi 1 6 + p ;
 
@@ -34,12 +35,12 @@ cOff
 "\nabove line should show : 3 4 3 3 7 7" ps
 //pause
 Test
-: hey test hi test2.hi hi ;
+: hey2 test hi test2.hi hi ;
 nl
 //pbclr
 dpbOn
 cpbOn
-hey hi
+hey2 hi
 'test notUsing
 hi
 'Test notUsing

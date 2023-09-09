@@ -39,7 +39,7 @@ _Udis_GetInstructionSize ( ud_t * ud, byte * address )
 ud_t *
 _Udis_Init ( ud_t * ud )
 {
-#if 1 
+#if 1
     ud_init ( ud ) ;
     ud_set_mode ( ud, 64 ) ;
     ud_set_syntax ( ud, UD_SYN_INTEL ) ;
@@ -53,55 +53,6 @@ _Udis_Init ( ud_t * ud )
     return ud ;
 }
 
-#if 0
-int64
-_Udis_Disassemble (ud_t *ud, Word * word, byte* iaddress, int64 number, 0, 0, byte * prefix)
-{
-    int64 isize, size = 0 ;
-    if ( ( ( int64 ) iaddress ) > 0 )
-    {
-        char * iasm ;
-        byte * address = 0 ;
-        ud_set_pc ( ud, ( uint64 ) iaddress ) ;
-        ud_set_input_buffer ( ud, ( byte* ) iaddress, 16 ) ;
-        do
-        {
-            isize = ud_disassemble ( ud ) ;
-            iasm = ( char* ) ud_insn_asm ( ud ) ;
-            address = ( byte* ) ( uint64 ) ud_insn_off ( ud ) ;
-            //if ( word ) 
-            SC_ShowSourceCode_In_Word_At_Address ( word, address ) ;
-            _Udis_PrintInstruction ( ud, address, ( byte* ) prefix, ( byte* ) postfix ) ;
-            if ( ( cflag && String_Equal ( ( byte* ) "ret", ( byte* ) iasm ) ) ) //|| String_Equal ( ( byte* ) "invalid", ( byte* ) iasm ) )
-            {
-                address ++ ;
-                cflag -- ;
-                if ( cflag <= 0 ) break ;
-            }
-            else if ( String_Equal ( ( byte* ) "invalid", ( byte* ) iasm ) ) break ;
-            number -= isize ;
-        }
-        while ( ( isize && ( number > 0 ) ) ) ;
-        size = address - iaddress + 1 ; // 1 : include last iaddress 
-    }
-    return (( size > 0 ) ? size : 0 ) ;
-}
-
-int64
-Debugger_UdisOneInstruction ( Debugger * debugger, Word * word, byte * address, byte * prefix, byte * postfix )
-{
-    int64 size = 0 ;
-    if ( GetState ( debugger, DBG_UDIS|DBG_UDIS_ONE ) )
-    {
-        if ( ! word ) word = debugger->w_Word ;
-        ud_t * ud = debugger->Udis ;
-        Debugger_UdisNew ( debugger ) ;
-        if ( address ) size = _Udis_Disassemble (ud, word, address, 16, 0, 0, prefix) ;
-        debugger->Udis = ud ;
-    }
-    return size ;
-}
-#else
 int64
 Debugger_UdisOneInstruction (Debugger * debugger, Word * word, byte * address, byte * prefix, byte * postfix )
 {
@@ -152,5 +103,3 @@ _Udis_Disassemble (ud_t *ud, Word * word, byte* iaddress, int64 number, byte * p
     }
     return (( size > 0 ) ? size : 0 ) ; 
 }
-
-#endif
