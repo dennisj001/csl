@@ -4,9 +4,10 @@
 void
 _Interpreter_LC_InterpretWord ( Interpreter *interp, ListObject * l0 )
 {
-    Word * word = l0->Lo_CSL_Word ;
+    Word * word = l0->Lo_CSL_Word ; byte c ;
     if ( ! word ) word = l0 ;
-    if ( kbhit ( ) ) Pause ( ) ; //CSL_Quit ( ) ;
+    if ( kbhit ( ) ) 
+        Pause ( ) ; 
     Interpreter_DoWord ( interp, word, word->W_RL_Index, word->W_SC_Index ) ;
 }
 

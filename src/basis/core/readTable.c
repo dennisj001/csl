@@ -221,6 +221,10 @@ ReadTable_D ( ReadLiner * rl ) // 'D' - ^[D = left arrow
         rl->EscapeModeFlag = 0 ;
         if ( rl->CursorPosition > 0 )
         {
+            if ( ReadLine_InputLine_FirstEscapeChar ( rl, 0 ) )
+            {
+                ReadTable_BackSpace_AdjustEscapeSequences ( rl ) ;
+            }
             ReadLine_DoCursorMoveInput ( rl, rl->CursorPosition - 1 ) ;
         }
         else return ;
@@ -321,49 +325,47 @@ ReadTable_Tilde ( ReadLiner * rl ) // '~' - Delete
 }
 
 void
-ReadTable_BackSpace ( ReadLiner * rl )
-#if 0
+ReadTable_BackSpace_AdjustEscapeSequences ( ReadLiner * rl )
 {
-    byte * il = _ReadLine_String_FormattingRemoved (rl, 0) ;
-    ReadLine_InputLine_Clear ( rl ) ;
-    strncpy ( rl->InputLine, il, BUFFER_IX_SIZE ) ;
-    rl->InputLineString = rl->InputLine ;
-    ReadLine_DeleteChar ( rl ) ;
-}
-#else // experimental
-{
-    if ( rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ;
-    //if ( GetState ( rl, TAB_WORD_COMPLETION ) )
-    if ( ReadLine_InputLine_FirstEscapeChar ( rl, 0 ) )
+#if 0            
+    if ( rl->InputLine[rl->CursorPosition - 1] != ' ' )
     {
-        if ( rl->InputLine[rl->CursorPosition - 1] != '.' )
+        int64 cp = rl->CursorPosition, slids, tfc ;
+        TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
+        memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
+        byte *ids, * id = TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
+        tfc = tci->TokenFirstChar ;
+        if ( tci->TokenFirstChar ) tci->PreviousIdentifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
+        Word * w = CSL_FindInAnyNamespace ( String_FormattingRemoved ( tci->PreviousIdentifier ) ) ;
+        if ( w )
         {
-            int64 cp = rl->CursorPosition, slids ;
-            TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-            memset ( tci, 0, sizeof ( TabCompletionInfo ) ) ;
-            byte *ids, * id = TabCompletionInfo_GetAPreviousIdentifier ( rl, _ReadLine_CursorPosition ( rl ) ) ;
-            if ( tci->TokenFirstChar ) tci->PreviousIdentifier = TabCompletionInfo_GetAPreviousIdentifier ( rl, tci->TokenFirstChar - 1 ) ; // TokenStart refers to start of 'Identifier'
-            Word * w = CSL_FindInAnyNamespace ( String_FormattingRemoved ( tci->PreviousIdentifier ) ) ;
-            if ( w )
-            {
-                //ReadLine_InputLine_Clear ( rl ) ;
-                byte * fnql = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, w ) ;
-                strcpy ( &rl->InputLine[tci->StringFirstChar], fnql ) ;
-                strcat ( &rl->InputLine[tci->StringFirstChar], "." ) ;
-                ids = String_FormattingRemoved ( id ) ;
-                rl->CursorPosition = cp + ( slids = strlen ( ids ) ) ; // don't add   "."
-                strncat ( rl->InputLine, ids, slids - 1 ) ;
-            }
-            else
-            {
-                byte * il = _ReadLine_String_FormattingRemoved (rl, 0 ) ; //tci->StringFirstChar ) ; //0) ;
-                strncpy ( &rl->InputLine[tci->StringFirstChar], il, BUFFER_IX_SIZE ) ;
-                rl->CursorPosition = strlen ( il ) ;
-            }
-            rl->InputLineString = rl->InputLine ;
+            //ReadLine_InputLine_Clear ( rl ) ;
+            byte * fnql = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, w ) ;
+            strcpy ( &rl->InputLine[tfc], fnql ) ;
+            strcat ( &rl->InputLine[tfc], "." ) ;
+            ids = String_FormattingRemoved ( id ) ;
+            rl->CursorPosition = cp + ( slids = strlen ( ids ) ) ; // don't add   "."
+            strncat ( rl->InputLine, ids, slids - 1 ) ;
         }
+        else
+#endif                
+        {
+            byte * il = _ReadLine_String_FormattingRemoved ( rl, 0 ) ; //tci->StringFirstChar ) ; //0) ;
+            strncpy ( &rl->InputLine[0], il, strlen ( il ) ) ;
+            rl->InputLine[rl->CursorPosition] = 0 ;
+        }
+        rl->InputLineString = rl->InputLine ;
+        //}
     }
-    ReadLine_DeleteChar ( rl ) ;
-}
-#endif
+
+    void
+    ReadTable_BackSpace ( ReadLiner * rl )
+    {
+        if ( --rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ;
+        if ( ReadLine_InputLine_FirstEscapeChar ( rl, 0 ) )
+        {
+            ReadTable_BackSpace_AdjustEscapeSequences ( rl ) ;
+        }
+        ReadLine_DeleteChar ( rl ) ;
+    }
 

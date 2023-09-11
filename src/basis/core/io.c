@@ -32,31 +32,9 @@ kbhit ( void )
     char ch = getchar ( ) ;
     //if ( ch < 0 ) ch = 0 ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf ) ;
-    return ((ch > ' ') || (ch == ESC)) ;
+    //return ((ch > ' ') || (ch == ESC) ? ch : 0 ) ;
+    return ( ch  == ESC ) ;
 }
-
-#if 0
-
-int64
-GetC ( )
-{
-    byte buffer [4] ;
-    read ( STDIN_FILENO, buffer, 1 ) ;
-    write ( STDOUT_FILENO, buffer, 1 ) ;
-    return buffer [0] ;
-}
-
-// from : http://stackoverflow.com/questions/16026858/reading-the-device-status-report-ansi-escape-sequence-reply
-
-void
-getCursor ( int* x, int* y )
-{
-    iPrintf ( "\033[6n" ) ;
-    int out = scanf ( "\033[%d;%dR", x, y ) ;
-    //fflush ( stdout ) ; 
-    //fflush ( stdin ) ; 
-}
-#endif
 
 #define KEY() getc ( stdin )
 
@@ -84,7 +62,7 @@ _Key ( FILE * f )
 void
 Kbhit_Pause ( )
 {
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
+    if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
 }
 
 int64

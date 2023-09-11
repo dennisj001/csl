@@ -1150,6 +1150,7 @@ void ReadTable_3(ReadLiner *rl);
 void ReadTable_1(ReadLiner *rl);
 void ReadTable_O(ReadLiner *rl);
 void ReadTable_Tilde(ReadLiner *rl);
+void ReadTable_BackSpace_AdjustEscapeSequences(ReadLiner *rl);
 void ReadTable_BackSpace(ReadLiner *rl);
 /* src/basis/bigNum.c */
 mpfr_t *_BigNum_New(byte *token);
