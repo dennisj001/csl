@@ -30,9 +30,9 @@ kbhit ( void )
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
     char ch = getchar ( ) ;
-    if ( ch < 0 ) ch = 0 ;
+    //if ( ch < 0 ) ch = 0 ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf ) ;
-    return ch ;
+    return ((ch > ' ') || (ch == ESC)) ;
 }
 
 #if 0

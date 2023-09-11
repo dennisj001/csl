@@ -37,7 +37,7 @@ CSL_ReadTables_Setup ( CSL * csl )
     //cfrl->ReadLine_CharacterTable [ '!' ] = 23 ; // the lexer handles this
 
     csl->ReadLine_FunctionTable [ 0 ] = ReadTable_Default ;
-    csl->ReadLine_FunctionTable [ 1 ] = ReadTable_BackSpace ;
+    csl->ReadLine_FunctionTable [ 1 ] = ReadTable_BackSpace ; //delete
     csl->ReadLine_FunctionTable [ 2 ] = ReadTable_Tab ;
     csl->ReadLine_FunctionTable [ 3 ] = ReadTable_0x03 ; // Ctrl-C
     csl->ReadLine_FunctionTable [ 4 ] = ReadTable_0x04 ; // Ctrl-D
