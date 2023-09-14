@@ -335,9 +335,6 @@ doReturn:
         }
         if ( rword != tci->LastFoundWord ) break ;
     }
-    //if ( (int64) rword == 1 ) return 0 ;
-    //_Printf ("") ;
-    //if ( rword ) tci->LastFoundWord = rword ;
     return rword ;
 }
 

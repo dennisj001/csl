@@ -138,7 +138,7 @@ s9.image:	s9 s9.scm ext/sys-unix/unix.scm ext/curses/curses.scm \
 	
 proto:
 	touch src/include/defines.h
-	make src/include/prototypes.h
+	make -j20 src/include/prototypes.h
 
 optimize1 : oclean _csl_O1
 
@@ -152,7 +152,7 @@ optimize :
 	#make optimize2
 	make -j 20 optimize3
 	#make optimize3
-	make csls
+	make -j 20 csls
 	make oclean
 	#make
 	#-sudo cp bin/cslo3 /usr/local/bin/csl

@@ -613,7 +613,6 @@ String_InsertCharacter ( CString into, int64 position, byte character )
     strcat ( ( char* ) b, &into [ position ] ) ;
     strcpy ( into, ( CString ) b ) ;
 }
-#if 1
 
 byte *
 _String_FormattingRemoved ( byte * str, int64 allocType )
@@ -640,56 +639,31 @@ String_FormattingRemoved ( byte * str )
 {
     return _String_FormattingRemoved ( str, TEMPORARY ) ;
 }
-#else
-
-byte *
-String_RemoveFormatting ( byte * str )
-{
-    int i, j ;
-    byte * b = Buffer_DataCleared ( _CSL_->TabCompletion ) ;
-    for ( i = 0, j = 0 ; str[i] ; i ++, j ++ )
-    {
-        if ( str [i] == ESC )
-        {
-            i ++ ;
-            while ( str [i ++] != 'm' ) ;
-        }
-        if ( str[i] ) b[j] = str[i] ;
-    }
-    b[j] = 0 ;
-    return b ;
-}
-#endif
 
 // insert istr into str slot ( startOfSlot, endOfSlot ) in buffer
 
 void
 String_InsertStringIntoStringSlot ( byte * str, int64 startOfSlot, int64 endOfSlot, byte * istr, int64 outStrMaxSize ) // size in bytes
 {
-    byte * strEnd = Buffer_DataCleared ( _CSL_->StringInsertB3 ) ;
+    //byte * strEnd = Buffer_DataCleared ( _CSL_->StringInsertB3 ) ;
     byte * b = Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
     int64 strfr = Strlen ( str ) ;
     int64 slis = Strlen ( istr ) ;
-    ///int64 slotSize = endOfSlot - startOfSlot, ts = ( Strlen ( str ) - ( slotSize ) + Strlen ( istr ) ) ; // total size
     int64 slotSize = endOfSlot - startOfSlot ;
     int64 ts = ( strfr - ( slotSize ) + slis ) ; // total size
     if ( ! outStrMaxSize ) outStrMaxSize = BUFFER_SIZE ; //default size 
-    //if ( (abs (ts) < outStrMaxSize) )
-    strcpy ( strEnd, &str [ endOfSlot ] ) ;
+    //strcpy ( strEnd, &str [ endOfSlot ] ) ;
     if ( ( ts >= 0 ) && ( ts < outStrMaxSize ) )
     {
         //iPrintf ( "\n...Insert... before :: str = \'%s\' : insert at %d to %d istr = \'%s\' :: at %s",
         //    str, startOfSlot, endOfSlot, istr, Context_Location ( ) ) ;
         Strcpy ( b, str ) ;
         Strcpy ( & b [ startOfSlot ], istr ) ; // watch for overlapping ??
-        //Strcat ( b, &str [ endOfSlot ] ) ;
-        //if ( startOfSlot != 0 ) //&& ( slsfr > slis )) )
-        Strcat ( b, strEnd ) ; //&sfr [ endOfSlot ] ) ;
+        Strcat ( b, &str [ endOfSlot ] ) ; //strEnd ) ; //&sfr [ endOfSlot ] ) ;
         Strcpy ( str, b ) ;
         //iPrintf ( "\n...Insert... after :: str = \'%s\'", str ) ;
     }
     else if ( ts > outStrMaxSize ) CSL_Exception ( BUFFER_OVERFLOW, 0, 1 ) ;
-    //return strEnd ;
 }
 
 byte *
@@ -907,7 +881,6 @@ String_FindStrnCmpIndex ( byte * str, byte* name0, int64 index, int64 wlen, int6
 {
     byte * scspp2, *scspp, *stri ;
     d0 ( scspp = & str [ index ] ) ;
-    //inc = 25 ; // why don't we find some words??
     int64 i, n, slsc = Strlen ( str ) ;
     for ( i = 0, n = inc + 1 ; ( i <= n ) ; i ++ ) // tokens are parsed in different order with parameter and c rtl args, etc. 
     {

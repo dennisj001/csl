@@ -346,7 +346,6 @@ ReadLine_ClearAndShowLineWithCursor ( ReadLiner * rl )
 void
 ReadLine_ShowNormalPrompt ( ReadLiner * rl )
 {
-    //_ReadLine_ShowStringWithCursor ( rl, ( byte* ) "", rl->NormalPrompt ) ;
     Clear_Terminal_Line ( ) ;
     iPrintf ( "\r%s", rl->NormalPrompt ) ;
     rl->EndPosition = 0 ;
@@ -369,9 +368,8 @@ ReadLine_SaveCharacter ( ReadLiner * rl )
         ReadLine_InsertCharacter ( rl ) ;
         _ReadLine_CursorRight ( rl ) ;
         ReadLine_ClearAndShowLineWithCursor ( rl ) ;
-        return ;
     }
-    ReadLine_AppendAndShowCharacter ( rl ) ;
+    else ReadLine_AppendAndShowCharacter ( rl ) ;
 }
 
 void
@@ -748,6 +746,7 @@ ReadLine_ShowInfo ( ReadLiner * rl )
         iPrintf ( "\nReadLiner Show :: %s : %d.%d :: \n%s", rl->Filename, rl->LineNumber, rl->CursorPosition, rl->InputLine ) ;
 }
 
+// ESC char ( 0x27 ) marks the beginning of an color adjust line for NOT_USING namespaces
 void
 ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
 {
@@ -756,7 +755,7 @@ ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
     str = rl->InputLineString = rl->InputLine ;
     for ( i = start ; str [i] ; i ++ )
     {
-        if ( str[i] == ESC )
+        if ( str[i] == ESC ) // esc is always the first char of a color escape sequence
         {
             if ( str[i + inc] == ESC ) inc = 16 ;
             src = & str[i + inc] ;
@@ -769,11 +768,7 @@ ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
                 rl->CursorPosition -= d ; 
                 inc = 8 ;
             }
-            else
-            {
-                //str[i] = ' ' ;
-                break ;
-            }
+            else break ;
             delimiterFlag = false ;
         }
         if ( _Lexer_IsCharDelimiter ( _Lexer_, str [i] ) && strFirstFlag ) strFirstFlag = 0, strFirst = 0, delimiterFlag = true ;
