@@ -46,7 +46,7 @@ ReadLiner_GenerateFullNamespaceQualifiedName ( ReadLiner * rl, Word * w )
         if ( nsName )
         {
             strcat ( ( char* ) b0, ( char* ) nsName ) ;
-            if ( i > 1 ) strcat ( ( char* ) b0, "." ) ; 
+            if ( i > 1 ) strcat ( ( char* ) b0, "." ) ;
         }
     }
     if ( ! Is_NamespaceType ( w ) )
@@ -81,24 +81,15 @@ void
 RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
 {
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
-    int64 stiLen, newCursorPos, startCursorPos = _ReadLine_CursorPosition ( rl ), slotEnd ;
-    int64 slotStart = _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( tci, rl->InputLineString, startCursorPos ) ;
+    int64 stiLen, startCursorPos = _ReadLine_CursorPosition ( rl ), slotEnd ;
+    int64 slotStart = _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( tci, rl->InputLine, startCursorPos ) ;
     stiLen = Strlen ( strToInsert ) ;
-    newCursorPos = slotStart + stiLen ;
-    slotEnd = newCursorPos ;
-    //if ( (slotStart == 0) || (newCursorPos < stiLen ))
-    //if ( newCursorPos < stiLen )
-    {
-        Clear_Terminal_Line ( ) ;
-        ReadLine_InputLine_Clear ( rl ) ;
-        byte * sfr = _String_FormattingRemoved ( _CSL_->OriginalInputLine, COMPILER_TEMP ) ;
-        Strncpy ( rl->InputLineString, sfr, slotStart ) ;
-    }
-    ReadLine_SetCursorPosition ( rl, newCursorPos ) ;
-    //_ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, startCursorPos, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
-    _ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, slotEnd, ( byte* ) strToInsert ) ; // 1 : TokenLastChar is the last char of the identifier
-    ReadLine_Set_ReadIndex ( rl, rl->CursorPosition ) ;
-    rl->EndPosition = rl->CursorPosition ;
+    slotEnd = slotStart + stiLen ;
+    ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, rl->CursorPosition, ( byte* ) strToInsert ) ;
+    ReadLine_SetCursorPosition ( rl, slotEnd ) ;
+    rl->EndPosition += stiLen ;
+    Readline_ZeroEndPosToEnd ( rl ) ;
+    ReadLine_ClearAndShowLineWithCursor ( rl ) ;
 }
 
 byte *
@@ -283,21 +274,21 @@ _TabCompletion_Compare ( Word * word )
                     return false ;
                 }
                 word->W_FoundMarker = tci->FoundMarker ;
-                fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
-                RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
+                //fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tw ) ;
+                //RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
                 tci->FoundCount ++ ;
                 if ( tci->FoundCount > tci->MaxFoundCount ) tci->MaxFoundCount = tci->FoundCount ;
                 static int flag ;
                 if ( ( Verbosity ( ) > 4 ) || flag )
                 {
                     ( flag || ( _O_->Verbosity > 4 ) ) ? ( flag = 0 ) : ( flag = 1 ) ;
-                    _O_->Verbosity = 1 ; 
+                    _O_->Verbosity = 1 ;
                     //if ( tci->FoundWrapCount )
                     {
                         iPrintf ( " [ Search = \'%s\' : WordWrapCount = %d : ComparedWordCount = %d : FoundCount = %d : MaxFoundCount = %d : FoundWrapCount = %d ]",
                             ( tci->RunWord ? tci->RunWord->Name : tci->Identifier ), tci->WordWrapCount, tci->ComparedWordCount, tci->FoundCount, tci->MaxFoundCount, tci->FoundWrapCount ) ;
                         _TabCompletionInfo_InitInfo ( tci ) ;
-                   }
+                    }
                 }
                 return word ; //true ;
             }

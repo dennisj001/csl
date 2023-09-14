@@ -985,7 +985,7 @@ void ReadLine_ClearAndShowLineWithCursor(ReadLiner *rl);
 void ReadLine_ShowNormalPrompt(ReadLiner *rl);
 void ReadLine_InsertCharacter(ReadLiner *rl);
 void ReadLine_SaveCharacter(ReadLiner *rl);
-void _ReadLine_InsertStringIntoInputLineSlotAndShow(ReadLiner *rl, int64 startOfSlot, int64 endOfSlot, byte *data);
+void ReadLine_InsertStringIntoInputLineSlotAndShow(ReadLiner *rl, int64 startOfSlot, int64 endOfSlot, byte *data);
 void ReadLiner_InsertTextMacro(ReadLiner *rl, Word *word);
 void ReadLine_DeleteChar(ReadLiner *rl);
 int64 ReadLine_IsLastCharADot(ReadLiner *rl, int64 pos);
@@ -1017,8 +1017,9 @@ byte ReadLine_NextNonPunctCharAfterEndOfString(ReadLiner *rl);
 Boolean ReadLine_AreWeAtNewlineAfterSpaces(ReadLiner *rl);
 Boolean ReadLine_CheckForLocalVariables(ReadLiner *rl);
 void ReadLine_ShowInfo(ReadLiner *rl);
-byte *_ReadLine_String_FormattingRemoved(ReadLiner *rl, int64 start);
+void ReadLine_String_FormattingRemoved(ReadLiner *rl, int64 start);
 byte *ReadLine_InputLine_FirstEscapeChar(ReadLiner *rl, int64 start);
+void ReadLine_SetCharAtCursorPos(ReadLiner *rl, char c);
 /* src/basis/core/dataStack.c */
 uint64 DataStack_Pop(void);
 void DataStack_Push(int64 value);
@@ -1193,6 +1194,7 @@ void BigNum_GreaterThanOrEqual(void);
 void BigNum_LogicalEquals(void);
 void BigNum_LogicalDoesNotEqual(void);
 /* src/basis/core/_readline.c */
+void Readline_ZeroEndPosToEnd(ReadLiner *rl);
 void ReadLine_Set_ReadIndex(ReadLiner *rl, int64 pos);
 byte *_ReadLine_pb_NextChar(ReadLiner *rl);
 byte _ReadLine_NextChar(ReadLiner *rl);

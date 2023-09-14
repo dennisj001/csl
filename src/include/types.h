@@ -643,7 +643,7 @@ typedef struct ReadLiner
     int64 InputKeyedCharacter ;
     int64 FileCharacterNumber, LineNumber, OutputLineCharacterNumber ; // set by _CSL_Key
     int64 ReadIndex, svReadIndex, EndPosition ; // index where the next input character is put
-    int64 MaxEndPosition ; // index where the next input character is put
+    int64 MaxEndPosition ; //, SlotStart, SlotEnd ; // index where the next input character is put
     int64 CursorPosition, EscapeModeFlag, InputStringIndex, InputStringLength, LineStartFileIndex ;
     byte *Filename, LastCheckedInputKeyedCharacter, * DebugPrompt, * DebugAltPrompt, * NormalPrompt, * AltPrompt, * Prompt ;
     byte InputLine [BUFFER_SIZE], * InputLineString, * InputStringOriginal, * InputStringCurrent, *svLine ;

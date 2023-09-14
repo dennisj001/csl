@@ -92,7 +92,7 @@ byte CharTable [128]= { // from maru
   /*  57  W  */	CHAR_PRINT | CHAR_LETTER | CHAR_ALPHA,
   /*  58  X  */	CHAR_PRINT | CHAR_LETTER | CHAR_ALPHA,
   /*  59  Y  */	CHAR_PRINT | CHAR_LETTER | CHAR_ALPHA,
-  /*  5a  N_0  */	CHAR_PRINT | CHAR_LETTER | CHAR_ALPHA,
+  /*  5a  Z  */	CHAR_PRINT | CHAR_LETTER | CHAR_ALPHA,
   /*  5b  [  */	CHAR_PRINT,
   /*  5c  \  */	CHAR_PRINT | CHAR_LETTER,
   /*  5d  ]  */	CHAR_PRINT,
@@ -126,9 +126,9 @@ byte CharTable [128]= { // from maru
   /*  79  y  */	CHAR_PRINT | CHAR_LETTER | CHAR_ALPHA,
   /*  7a  z  */	CHAR_PRINT | CHAR_LETTER | CHAR_ALPHA,
   /*  7b  {  */	CHAR_PRINT,
-  /*  7c  | */         CHAR_PRINT | CHAR_LETTER,
+  /*  7c  | */  CHAR_PRINT,
   /*  7d  }  */	CHAR_PRINT,
-  /*  7e  ~  */	CHAR_PRINT | CHAR_LETTER,
+  /*  7e  ~  */	CHAR_PRINT,
   /*  7f del */	0,
 };
 

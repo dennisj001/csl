@@ -71,7 +71,7 @@ int64
 String_FirstCharOfString_FromPos ( byte * s, int64 pos )
 {
     int64 i ;
-    for ( i = pos - 1; i ; i -- )
+    for ( i = pos - 1 ; i ; i -- )
     {
         if ( _Lexer_IsCharDelimiter ( _Context_->Lexer0, s [i] ) ) break ;
     }
@@ -97,6 +97,7 @@ String_IsThereADotSeparatorBackFromPosToLastNonDelmiter ( byte * s, int64 pos )
     return 0 ;
 }
 // ESC char ( 0x27 ) marks the beginning of an color adjust line for NOT_USING namespaces
+
 byte *
 String_FirstEscapeCharFromPos ( byte *str, int64 pos )
 {
@@ -135,6 +136,7 @@ String_LastCharOfLastToken_FromPos ( byte * s, int64 pos )
     return i ;
 }
 #if 0
+
 int64
 String_FirstTokenDelimiter_FromPos ( byte * s, int64 pos )
 {
@@ -158,6 +160,7 @@ String_FirstTokenDelimiterOrDot_FromPos ( byte * s, int64 pos )
     return i ;
 }
 #endif
+
 Boolean
 String_IsReverseTokenQualifiedID ( byte * s, int64 pos )
 {
@@ -599,42 +602,58 @@ String_InsertCharacter ( CString into, int64 position, byte character )
 
     char * b = ( char* ) Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
     strcpy ( ( char* ) b, into ) ;
+    char svChar = b [ position ] ;
     b [ position ] = character ;
-    b [ position + 1 ] = 0 ;
+    if ( svChar > ' ' )
+    {
+        b [ position + 1 ] = ' ' ;
+        b [ position + 2 ] = 0 ;
+    }
+    else b [ position + 1 ] = 0 ;
     strcat ( ( char* ) b, &into [ position ] ) ;
     strcpy ( into, ( CString ) b ) ;
 }
 #if 1
+
 byte *
 _String_FormattingRemoved ( byte * str, int64 allocType )
 {
-    byte * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
+    byte * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns = 0 ;
     int64 i, j ;
-    for ( i = 0, j = 0 ; str && (str [i]) ; i++ )
+    if ( str )
     {
-        if ( str[i] == ESC )
+        for ( i = 0, j = 0 ; str [i] ; i ++ )
         {
-            while ( str[++i] != 'm' ) ;
+            if ( str[i] == ESC )
+            {
+                while ( str[++ i] != 'm' ) ;
+            }
+            else bf [j ++] = str[i] ;
         }
-        else bf [j++] = str[i] ;
+        ns = String_New ( bf, allocType ) ;
     }
-    ns = String_New ( bf, allocType ) ;
     return ns ;
 }
+
 byte *
-String_FormattingRemoved ( byte * str  )
+String_FormattingRemoved ( byte * str )
 {
     return _String_FormattingRemoved ( str, TEMPORARY ) ;
 }
 #else
+
 byte *
 String_RemoveFormatting ( byte * str )
 {
-    int i,j ;
+    int i, j ;
     byte * b = Buffer_DataCleared ( _CSL_->TabCompletion ) ;
-    for (i =0, j = 0 ; str[i] ; i++, j++)
+    for ( i = 0, j = 0 ; str[i] ; i ++, j ++ )
     {
-        if (str [i] == ESC ) { i++ ; while ( str [i++] != 'm' ) ; }
+        if ( str [i] == ESC )
+        {
+            i ++ ;
+            while ( str [i ++] != 'm' ) ;
+        }
         if ( str[i] ) b[j] = str[i] ;
     }
     b[j] = 0 ;
@@ -647,48 +666,31 @@ String_RemoveFormatting ( byte * str )
 void
 String_InsertStringIntoStringSlot ( byte * str, int64 startOfSlot, int64 endOfSlot, byte * istr, int64 outStrMaxSize ) // size in bytes
 {
-    byte * sfr = _String_FormattingRemoved ( str, COMPILER_TEMP ); 
+    byte * strEnd = Buffer_DataCleared ( _CSL_->StringInsertB3 ) ;
     byte * b = Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
-    int64 slsfr = Strlen ( sfr ) ;
+    int64 strfr = Strlen ( str ) ;
     int64 slis = Strlen ( istr ) ;
     ///int64 slotSize = endOfSlot - startOfSlot, ts = ( Strlen ( str ) - ( slotSize ) + Strlen ( istr ) ) ; // total size
     int64 slotSize = endOfSlot - startOfSlot ;
-    int64 ts = ( slsfr - ( slotSize ) + slis ) ; // total size
+    int64 ts = ( strfr - ( slotSize ) + slis ) ; // total size
     if ( ! outStrMaxSize ) outStrMaxSize = BUFFER_SIZE ; //default size 
     //if ( (abs (ts) < outStrMaxSize) )
-    if ( ( ts >= 0 ) && ( ts < outStrMaxSize) )
+    strcpy ( strEnd, &str [ endOfSlot ] ) ;
+    if ( ( ts >= 0 ) && ( ts < outStrMaxSize ) )
     {
         //iPrintf ( "\n...Insert... before :: str = \'%s\' : insert at %d to %d istr = \'%s\' :: at %s",
         //    str, startOfSlot, endOfSlot, istr, Context_Location ( ) ) ;
-        Strcpy ( b, sfr ) ;
+        Strcpy ( b, str ) ;
         Strcpy ( & b [ startOfSlot ], istr ) ; // watch for overlapping ??
         //Strcat ( b, &str [ endOfSlot ] ) ;
-        if ( startOfSlot != 0 ) //&& ( slsfr > slis )) )
-            Strcat ( b, &sfr [ endOfSlot ] ) ;
+        //if ( startOfSlot != 0 ) //&& ( slsfr > slis )) )
+        Strcat ( b, strEnd ) ; //&sfr [ endOfSlot ] ) ;
         Strcpy ( str, b ) ;
         //iPrintf ( "\n...Insert... after :: str = \'%s\'", str ) ;
     }
     else if ( ts > outStrMaxSize ) CSL_Exception ( BUFFER_OVERFLOW, 0, 1 ) ;
+    //return strEnd ;
 }
-
-#if 0
-
-void
-String_Insert ( byte * str, int64 startOfSlot, int64 slotSize, byte * insert, int64 outBufSize ) // ostr : orig str in the slot
-{
-    byte * b = Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
-    int64 sli = Strlen ( insert ) ;
-    if ( Strlen ( str ) + sli < outBufSize )
-    {
-        strncpy ( ( char* ) b, ( char* ) str, outBufSize ) ;
-        strncpy ( ( char* ) & b [ startOfSlot ], ( char* ) insert, outBufSize ) ;
-        if ( ( str [ startOfSlot + outBufSize ] == ' ' ) || ( slotSize > outBufSize ) ) strncat ( ( char* ) b, " ", 2 ) ;
-        strncat ( ( char* ) b, ( char* ) &str [ startOfSlot + slotSize ], outBufSize ) ;
-        strncpy ( ( char* ) str, ( char* ) b, outBufSize ) ;
-    }
-    else CSL_Exception ( BUFFER_OVERFLOW, 0, 1 ) ;
-}
-#endif
 
 byte *
 String_RemoveFinalNewline ( char * astring )
@@ -1001,8 +1003,8 @@ _IsString ( byte * address, int64 maxLength )
 {
     int64 i, count ;
     //if ( address < ( byte* ) 0x7f0000000000 ) return false ; // prevent integer 'string's 
-    if ( address < ( byte* )  0x0000500000000000 ) return false ; // prevent integer 'string's 
-    else if ( address > ( byte* ) 0x8f0000000000 ) return false ; 
+    if ( address < ( byte* ) 0x0000500000000000 ) return false ; // prevent integer 'string's 
+    else if ( address > ( byte* ) 0x8f0000000000 ) return false ;
     for ( i = 0, count = 0 ; i < maxLength ; i ++ )
     {
         //if ( ! ( isprint ( address [i] ) || iscntrl ( address [i] ) ) ) return false ;
@@ -1236,7 +1238,7 @@ Buffer_PrintBuffers ( )
             total ++ ;
         }
     }
-    if ( Verbosity () > 1 ) iPrintf ( "\nBuffer_PrintBuffers : total = %d : free = %d : unlocked = %d : locked = %d : permanent = %d", total, free, unlocked, locked, permanent ) ;
+    if ( Verbosity ( ) > 1 ) iPrintf ( "\nBuffer_PrintBuffers : total = %d : free = %d : unlocked = %d : locked = %d : permanent = %d", total, free, unlocked, locked, permanent ) ;
 }
 
 Buffer *

@@ -99,6 +99,7 @@ _ReadLine_MoveInputStartToLineStart ( int64 fromPosition ) //, int64 lineUpFlag 
 {
     // nb. this is *necessary* when user scrolls up with scrollbar in eg. konsole and then hits up/down arrow
     //if ( lineUpFlag )
+#if 0    
     {
         int64 n, columns = GetTerminalWidth ( ) ;
         if ( fromPosition && columns )
@@ -109,6 +110,8 @@ _ReadLine_MoveInputStartToLineStart ( int64 fromPosition ) //, int64 lineUpFlag 
         }
         return ;
     }
+#endif    
+    fflush ( stdout ) ;
     iPrintf ( "\r" ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
     //_Printf ( "\r%c[2K", ESC ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
 }
@@ -116,7 +119,7 @@ _ReadLine_MoveInputStartToLineStart ( int64 fromPosition ) //, int64 lineUpFlag 
 void
 ReadLine_ClearCurrentTerminalLine ( ReadLiner * rl, int64 fromPosition )
 {
-    _ReadLine_MoveInputStartToLineStart ( fromPosition + PROMPT_LENGTH + 1 ) ; // 1 : zero array indexing
+    //_ReadLine_MoveInputStartToLineStart ( fromPosition + PROMPT_LENGTH + 1 ) ; // 1 : zero array indexing
     Clear_Terminal_Line ( ) ;
 }
 
@@ -264,6 +267,7 @@ ReadLine_GetNormalPrompt ( ReadLiner * rl )
 void
 _ReadLine_Show ( ReadLiner * rl, byte * prompt )
 {
+    //Clear_Terminal_Line ( ) ;
     iPrintf ( "\r%s%s", prompt, rl->InputLine ) ;
 }
 
@@ -306,11 +310,11 @@ ReadLine_ClearAndShowLine ( ReadLiner * rl )
 void
 _ReadLine_ShowCursor ( ReadLiner * rl, byte * prompt )
 {
-    _ReadLine_MoveInputStartToLineStart ( rl->EndPosition + PROMPT_LENGTH + 1 ) ;
+    //_ReadLine_MoveInputStartToLineStart ( rl->EndPosition + PROMPT_LENGTH + 1 ) ;
     byte saveChar = rl->InputLine [ rl->CursorPosition ] ; // set up to show cursor at end of new word
-    rl->InputLine [ rl->CursorPosition ] = 0 ; // set up to show cursor at end of new word
+    ReadLine_SetCharAtCursorPos ( rl, 0 ) ; //(rl->CursorPosition < rl->EndPosition) ? ' ' : 0  ; // set up to show cursor at end of new word
     _ReadLine_Show ( rl, prompt ) ;
-    rl->InputLine [ rl->CursorPosition ] = saveChar ; // set up to show cursor at end of new word
+    ReadLine_SetCharAtCursorPos ( rl, saveChar ) ; // set up to show cursor at end of new word
 }
 
 void
@@ -371,9 +375,11 @@ ReadLine_SaveCharacter ( ReadLiner * rl )
 }
 
 void
-_ReadLine_InsertStringIntoInputLineSlotAndShow ( ReadLiner * rl, int64 startOfSlot, int64 endOfSlot, byte * data )
+ReadLine_InsertStringIntoInputLineSlotAndShow ( ReadLiner * rl, int64 startOfSlot, int64 endOfSlot, byte * data )
 {
-    String_InsertStringIntoStringSlot ( rl->InputLineString, startOfSlot, endOfSlot, data, 0 ) ; // size in bytes
+    String_InsertStringIntoStringSlot ( rl->InputLine, startOfSlot, endOfSlot, data, 0 ) ; // size in bytes
+    rl->EndPosition = startOfSlot + strlen ( data ) + strlen ( &rl->InputLine[endOfSlot] ) ;
+    Readline_ZeroEndPosToEnd ( rl ) ;
     ReadLine_ClearAndShowLineWithCursor ( rl ) ;
 }
 
@@ -395,9 +401,10 @@ ReadLine_DeleteChar ( ReadLiner * rl )
     {
         if ( -- rl->CursorPosition < 0 ) _ReadLine_CursorToStart ( rl ) ;
     }
-    rl->InputLine [ rl->CursorPosition ] = 0 ;
+    ReadLine_SetCharAtCursorPos ( rl, 0 ) ;
     // prevent string overwriting itself while coping ...
-    strncpy ( ( char* ) b, ( char* ) & rl->InputLine [ rl->CursorPosition + 1 ], BUFFER_IX_SIZE ) ;
+    if ( rl->InputLine [ rl->CursorPosition + 1 ] != ESC )
+        strncpy ( ( char* ) b, ( char* ) & rl->InputLine [ rl->CursorPosition + 1 ], BUFFER_IX_SIZE ) ;
     if ( rl->CursorPosition < rl->EndPosition ) strncat ( ( char* ) rl->InputLine, ( char* ) b, BUFFER_IX_SIZE ) ;
     ReadLine_ClearAndShowLineWithCursor ( rl ) ;
 }
@@ -613,6 +620,7 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
     TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
     if ( rl->InputKeyedCharacter != '\t' )
     {
+        //if ( rl->InputKeyedCharacter != '.' ) rl->SlotEnd = 0, rl->SlotStart = 0 ;
         if ( GetState ( rl, TAB_WORD_COMPLETION | TAB_COMPLETION_CHANGE_STATE ) )
         {
             SetState ( rl, TAB_COMPLETION_CHANGE_STATE, true ) ;
@@ -676,7 +684,6 @@ ReadLine_NextChar ( ReadLiner * rl )
             SetState ( rl, STRING_MODE, false ) ; // only good once
             return nchar ;
         }
-
         else _ReadLine_GetLine ( rl, 0 ) ; // get a line of characters
         //else rl->LineNumber ++, _ReadLine_GetLine ( rl, 0 ) ; // get a line of characters
         ReadLine_Set_ReadIndex ( rl, 0 ) ;
@@ -741,28 +748,39 @@ ReadLine_ShowInfo ( ReadLiner * rl )
         iPrintf ( "\nReadLiner Show :: %s : %d.%d :: \n%s", rl->Filename, rl->LineNumber, rl->CursorPosition, rl->InputLine ) ;
 }
 
-byte *
-_ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
+void
+ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
 {
-    byte *str = rl->InputLine, * bf = Buffer_DataCleared ( _CSL_->FormatRemoval ), *ns ;
-    int64 i, j, ep = rl->EndPosition ;
-    //rl->InputLineString = rl->InputLine ;
-    for ( i = start, j = 0 ; str [i] ; i ++ )
+    byte *dest, *src, *str ;
+    int64 i, d, strFirst = 0, strFirstFlag = 0, delimiterFlag = true, inc = 8 ;
+    str = rl->InputLineString = rl->InputLine ;
+    for ( i = start ; str [i] ; i ++ )
     {
         if ( str[i] == ESC )
         {
-            do
+            if ( str[i + inc] == ESC ) inc = 16 ;
+            src = & str[i + inc] ;
+            if ( strFirstFlag && delimiterFlag ) dest = & str[strFirst], i = strFirst ; //strFirst = i ; 
+            else dest = & str[i] ;
+            if ( *src) 
             {
-                rl->CursorPosition -- ;
-                rl->EndPosition -- ;
-                if ( str[i] == 'm' ) break ;
+                _Strcpy ( dest, src ) ;
+                d = (int64) src - (int64) dest ;
+                rl->CursorPosition -= d ; 
+                inc = 8 ;
             }
-            while ( i ++ <= ep ) ;
+            else
+            {
+                //str[i] = ' ' ;
+                break ;
+            }
+            delimiterFlag = false ;
         }
-        else bf [j ++] = str[i] ;
+        if ( _Lexer_IsCharDelimiter ( _Lexer_, str [i] ) && strFirstFlag ) strFirstFlag = 0, strFirst = 0, delimiterFlag = true ;
+        else if ( ! strFirstFlag ) strFirst = i, strFirstFlag = true ;
     }
-    ns = String_New ( bf, TEMPORARY ) ;
-    return ns ;
+    rl->EndPosition = i ; //??
+    Readline_ZeroEndPosToEnd ( rl) ;
 }
 
 // ESC char ( 0x27 ) marks the beginning of an color adjust line for NOT_USING namespaces
@@ -772,5 +790,11 @@ ReadLine_InputLine_FirstEscapeChar ( ReadLiner * rl, int64 start )
 {
     byte *str = rl->InputLine ;
     return String_FirstEscapeCharFromPos ( str, start ) ;
+}
+
+void
+ReadLine_SetCharAtCursorPos ( ReadLiner * rl, char c )
+{
+    rl->InputLine [ rl->CursorPosition ] = c ;
 }
 

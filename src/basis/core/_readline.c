@@ -1,6 +1,13 @@
 #include "../../include/csl.h"
 
 void
+Readline_ZeroEndPosToEnd ( ReadLiner * rl )
+{
+    int64 i ;
+    for ( i = rl->EndPosition ; i < BUFFER_SIZE ; i ++ ) rl->InputLine[i] = 0 ;
+}
+
+void
 ReadLine_Set_ReadIndex ( ReadLiner * rl, int64 pos )
 {
     rl->ReadIndex = pos ;
@@ -165,7 +172,8 @@ void
 _ReadLine_CursorToEnd ( ReadLiner * rl )
 {
     ReadLine_SetCursorPosition ( rl, rl->EndPosition ) ;
-    rl->InputLine [ rl->CursorPosition ] = 0 ;
+    //rl->InputLine [ rl->CursorPosition ] = 0 ;
+    ReadLine_SetCharAtCursorPos ( rl, 0 ) ;
 }
 
 void
