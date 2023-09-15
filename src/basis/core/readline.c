@@ -95,31 +95,8 @@ ReadLiner_IsDone ( ReadLiner * rl )
 }
 
 void
-_ReadLine_MoveInputStartToLineStart ( int64 fromPosition ) //, int64 lineUpFlag )
-{
-    // nb. this is *necessary* when user scrolls up with scrollbar in eg. konsole and then hits up/down arrow
-    //if ( lineUpFlag )
-#if 0    
-    {
-        int64 n, columns = GetTerminalWidth ( ) ;
-        if ( fromPosition && columns )
-        {
-            n = ( fromPosition ) / ( columns ) ;
-            if ( ( fromPosition % columns ) < 2 ) n -- ; // nb : ?? -- i don't understand this but it works
-            if ( n ) Cursor_Up ( n ) ; //_Printf ( "\r%c[%dA", ESC, n ) ; // move n lines up 
-        }
-        return ;
-    }
-#endif    
-    fflush ( stdout ) ;
-    iPrintf ( "\r" ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
-    //_Printf ( "\r%c[2K", ESC ) ; // nb -- a workaround : ?? second sequence ( clear 2 eol ) not necessary but seems to reset things to work -- ??
-}
-
-void
 ReadLine_ClearCurrentTerminalLine ( ReadLiner * rl, int64 fromPosition )
 {
-    //_ReadLine_MoveInputStartToLineStart ( fromPosition + PROMPT_LENGTH + 1 ) ; // 1 : zero array indexing
     Clear_Terminal_Line ( ) ;
 }
 
@@ -370,15 +347,6 @@ ReadLine_SaveCharacter ( ReadLiner * rl )
         ReadLine_ClearAndShowLineWithCursor ( rl ) ;
     }
     else ReadLine_AppendAndShowCharacter ( rl ) ;
-}
-
-void
-ReadLine_InsertStringIntoInputLineSlotAndShow ( ReadLiner * rl, int64 startOfSlot, int64 endOfSlot, byte * data )
-{
-    String_InsertStringIntoStringSlot ( rl->InputLine, startOfSlot, endOfSlot, data, 0 ) ; // size in bytes
-    rl->EndPosition = startOfSlot + strlen ( data ) + strlen ( &rl->InputLine[endOfSlot] ) ;
-    Readline_ZeroEndPosToEnd ( rl ) ;
-    ReadLine_ClearAndShowLineWithCursor ( rl ) ;
 }
 
 void
@@ -764,7 +732,7 @@ ReadLine_String_FormattingRemoved ( ReadLiner * rl, int64 start )
             if ( *src) 
             {
                 _Strcpy ( dest, src ) ;
-                d = (int64) src - (int64) dest ;
+                d = (int64) src - (int64) dest ;//!! : d can be much more than 16 chars
                 rl->CursorPosition -= d ; 
                 inc = 8 ;
             }

@@ -597,21 +597,15 @@ String_FilterMultipleSpaces ( byte * istring, int64 allocType )
 }
 
 void
-String_InsertCharacter ( CString into, int64 position, byte character )
+String_InsertCharacter ( CString orig, int64 position, byte character )
 {
 
     char * b = ( char* ) Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
-    strcpy ( ( char* ) b, into ) ;
-    char svChar = b [ position ] ;
+    strcpy ( ( char* ) b, orig ) ;
     b [ position ] = character ;
-    if ( svChar > ' ' )
-    {
-        b [ position + 1 ] = ' ' ;
-        b [ position + 2 ] = 0 ;
-    }
-    else b [ position + 1 ] = 0 ;
-    strcat ( ( char* ) b, &into [ position ] ) ;
-    strcpy ( into, ( CString ) b ) ;
+    b [ position + 1 ] = 0 ;
+    strcat ( ( char* ) b, &orig [ position ]) ; 
+    strcpy ( orig, ( CString ) b ) ;
 }
 
 byte *
@@ -645,18 +639,13 @@ String_FormattingRemoved ( byte * str )
 void
 String_InsertStringIntoStringSlot ( byte * str, int64 startOfSlot, int64 endOfSlot, byte * istr, int64 outStrMaxSize ) // size in bytes
 {
-    //byte * strEnd = Buffer_DataCleared ( _CSL_->StringInsertB3 ) ;
     byte * b = Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
-    int64 strfr = Strlen ( str ) ;
-    int64 slis = Strlen ( istr ) ;
     int64 slotSize = endOfSlot - startOfSlot ;
-    int64 ts = ( strfr - ( slotSize ) + slis ) ; // total size
+    int64 ts = ( Strlen ( str ) - ( slotSize ) + Strlen ( istr ) ) ; // total size
     if ( ! outStrMaxSize ) outStrMaxSize = BUFFER_SIZE ; //default size 
-    //strcpy ( strEnd, &str [ endOfSlot ] ) ;
     if ( ( ts >= 0 ) && ( ts < outStrMaxSize ) )
     {
-        //iPrintf ( "\n...Insert... before :: str = \'%s\' : insert at %d to %d istr = \'%s\' :: at %s",
-        //    str, startOfSlot, endOfSlot, istr, Context_Location ( ) ) ;
+        //iPrintf ( "\n...Insert... before :: str = \'%s\' : insert at %d to %d istr = \'%s\' :: at %s", str, startOfSlot, endOfSlot, istr, Context_Location ( ) ) ;
         Strcpy ( b, str ) ;
         Strcpy ( & b [ startOfSlot ], istr ) ; // watch for overlapping ??
         Strcat ( b, &str [ endOfSlot ] ) ; //strEnd ) ; //&sfr [ endOfSlot ] ) ;
@@ -830,10 +819,7 @@ byte *
 StringMacros_Do ( byte * buffer, byte * namespace, byte * ostr, int64 startIndex, int64 endIndex ) // buffer :: the string to which we apply any set macros also cf. .init.csl beginning for how to initialize 
 {
     byte * nstr = _StringMacro_Run ( namespace, ostr ) ;
-    if ( nstr )
-    {
-        String_InsertStringIntoStringSlot ( buffer, startIndex, endIndex, nstr, BUFFER_SIZE ) ; // use the original buffer for the total result of the macro
-    }
+    if ( nstr ) String_InsertStringIntoStringSlot ( buffer, startIndex, endIndex, nstr, BUFFER_SIZE ) ; // use the original buffer for the total result of the macro
     return nstr ;
 }
 // _CSL_StringMacros_Do ::

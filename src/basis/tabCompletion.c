@@ -85,10 +85,10 @@ RL_TC_StringInsert_AtCursor ( ReadLiner * rl, byte * strToInsert )
     int64 slotStart = _TC_FindPrevious_NamespaceQualifiedIdentifierStart ( tci, rl->InputLine, startCursorPos ) ;
     stiLen = Strlen ( strToInsert ) ;
     slotEnd = slotStart + stiLen ;
-    ReadLine_InsertStringIntoInputLineSlotAndShow ( rl, slotStart, rl->CursorPosition, ( byte* ) strToInsert ) ;
-    ReadLine_SetCursorPosition ( rl, slotEnd ) ;
-    rl->EndPosition += stiLen ;
+    String_InsertStringIntoStringSlot ( rl->InputLine, slotStart, rl->CursorPosition, strToInsert, 0 ) ; // size in bytes
+    rl->EndPosition = slotStart + strlen ( strToInsert ) + strlen ( &rl->InputLine[rl->CursorPosition] ) ;
     Readline_ZeroEndPosToEnd ( rl ) ;
+    ReadLine_SetCursorPosition ( rl, slotEnd ) ;
     ReadLine_ClearAndShowLineWithCursor ( rl ) ;
 }
 
@@ -132,8 +132,8 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
     if ( ( tci->EndDottedPos = ReadLine_IsLastCharADot ( rl, _ReadLine_CursorPosition ( rl ) ) ) ) //ReadLine_IsDottedToken ( rl ) )
     {
         tci->SearchToken = ( byte * ) "" ; // everything matches
-        rl->CursorPosition = tci->EndDottedPos ;
-        rl->InputLine [ tci->EndDottedPos ] = ' ' ; // overwrite the final '.' with ' ' and move cursor pos back to that space 
+        //rl->CursorPosition = tci->EndDottedPos ;
+        //rl->InputLine [ tci->EndDottedPos ] = ' ' ; // overwrite the final '.' with ' ' and move cursor pos back to that space 
     }
     else tci->SearchToken = tci->Identifier ? tci->Identifier : ( byte* ) "" ;
     if ( tci->DotSeparator )
@@ -155,6 +155,7 @@ RL_TabCompletionInfo_Init ( ReadLiner * rl )
                 tci->RunWord = ( Word* ) dllist_First ( ( dllist* ) tci->OriginalWord->Lo_List ) ;
                 tci->OriginalContainingNamespace = tci->OriginalWord ;
             }
+            //if ( tci->EndDottedPos && tci->DotSeparator ) rl->InputLine [ tci->EndDottedPos ] = '.' ;
         }
     }
     else
