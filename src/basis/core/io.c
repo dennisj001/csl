@@ -24,16 +24,22 @@ GetTerminalWidth ( )
 }
 
 char
-kbhit ( void )
+_kbhit ( int64 key )
 {
     int64 oldf ;
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
     char ch = getchar ( ) ;
-    //if ( ch < 0 ) ch = 0 ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf ) ;
-    //return ((ch > ' ') || (ch == ESC) ? ch : 0 ) ;
-    return ( ch  == ESC ) ;
+    if ( key == CHAR_PRINT ) return ( ch >= ' ' ) ;
+    else if ( key == CHAR_ANY ) return ( ch ) ;
+    else return (ch == key) ;
+}
+
+char
+kbhit ( void )
+{
+    return _kbhit ( ESC ) ;
 }
 
 #define KEY() getc ( stdin )

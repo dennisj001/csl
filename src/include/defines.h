@@ -823,10 +823,11 @@
 #define CHAR_DELIMITER  ( (uint64) 1 << 0 )
 #define CHAR_BLANK      ( (uint64) 1 << 1 )
 #define CHAR_ALPHA      ( (uint64) 1 << 2 )
-#define CHAR_DIGIT10 ( (uint64) 1 << 3 )
-#define CHAR_DIGIT16 ( (uint64) 1 << 4 )
+#define CHAR_DIGIT10    ( (uint64) 1 << 3 )
+#define CHAR_DIGIT16    ( (uint64) 1 << 4 )
 #define CHAR_LETTER     ( (uint64) 1 << 5 )
 #define CHAR_PRINT      ( (uint64) 1 << 6 )
+#define CHAR_ANY        ( (uint64) 1 << 7 )
 
 #define _CharSet_IsDelimiter( cset, ch ) cset [ ch ]
 #define _CharSet_IsPrint( ch ) CharTable_IsCharType ( ch, CHAR_PRINT )

@@ -343,7 +343,10 @@ ReadTable_BackSpace_AdjustEscapeSequences ( ReadLiner * rl )
 void
 ReadTable_BackSpace ( ReadLiner * rl )
 {
-    if ( -- rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ;
+    if ( rl->CursorPosition > 0 )
+    {
+        if ( -- rl->CursorPosition > rl->EndPosition ) rl->CursorPosition = rl->EndPosition ;
+    }
     if ( ReadLine_InputLine_FirstEscapeChar ( rl, 0 ) ) ReadTable_BackSpace_AdjustEscapeSequences ( rl ) ;
     ReadLine_DeleteChar ( rl ) ;
 }

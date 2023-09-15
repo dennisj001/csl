@@ -414,22 +414,6 @@ _dllist_Get_N_Node ( dllist * list, int64 n )
     return node ;
 }
 
-#if 0
-
-int64
-_dllist_Get_N_InUse_Node_M_Slot ( dllist * list, int64 n, int64 m )
-{
-    dlnode * node, *nextNode ;
-    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode ) // nb. this is a little subtle
-    {
-        nextNode = dlnode_Next ( node ) ;
-        if ( dobject_Get_M_Slot ( ( dobject* ) node, SCN_IN_USE_FLAG ) ) n -- ;
-        if ( ( n < 0 ) || ( node == nextNode ) ) break ;
-    }
-    return node ? dobject_Get_M_Slot ( ( dobject* ) node, m ) : 0 ; // LIST_EMPTY
-}
-#endif
-
 int64
 _dllist_Get_N_Node_M_Slot ( dllist * list, int64 n, int64 m )
 {
@@ -935,49 +919,4 @@ List_PushNew_T_WORD ( dllist *list, int64 value, int64 allocType )
 {
     _List_PushNew_1Value ( list, value, T_WORD, allocType ) ;
 }
-
-#if 0
-
-void
-dllist_ReInit ( dllist * list )
-{
-    dlnode * node, * nextNode ;
-    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
-    {
-        nextNode = dlnode_Next ( node ) ;
-        dlnode_Remove ( node ) ;
-    }
-    _dllist_Init ( list ) ;
-}
-inline dlnode *
-_Is_NotHeadOrTailNode ( dlnode * anode )
-{
-    if ( _dlnode_After ( anode ) && _dlnode_Before ( anode ) ) return anode ;
-    else return 0 ;
-}
-
-
-inline dlnode *
-_Is_NotAHeadNode ( dlnode * anode )
-{
-    if ( _dlnode_Before ( anode ) ) return anode ;
-    else return 0 ;
-}
-
-inline dlnode *
-_Is_NotATailNode ( dlnode * anode )
-{
-    if ( _dlnode_After ( anode ) ) return anode ;
-    return 0 ;
-}
-
-Boolean
-Is_TheHeadOrTailNode ( dlnode * anode )
-{
-    if ( anode && anode->n_After && anode->n_Before ) return false ;
-    return true ;
-}
-#endif
-
-
 

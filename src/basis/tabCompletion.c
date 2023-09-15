@@ -317,7 +317,7 @@ TC_Tree_Map ( TabCompletionInfo * tci, MapFunction mf, Word * wordi )
             for ( word = ( Word * ) dllist_First ( ns->S_SymbolList ) ; word ; word = nextWord )
             {
                 nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
-                if ( kbhit ( ) ) return 0 ; //must be here else could loop forever !?
+                //if ( _kbhit ( CHAR_ANY ) ) return 0 ; //just in case :: prevent loop forever !?
                 if ( rword = ( Word* ) mf ( ( Symbol* ) word ) ) goto doReturn ;
             }
             if ( rword = ( Word* ) mf ( ( Symbol* ) ns ) ) goto doReturn ;
@@ -332,6 +332,7 @@ doReturn:
             {
                 tci->FoundMarker = rand ( ) ;
                 tci->WordWrapCount = 0 ;
+                break ;
             }
         }
         if ( rword != tci->LastFoundWord ) break ;
