@@ -41,8 +41,12 @@ kbhit ( void )
 void
 Clear_Terminal_Line ( )
 {
+    // try, try, again!?
     fflush (stdout) ;
     iPrintf ( "\r%c[J", ESC ) ; // clear from cursor to end of screen -- important if we have (mistakenly) gone up an extra line
+    fflush (stdout) ;
+    iPrintf ( "\r%c[J", ESC ) ; // clear from cursor to end of screen -- important if we have (mistakenly) gone up an extra line
+    fflush (stdout) ;
 }
 
 void

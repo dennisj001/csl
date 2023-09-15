@@ -171,7 +171,8 @@ GetDataStackPointer ( )
 void
 CSL_CheckInitDataStack ( )
 {
-    if ( Stack_Depth ( _DataStack_ ) < 0 )
+    if ( _O_->RestartCondition >= QUIT ) _CSL_DataStack_Init ( _CSL_ ) ;
+    else if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;
         iPrintf ( c_ad ( "\n\nError : %s : %s : Stack Underflow!" ), _Context_->CurrentlyRunningWord ? _Context_->CurrentlyRunningWord->Name : ( byte * ) "", _Context_Location ( _Context_ ) ) ;

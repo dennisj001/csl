@@ -38,7 +38,7 @@ ReadLine_ShowHistoryNode ( ReadLiner * rl )
     }
     else
     {
-        //ReadLine_ClearCurrentTerminalLine ( rl, rl->EndPosition ) ; // nb : this is also part of ShowString
+        Clear_Terminal_Line ( ) ;
         ReadLine_InputLine_Clear ( rl ) ;
         ReadLine_ShowNormalPrompt ( rl ) ;
     }

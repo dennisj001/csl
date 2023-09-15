@@ -202,8 +202,8 @@ _OVT_ShowMemoryAllocated ( OpenVmTil * ovt )
     iPrintf ( "\nNBA ReAllocations             = %9ld", _O_->ReAllocations ) ;
     int64 wordSize = ( sizeof ( Word ) + sizeof ( WordData ) ) ;
     iPrintf ( "\nWordsAllocation               = %9ld : %-5ld x %3ld bytes", _O_->MemorySpace0->WordsAllocated * wordSize, _O_->MemorySpace0->WordsAllocated, wordSize ) ;
-    iPrintf ( "\nRecycledWordCount             = %9ld : %-5ld x %3ld bytes", _O_->MemorySpace0->RecycledWordCount * wordSize, _O_->MemorySpace0->RecycledWordCount, wordSize ) ;
-    iPrintf ( "\nWordsInRecycling              = %9ld : %-5ld x %3ld bytes\n", _O_->MemorySpace0->WordsInRecycling * wordSize, _O_->MemorySpace0->WordsInRecycling, wordSize ) ;
+    iPrintf ( "\nRecycled-Bytes:WordCount      = %9ld : %-5ld x %3ld bytes", _O_->MemorySpace0->RecycledWordCount * wordSize, _O_->MemorySpace0->RecycledWordCount, wordSize ) ;
+    iPrintf ( "\nBytes:Words-InRecycling       = %9ld : %-5ld x %3ld bytes\n", _O_->MemorySpace0->WordsInRecycling * wordSize, _O_->MemorySpace0->WordsInRecycling, wordSize ) ;
     Buffer_PrintBuffers ( ) ;
     if ( leak )
     {

@@ -187,6 +187,10 @@ ReadTable_B ( ReadLiner * rl )// 'B' - forward, toward end of history - DOWN arr
 {
     if ( rl->EscapeModeFlag == 2 )
     {
+        if ( GetState ( _Context_->System0, ADD_READLINE_TO_HISTORY ) || GetState ( rl, ADD_TO_HISTORY ) )
+        {
+            _OpenVmTil_AddStringToHistoryList ( rl->InputLine ) ;
+        }
         dlnode * node = dllist_SetCurrentNode_After ( _OSMS_->HistorySpace_MemChunkStringList ) ;
         if ( node )
         {

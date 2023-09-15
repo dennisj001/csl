@@ -323,7 +323,6 @@ ReadLine_ClearAndShowLineWithCursor ( ReadLiner * rl )
 void
 ReadLine_ShowNormalPrompt ( ReadLiner * rl )
 {
-    Clear_Terminal_Line ( ) ;
     iPrintf ( "\r%s", rl->NormalPrompt ) ;
     rl->EndPosition = 0 ;
     rl->InputLine [ 0 ] = 0 ;
