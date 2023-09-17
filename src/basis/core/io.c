@@ -29,11 +29,11 @@ _kbhit ( int64 key )
     int64 oldf ;
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
-    char ch = getchar ( ) ;
+    char ch = getc (stdin) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf ) ;
     if ( key == CHAR_PRINT ) return ( ch >= ' ' ) ;
     else if ( key == CHAR_ANY ) return ( ch ) ;
-    else return (ch == key) ;
+    else return (ch == key) ; //return ch ;
 }
 
 char
@@ -171,7 +171,8 @@ void
 iPrintf ( char *format, ... )
 {
     va_list args ;
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
+    if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
+    //if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
         //int64 isIncludingFiles = ( _Context_ && _Context_->System0 ) ? _Context_->System0->IncludeFileStackNumber : 0 ;
@@ -226,7 +227,7 @@ void
 oPrintf ( char *format, ... )
 {
     va_list args ;
-    if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
+    if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
         //int64 isIncludingFiles = ( _Context_ && _Context_->System0 ) ? _Context_->System0->IncludeFileStackNumber : 0 ;

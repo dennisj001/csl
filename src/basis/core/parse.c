@@ -2,22 +2,6 @@
 #include "../../include/csl.h"
 
 void
-Compiler_TypedObjectInit ( Word * word, Namespace * typeNamespace )
-{
-    int64 size ;
-    word->TypeNamespace = typeNamespace ;
-    word->W_MorphismAttributes |= typeNamespace->W_MorphismAttributes ;
-    if ( typeNamespace->W_ObjectAttributes & CLASS ) word->W_ObjectAttributes |= OBJECT ;
-    if ( Compiling ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
-    //if ( Compiling && ( ! ( word->W_ObjectAttributes & STRUCTURE ) ) ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
-    size = _Namespace_VariableValueGet ( word, ( byte* ) "size" ) ;
-    word->ObjectByteSize = size ? size : typeNamespace->ObjectByteSize ;
-    //_DObject_Init ( Word * word, uint64 value, uint64 ftype, byte * function, int64 arg )
-    _DObject_Init ( word, ( int64 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0 ) ;
-    _Word_Add ( word, 1, 0 ) ;
-}
-
-void
 Lexer_ParseAsAString ( Lexer * lexer )
 {
     if ( lexer->OriginalToken [ 0 ] == '"' )

@@ -521,7 +521,7 @@ void CSL_LC_DebugOff(void);
 int64 _CSL_TerminalLineWidth(CSL *csl);
 int64 TerminalLineWidth(void);
 /* src/basis/core/parse.c */
-void Compiler_TypedObjectInit(Word *word, Namespace *typeNamespace);
+void CSL_LocalObject_Init(Word *word, Namespace *typeNamespace);
 void Lexer_ParseAsAString(Lexer *lexer);
 void _Lexer_ParseBinary(Lexer *lexer, int64 offset);
 void Lexer_ParseBinary(Lexer *lexer, byte *token, int64 offset);

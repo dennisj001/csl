@@ -117,9 +117,8 @@ PP_IfStatus ( int64 evalFlag, int64 condStatus )
 int64
 GetElxxStatus ( int64 cond, int64 type )
 {
-    int64 llen = List_Length ( _Context_->PreprocessorStackList ) ;
     Ppibs *top = GetTopLogicNode ( ) ;
-    Boolean status, topAccumStatus = top ? top->AccumStatus : 1 ;
+    Boolean status ; 
     if ( top )
     {
         if ( type == PP_ELIF )
@@ -139,7 +138,6 @@ GetElxxStatus ( int64 cond, int64 type )
         {
             status = ( ( top->AccumStatus || top->SvIfCond ) && ( ! top->IfCond ) ) ;
         }
-        top->AccumStatus = status ;
         top->Status = status ;
         return status ;
     }

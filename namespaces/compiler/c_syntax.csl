@@ -554,6 +554,68 @@ infixOn
 infixOff
 sp0
 
+// three different ways ...
+#if 0
+typedef struct { byte buf [ 2048 ] ; } Buffer2048 ;
+cOn
+void ash ( str ) { ps ( str ) ; nl (); _sh ( str ) ; }
+void node-p ( txt, poftxt | Buffer2048 buffer ) //| buffer, Buffer2048 buffer0 ) 
+{
+    sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) ;
+    ash ( buffer ) ;
+}
+node-p ( "1+33", "./node.txt") ; //, abuf ) ;
+pwi node-p 
+cOff
+$cat node.txt
+#elif 1
+typedef struct { byte buf [ 2048 ] ; } Buffer2048 ;
+cOn
+void ash ( str ) { ps ( str ) ; nl (); _sh ( str ) ; }
+void node-p ( txt, poftxt ) 
+{
+    Buffer2048 buffer0 ;
+    byte * buffer1 = &buffer0.buf ;
+    sprintf ( buffer1, "node -p \" %s \" > %s", txt, poftxt ) ;
+    ash ( buffer1 ) ;
+}
+node-p ( "1+43", "./node.txt") ; //, abuf ) ;
+pwi node-p 
+cOff
+$cat node.txt
+pause
+#elif 1
+typedef struct { byte buf [ 2048 ] ; } Buffer2048 ;
+Buffer2048 'buffer new 
+cOn
+void ash ( str ) { _sh ( str ) ; nl ; ps ( str ) ; nl (); }
+pwi ash
+void node-p ( txt, poftxt, Buffer2048 * buffer0 ) 
+{
+    byte * buffer1 = &buffer0.buf ;
+    sprintf ( buffer1, "node -p \" %s \" > %s", txt, poftxt ) ;
+    ash ( buffer1 ) ;
+}
+node-p ( "1+10", "./node.txt", buffer) ; 
+pwi node-p 
+cOff
+$cat node.txt
+#elif 0 // not yet??
+cOn
+void ash ( str ) { _sh ( str ) ; nl ; ps ( str ) ; nl (); }
+pwi ash
+void node-p ( txt, poftxt ) 
+{
+    d: byte buffer [ 2048] ;
+    sprintf ( buffer, "node -p \" %s \" > %s", txt, poftxt ) ;
+    ash ( buffer ) ;
+}
+node-p ( "1+6", "./node.txt" ) ; 
+pwi node-p 
+cOff
+$cat node.txt
+#endif
+//pause
 2 + 7 assertStkChk // stack checking
 sp0
 

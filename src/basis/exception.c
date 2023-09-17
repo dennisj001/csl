@@ -381,7 +381,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
             }
         }
         else
-        { //++ _O_->SigSegvs ;
+        {   //++ _O_->SigSegvs ;
             if ( _O_->SigSegvs >= 2 )
             {
                 //if ( _O_->SigSegvs >= 2 ) 

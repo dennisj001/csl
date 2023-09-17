@@ -388,17 +388,17 @@ StringEqual ("hi" "hey") == 0 ? noop : abort
 Dlsym libc 
 void pbAssert ( argin ) 
 {
-    byte * pb = pbc ; 
+    byte * pb = pbc () ; 
     if ( StringEqual ( pb, argin ) ) ps ( "\npbAssert : ok\n") ; 
     else 
     {   
-        int64 la = Strlen ( argin ), lp = Strlen ( pb ) ; //, pb = pbc ;
+        int64 la = Strlen ( argin ), lp = Strlen ( pb ) ; 
         printf ( "\nargIn != pbc" ) ; 
         ps ("\npbc :" ) ;
-        dump ( pbc, lp  ) ;
+        dump ( pb, lp  ) ;
         ps ("\nargIn :" ) ;
         dump ( argin, la  ) ;
-        printf ( "\nStrlen ( argin ) = %d :: Strlen ( pbc ) = %d", la, lp ) ;
+        printf ( "\nStrlen ( argin ) = %d :: Strlen ( pb ) = %d", la, lp ) ;
         printf ( "\nargIn  = \'%s\' \n!= pbc = \'%s\'", argin, pb ) ; 
         Error () ; 
     }  
@@ -459,7 +459,7 @@ Lisp OpenVmTil
 postfixOn 
 Root
  
-: ash _sh ; prefix
+//: ash _sh ; prefix
 
 //================================================================================
 
@@ -576,3 +576,4 @@ cOff
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
 2 + 7 assertStkChk // stack checking
+

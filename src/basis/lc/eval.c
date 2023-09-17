@@ -51,7 +51,7 @@ _LC_Eval ( ListObject *l0 )
         _LC_->L1 = _LC_->L0 ; // default 
         SetState ( _LC_, LC_EVAL, true ) ;
 
-        if ( kbhit ( ) == ESC ) OpenVmTil_Pause ( ) ;
+        if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
         LC_Debug ( _LC_, LC_EVAL, 1 ) ;
         ///_LC_EvalSymbol ( )
         if ( LO_IsQuoted ( _LC_->L0 ) ) return _LC_->L0 ;

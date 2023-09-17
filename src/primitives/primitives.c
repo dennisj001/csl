@@ -10,7 +10,7 @@ CPrimitive CPrimitives [] = {
     { "locationPush", 0, 0, 0, Location_PushNew, 0, 0, 0, "Experimental", "Root" },
     { "locationPrint", 0, 0, 0, CSL_Location_Printf, 0, 0, 0, "Experimental", "Root" },
     { "do>", 0, 0, 0, CSL_Do, IMMEDIATE, 0, 0, "Experimental", "Root" },
-    { "does>", 0, 0, 0, CSL_Does, IMMEDIATE|COMBINATOR, 0, 0, "Experimental", "Root" },
+    { "does>", 0, 0, 0, CSL_Does, IMMEDIATE | COMBINATOR, 0, 0, "Experimental", "Root" },
     { "<do", 0, 0, 0, CSL_NoOp, IMMEDIATE, 0, 0, "Experimental", "Root" },
     { "<does", 0, 0, 0, CSL_NoOp, IMMEDIATE, 0, 0, "Experimental", "Root" },
 
@@ -69,7 +69,7 @@ CPrimitive CPrimitives [] = {
     { "8,", 0, 0, 0, CompileInt64, 0, 0, 0, "Forth", "Root" },
     { "n,", 0, 0, 0, Compile_N_Bytes, 0, 0, 0, "Forth", "Root" },
     { "rpn", 0, 0, 0, CSL_PostfixModeOn, 0, 0, 0, "Forth", "Root" },
-    
+
 
     { "oPrintf", 0, 0, 0, ( block ) oPrintf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, 0, "C", "Root" },
     { "iPrintf", 0, 0, 0, ( block ) iPrintf, C_PREFIX_RTL_ARGS | LISP_VOID_RETURN, 0, 0, "C", "Root" },
@@ -197,9 +197,10 @@ CPrimitive CPrimitives [] = {
     { "struct", 0, 0, 0, CSL_Class_New, 0, 0, 0, "Class", "Root" },
     { "new", 0, 0, 0, ( block ) CSL_Class_Object_New, 0, 0, 0, "Class", "Root" },
     { "clone", 0, 0, 0, CSL_Class_Clone, 0, 0, 0, "Class", "Root" },
-    { "]", 0, 0, 0, _CSL_ArrayEnd, ( IMMEDIATE | OBJECT_OPERATOR ), RIGHT_BRACKET, 0, "Class", "Root" },
-    { "[", 0, 0, 0, CSL_ArrayBegin, ( IMMEDIATE | OBJECT_OPERATOR ), COMPILER_LEFT_BRACKET, 0, "Class", "Root" },
     { ".", 0, 0, 0, CSL_Dot, ( IMMEDIATE | OBJECT_OPERATOR | NO_CODING ), 0, 0, "Class", "Root" },
+
+    { "]", 0, 0, 0, _CSL_ArrayEnd, ( IMMEDIATE | OBJECT_OPERATOR ), RIGHT_BRACKET, 0, "Array", "Root" },
+    { "[", 0, 0, 0, CSL_ArrayBegin, ( IMMEDIATE | OBJECT_OPERATOR ), COMPILER_LEFT_BRACKET, 0, "Array", "Root" },
 
 
     { "+", "NN.N", 0, 0, BigNum_Add, BIGNUM | CATEGORY_OP | INFIXABLE, 0, 0, "BigNum", "Class" },

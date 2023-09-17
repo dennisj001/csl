@@ -89,6 +89,22 @@ CSL_Do_LocalObject ( Word * word )
 }
 
 void
+CSL_LocalObject_Init ( Word * word, Namespace * typeNamespace )
+{
+    int64 size ;
+    word->TypeNamespace = typeNamespace ;
+    word->W_MorphismAttributes |= typeNamespace->W_MorphismAttributes ;
+    if ( typeNamespace->W_ObjectAttributes & CLASS ) word->W_ObjectAttributes |= OBJECT ;
+    if ( Compiling ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
+    //if ( Compiling && ( ! ( word->W_ObjectAttributes & STRUCTURE ) ) ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
+    size = _Namespace_VariableValueGet ( word, ( byte* ) "size" ) ;
+    word->ObjectByteSize = size ? size : typeNamespace->ObjectByteSize ;
+    //_DObject_Init ( Word * word, uint64 value, uint64 ftype, byte * function, int64 arg )
+    _DObject_Init ( word, ( int64 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0 ) ;
+    _Word_Add ( word, 1, 0 ) ; //?? is this necessary??
+}
+
+void
 _Do_Compile_Variable ( Word * word )
 {
     Context * cntx = _Context_ ;
@@ -326,7 +342,7 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token )
                     token = Lexer_ReadToken ( _Lexer_ ) ;
                 }
                 else objectAttributes = 0 ;
-                if ( token && ( token[0] == ';' ) ) break ;
+                if ( token[0] == ';' ) break ;
                 Word * word = Lexer_ParseToken_ToWord ( _Lexer_, token, - 1, - 1 ) ;
                 if ( word->W_MorphismAttributes & ( DEBUG_WORD ) )
                 {
@@ -336,11 +352,11 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token )
                 }
                 else if ( _Lexer_->L_ObjectAttributes & ( T_RAW_STRING | KNOWN_OBJECT ) )
                 {
-                    if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) )
-                        objectAttributes |= ( OBJECT | STRUCT ) ;
+                    if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) objectAttributes |= ( OBJECT | STRUCT ) ;
                     word->W_ObjectAttributes = ( LOCAL_VARIABLE | objectAttributes ) ; //| ns->W_ObjectAttributes ) ;
                     Compiler_LocalWord_UpdateCompiler ( _Compiler_, word, LOCAL_VARIABLE | objectAttributes ) ;
-                    _Word_Add ( word, 0, lns ) ;
+                    if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) CSL_LocalObject_Init ( word, ns ) ;
+                    else _Word_Add ( word, 0, lns ) ;
                 }
                 token = Lexer_Peek_NextToken ( _Lexer_, 1, 1 ) ;
                 if ( strchr ( token, '=' ) )
@@ -348,6 +364,12 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token )
                     Compiler_Set_LHS ( word ) ;
                     token = _Compile_C_TypeDeclaration ( ) ;
                 }
+#if 0 // not yet              
+                else if ( strchr ( token, '[' ) )
+                {
+                    //_CSL_ArrayBegin ( 0, 0, 0 ) ;
+                }
+#endif                 
                 else token = Lexer_ReadToken ( _Lexer_ ) ;
 
                 if ( token && ( token[0] == ',' ) ) token = Lexer_ReadToken ( _Lexer_ ) ;
@@ -468,9 +490,9 @@ CSL_Do_ObjectField ( Word * word )
             //DBI_ON ;
             int8 reg = word->W_BaseObject->RegToUse ;
             SetHere ( word->W_BaseObject->StackPushRegisterCode ) ;
-            if ( offsetPtr ) 
+            if ( offsetPtr )
             {
-                offset = (* ( int32 * ) offsetPtr) ;
+                offset = ( * ( int32 * ) offsetPtr ) ;
                 if ( offset )
                 {
                     Compile_Move_Rm_To_Reg ( reg, reg, 0, 8 ) ;
@@ -486,7 +508,7 @@ CSL_Do_ObjectField ( Word * word )
         else if ( word->W_BaseObject ) Context_CheckAddressDeReference ( cntx, word ) ;
     }
 #if 0    
-    dbg ( 0, (int64) word, 0 ) ;
+    dbg ( 0, ( int64 ) word, 0 ) ;
     if ( ( word->W_ObjectAttributes & ( STRUCT | OBJECT | O_POINTER ) ) || GetState ( cntx, IS_FORWARD_DOTTED ) )
         Finder_SetQualifyingNamespace ( cntx->Finder0, word ) ; //word->TypeNamespace ) ;
 #endif    
@@ -542,8 +564,8 @@ CSL_Do_AccumulatedAddress ( Word * word, byte * accumulatedAddress, int64 offset
         size = ( ns ? ( int64 ) _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) : CELL ) ;
         if ( ( word->W_ObjectAttributes & O_POINTER ) || ( ns->W_ObjectAttributes & OBJECT ) ) size = 8 ;
         //else size = 8 ;
-        
-        Do_AccumulatedAddress ( accumulatedAddress, offset, (size <= 8) ? size : 8 ) ;
+
+        Do_AccumulatedAddress ( accumulatedAddress, offset, ( size <= 8 ) ? size : 8 ) ;
     }
 }
 
