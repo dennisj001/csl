@@ -488,6 +488,7 @@ CPrimitive CPrimitives [] = {
     //{ "showAllocated", 0, 0, 0, OVT_Mem_ShowAllocated, 0, 0, 0, "OpenVmTil", "Root" },
     { "ukseOn", 0, 0, 0, OVT_Set_UnknowStringIsErrorFlag, 0, 0, 0, "OpenVmTil", "Root" },
     { "ukseOff", 0, 0, 0, OVT_UnSet_UnknowStringIsErrorFlag, 0, 0, 0, "OpenVmTil", "Root" },
+    { "openvmtil", 0, 0, 0, OVT_openvmtil, 0, 0, 0, "OpenVmTil", "Root" },
 
     { "freeTemporayMem", 0, 0, 0, OVT_MemListFree_TempObjects, 0, 0, 0, "Memory", "OpenVmTil" },
     { "freeCompilerTempMem", 0, 0, 0, OVT_MemListFree_CompilerTempObjects, 0, 0, 0, "Memory", "OpenVmTil" },

@@ -2418,6 +2418,7 @@ void OVT_ResetOutputPrintBuffer(void);
 int64 Verbosity(void);
 void OVT_Set_UnknowStringIsErrorFlag(void);
 void OVT_UnSet_UnknowStringIsErrorFlag(void);
+void OVT_openvmtil(void);
 /* src/primitives/ls9.c */
 void clrtrace(void);
 int gottrace(void);

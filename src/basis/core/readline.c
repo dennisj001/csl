@@ -591,10 +591,11 @@ _ReadLine_TabCompletion_Check ( ReadLiner * rl )
             SetState ( rl, TAB_COMPLETION_CHANGE_STATE, true ) ;
             if ( ( rl->InputKeyedCharacter == ' ' ) && ( tci->RunWord || tci->TrialWord ) )
             {
-                if ( tci->PreviousIdentifier )
+                if (tci->PreviousIdentifier && tci->PreviousIdentifier[0]) //( tci->PreviousIdentifier )
                 {
-                    byte * s = String_FirstEscapeCharFromPos ( &rl->InputLine[tci->StringFirstChar], 0 ) ;
-                    byte * s1 = String_FormattingRemoved ( s ) ;
+                    byte *s1, * s = String_FirstEscapeCharFromPos ( &rl->InputLine[tci->StringFirstChar], 0 ) ;
+                    if ( s ) s1 = String_FormattingRemoved ( s ) ;
+                    else s1 = tci->PreviousIdentifier ;
                     RL_TC_StringInsert_AtCursor ( rl, s1 ) ;
                 }
                 else

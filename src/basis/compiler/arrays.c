@@ -223,10 +223,7 @@ _CSL_ArrayBegin ( Boolean lispMode, Word **pl1, int64 *i )
                 Debugger_Set_StartHere ( _Debugger_ ) ; // for Debugger_DisassembleAccumulated
                 _Debugger_->EntryWord = baseObject ; // for Debugger_DisassembleAccumulated
                 _Compile_GetVarLitObj_LValue_To_Reg ( baseObject, ACC, 0 ) ;
-                if ( lispMode )
-                {
-                    Compile_Move_Reg_To_Reg ( LispRegParameterOrder ( ( *i ) ++ ), ACC, 0 ) ;
-                }
+                if ( lispMode ) Compile_Move_Reg_To_Reg ( LispRegParameterOrder ( ( *i ) ++ ), ACC, 0 ) ;
                 else _Word_CompileAndRecord_PushReg (baseObject, ACC, true , 0) ;
             }
             else _CSL_OptimizeOff ( ) ; // can't really be optimized any more anyway and optimize is turned back on after an =/store anyway

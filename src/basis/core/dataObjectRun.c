@@ -107,6 +107,7 @@ CSL_LocalObject_Init ( Word * word, Namespace * typeNamespace, int64 arraySize )
     //if ( Compiling && ( ! ( word->W_ObjectAttributes & STRUCTURE ) ) ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
     size = _Namespace_VariableValueGet ( word, ( byte* ) "size" ) ;
     tsize = _Namespace_VariableValueGet ( typeNamespace, ( byte* ) "size" ) ;
+    typeNamespace->CompiledDataFieldByteSize = tsize ;
     word->ObjectByteSize = ( size ? size : tsize ? tsize : typeNamespace->ObjectByteSize ) * ( arraySize ? arraySize : 1 ) ;
     if ( arraySize ) 
     // new ??
@@ -115,7 +116,6 @@ CSL_LocalObject_Init ( Word * word, Namespace * typeNamespace, int64 arraySize )
         word->ArrayDimensions = ( int64 * ) Mem_Allocate ( 1 * sizeof (int64 ), DICTIONARY ) ; // 1 : 1 dimension only so far
         word->ArrayDimensions[0]= arraySize ;
         word->ArrayNumberOfDimensions = 1 ;
-        typeNamespace->CompiledDataFieldByteSize = tsize ;
         CSL_TypeStackPush ( word ) ; // is this the right word to push? arraySize word may be more correct
     }
     //_DObject_Init ( Word * word, uint64 value, uint64 ftype, byte * function, int64 arg )

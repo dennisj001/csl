@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.939.314" ) 
+#define VERSION ((byte*) "0.939.315" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // CT/Oop (Category Theory, Object Oriented Programming, Type Theory), 
@@ -25,7 +25,7 @@ main ( int argc, char * argv [ ] )
     openvmtil ( argc, argv ) ;
 }
 
-void 
+void
 openvmtil ( int64 argc, char * argv [ ] )
 {
     OpenVmTil_Run ( argc, argv ) ;
@@ -119,7 +119,7 @@ OpenVmTil_Run ( int64 argc, char * argv [ ] )
             sigSegvs = _O_->SigSegvs ;
             restarts = ++ _O_->Restarts ;
             if ( _O_->Restarts > 20 ) OVT_Exit ( ) ;
-            if (( _O_->RestartCondition == COMPLETE_INITIAL_START ) || (_O_->SigSegvs > 1 ) ) 
+            if ( ( _O_->RestartCondition == COMPLETE_INITIAL_START ) || ( _O_->SigSegvs > 1 ) )
             {
                 _OVT_SimpleFinal_Key_Pause ( _O_, "SigSegv : COMPLETE_INITIAL_START" ) ;
                 OVT_FullRestartCompleteDelete ( ) ;
@@ -193,21 +193,28 @@ OVT_ResetOutputPrintBuffer ( )
     _O_->PrintBuffer->B_Data[0] = 0 ;
 }
 
-int64 
-Verbosity () 
+int64
+Verbosity ( )
 {
-    return (_O_->Verbosity & 0x7) ; // higher bits for specific functions
+    return (_O_->Verbosity & 0x7 ) ; // higher bits for specific functions
 }
 
-void 
-OVT_Set_UnknowStringIsErrorFlag () 
+void
+OVT_Set_UnknowStringIsErrorFlag ( )
 {
-    SetState (_O_, OVT_UNKNOWN_STRING_IS_ERROR, true ) ; 
+    SetState ( _O_, OVT_UNKNOWN_STRING_IS_ERROR, true ) ;
 }
 
-void 
-OVT_UnSet_UnknowStringIsErrorFlag () 
+void
+OVT_UnSet_UnknowStringIsErrorFlag ( )
 {
-    SetState (_O_, OVT_UNKNOWN_STRING_IS_ERROR, false ) ; 
+    SetState ( _O_, OVT_UNKNOWN_STRING_IS_ERROR, false ) ;
 }
-    
+
+void
+OVT_openvmtil ( )
+{
+    //_O_->RestartCondition = COMPLETE_INITIAL_START ;
+    OpenVmTil_Run ( 0, 0 ) ;
+}
+
