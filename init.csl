@@ -1,5 +1,6 @@
 //_dbgOn ukseOn
 5 // stack checking marker
+#define DEBUG_ON 0
 scOn 
 Debug
 // higher debugLevel turns on more debugging
@@ -511,7 +512,9 @@ Root
 dbgOff
 //lisp
 //scOn
-//dbgOn 
+#if DEBUG_ON 
+dbgOn
+#endif 
 //l9
 //lisp
 
@@ -576,4 +579,5 @@ cOff
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
 2 + 7 assertStkChk // stack checking
+//rdim 
 

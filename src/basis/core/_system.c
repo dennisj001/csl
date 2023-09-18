@@ -103,7 +103,6 @@ void
 _System_Init ( System * system )
 {
     system->NumberBase = 10 ;
-    system->IncludeFileStackNumber = 0 ;
 }
 
 void

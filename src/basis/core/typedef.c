@@ -535,7 +535,7 @@ TypeDefStructCompileInfo_New ( uint64 allocType )
 TypeDefInfo *
 TDI_Push_New ( )
 {
-    TypeDefInfo *tdi = TypeDefStructCompileInfo_New ( COMPILER_TEMP ) ;
+    TypeDefInfo *tdi = TypeDefStructCompileInfo_New ( TEMPORARY ) ;
     Stack_Push ( _CONTEXT_TDI_STACK, ( int64 ) tdi ) ;
     return tdi ;
 }
@@ -557,7 +557,7 @@ TDI_Start ( Namespace * ns, byte* objectBitData, int64 stateFlags )
     tdi->State |= stateFlags ;
     tdi->DataPtr = objectBitData ;
     SetState ( _Context_, TDI_PARSING, true ) ;
-    Lexer_SetTokenDelimiters ( cntx->Lexer0, ( byte* ) " ,\n\r\t", COMPILER_TEMP ) ;
+    Lexer_SetTokenDelimiters ( cntx->Lexer0, ( byte* ) " ,\n\r\t", TEMPORARY ) ;
     if ( ! ( stateFlags & TDI_PRINT ) )
     {
         CSL_Lexer_SourceCodeOn ( ) ;

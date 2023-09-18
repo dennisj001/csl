@@ -459,7 +459,7 @@ _Readline_CheckArrayDimensionForVariables ( ReadLiner * rl )
 Boolean
 _Readline_Is_AtEndOfBlock ( ReadLiner * rl0 )
 {
-    ReadLiner * rl = ReadLine_Copy ( rl0, COMPILER_TEMP ) ;
+    ReadLiner * rl = ReadLine_Copy ( rl0, TEMPORARY ) ;
     Word * word = CSL_WordList ( 0 ) ;
     if ( word )
     {

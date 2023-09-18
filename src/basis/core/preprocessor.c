@@ -369,7 +369,7 @@ CSL_PP_Define ( )
         }
     }
     CSL_Inline ( ) ;
-    CSL_SaveDebugInfo ( _CSL_->LastFinished_Word, 0 ) ; // how would this kind of thing work with an inline word??
+    CSL_SaveDebugInfo (_CSL_->LastFinished_Word) ; // how would this kind of thing work with an inline word??
     CSL_SourceCode_Init ( ) ; //don't leave the define in sc
     _CSL_Namespace_InNamespaceSet ( svns ) ;
     Context_SetSpecialTokenDelimiters ( cntx, 0, CONTEXT ) ;

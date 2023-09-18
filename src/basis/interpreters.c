@@ -186,7 +186,7 @@ _CSL_Interpret ( CSL * csl )
     do
     {
         if ( ! _AtCommandLine ( ) ) _CSL_Init_SessionCore ( csl, 1, 1 ) ;
-        else CSL_Prompt ( csl, ( ! loopTimes++ ) ? 1 : 2 ) ;
+        else CSL_Prompt (csl, loopTimes++ < 2, 1 ) ;
         Context_Interpret ( csl->Context0 ) ;
     }
     while ( GetState ( csl, CSL_RUN ) ) ;

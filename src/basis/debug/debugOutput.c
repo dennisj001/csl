@@ -27,12 +27,12 @@ Debugger_Menu ( Debugger * debugger )
 void
 _Debugger_Locals_ShowALocal ( Cpu * cpu, Word * localsWord, Word * scWord ) // use a debugger buffer instead ??
 {
+    if ( Compiling ) scWord = _CSL_->SC_Word ;
     if ( cpu && localsWord && scWord )
     {
         Word * word2 = 0 ;
         byte * buffer = Buffer_DataCleared ( _CSL_->DebugB ) ;
         uint64 * fp = cpu->CPU_FP ; //? ( uint64* ) ((* cpu->CPU_FP)? ( uint64* ) (* cpu->CPU_FP) : (cpu->CPU_FP)) : 0 ;
-        if ( Compiling ) scWord = _CSL_->SC_Word ;
         int64 localVarFlag = ( localsWord->W_ObjectAttributes & LOCAL_VARIABLE ) ; // nb! not a Boolean with '='
         //int64 varOffset = LocalOrParameterVar_Offset ( localsWord ) ;
         int64 varOffset = _LocalOrParameterVar_Offset ( localsWord, scWord->W_NumberOfNonRegisterArgs,

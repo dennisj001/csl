@@ -328,13 +328,13 @@ CSL_DebugLevel ( )
 }
 
 void
-CSL_SaveDebugInfo ( Word * word, uint64 allocType )
+CSL_SaveDebugInfo (Word * word)
 {
     word = word ? word : _Context_->CurrentWordBeingCompiled ? _Context_->CurrentWordBeingCompiled : 0 ;
     if ( word )
     {
         Compiler * compiler = _Compiler_ ;
-        if ( ! allocType ) allocType = COMPILER_TEMP ;
+        //if ( ! allocType ) allocType = COMPILER_TEMP ;
         if ( ! GetState ( word, DEBUG_INFO_SAVED ) )
         {
             if ( ! word->NamespaceStack ) // already done earlier
@@ -399,7 +399,7 @@ void
 _CSL_FinishWordDebugInfo ( Word * word )
 {
     if ( word && ( ! GetState ( _CSL_, ( RT_DEBUG_ON | GLOBAL_SOURCE_CODE_MODE ) ) ) ) CSL_DeleteDebugInfo ( ) ;
-    else CSL_SaveDebugInfo ( word, 0 ) ;
+    else CSL_SaveDebugInfo (word) ;
 }
 
 void

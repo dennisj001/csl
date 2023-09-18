@@ -103,7 +103,8 @@ TabCompletionInfo_GetAPreviousIdentifier ( ReadLiner *rl, int64 start )
     tci->TokenLength = tci->TokenLastChar - tci->TokenFirstChar + 1 ; // zero array start
     Strncpy ( b, & rl->InputLine [ tci->TokenFirstChar ], tci->TokenLength ) ;
     b [ tci->TokenLength ] = 0 ;
-    return TemporaryString_New ( b ) ;
+    //return TemporaryString_New ( b ) ;
+    return String_New ( b, TEMPORARY ) ;
 }
 
 // nb. the notation (function names) around parsing in tab completion is based in 'reverse parsing' - going back in the input line from the cursor position

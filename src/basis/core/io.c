@@ -175,7 +175,6 @@ iPrintf ( char *format, ... )
     //if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
-        //int64 isIncludingFiles = ( _Context_ && _Context_->System0 ) ? _Context_->System0->IncludeFileStackNumber : 0 ;
         va_start ( args, ( char* ) format ) ;
         if ( IS_INCLUDING_FILES ) vprintf ( ( char* ) format, args ) ;
         else
@@ -230,7 +229,6 @@ oPrintf ( char *format, ... )
     if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
-        //int64 isIncludingFiles = ( _Context_ && _Context_->System0 ) ? _Context_->System0->IncludeFileStackNumber : 0 ;
         va_start ( args, ( char* ) format ) ;
         if ( IS_INCLUDING_FILES ) vprintf ( ( char* ) format, args ) ;
         else

@@ -935,7 +935,6 @@ typedef struct
     long BigNum_Printf_Precision ;
     long BigNum_Printf_Width ;
     int64 ExceptionFlag ;
-    int64 IncludeFileStackNumber ;
     struct timespec Timers [ 8 ] ;
 } System ;
 typedef struct
@@ -1034,8 +1033,8 @@ typedef struct _StringTokenInfo
 typedef struct _CSL
 {
     uint64 State, SavedState, * SaveDsp ;
-    int64 InitSessionCoreTimes, WordsAdded, FindWordCount, FindWordMaxCount, TerminalLineWidth,
-    WordCreateCount, DObjectCreateCount, DebugLevel ; // SC_Index == SC_Buffer Index ;
+    int64 InitSessionCoreTimes, WordsAdded, FindWordCount, FindWordMaxCount, TerminalLineWidth, IncludeFileStackNumber ;
+    int64 WordCreateCount, DObjectCreateCount, DebugLevel ; // SC_Index == SC_Buffer Index ;
     Stack *ReturnStack, * DataStack ;
     Namespace * Namespaces, * InNamespace, *BigNumNamespace, *IntegerNamespace, *StringNamespace, *RawStringNamespace,
     *C_Preprocessor_IncludeDirectory_SearchList, *C_Preprocessor_IncludedList ;

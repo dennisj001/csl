@@ -121,7 +121,7 @@ _Debugger_SetupReturnStackCopy ( Debugger * debugger, int64 size, Boolean showFl
         int64 pushedWindow = 64 ;
         if ( ! debugger->CopyRSP )
         {
-            rsc0 = ( uint64 ) Mem_Allocate ( size, COMPILER_TEMP ) ;
+            rsc0 = ( uint64 ) Mem_Allocate ( size, TEMPORARY ) ;
             rsc = ( rsc0 + 0xf ) & ( uint64 ) 0xfffffffffffffff0 ; // 16 byte alignment
             debugger->CopyRSP = ( byte* ) rsc + size - pushedWindow ;
             if ( showFlag ) ( _PrintNStackWindow ( ( uint64* ) debugger->CopyRSP, ( byte* ) "ReturnStackCopy", ( byte* ) "RSCP", 4 ) ) ;

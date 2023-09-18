@@ -54,20 +54,17 @@ Symbol_CompareName2 ( Symbol * symbol, byte * name, Namespace * ns )
 {
     //d1 ( if ( Verbosity () > 3 ) _Printf ( (byte*) "\n symbol name = %s : name = %s", symbol->S_Name, name ) ) ;
     d0 ( if ( Is_DebugOn && String_Equal ( symbol->S_Name, "int" ) ) { iPrintf ( "\n symbol name = %s : name = %s", symbol->S_Name, name ) ; Pause ( ) ; } ) ;
-    d0 ( if ( Is_DebugOn ) { iPrintf ( "\n symbol name = %s.%s : name = %s",
-            symbol->S_ContainingNamespace ? symbol->S_ContainingNamespace->Name : ( byte* ) "", symbol->S_Name, name ) ; } ) ; //Pause () ; } ) ;
+    d0 ( if ( Is_DebugOn ) { iPrintf ( "\n symbol name = %s.%s : name = %s", symbol->S_ContainingNamespace ? symbol->S_ContainingNamespace->Name : ( byte* ) "", symbol->S_Name, name ) ; } ) ; //Pause () ; } ) ;
     if ( name && symbol && symbol->S_Name && ( String_Equal ( symbol->S_Name, name ) ) && (symbol->S_ContainingNamespace == ns) )
     {
-        d0 ( if ( Is_DebugOn ) { iPrintf ( "\n FOUND  : symbol name = %s.%s : name = %s",
-            symbol->S_ContainingNamespace ? symbol->S_ContainingNamespace->Name : ( byte* ) "", symbol->S_Name, name ) ; } ) ; //Pause () ; } ) ;
-            
+        d0 ( if ( Is_DebugOn ) { iPrintf ( "\n FOUND  : symbol name = %s.%s : name = %s", symbol->S_ContainingNamespace ? symbol->S_ContainingNamespace->Name : ( byte* ) "", symbol->S_Name, name ) ; } ) ; //Pause () ; } ) ;
         return symbol ;
     }
     else return 0 ;
 }
 
 Symbol *
-_Symbol_CompareName ( Symbol * symbol, byte * name )
+Symbol_CompareName ( Symbol * symbol, byte * name )
 {
     //d1 ( if ( Verbosity () > 3 ) _Printf ( (byte*) "\n symbol name = %s : name = %s", symbol->S_Name, name ) ) ;
     //d0 ( if ( Is_DebugOn && String_Equal ( symbol->S_Name, "int" ) ) { _Printf ( "\n symbol name = %s : name = %s", symbol->S_Name, name ) ; Pause ( ) ; } ) ;
@@ -81,12 +78,12 @@ _Symbol_CompareName ( Symbol * symbol, byte * name )
     }
     else return 0 ;
 }
-
+#if 0
 Symbol *
 Symbol_CompareName ( Symbol * symbol, byte * name )
 {
     Symbol * symbol1 ;
-    if ( symbol1 = _Symbol_CompareName ( symbol, name ) )
+    if ( symbol1 = Symbol_CompareName ( symbol, name ) )
     {
 #if 0        
         Word * word = (Word*) symbol1 ;
@@ -97,4 +94,4 @@ Symbol_CompareName ( Symbol * symbol, byte * name )
     }
     return 0 ;
 }
-
+#endif

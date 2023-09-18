@@ -22,6 +22,7 @@ OVT_CheckThrowState ( int64 signal, int64 restartCondition )
 
 // OVT_Throw and related functions should be rethought and/or cleaned up
 // this is still somewhat of a mess : just haven't take time to fix
+
 void
 OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
 {
@@ -155,7 +156,7 @@ OVT_PauseInterpret ( Context * cntx, byte key )
     ReadLine_Init ( rl, _CSL_Key ) ;
     SetState ( cntx, AT_COMMAND_LINE, true ) ;
     if ( ( key <= ' ' ) || ( key == '\\' ) ) key = 0 ;
-    iPrintf ( "\nPause interpreter : hit <enter> or <esc> to exit : \n" ) ;
+    iPrintf ( "\nPause interpreter : hit <enter> with an empy line or <esc> to exit : \n" ) ;
     do
     {
         svPrompt = ReadLine_GetPrompt ( rl ) ;
@@ -190,7 +191,7 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
         Debugger * debugger = _Debugger_ ;
         if ( _Context_->CurrentlyRunningWord ) _Debugger_->ShowLine = ( byte* ) "" ;
         byte * buffer = Buffer_DataCleared ( _CSL_->StringInsertB4 ), *defaultPrompt =
-            ( byte * ) "\n%s\n%s : at %s :: %s'c' or <key> (c)ontinue, d' (d)ebugger, 't' s(t)ack, <esc> cancel, 'q' (q)uit, 'x' e(x)it, 'i' '\\' (i)interpret%s" ;
+            ( byte * ) "\n%s\n%s : at %s : %s:: <key>/(c)ontinue (d)ebugger s(t)ack '\\'/(i)interpret (q)uit e(x)it, <esc> cancel%s" ;
         snprintf ( ( char* ) buffer, BUFFER_IX_SIZE, prompt ? ( char* ) prompt : ( char* ) defaultPrompt,
             _O_->ExceptionMessage ? ( char* ) _O_->ExceptionMessage : "\r",
             c_gd ( "pause" ), _Context_Location ( _Context_ ),
@@ -253,11 +254,11 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
                     CSL_PrintDataStack ( ) ;
                     break ; // continue with next char command input
                 }
+                case '\\':
                 case 'i':
                 {
                     if ( _O_->RestartCondition < RESET_ALL )
                     {
-                        // new context
                         Context * cntx = CSL_Context_PushNew ( _CSL_ ) ;
                         OVT_PauseInterpret ( cntx, 0 ) ; //key ) ;
                         CSL_Context_PopDelete ( _CSL_ ) ;
@@ -297,6 +298,7 @@ int64
 _OpenVmTil_Pause ( byte * msg )
 {
     iPrintf ( "\n%s", msg ) ;
+    _O_->RestartCondition = PAUSE ;
     return OVT_Pause ( 0, _O_->SignalExceptionsHandled ) ;
 }
 
@@ -381,7 +383,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
             }
         }
         else
-        {   //++ _O_->SigSegvs ;
+        { //++ _O_->SigSegvs ;
             if ( _O_->SigSegvs >= 2 )
             {
                 //if ( _O_->SigSegvs >= 2 ) 

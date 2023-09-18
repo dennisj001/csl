@@ -43,7 +43,7 @@ CSL_StrCat ( )
     char * dst = (char*) DataStack_Pop ( ) ;
     strncpy ( (char*) buffer, dst, BUFFER_IX_SIZE ) ;
     if (src) strncat ( (char *) buffer, src, BUFFER_IX_SIZE ) ; 
-    str = String_New ( buffer, TEMPORARY ) ; //String_New ( (byte*) buffer, DICTIONARY ) ;
+    str = String_New ( buffer, SESSION ) ; //String_New ( (byte*) buffer, DICTIONARY ) ;
     DataStack_Push ((int64) str) ;
 }
 

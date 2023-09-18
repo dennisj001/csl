@@ -197,15 +197,15 @@ Compiler_GotoList_Print ( )
 }
 
 void
-_CompileOptimizeInfo_Init ( CompileOptimizeInfo * optInfo )
+_COI_Init ( CompileOptimizeInfo * optInfo )
 {
     memset ( ( byte* ) & optInfo->State, 0, sizeof ( CompileOptimizeInfo ) - sizeof ( DLNode ) ) ;
 }
 
 void
-CompileOptimizeInfo_Init ( CompileOptimizeInfo * optInfo, uint64 state )
+COI_Init ( CompileOptimizeInfo * optInfo, uint64 state )
 {
-    _CompileOptimizeInfo_Init ( optInfo ) ;
+    _COI_Init ( optInfo ) ;
     dlnode * node ;
     int64 i ;
     // we don't really use optInfo->COIW much 
@@ -221,7 +221,7 @@ CompileOptimizeInfo_Init ( CompileOptimizeInfo * optInfo, uint64 state )
 }
 
 CompileOptimizeInfo *
-_CompileOptimizeInfo_New ( uint64 type )
+_COI_New ( uint64 type )
 {
     CompileOptimizeInfo * optInfo = ( CompileOptimizeInfo * ) Mem_Allocate ( sizeof (CompileOptimizeInfo ), type ) ;
     optInfo->InUseFlag = N_LOCKED ;
@@ -231,12 +231,12 @@ _CompileOptimizeInfo_New ( uint64 type )
 CompileOptimizeInfo *
 CompileOptimizeInfo_New ( uint64 type )
 {
-    CompileOptimizeInfo * optInfo = optInfo = _CompileOptimizeInfo_New ( type ) ;
+    CompileOptimizeInfo * optInfo = optInfo = _COI_New ( type ) ;
     return optInfo ;
 }
 
 CompileOptimizeInfo *
-COInfo_PushNew ( Compiler * compiler )
+COI_PushNew ( Compiler * compiler )
 {
     CompileOptimizeInfo * coi = CompileOptimizeInfo_New ( COMPILER_TEMP ) ;
     if ( coi )
@@ -248,9 +248,9 @@ COInfo_PushNew ( Compiler * compiler )
 }
 
 CompileOptimizeInfo *
-COInfo_New ( Compiler * compiler, uint64 type )
+COI_New ( Compiler * compiler, uint64 type )
 {
-    compiler->OptInfo = _CompileOptimizeInfo_New ( type ) ;
+    compiler->OptInfo = _COI_New ( type ) ;
     return compiler->OptInfo ;
 }
 
@@ -323,7 +323,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     _dllist_Init ( compiler->CurrentMatchList ) ;
     _dllist_Init ( compiler->RegisterParameterList ) ;
     _dllist_Init ( compiler->OptimizeInfoList ) ;
-    COInfo_PushNew ( compiler ) ;
+    COI_PushNew ( compiler ) ;
     //SetBuffersUnused ( 0 ) ;
     SetState ( compiler, VARIABLE_FRAME, false ) ;
     //OVT_MemListFree_CompilerTempObjects ( ) ;

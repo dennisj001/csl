@@ -257,7 +257,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
             cntx->ReadLiner0->InputFile = file ;
             ReadLine_SetRawInputFunction ( rl, ReadLine_GetNextCharFromString ) ;
             SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
-            cntx->System0->IncludeFileStackNumber ++ ;
+            _CSL_->IncludeFileStackNumber ++ ;
             _SetEcho ( 0 ) ;
 
             ReadLine_ReadFileIntoAString ( rl, file ) ;
@@ -269,7 +269,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
                 else if ( interpretFlag == 2 ) Interpret_UntilFlagged2WithInit ( cntx->Interpreter0, END_OF_FILE | END_OF_STRING ) ;// used with preprocessor
             }
 
-            cntx->System0->IncludeFileStackNumber -- ;
+            _CSL_->IncludeFileStackNumber -- ;
             if ( Verbosity () > 2 ) iPrintf ( "\n%s included\n", filename ) ;
         }
         else

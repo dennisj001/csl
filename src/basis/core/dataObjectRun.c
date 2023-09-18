@@ -68,16 +68,18 @@ void
 _Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value, int64 size )
 {
     Word * word = _CSL_ObjectNew ( size, ( byte* ) "<object>", 0, TEMPORARY ) ;
-    _Class_Object_Init ( word, typeNamespace ) ;
+    if ( typeNamespace->W_ObjectAttributes & (STRUCT) ) _Class_Object_Init ( word, typeNamespace ) ;
     * value = ( byte* ) word->W_Value ;
 }
 
+// called by Word_ObjectRun 
+
 void
-CSL_Do_LocalObject ( Word * word )
+_CSL_Do_LocalObject (Word * word, Boolean force)
 {
-    if ( ( word->W_ObjectAttributes & LOCAL_VARIABLE ) && ( ! ( word->W_ObjectAttributes & O_POINTER ) ) && ( ! GetState ( word, W_INITIALIZED ) ) ) // this is a local variable so it is initialed at creation 
+    if ( force || (( word->W_ObjectAttributes & LOCAL_VARIABLE ) && ( ! ( word->W_ObjectAttributes & O_POINTER ) ) && ( ! GetState ( word, W_INITIALIZED ) ) ) ) // this is a local variable so it is initialed at creation 
     {
-        int64 size = _Namespace_VariableValueGet ( word->TypeNamespace, ( byte* ) "size" ) ;
+        int64 size = word->ObjectByteSize ? word->ObjectByteSize : _Namespace_VariableValueGet ( word->TypeNamespace, ( byte* ) "size" ) ;
         Compile_MoveImm_To_Reg ( RDI, ( int64 ) word->TypeNamespace, CELL ) ;
         _Compile_LEA ( RSI, FP, 0, LocalVar_Disp ( word ) ) ;
         //_Compile_Move_Rm_To_Reg ( RSI, RSI, 0 ) ;
@@ -85,23 +87,40 @@ CSL_Do_LocalObject ( Word * word )
         Compile_Call_TestRSP ( ( byte* ) _Do_LocalObject_AllocateInit ) ; // we want to only allocate this object once and only at run time; and not at compile time
         SetState ( word, W_INITIALIZED, true ) ;
     }
+}
+
+void
+CSL_Do_LocalObject ( Word * word )
+{
+    _CSL_Do_LocalObject (word, 0) ;
     CSL_Do_Object ( word ) ;
 }
 
 void
-CSL_LocalObject_Init ( Word * word, Namespace * typeNamespace )
+CSL_LocalObject_Init ( Word * word, Namespace * typeNamespace, int64 arraySize )
 {
-    int64 size ;
+    int64 size, tsize ;
     word->TypeNamespace = typeNamespace ;
     word->W_MorphismAttributes |= typeNamespace->W_MorphismAttributes ;
     if ( typeNamespace->W_ObjectAttributes & CLASS ) word->W_ObjectAttributes |= OBJECT ;
     if ( Compiling ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
     //if ( Compiling && ( ! ( word->W_ObjectAttributes & STRUCTURE ) ) ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
     size = _Namespace_VariableValueGet ( word, ( byte* ) "size" ) ;
-    word->ObjectByteSize = size ? size : typeNamespace->ObjectByteSize ;
+    tsize = _Namespace_VariableValueGet ( typeNamespace, ( byte* ) "size" ) ;
+    word->ObjectByteSize = ( size ? size : tsize ? tsize : typeNamespace->ObjectByteSize ) * ( arraySize ? arraySize : 1 ) ;
+    if ( arraySize ) 
+    // new ??
+    {
+        _CSL_Do_LocalObject (word, 1) ;
+        word->ArrayDimensions = ( int64 * ) Mem_Allocate ( 1 * sizeof (int64 ), DICTIONARY ) ; // 1 : 1 dimension only so far
+        word->ArrayDimensions[0]= arraySize ;
+        word->ArrayNumberOfDimensions = 1 ;
+        typeNamespace->CompiledDataFieldByteSize = tsize ;
+        CSL_TypeStackPush ( word ) ; // is this the right word to push? arraySize word may be more correct
+    }
     //_DObject_Init ( Word * word, uint64 value, uint64 ftype, byte * function, int64 arg )
-    _DObject_Init ( word, ( int64 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0 ) ;
-    _Word_Add ( word, 1, 0 ) ; //?? is this necessary??
+    else _DObject_Init ( word, ( int64 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0 ) ;
+    _Word_Add ( word, 1, 0 ) ; 
 }
 
 void
@@ -306,18 +325,17 @@ _Compile_C_TypeDeclaration ( )
 // for type declarations not function declarations??
 
 void
-Compile_C_TypeDeclaration ( Namespace * ns, byte * token )
+Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
 {
     Interpreter * interp = _Interpreter_ ;
     Word * word ;
-    byte * token1 ;
     if ( token && Compiling )
     {
         if ( token[0] == ')' )
         {
             //  C cast code here ; 
             // nb! : we mostly have no (fully) implemented operations on operand size less than 8 bytes
-            token1 = Lexer_ReadToken ( _Lexer_ ) ;
+            byte * token1 = Lexer_ReadToken ( _Lexer_ ) ;
             if ( token1 )
             {
                 Word * word0 = _Interpreter_TokenToWord ( interp, token1, - 1, - 1 ) ;
@@ -344,6 +362,7 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token )
                 else objectAttributes = 0 ;
                 if ( token[0] == ';' ) break ;
                 Word * word = Lexer_ParseToken_ToWord ( _Lexer_, token, - 1, - 1 ) ;
+                byte * pntoken = Lexer_Peek_NextToken ( _Lexer_, 1, 1 ) ;
                 if ( word->W_MorphismAttributes & ( DEBUG_WORD ) )
                 {
                     Word_Morphism_Run ( word ) ; //Interpreter_InterpretAToken ( _Interpreter_, token1, - 1, - 1 ) ;
@@ -355,21 +374,23 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token )
                     if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) objectAttributes |= ( OBJECT | STRUCT ) ;
                     word->W_ObjectAttributes = ( LOCAL_VARIABLE | objectAttributes ) ; //| ns->W_ObjectAttributes ) ;
                     Compiler_LocalWord_UpdateCompiler ( _Compiler_, word, LOCAL_VARIABLE | objectAttributes ) ;
-                    if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) CSL_LocalObject_Init ( word, ns ) ;
+                    if ( strchr ( pntoken, '[' ) ) // one dimensional arrays only for now
+                    // new ??
+                    {
+                        word->W_ObjectAttributes |= O_POINTER ; // !nb. after CSL_LocalObject_Init
+                        pntoken = Lexer_ReadToken ( _Lexer_ ) ;
+                        byte * dtoken = Lexer_ReadToken ( _Lexer_ ) ; //
+                        CSL_LocalObject_Init ( word, ns, atoi ( dtoken ) ) ;
+                        byte * aend = Lexer_ReadToken ( _Lexer_ ) ; // "]"
+                    }
+                    else if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) CSL_LocalObject_Init ( word, ns, 0 ) ;
                     else _Word_Add ( word, 0, lns ) ;
                 }
-                token = Lexer_Peek_NextToken ( _Lexer_, 1, 1 ) ;
-                if ( strchr ( token, '=' ) )
+                if ( strchr ( pntoken, '=' ) )
                 {
                     Compiler_Set_LHS ( word ) ;
                     token = _Compile_C_TypeDeclaration ( ) ;
                 }
-#if 0 // not yet              
-                else if ( strchr ( token, '[' ) )
-                {
-                    //_CSL_ArrayBegin ( 0, 0, 0 ) ;
-                }
-#endif                 
                 else token = Lexer_ReadToken ( _Lexer_ ) ;
 
                 if ( token && ( token[0] == ',' ) ) token = Lexer_ReadToken ( _Lexer_ ) ;
@@ -412,7 +433,7 @@ _CSL_Do_C_Type ( Namespace * ns )
     if ( token2 && ( token2 [0] == '(' ) ) Compile_C_FunctionDeclaration ( token1 ) ;
     else
     {
-        if ( Compiling ) Compile_C_TypeDeclaration ( ns, token1 ) ;
+        if ( Compiling ) Compile_C_TypeDeclaration ( ns, token1, 0 ) ;
         else Interpreter_InterpretAToken ( _Interpreter_, token1, - 1, - 1 ) ; //_Lexer_->TokenStart_ReadLineIndex, _Lexer_->SC_Index ) ;
     }
     SetState ( _Compiler_, DOING_C_TYPE_DECLARATION, false ) ;

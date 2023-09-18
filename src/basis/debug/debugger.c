@@ -272,7 +272,7 @@ Debugger_GetDbgAddressFromRsp ( Debugger * debugger, Cpu * cpu )
 {
     Word * word, *lastWord = 0, *currentlyRunning = Word_UnAlias ( _Context_->CurrentlyRunningWord ) ;
     byte * addr, *retAddr ;
-    dllist * retStackList = List_New ( COMPILER_TEMP ) ;
+    dllist * retStackList = List_New ( TEMPORARY ) ;
     int64 i0, i1, i2, d ;
     if ( Is_DebugOn && ( Verbosity ( ) > 1 ) ) CSL_PrintReturnStack ( ) ;
     for ( i0 = 0 ; i0 < ( K ) ; i0 ++ ) // K : sizeof ReturnStack

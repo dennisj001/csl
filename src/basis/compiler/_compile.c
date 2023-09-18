@@ -87,7 +87,6 @@ _Compile_GetVarLitObj_RValue_To_Reg ( Word * word, int64 reg, int size )
     Compiler_Word_SCHCPUSCA ( word, 0 ) ;
     if ( word->W_ObjectAttributes & REGISTER_VARIABLE ) return ; // already 
     else if ( word->W_ObjectAttributes & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | T_LISP_SYMBOL | LOCAL_OBJECT )
-        //else if ( word->W_ObjectAttributes & ( LOCAL_VARIABLE | PARAMETER_VARIABLE | T_LISP_SYMBOL | LOCAL_OBJECT | O_POINTER ) 
         || ( word->W_LispAttributes & T_LISP_SYMBOL ) )
     {
         _Compile_Move_StackN_To_Reg ( reg, FP, LocalOrParameterVar_Offset ( word ), size ) ;

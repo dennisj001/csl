@@ -353,7 +353,7 @@ done:
 Rllafl *
 ReadLiner_LookAroundFor_Logic ( uint64 la_code )
 {
-    Rllafl * r = Rllafl_New ( la_code, COMPILER_TEMP ) ;
+    Rllafl * r = Rllafl_New ( la_code, TEMPORARY ) ;
     Switch_LookAroundFor_Logic ( r, 1 ) ; //p = ( pnc + i ), la_code, 1, &mparenLevel, &pparenLevel ) ;
     r->nc -- ;
     Switch_LookAroundFor_Logic ( r, - 1 ) ; //p = ( pnc + i ), la_code, 1, &mparenLevel, &pparenLevel ) ;
@@ -384,8 +384,8 @@ Print_Defined_LogicVariable ( Rllafl * r )
 {
     if ( r->rtrn )
     {
-        byte * start = String_RemoveFinalNewline ( String_New ( r->nc - r->i, COMPILER_TEMP ) ) ;
-        byte * actual = String_RemoveFinalNewline ( String_New ( r->nc - ( r->i / 2 ), COMPILER_TEMP ) ) ;
+        byte * start = String_RemoveFinalNewline ( String_New ( r->nc - r->i, TEMPORARY ) ) ;
+        byte * actual = String_RemoveFinalNewline ( String_New ( r->nc - ( r->i / 2 ), TEMPORARY ) ) ;
         iPrintf ( "\nDebug at : \'%s\' \n\t: \'%s\' : \n%s : ", start, actual, Context_Location ( ) ) ;
         if ( r->rtrn & LT_START_OF_BLOCK ) iPrintf ( " LT_START_OF_BLOCK" ) ;
         if ( r->rtrn & LT_OR_PREVIOUS ) iPrintf ( " LT_OR_PREVIOUS" ) ;

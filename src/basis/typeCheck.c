@@ -621,7 +621,7 @@ CSL_Typecheck ( Word * opWord )
     {
         if ( ! GetState ( _Compiler_, ( DOING_BEFORE_AN_INFIX_WORD | DOING_BEFORE_A_PREFIX_WORD ) ) )
         {
-            TSI * tsi = TSI_New ( opWord, COMPILER_TEMP ) ;
+            TSI * tsi = TSI_New ( opWord, TEMPORARY ) ;
             TSI_TypeCheckAndInfer ( tsi ) ;
             if ( tsi->TypeErrorStatus ) TSI_ShowTypeErrorStatus ( tsi ) ;
         }

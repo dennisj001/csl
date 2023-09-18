@@ -367,7 +367,7 @@ FreeNba_BaList ( NamedByteArray * nba )
 void
 OVT_FreeTempMem ( )
 {
-    OVT_MemListFree_CompilerTempObjects ( ) ;
+    //OVT_MemListFree_CompilerTempObjects ( ) ;
     OVT_MemListFree_TempObjects ( ) ;
     OVT_MemListFree_Objects ( ) ;
     OVT_MemListFree_LispTemp ( ) ;
@@ -390,7 +390,7 @@ _OVT_MemList_FreeNBAMemory ( NamedByteArray *nba, uint64 moreThan, int64 always 
     if ( nba && ( always || ( nba->MemAllocated > ( nba->MemInitial + moreThan ) ) ) ) // this logic is fuzzy ?? what is wanted is a way to fine tune mem allocation 
     {
         dlnode * node, *nodeNext ;
-        int64 size, flag ;
+        int64 flag ;
         for ( flag = 0, node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
         {
             nodeNext = dlnode_Next ( node ) ;

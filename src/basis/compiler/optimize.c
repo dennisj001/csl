@@ -70,9 +70,9 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
 {
     CompileOptimizeInfo * optInfo ;
     int64 state = compiler->OptInfo->State ;
-    compiler->OptInfo = COInfo_PushNew ( compiler ) ;
+    compiler->OptInfo = COI_PushNew ( compiler ) ;
     optInfo = compiler->OptInfo ;
-    CompileOptimizeInfo_Init ( optInfo, state ) ; // State : not used yet ??
+    COI_Init ( optInfo, state ) ; // State : not used yet ??
     optInfo->opWord = word ;
     SetState ( _CSL_, IN_OPTIMIZER, true ) ;
     for ( optInfo->node = optInfo->wordNode = dllist_First ( ( dllist* ) _CSL_->CSL_N_M_Node_WordList ), optInfo->node = dlnode_Next ( optInfo->node ) ;

@@ -148,7 +148,7 @@
 #define c_u( s ) cc ( (byte*) s, &_O_->User ) 
 #define c_n( s ) cc ( (byte*) s, &_O_->Notice ) 
 
-#define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 
+//#define TemporaryString_New( string ) String_New ( string, TEMPORARY ) 
 #define IsWordRecursive CSL_CheckForGotoPoints ( GI_RECURSE )
 #define AppendCharToSourceCode( c ) //_Lexer_AppendCharToSourceCode ( lexer, c ) 
 #define ReadLine_Nl (ReadLine_PeekNextChar ( _Context_->ReadLiner0 ) == '\n')
@@ -260,7 +260,7 @@
 #define Is_DebugOn_DBI ( Is_DebugOn ? DBI_ON : 0 )
 #define _VERBOSITY _O_->Verbosity
 #define DBI_N( n ) (GetState ( _Debugger_, DBG_ASM_SHOW_ON ) && ( Verbosity () > n ) )
-#define IS_INCLUDING_FILES ( ( _Context_ && _Context_->System0 ) ? _Context_->System0->IncludeFileStackNumber : 0  )
+#define IS_INCLUDING_FILES ( _CSL_ && _CSL_->IncludeFileStackNumber )
 #define Is_DbiOn _O_->Dbi
 
 #define C_SyntaxOn ( GetState ( _Context_, (C_SYNTAX|INFIX_MODE)) )

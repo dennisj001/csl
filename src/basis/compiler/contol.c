@@ -341,7 +341,7 @@ _Compile_CallReg ( Boolean reg, Boolean regOrMem )
 GotoInfo *
 _GotoInfo_Allocate ( )
 {
-    GotoInfo * gi = ( GotoInfo * ) Mem_Allocate ( sizeof ( GotoInfo ), COMPILER_TEMP ) ;
+    GotoInfo * gi = ( GotoInfo * ) Mem_Allocate ( sizeof ( GotoInfo ), TEMPORARY ) ;
     return gi ;
 }
 

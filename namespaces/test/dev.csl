@@ -259,7 +259,6 @@ cOff
 //pause
 User
 
-#if 1
 reps0 23 =
 reps 1000 =
 //verbosity 2 =
@@ -269,7 +268,6 @@ reps 1000 =
 "cfactorial3" ffx
 "factoriali" ffx 
 
-#if 1 
 User "qexp" ffx
 C "bexp" ffx
 "bexp2" ffx
@@ -278,7 +276,6 @@ C "qexp2" ffx
 "bexp" ffx
 "bexp2" ffx
 "bexp3" ffx
-#endif
 
 "fac" ffx
 "fac5" ffx 
@@ -320,7 +317,6 @@ using
 "fac40" ffx
 sp0
 //pause
-#endif
 
 jcc8_Off initRegs
 //verbosity 3 =
@@ -480,12 +476,10 @@ C
 
 jcc8_Off
 'cfib2_O3 find wdiss //sp0
-#if 1
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) 1 ti n @ _fib3 p 1 time ;
 : fib4 ( n ) 1 ti n @ _fib4 p 1 time ;
-#endif
 C_Syntax C Interpreter
 
 : fibn0 ( n ) 1 ti n @ _fibn0 p 1 time ;
@@ -582,8 +576,6 @@ nl
 namespaceTreeWithWords 
 Interpreter
 sp0
-rdim 
-#endif
 
 
 #if 0 // this works
@@ -693,5 +685,6 @@ CountChange (1000) ;
 cOff
 
 #endif // ifdef _DEV_H_
+rdim 
 2 + 7 assertStkChk // stack checking
 //pause

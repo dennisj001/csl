@@ -143,7 +143,8 @@ Compiler_LocalsNamespace_FindOrNew ( Compiler * compiler )
 Word *
 Compiler_LocalWord_New ( Compiler * compiler, byte * name, int64 morphismAttributes, int64 objectAttributes, int64 lispAttributes, int64 allocType )
 {
-    if ( ( ! GetState ( compiler, DOING_C_TYPE ) && ( ! GetState ( _LC_, LC_BLOCK_COMPILE ) ) ) ) compiler->LocalsNamespace = Compiler_LocalsNamespace_FindOrNew ( compiler ) ;
+    if ( ( ! GetState ( compiler, DOING_C_TYPE ) && ( ! GetState ( _LC_, LC_BLOCK_COMPILE ) ) ) ) 
+        compiler->LocalsNamespace = Compiler_LocalsNamespace_FindOrNew ( compiler ) ;
     Word * word = _Compiler_LocalWord_New ( compiler, name, morphismAttributes, objectAttributes, lispAttributes, allocType ) ;
     return word ;
 }
@@ -451,7 +452,7 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
             }
             if ( objectTypeNamespace )
             {
-                CSL_LocalObject_Init ( word, objectTypeNamespace ) ;
+                CSL_LocalObject_Init (word, objectTypeNamespace , 0) ;
                 Word_TypeChecking_SetSigInfoForAnObject ( word ) ;
             }
             else if ( typeNamespace ) word->CompiledDataFieldByteSize = typeNamespace->CompiledDataFieldByteSize ;

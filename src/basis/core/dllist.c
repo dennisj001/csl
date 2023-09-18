@@ -732,11 +732,10 @@ Tree_Map_State_OneArg ( uint64 state, MapFunction_1 mf, int64 one )
         {
             nextWord = ( Word* ) dlnode_Next ( ( node* ) word ) ;
             _CSL_->FindWordCount ++ ;
-            if ( mf ( ( Symbol* ) word, one ) )
-                return word ;
-            //if ( ( ( word->State & state ) || Is_NamespaceType ( word ) ) && ( mf ( ( Symbol* ) word, one ) ) )
-            if ( ( word->State & state ) && ( Is_NamespaceType ( word ) ) )
+            if ( mf ( ( Symbol* ) word, one ) ) return word ;
+            else if ( ( Is_NamespaceType ( word ) ) && ( word->State & state ) )
             {
+                //if ( Is_DebugOn && String_Equal (word->Name, "Defines") ) Pause () ;
                 if ( ( word2 = Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) word->W_List ), mf, one ) ) )
                     return word2 ;
             }

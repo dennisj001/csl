@@ -5,14 +5,14 @@ Symbol *
 DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
 {
     Symbol * s = ( Symbol* ) Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) list ),
-        ( MapFunction_1 ) _Symbol_CompareName, ( int64 ) name ) ;
+        ( MapFunction_1 ) Symbol_CompareName, ( int64 ) name ) ;
     return s ;
 }
 
 Symbol *
 _DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
 {
-    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace ( ( Word* ) dllist_First ( list ), ( MapFunction_1 ) _Symbol_CompareName, ( int64 ) name ) ;
+    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace ( ( Word* ) dllist_First ( list ), ( MapFunction_1 ) Symbol_CompareName, ( int64 ) name ) ;
     return s ;
 }
 
