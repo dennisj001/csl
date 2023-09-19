@@ -68,16 +68,16 @@ void
 _Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value, int64 size )
 {
     Word * word = _CSL_ObjectNew ( size, ( byte* ) "<object>", 0, TEMPORARY ) ;
-    if ( typeNamespace->W_ObjectAttributes & (STRUCT) ) _Class_Object_Init ( word, typeNamespace ) ;
+    if ( typeNamespace->W_ObjectAttributes & ( STRUCT ) ) _Class_Object_Init ( word, typeNamespace ) ;
     * value = ( byte* ) word->W_Value ;
 }
 
 // called by Word_ObjectRun 
 
 void
-_CSL_Do_LocalObject (Word * word, Boolean force)
+_CSL_Do_LocalObject ( Word * word, Boolean force )
 {
-    if ( force || (( word->W_ObjectAttributes & LOCAL_VARIABLE ) && ( ! ( word->W_ObjectAttributes & O_POINTER ) ) && ( ! GetState ( word, W_INITIALIZED ) ) ) ) // this is a local variable so it is initialed at creation 
+    if ( force || ( ( word->W_ObjectAttributes & LOCAL_VARIABLE ) && ( ! ( word->W_ObjectAttributes & O_POINTER ) ) && ( ! GetState ( word, W_INITIALIZED ) ) ) ) // this is a local variable so it is initialed at creation 
     {
         int64 size = word->ObjectByteSize ? word->ObjectByteSize : _Namespace_VariableValueGet ( word->TypeNamespace, ( byte* ) "size" ) ;
         Compile_MoveImm_To_Reg ( RDI, ( int64 ) word->TypeNamespace, CELL ) ;
@@ -92,35 +92,25 @@ _CSL_Do_LocalObject (Word * word, Boolean force)
 void
 CSL_Do_LocalObject ( Word * word )
 {
-    _CSL_Do_LocalObject (word, 0) ;
+    _CSL_Do_LocalObject ( word, 0 ) ;
     CSL_Do_Object ( word ) ;
 }
 
 void
 CSL_LocalObject_Init ( Word * word, Namespace * typeNamespace, int64 arraySize )
 {
-    int64 size, tsize ;
     word->TypeNamespace = typeNamespace ;
     word->W_MorphismAttributes |= typeNamespace->W_MorphismAttributes ;
     if ( typeNamespace->W_ObjectAttributes & CLASS ) word->W_ObjectAttributes |= OBJECT ;
     if ( Compiling ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
-    //if ( Compiling && ( ! ( word->W_ObjectAttributes & STRUCTURE ) ) ) word->W_ObjectAttributes |= LOCAL_OBJECT ;
-    size = _Namespace_VariableValueGet ( word, ( byte* ) "size" ) ;
-    tsize = _Namespace_VariableValueGet ( typeNamespace, ( byte* ) "size" ) ;
-    typeNamespace->CompiledDataFieldByteSize = tsize ;
-    word->ObjectByteSize = ( size ? size : tsize ? tsize : typeNamespace->ObjectByteSize ) * ( arraySize ? arraySize : 1 ) ;
-    if ( arraySize ) 
-    // new ??
+    if ( arraySize )
     {
-        _CSL_Do_LocalObject (word, 1) ;
-        word->ArrayDimensions = ( int64 * ) Mem_Allocate ( 1 * sizeof (int64 ), DICTIONARY ) ; // 1 : 1 dimension only so far
-        word->ArrayDimensions[0]= arraySize ;
-        word->ArrayNumberOfDimensions = 1 ;
+        _CSL_Do_LocalObject ( word, 1 ) ;
         CSL_TypeStackPush ( word ) ; // is this the right word to push? arraySize word may be more correct
     }
     //_DObject_Init ( Word * word, uint64 value, uint64 ftype, byte * function, int64 arg )
     else _DObject_Init ( word, ( int64 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0 ) ;
-    _Word_Add ( word, 1, 0 ) ; 
+    _Word_Add ( word, 1, 0 ) ;
 }
 
 void
@@ -374,14 +364,22 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
                     if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) objectAttributes |= ( OBJECT | STRUCT ) ;
                     word->W_ObjectAttributes = ( LOCAL_VARIABLE | objectAttributes ) ; //| ns->W_ObjectAttributes ) ;
                     Compiler_LocalWord_UpdateCompiler ( _Compiler_, word, LOCAL_VARIABLE | objectAttributes ) ;
-                    if ( strchr ( pntoken, '[' ) ) // one dimensional arrays only for now
-                    // new ??
+                    if ( strchr ( pntoken, '[' ) )
+                        //new block -- volatile
                     {
-                        word->W_ObjectAttributes |= O_POINTER ; // !nb. after CSL_LocalObject_Init
+                        TDI * tdi = TDI_Push_New ( ) ;
+                        tdi->Tdi_Field_Size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
                         pntoken = Lexer_ReadToken ( _Lexer_ ) ;
-                        byte * dtoken = Lexer_ReadToken ( _Lexer_ ) ; //
-                        CSL_LocalObject_Init ( word, ns, atoi ( dtoken ) ) ;
-                        byte * aend = Lexer_ReadToken ( _Lexer_ ) ; // "]"
+                        tdi->TdiToken = pntoken ;
+                        tdi->Tdi_Field_Object = word ;
+                        TD_Array ( ) ;
+                        int64 tsize = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
+                        ns->CompiledDataFieldByteSize = tsize ;
+                        interp->CurrentObjectNamespace = ns ;
+                        CSL_LocalObject_Init ( word, ns, word->ObjectByteSize ) ;
+                        word->W_ObjectAttributes |= O_POINTER ; // !nb. after CSL_LocalObject_Init
+                        _Word_Add ( word, 1, 0 ) ;
+                        if ( tdi->TdiToken[0] = ';' ) break ;
                     }
                     else if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) CSL_LocalObject_Init ( word, ns, 0 ) ;
                     else _Word_Add ( word, 0, lns ) ;

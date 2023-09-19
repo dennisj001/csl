@@ -105,7 +105,7 @@ TD_Array ( )
     //TDI_ReadToken ( ) ;
     int64 arrayDimensions [ 32 ] ; // 32 : max dimensions for now
     //if ( GetState ( tdi, TDI_PRINT ) ) iPrintf ( "" ) ; //debug
-    int64 size = tdi->Tdi_Field_Size, i, arrayDimensionSize ;
+    int64 size = tdi->Tdi_Field_Size, i, arrayDimensionSize, objectByteSize = 0 ;
     byte *token = tdi->TdiToken ;
     memset ( arrayDimensions, 0, sizeof (arrayDimensions ) ) ;
 
@@ -121,6 +121,7 @@ TD_Array ( )
             if ( ! String_Equal ( ( char* ) token, "]" ) ) CSL_Exception ( SYNTAX_ERROR, 0, 1 ) ;
             else arrayDimensions [ i ] = arrayDimensionSize ;
             token = TDI_ReadToken ( ) ;
+            objectByteSize += size ;
         }
         else
         {
@@ -133,6 +134,7 @@ TD_Array ( )
                 {
                     tdi->Tdi_Field_Object->ArrayDimensions = tdi->Tdi_ArrayDimensions ; //tdi->Tdi_Field_Size, DICTIONARY ) ;
                     tdi->Tdi_Field_Object->ArrayNumberOfDimensions = tdi->Tdi_ArrayNumberOfDimensions ;
+                    tdi->Tdi_Field_Object->ObjectByteSize = objectByteSize ;
                 }
             }
             break ;

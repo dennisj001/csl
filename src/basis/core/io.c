@@ -29,11 +29,11 @@ _kbhit ( int64 key )
     int64 oldf ;
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
-    char ch = getc (stdin) ;
+    char ch = getc ( stdin ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf ) ;
     if ( key == CHAR_PRINT ) return ( ch >= ' ' ) ;
     else if ( key == CHAR_ANY ) return ( ch ) ;
-    else return (ch == key) ; //return ch ;
+    else return (ch == key ) ; //return ch ;
 }
 
 char
@@ -48,11 +48,11 @@ void
 Clear_Terminal_Line ( )
 {
     // try, try, again!?
-    fflush (stdout) ;
+    fflush ( stdout ) ;
     iPrintf ( "\r%c[J", ESC ) ; // clear from cursor to end of screen -- important if we have (mistakenly) gone up an extra line
-    fflush (stdout) ;
+    fflush ( stdout ) ;
     iPrintf ( "\r%c[J", ESC ) ; // clear from cursor to end of screen -- important if we have (mistakenly) gone up an extra line
-    fflush (stdout) ;
+    fflush ( stdout ) ;
 }
 
 void
@@ -167,6 +167,7 @@ Printf_Log ( char *format, ... )
 }
 
 //iPrintf : to be used with internal output
+
 void
 iPrintf ( char *format, ... )
 {
@@ -188,9 +189,19 @@ iPrintf ( char *format, ... )
         }
         va_end ( args ) ;
         fflush ( stdout ) ;
+#if 1        
+        if ( _O_->LogFlag )
+        {
+            va_start ( args, ( char* ) format ) ;
+            vfprintf ( _CSL_->LogFILE, ( char* ) format, args ) ;
+            va_end ( args ) ;
+            fflush ( _CSL_->LogFILE ) ;
+        }
+#endif        
     }
 }
 #if 0
+
 void
 dPrintf ( char *format, ... )
 {
@@ -207,6 +218,7 @@ dPrintf ( char *format, ... )
         va_end ( args ) ;
     }
 }
+
 void
 lPrintf ( char *format, ... )
 {
@@ -222,6 +234,7 @@ lPrintf ( char *format, ... )
 #endif
 // oPrintf : printf with PrintBufferCopy added logic
 // printf for user output not for internal output
+
 void
 oPrintf ( char *format, ... )
 {

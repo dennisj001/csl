@@ -582,7 +582,7 @@ pwi node-p
 cOff
 $cat node.txt
 //pause
-#elif 0
+#elif 1
 Buffer2048 'buffer new 
 void node-p ( txt, poftxt, Buffer2048 * buffer0 ) 
 {
@@ -604,7 +604,7 @@ void node-p ( txt, poftxt )
     ash ( buffer ) ;
     printf ( "\n &buffer[5] = %s\n", &buffer [5] ) ;
 }
-node-p ( "1+6", "./node.txt" ) ; 
+node-p ( "1+10", "./node.txt" ) ; 
 pwi node-p  
 cOff
 $cat node.txt

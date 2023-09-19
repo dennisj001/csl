@@ -634,6 +634,22 @@ String_FormattingRemoved ( byte * str )
     return _String_FormattingRemoved ( str, TEMPORARY ) ;
 }
 
+#if 0
+void
+String_FillSlot ( byte * start, byte * istr, int64 slotSize )
+{
+    int64 i, sl = strlen ( istr ), max  ; 
+    max = slotSize > sl ? slotSize : sl  ;
+    //Strcpy ( start, istr ) ;
+    
+    for ( i = 0 ; i < max ; i++ )
+    {
+        if (istr[i]) start[i] = istr[i] ;
+        else start[i] = 0 ;
+    }
+}
+#endif
+
 // insert istr into str slot ( startOfSlot, endOfSlot ) in buffer
 
 void
@@ -641,14 +657,19 @@ String_InsertStringIntoStringSlot ( byte * str, int64 startOfSlot, int64 endOfSl
 {
     byte * b = Buffer_DataCleared ( _CSL_->StringInsertB2 ) ;
     int64 slotSize = endOfSlot - startOfSlot ;
-    int64 ts = ( Strlen ( str ) - ( slotSize ) + Strlen ( istr ) ) ; // total size
+    int64 i, li, ts = ( Strlen ( str ) - ( slotSize ) + ( li = Strlen ( istr )) ) ; // total size
     if ( ! outStrMaxSize ) outStrMaxSize = BUFFER_SIZE ; //default size 
     if ( ( ts >= 0 ) && ( ts < outStrMaxSize ) )
     {
         //iPrintf ( "\n...Insert... before :: str = \'%s\' : insert at %d to %d istr = \'%s\' :: at %s", str, startOfSlot, endOfSlot, istr, Context_Location ( ) ) ;
         Strcpy ( b, str ) ;
         Strcpy ( & b [ startOfSlot ], istr ) ; // watch for overlapping ??
-        Strcat ( b, &str [ endOfSlot ] ) ; //strEnd ) ; //&sfr [ endOfSlot ] ) ;
+        if ( slotSize > li ) // fill the slot beyond strlen ( istr ) with spaces and null delimit
+        {
+            for ( i = 0 ; i < (slotSize - li ) ; i ++ ) b [startOfSlot + li + i ] = ' ' ; //Strcat ( b, " " ) ;
+            b [startOfSlot + li + i ] = 0 ;
+        }
+        Strcat ( b, &str [ endOfSlot ] ) ; 
         Strcpy ( str, b ) ;
         //iPrintf ( "\n...Insert... after :: str = \'%s\'", str ) ;
     }
@@ -819,7 +840,11 @@ byte *
 StringMacros_Do ( byte * buffer, byte * namespace, byte * ostr, int64 startIndex, int64 endIndex ) // buffer :: the string to which we apply any set macros also cf. .init.csl beginning for how to initialize 
 {
     byte * nstr = _StringMacro_Run ( namespace, ostr ) ;
-    if ( nstr ) String_InsertStringIntoStringSlot ( buffer, startIndex, endIndex, nstr, BUFFER_SIZE ) ; // use the original buffer for the total result of the macro
+    if ( nstr ) 
+    {
+        //nstr = String_RemoveFinalNewline ( nstr ) ;
+        String_InsertStringIntoStringSlot ( buffer, startIndex, endIndex, nstr, BUFFER_SIZE ) ; // use the original buffer for the total result of the macro
+    }
     return nstr ;
 }
 // _CSL_StringMacros_Do ::

@@ -154,7 +154,8 @@ Interpret_ToEndOfLine ( Interpreter * interp )
     {
         if ( GetState ( interp->Lexer0, ( END_OF_LINE | END_OF_STRING ) ) ) break ; // either the lexer will get a newline or the readLiner
         if ( ReadLine_AreWeAtNewlineAfterSpaces ( rl ) ) break ;
-        Interpreter_InterpretNextToken ( interp ) ;
+        byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
+        Interpreter_InterpretAToken ( interp, token, _Lexer_->TokenStart_ReadLineIndex, _Lexer_->SC_Index ) ;
     }
     while ( ( ! Interpreter_IsDone ( interp, END_OF_FILE | END_OF_LINE | END_OF_STRING ) ) ) ;
 }

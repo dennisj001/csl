@@ -1,3 +1,4 @@
+//logOn
 //_dbgOn ukseOn
 5 // stack checking marker
 #define DEBUG_ON 0
@@ -29,7 +30,6 @@ typecheckOn dbgTypecheckOn
 : sp ; //stack pause ; 
 : include _include ; //dup "\tincluding ..." printString printString stack pause _include ;
 #endif
-// logOn
 verbosity 1 = 
 sp
 Root 
@@ -580,4 +580,4 @@ cOff
 ;d
 2 + 7 assertStkChk // stack checking
 //rdim 
-
+//logOff
