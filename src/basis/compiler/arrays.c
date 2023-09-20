@@ -205,11 +205,19 @@ _CSL_ArrayBegin ( Boolean lispMode, Word **pl1, int64 *i )
     }
     if ( arrayBaseObject )
     {
+#if 0 // ??should this even be here??      
+        //if ( ! arrayBaseObject->ArrayDimensions ) Compile_ArrayDeclaration ( ns, word ) ; // eg. : byte, buffer
+        if (( ! C_SyntaxOn ) && ( ! arrayBaseObject->ArrayDimensions )) 
+        {
+            Compile_ArrayDeclaration ( _CSL_->InNamespace, arrayBaseObject ) ; // ??should this even be here??
+            return ;
+        }
+#endif        
         CSL_OptimizeOn ( ) ; // internal to arrays optimize must be on
 
         if ( ! arrayBaseObject->ArrayDimensions ) CSL_Exception ( ARRAY_DIMENSION_ERROR, 0, QUIT ) ;
         if ( interp->CurrentObjectNamespace ) objSize = interp->CurrentObjectNamespace->CompiledDataFieldByteSize ;
-        //objSize = arrayBaseObject->CompiledDataFieldByteSize ;
+        else objSize = arrayBaseObject->CompiledDataFieldByteSize ;
         if ( ! objSize ) CSL_Exception ( OBJECT_SIZE_ERROR, 0, QUIT ) ;
         variableFlag = _CheckArrayDimensionForVariables_And_UpdateCompilerState ( ) ;
         if ( lispMode ) Arrays_DoArrayArgs_Lisp ( pl1, l1, arrayBaseObject, objSize, saveCompileMode, &variableFlag ) ;
@@ -219,6 +227,7 @@ _CSL_ArrayBegin ( Boolean lispMode, Word **pl1, int64 *i )
         {
             if ( ! variableFlag )
             {
+                if ( ! baseObject ) baseObject = arrayBaseObject ;
                 CSL_OptimizeOn ( ) ;
                 SetHere (baseObject->Coding) ;
                 Debugger_Set_StartHere ( _Debugger_ ) ; // for Debugger_DisassembleAccumulated

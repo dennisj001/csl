@@ -98,6 +98,7 @@ User
 'ts 'showTypeWordStack find alias
 's 'stack find alias
 : p space intPrint ;
+'streol 'getStringToEndOfLine find alias
 Root 
 'dbgOnVar var 
 'dbOn 'dbgOnVar find alias
@@ -107,15 +108,8 @@ Root
 
 // === controls ===
 Root 
-dbgOff
-dbgOn 
 
 User
-#if Is_DebugOn
-: mp mem pause ;
-#else
-: mp ; //mem pause ;
-#endif
 sp
 Combinators
 "ix" ' call find alias immediate
@@ -509,11 +503,12 @@ Root
 : lisp lispInitNamespace _lisp ;  // demo of another way 
 //: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
 
-dbgOff
 //lisp
 //scOn
 #if DEBUG_ON 
 dbgOn
+#else
+dbgOff
 #endif 
 //l9
 //lisp

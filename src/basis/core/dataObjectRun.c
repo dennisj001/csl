@@ -108,7 +108,7 @@ CSL_LocalObject_Init ( Word * word, Namespace * typeNamespace, int64 arraySize )
         _CSL_Do_LocalObject ( word, 1 ) ;
         CSL_TypeStackPush ( word ) ; // is this the right word to push? arraySize word may be more correct
     }
-    //_DObject_Init ( Word * word, uint64 value, uint64 ftype, byte * function, int64 arg )
+        //_DObject_Init ( Word * word, uint64 value, uint64 ftype, byte * function, int64 arg )
     else _DObject_Init ( word, ( int64 ) 0, LOCAL_OBJECT, ( byte* ) _DataObject_Run, 0 ) ;
     _Word_Add ( word, 1, 0 ) ;
 }
@@ -311,6 +311,24 @@ _Compile_C_TypeDeclaration ( )
     return token ;
 }
 
+byte *
+Compile_ArrayDeclaration ( Namespace * ns, Word * word )
+{
+    TDI * tdi = TDI_Push_New ( ) ;
+    tdi->Tdi_Field_Size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
+    if ( _Context_->CurrentToken[0] != '[' ) tdi->TdiToken = Lexer_ReadToken ( _Lexer_ ) ; //pntoken
+    else tdi->TdiToken = _Context_->CurrentToken ;
+    tdi->Tdi_Field_Object = word ;
+    TD_Array ( ) ;
+    ns->CompiledDataFieldByteSize = tdi->Tdi_Field_Size ;
+    _Interpreter_->CurrentObjectNamespace = ns ;
+    CSL_LocalObject_Init ( word, ns, word->ObjectByteSize ) ;
+    word->W_ObjectAttributes |= O_POINTER ; // !nb. after CSL_LocalObject_Init
+    Namespace * lns = Compiler_LocalsNamespace_FindOrNew ( _Compiler_ ) ;
+    _Word_Add ( word, 0, lns ) ;
+    SetState ( _Context_, TDI_PARSING, false ) ;
+    return tdi->TdiToken ;
+}
 // nb.Compiling !!
 // for type declarations not function declarations??
 
@@ -365,21 +383,9 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
                     word->W_ObjectAttributes = ( LOCAL_VARIABLE | objectAttributes ) ; //| ns->W_ObjectAttributes ) ;
                     Compiler_LocalWord_UpdateCompiler ( _Compiler_, word, LOCAL_VARIABLE | objectAttributes ) ;
                     if ( strchr ( pntoken, '[' ) )
-                        //new block -- volatile
                     {
-                        TDI * tdi = TDI_Push_New ( ) ;
-                        tdi->Tdi_Field_Size = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
-                        pntoken = Lexer_ReadToken ( _Lexer_ ) ;
-                        tdi->TdiToken = pntoken ;
-                        tdi->Tdi_Field_Object = word ;
-                        TD_Array ( ) ;
-                        int64 tsize = _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) ;
-                        ns->CompiledDataFieldByteSize = tsize ;
-                        interp->CurrentObjectNamespace = ns ;
-                        CSL_LocalObject_Init ( word, ns, word->ObjectByteSize ) ;
-                        word->W_ObjectAttributes |= O_POINTER ; // !nb. after CSL_LocalObject_Init
-                        _Word_Add ( word, 1, 0 ) ;
-                        if ( tdi->TdiToken[0] = ';' ) break ;
+                        byte * token = Compile_ArrayDeclaration ( ns, word ) ;
+                        if ( token[0] = ';' ) break ;
                     }
                     else if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) CSL_LocalObject_Init ( word, ns, 0 ) ;
                     else _Word_Add ( word, 0, lns ) ;

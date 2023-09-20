@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.939.411" ) 
+#define VERSION ((byte*) "0.939.460" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // CT/Oop (Category Theory, Object Oriented Programming, Type Theory), 
@@ -212,9 +212,15 @@ OVT_UnSet_UnknowStringIsErrorFlag ( )
 }
 
 void
+_OVT_openvmtil ( )
+{
+    OpenVmTil_Run ( 0, 0 ) ;
+}
+
+void
 OVT_openvmtil ( )
 {
-    //_O_->RestartCondition = COMPLETE_INITIAL_START ;
-    OpenVmTil_Run ( 0, 0 ) ;
+    _O_->RestartCondition = COMPLETE_INITIAL_START ;
+    _OVT_openvmtil ( ) ;
 }
 

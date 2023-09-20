@@ -17,7 +17,8 @@ Context_DataObject_Run ()
 void
 _Context_Prompt ( Context * cntx, int64 control )
 {
-    if ( Verbosity () && (( control && ( ! IS_INCLUDING_FILES ) ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
+    //if ( Verbosity () && (( control && ( ! IS_INCLUDING_FILES ) ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
+    if ( (control && Verbosity ()) && ( ( ! IS_INCLUDING_FILES )  || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
         Context_DoPrompt ( cntx ) ;
 }
 

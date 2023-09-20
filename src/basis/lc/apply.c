@@ -254,7 +254,7 @@ void
 _LO_Apply_NonMorphismArg ( ListObject ** pl1, int64 * i )
 {
     Context * cntx = _Context_ ;
-    Lexer * lexer = cntx->Lexer0 ;
+    //Lexer * lexer = cntx->Lexer0 ;
     ListObject *l1 = * pl1 ;
     Word * word = l1->Lo_CSL_Word ;
     byte * here = Here ;

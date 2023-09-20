@@ -635,8 +635,7 @@ typedef struct TCI
 } TabCompletionInfo, TCI ;
 
 struct ReadLiner ;
-typedef
-byte( *ReadLiner_KeyFunction ) (struct ReadLiner *) ;
+typedef byte ( *ReadLiner_KeyFunction ) (struct ReadLiner *) ;
 typedef struct ReadLiner
 {
     uint64 State, svState ;
@@ -720,62 +719,16 @@ typedef struct
         } ;
         Word * COIW [8] ; // CompileOptimizeInfo Word array
     } ;
-#if NEW_CPU_PIPELINE_STATE    
-    CpuPipelineState CPState ;
-#endif   
-    // ArgXLocation    
-#define ASSUMED_LOC_LITERAL     ( (uint64) 1 << 0 )
-#define ASSUMED_STACK_0         ( (uint64) 1 << 1 )
-#define ASSUMED_STACK_1         ( (uint64) 1 << 2 )
-#define ASSUMED_STACK_2         ( (uint64) 1 << 3 )
-#define ASSUMED_STACK_3         ( (uint64) 1 << 4 )
-#define ASSUMED_LOC_ACC         ( (uint64) 1 << 5 )
-#define ASSUMED_LOC_OREG        ( (uint64) 1 << 6 )
-#define ASSUMED_LOC_OREG2       ( (uint64) 1 << 7 )
-#define IDEAL_LOC_LITERAL       ( (uint64) 1 << 8 )
-#define IDEAL_STACK_0           ( (uint64) 1 << 9 )
-#define IDEAL_STACK_1           ( (uint64) 1 << 10 )
-#define IDEAL_STACK_2           ( (uint64) 1 << 11 )
-#define IDEAL_STACK_3           ( (uint64) 1 << 12 )
-#define IDEAL_LOC_ACC           ( (uint64) 1 << 13 )
-#define IDEAL_LOC_OREG          ( (uint64) 1 << 14 )
-#define IDEAL_LOC_OREG2         ( (uint64) 1 << 15 )
-#define LOC_STACK_0             ( 1 << 4 )
-#define LOC_STACK_1             ( 1 << 5 )
-#define LOC_ACC                 ( 1 << 6 )
-#define LOC_OREG                ( 1 << 7 )
-#define REG_LOCK_BIT              ( 0x10 ) // decimal 16, beyond the 15 regs
+    
     int64 rtrn, NumberOfArgs ;
     uint16 ControlFlags ;
     Word *rparenPrevOp, *opWord, *wordn, *wordm, *wordArg1, *wordArg2, *xBetweenArg1AndArg2, *wordArg0_ForOpEqual, *lparen1, *lparen2 ;
     dlnode * node, *nodem, *wordNode, *nextNode, *wordArg2Node, *wordArg1Node ;
     Boolean rvalue, wordArg1_rvalue, wordArg2_rvalue, wordArg1_literal, wordArg2_literal ;
     Boolean wordArg1_Op, wordArg2_Op ;
-    // CompileOptimizeInfo State values
-#define ACC_1L                   ( (uint64) 1 << 1 )              
-#define ACC_1R                   ( (uint64) 1 << 2 )              
-#define ACC_2L                   ( (uint64) 1 << 3 )              
-#define ACC_2R                   ( (uint64) 1 << 4 )              
-#define OREG_1L                  ( (uint64) 1 << 5 )              
-#define OREG_1R                  ( (uint64) 1 << 6 )              
-#define OREG_2L                  ( (uint64) 1 << 7 )              
-#define OREG_2R                  ( (uint64) 1 << 8 )              
-#define OREG2_1L                 ( (uint64) 1 << 9 )              
-#define OREG2_1R                 ( (uint64) 1 << 10 )              
-#define OREG2_2L                 ( (uint64) 1 << 11 )              
-#define OREG2_2R                 ( (uint64) 1 << 12 )  
-#define OP_RESULT_ACC            ( (uint64) 1 << 13 )  
-#define OP_RESULT_OREG           ( (uint64) 1 << 14 )  
-#define OP_RESULT_OREG2          ( (uint64) 1 << 15 )
+#define REG_LOCK_BIT              ( 0x10 ) // decimal 16, beyond the 15 regs
 #define STACK_ARGS_TO_STANDARD_REGS  ( (uint64) 1 << 16 )
-    // CompileOptimizeInfo StateRegValues ;  
-#define ARG1_L                   ( 1 << 0 )
-#define ARG1_R                   ( 1 << 1 )
-#define ARG2_L                   ( 1 << 2 )
-#define ARG2_R                   ( 1 << 3 )
-#define OP_RESULT                ( 1 << 4 )
 } CompileOptimizeInfo, COI ;
-#if 1
 typedef struct TypeDefInfo
 {
     int64 State, Tdi_Offset, Tdi_StructureUnion_Size, Tdi_Structure_Size, Tdi_Union_Size, Tdi_Field_Size, T_Type ;
@@ -810,44 +763,6 @@ typedef struct TypeDefInfo
 #define TD_FIELD_ID                 ( (uint8) 1 << 10 )
 #define TD_BIT_FIELD                        ( (uint64) 1 << 11 )
 
-#else
-typedef struct TypeDefInfo
-{
-    int64 State, Tdi_Offset, Tdi_StructureUnion_Size, Tdi_Structure_Size, Tdi_Union_Size, Tdi_Field_Size ;
-    int64 Tdi_BitFieldOffset, Tdi_BitFieldSize, T_Type ;
-    int64 LineNumber, Token_EndIndex, Token_StartIndex, *Tdi_ArrayDimensions, Tdi_ArrayNumberOfDimensions ;
-    Namespace *Tdi_InNamespace, * Tdi_StructureUnion_Namespace, * Tdi_Field_Type_Namespace, *FunctionId ;
-    Word * Tdi_Field_Object ;
-    byte *NextChar, *DataPtr, * TdiToken, *FieldName, *StructureUnionName ;
-} TypeDefInfo, TDI ;
-//TypeDefStructCompileInfo State flags
-#define TDI_CLONE                           ( (uint64) 1 << 0 ) 
-#define TDI_STRUCT                          ( (uint64) 1 << 1 ) 
-#define TDI_UNION                           ( (uint64) 1 << 2 ) 
-#define TDI_BITFIELD                        ( (uint64) 1 << 3 ) 
-#define TDI_PRINT                           ( (uint64) 1 << 4 ) 
-#define TDI_POINTER                         ( (uint64) 1 << 5 ) 
-#define TDI_UNION_PRINTED                   ( (uint64) 1 << 6 ) 
-#define TDI_POST_STRUCT                     ( (uint64) 1 << 7 ) 
-//#define TDI_STRUCT_OR_UNION_FLAG            ( (uint64) 1 << 8 ) 
-#define TDI_STRUCT_OR_UNION_FIELD           ( (uint64) 1 << 9 ) 
-#define TDI_CONSTANT                        ( (uint64) 1 << 10 ) 
-// typedef/parse defines
-#define TD_PRE_STRUCTURE_ID                 ( (uint64) 1 << 0 )
-#define TD_POST_STRUCTURE_ID                ( (uint64) 1 << 1 )
-#define TD_TYPE_ID_FIELD                    ( (uint64) 1 << 2 )
-#define TD_STRUCT_ID                        ( (uint64) 1 << 3 )
-#define TD_ARRAY_FIELD                      ( (uint64) 1 << 4 )
-//#define TD_FUNCTION_TYPE                    ( (uint64) 1 << 5 )
-#define TD_FUNCTION_PARAMETER_TYPES         ( (uint64) 1 << 6 )
-#define TD_TYPENAMESPACE_DONE               ( (uint64) 1 << 7 )
-#define TD_FUNCTION_ID_FIELD                ( (uint64) 1 << 8 )
-#define TD_FORWARD_REF                      ( (uint64) 1 << 9 )
-#define TD_FIELD_ID                         ( (uint64) 1 << 10 )
-#define TD_BIT_FIELD                        ( (uint64) 1 << 11 )
-#define TD_TYPE_ID                          ( (uint64) 1 << 12 )
-#define TDI_CLASS                           ( (uint64) 1 << 13 )
-#endif
 typedef struct
 {
     dlnode * JON_Node ;
@@ -1061,10 +976,6 @@ typedef struct _CSL
     dllist * CSL_N_M_Node_WordList ;
     SourceCodeInfo SCI ;
     sigjmp_buf JmpBuf0 ;
-#if TCO    
-    Cpu * LC_EvalList_Cpu, *LC_Apply_Cpu ;
-    block LC_EvalList_SaveCpuState, LC_EvalList_RestoreCpuState, LC_Apply_SaveCpuState, LC_Apply_RestoreCpuState ;
-#endif    
 } CSL, ContextSensitiveLanguage ;
 #define SC_Word SCI.SciWord
 #define SC_Buffer SCI.SciBuffer
@@ -1231,8 +1142,4 @@ typedef struct
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
 
-typedef struct
-{
-    int64 State ;
-    Cpu gtb_Cpu ;
-} GotoBuf ;
+

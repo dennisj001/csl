@@ -133,8 +133,6 @@ _DObject_ValueDefinition_Init ( Word * word, uint64 value, uint64 ftype, byte * 
         d0 ( iPrintf ( "\n_DObject_ValueDefinition_Init :" ) ) ;
         ByteArray * svcs = _O_CodeByteArray ;
         int64 sscm = GetState ( _CSL_, DEBUG_SOURCE_CODE_MODE ) ;
-        //if ( _LC_ ) _NBA_SetCompilingSpace_MakeSureOfRoom ( _O_->MemorySpace0->LispSpace, 1 * K ) ; 
-        //else 
         _NBA_SetCompilingSpace_MakeSureOfRoom ( _O_->InternalObjectSpace, 1 * K ) ; 
         Word_SetCoding ( word, Here ) ;
         word->CodeStart = Here ;
@@ -232,7 +230,6 @@ DObject_SubObjectInit ( DObject * dobject, Word * parent )
         parent->W_ObjectAttributes |= DOBJECT_FIELD | NAMESPACE ;
         _Namespace_AddToNamespacesTail ( parent ) ;
     }
-    //if ( parent->S_WAllocType == WORD_COPY_MEM ) parent = Word_Copy ( ( Word* ) parent, DICTIONARY ) ; // nb! : this allows us to
     Namespace_DoAddWord ( parent, dobject ) ;
     dobject->W_MorphismAttributes |= parent->W_MorphismAttributes ;
     dobject->W_ObjectAttributes |= T_ANY ;

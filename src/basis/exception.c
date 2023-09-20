@@ -423,7 +423,7 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
         {
             byte * b = Buffer_DataCleared ( _CSL_->ScratchB2 ) ;
             sprintf ( ( char* ) b, "Exception : Warning : Class object size is 0. Did you declare 'size' for %s? ",
-                _Context_->CurrentlyRunningWord->ContainingNamespace->Name ) ;
+                _Context_->CurrentlyRunningWord? _Context_->CurrentlyRunningWord->ContainingNamespace->Name : (byte * ) "" ) ;
             OpenVmTil_Throw ( b, 0, restartCondition, 1, 0 ) ;
             break ;
         }
