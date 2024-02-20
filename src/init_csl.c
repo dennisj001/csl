@@ -1,3 +1,4 @@
+#if 0
 //logOn
 //_dbgOn ukseOn
 5 // stack checking marker
@@ -576,3 +577,4 @@ cOff
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff
+#endif

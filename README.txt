@@ -54,5 +54,5 @@ Type 'test' or 'tc' and then 'demo' (without the single quotes, of course) for s
   - 'fr' - full restart
   - up arrow/down arrow : command history
   - tab key : tab-completion
-"init.csl" is the startup initialization file. Follow what it does and you will be led to all the internals of the program.
+  - "init.csl" is the startup initialization file. Follow what it does and you will be led to all     the internals of the program.
 I use netbeans (cpp) for debugging.

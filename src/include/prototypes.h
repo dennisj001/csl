@@ -351,7 +351,7 @@ void _CompileFromUptoRET(byte *data);
 void _Compile_WordInline(Word *word);
 void _CompileFromName(byte *wordName);
 void _CompileFromName_Inline(byte *wordName);
-/* src/basis/core/_system.c */
+/* src/basis/core/system.c */
 void TimerInit(struct timespec *timer);
 void _System_TimerInit(System *system, int64 i);
 void Time(struct timespec *timer, char *format, byte *toString);

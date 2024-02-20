@@ -1,9 +1,9 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.939.460" ) 
+#define VERSION ((byte*) "0.939.481" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
-// CT/Oop (Category Theory, Object Oriented Programming, Type Theory), 
+// Category Theory, Object Oriented Programming, Type Theory 
 // Formal Language Theory (Panini, Jiva Goswami, Chomsky) 
 // C/C++/C#, Lisp, RPN/Lag - Reverse Polish Notation - (Left Associative Grammar)
 // (especially Java, C#, retroforth, factor), 
@@ -14,7 +14,7 @@
 // cflr : C, Forth, Lisp, reason
 // til : a toolkit for implementing languages (maybe even a compiler compiler) based on these ideas,
 // cfrtil : an old name for csl
-// !! this is only a prototype : it is still rough in spots; it needs to be extended, improved, and rewritten (at least in some places) !!
+// !! this is a prototype : it is still rough in spots; it needs to be extended, improved, and rewritten (at least in some places) !!
 
 OpenVmTil * _O_ ;
 
@@ -42,6 +42,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt )
     ovt->RecycledOptInfoList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->VersionString = VERSION ;
     // ? where do we want the init file ?
+#if 1    
     if ( _File_Exists ( ( byte* ) "./init.csl" ) )
     {
         ovt->InitString = ( byte* ) "\"./init.csl\" _include" ; // could allow override with a startup parameter
@@ -52,6 +53,19 @@ _OpenVmTil_Init ( OpenVmTil * ovt )
         ovt->InitString = ( byte* ) "\"/usr/local/lib/csl/init.csl\" _include" ; // could allow override with a startup parameter
         SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, false ) ;
     }
+#else
+    if ( _File_Exists ( ( byte* ) "./init.csl" ) )
+    {
+        ovt->InitString = ( byte* ) "\"./init.csl\" _include" ; // could allow override with a startup parameter
+        SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, true ) ;
+    }
+    else if ( _File_Exists ( ( byte* ) "/usr/local/lib/csl/init.csl" ) )
+    {
+        ovt->InitString = ( byte* ) "\"/usr/local/lib/csl/init.csl\" _include" ; // could allow override with a startup parameter
+        SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, false ) ;
+    }
+    else ovt->InitString = internalInit ;
+#endif    
     if ( ovt->Verbosity > 1 )
     {
         iPrintf ( "\nRestart : All memory freed, allocated and initialized as at startup. "
@@ -98,7 +112,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     ovt->CSLSize = ( 190 * K ) ;
     ovt->OpenVmTilSize = ( 6 * K ) ;
     ovt->DataStackSize = 8 * K ; //1 * MB ; //8 * MB ;
-    ovt->TempObjectsSize = 200 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
+    ovt->TempObjectsSize = 1 * M ; //200 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
     ovt->WordRecylingSize = 1 * K * ( sizeof (Word ) + sizeof (WordData ) ) ; //50 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
     ovt->SessionObjectsSize = 1 * M ; //50 * K ;
 

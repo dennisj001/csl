@@ -2,7 +2,7 @@
 SOURCES = src/basis/compiler/machineCode.c src/basis/compiler/_compile.c src/basis/compiler/memory.c\
 	src/basis/compiler/combinators.c src/basis/compiler/math.c src/basis/compiler/cpu.c src/basis/compiler/mcPrimitives.c\
 	src/basis/compiler/stack.c src/basis/compiler/logic.c src/basis/compiler/contol.c src/basis/core/dataObjectRun.c\
-	src/basis/core/block.c src/basis/compiler/blocks.c src/basis/core/conditionals.c src/basis/compiler/compile.c src/basis/core/_system.c\
+	src/basis/core/block.c src/basis/compiler/blocks.c src/basis/core/conditionals.c src/basis/compiler/compile.c src/basis/core/system.c\
 	src/basis/compiler/optimize.c src/basis/compiler/bit.c src/basis/compiler/udis.c src/basis/compiler/arrays.c \
 	src/basis/core/io.c src/basis/core/symbol.c src/basis/repl.c src/basis/core/syntax.c src/basis/core/dataObjectNew.c\
 	src/basis/csl.c src/basis/core/parse.c src/basis/core/memSpace.c src/basis/init.c src/basis/system.c src/basis/core/charSet.c\
@@ -22,6 +22,7 @@ SOURCES = src/basis/compiler/machineCode.c src/basis/compiler/_compile.c src/bas
 	src/primitives/debuggers.c src/primitives/memorys.c src/primitives/primitives.c src/primitives/contexts.c\
 	src/primitives/disassembler.c src/primitives/syntaxes.c src/primitives/cmaths.c src/primitives/dataObjectNews.c src/basis/openVmTil.c\
 	src/primitives/ls9.c src/basis/debug/debuggerSteppingSetup.c 
+	#src/init_csl.c
 	#src/primitives/fltlisp.c src/primitives/fltread.c src/primitives/s9.c src/primitives/s9core.c
 	
 S9_SOURCES = src/primitives/s9.c src/primitives/s9core.c

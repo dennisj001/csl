@@ -382,7 +382,7 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
                     if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) objectAttributes |= ( OBJECT | STRUCT ) ;
                     word->W_ObjectAttributes = ( LOCAL_VARIABLE | objectAttributes ) ; //| ns->W_ObjectAttributes ) ;
                     Compiler_LocalWord_UpdateCompiler ( _Compiler_, word, LOCAL_VARIABLE | objectAttributes ) ;
-                    if ( strchr ( pntoken, '[' ) )
+                    if ( strchr ( (char*) pntoken, '[' ) )
                     {
                         byte * token = Compile_ArrayDeclaration ( ns, word ) ;
                         if ( token[0] = ';' ) break ;
@@ -390,7 +390,7 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
                     else if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) CSL_LocalObject_Init ( word, ns, 0 ) ;
                     else _Word_Add ( word, 0, lns ) ;
                 }
-                if ( strchr ( pntoken, '=' ) )
+                if ( strchr ( (char*) pntoken, '=' ) )
                 {
                     Compiler_Set_LHS ( word ) ;
                     token = _Compile_C_TypeDeclaration ( ) ;
