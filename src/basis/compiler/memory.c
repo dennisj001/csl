@@ -96,7 +96,7 @@ Compile_Store ( Compiler * compiler, int lvalueSize ) // !
         if ( ( word = ( Word* ) CSL_WordList ( 1 ) ) && word->StackPushRegisterCode ) SetHere (word->StackPushRegisterCode) ;
         else Compile_Move_Rm_To_Reg ( ACC, stackReg, 0, 0 ) ;
         Compile_Move_Rm_To_Reg ( OREG, stackReg, ( word && word->StackPushRegisterCode ) ? 0 : ( - CELL_SIZE ), 0 ) ;
-        Compile_Move_Reg_To_Rm ( ( ( word && word->StackPushRegisterCode ) ? word->RegToUse : ACC, 0 ), OREG, 0, 0 ) ;
+        Compile_Move_Reg_To_Rm ( ( (( word && word->StackPushRegisterCode ) ? word->RegToUse : ACC), 0 ), OREG, 0, 0 ) ;
         Compile_SUBI ( REG, stackReg, 0, ( ( word && word->StackPushRegisterCode ) ? 1 : 2 ) * CELL_SIZE, 0 ) ;
         //DBI_OFF ;
     }

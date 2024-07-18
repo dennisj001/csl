@@ -160,9 +160,9 @@ _Compile_ImmDispData ( int64 immDisp, Boolean size, Boolean forceFlag )
     }
     else // with operandSize == 0 let the compiler use the minimal size ; nb. can't be imm == 0
     {
-        if ( abs ( immDisp ) >= 0x7fffffff )
+        if ( labs ( immDisp ) >= 0x7fffffff )
             _Compile_Int64 ( immDisp ) ;
-        else if ( abs ( immDisp ) >= 0x7f )
+        else if ( labs ( immDisp ) >= 0x7f )
             _Compile_Int32 ( immDisp ) ;
         else if ( immDisp || forceFlag )
             _Compile_Int8 ( ( byte ) immDisp ) ;

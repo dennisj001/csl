@@ -579,7 +579,7 @@ nl 92 dup p fibBN p
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
 reps0 92 =
 'SHOOTOUT var 
-SHOOTOUT 2 =
+SHOOTOUT 1 =
 : _shootout ( wn n | m w t ) 
     { SHOOTOUT @ } 
     {

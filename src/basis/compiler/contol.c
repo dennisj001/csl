@@ -528,9 +528,9 @@ GotoInfo_ResetOffsetAndRemove ( GotoInfo * gi, byte * address, Boolean removeFla
 #if 1            
         if ( Is_DebugOn )
         {
-            byte * format = ( gi->GI_CAttribute & GI_JCC_TO_TRUE ) ? "\nGotoInfo_ResetOffsetAndRemove : GI_JCC_TO_TRUE : %.24s : OriginalAddress = %lx : CompiledAtAddress = %lx" :
+            char * format0 = ( gi->GI_CAttribute & GI_JCC_TO_TRUE ) ? "\nGotoInfo_ResetOffsetAndRemove : GI_JCC_TO_TRUE : %.24s : OriginalAddress = %lx : CompiledAtAddress = %lx" :
                 "\nGotoInfo_ResetOffsetAndRemove : GI_JCC_TO_FALSE : %.24s : OriginalAddress = %lx : CompiledAtAddress = %lx" ;
-            iPrintf ( format, gi->pb_LabelName, gi->OriginalAddress, gi->CompiledAtAddress ) ;
+            iPrintf ( format0, gi->pb_LabelName, gi->OriginalAddress, gi->CompiledAtAddress ) ;
             _Debugger_Disassemble ( _Debugger_, 0, compiledAtAddress, 6, 1 ) ;
             iPrintf ( "\nGotoInfo_ResetOffsetAndRemove : %s", Context_Location ( ) ) ;
         }
@@ -658,7 +658,6 @@ CSL_JMP ( )
     }
     else
     {
-
         Error_Abort ( "", "\njmp : can only be used in compile mode." ) ;
     }
 }

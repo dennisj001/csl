@@ -97,7 +97,7 @@ Compile_X_Shift ( Compiler * compiler, int64 op, Boolean stackFlag, Boolean opEq
     else
     {
         Word *one = ( Word* ) CSL_WordList (1) ; // the operand
-        if ( one->W_ObjectAttributes && LITERAL )
+        if ( one->W_ObjectAttributes & LITERAL ) 
         {
             SetHere (one->Coding) ;
             //_Compile_MoveImm_To_Reg ( OREG, one->W_Value, 4 ) ;

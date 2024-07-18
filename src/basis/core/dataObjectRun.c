@@ -227,7 +227,7 @@ CSL_Do_Object ( Word * word )
         }
     }
     if ( ( ! GetState ( compiler, ARRAY_MODE ) ) && ( ! GetState ( cntx, IS_FORWARD_DOTTED ) )
-        && ( ! GetState ( cntx, IS_REVERSE_DOTTED ) ) && ( ! word->W_ObjectAttributes & LOCAL_OBJECT ) ) cntx->BaseObject = 0 ;
+        && ( ! GetState ( cntx, IS_REVERSE_DOTTED ) ) && ( ! (word->W_ObjectAttributes & LOCAL_OBJECT) ) ) cntx->BaseObject = 0 ;
     Do_Variable ( word ) ;
 }
 
@@ -264,7 +264,7 @@ Compile_C_FunctionDeclaration ( byte * token1 )
     CSL_LocalsAndStackVariablesBegin ( ) ;
     do // the rare occurence of any tokens between closing locals right paren ')' and beginning block '}'
     {
-        if ( token = Lexer_ReadToken ( _Lexer_ ) )
+        if ( (token = Lexer_ReadToken ( _Lexer_ )) )
         {
             if ( String_Equal ( token, "s{" ) )
             {

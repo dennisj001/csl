@@ -38,6 +38,7 @@ OBJECTS = $(SOURCES:%.c=%.o)
 S9_OBJECTS = src/primitives/s9.o src/primitives/s9core.o
 ALL_OBJECTS = $(OBJECTS) #$(S9_OBJECTS) 	
 CC = gcc #-Wno-stringop-overflow
+#CC = clang #gcc #-Wno-stringop-overflow
 #CC = g++ -fpermissive -Wwrite-strings
 OUT = csl-gdb
 
