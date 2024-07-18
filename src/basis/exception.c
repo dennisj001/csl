@@ -12,7 +12,7 @@ OVT_CheckThrowState ( int64 signal, int64 restartCondition )
     if ( _O_->RestartCondition == COMPLETE_INITIAL_START )
     {
         iPrintf ( "%s", _O_->ExceptionMessage ) ;
-        if ( OVT_Pause ( 0, _O_->SignalExceptionsHandled ) ) return 1 ;
+        if ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) if ( OVT_Pause ( 0, _O_->SignalExceptionsHandled ) ) return 1 ;
         _OVT_SigLongJump ( & _O_->JmpBuf0 ) ;
     }
     if ( GetState ( _O_, OVT_THROW ) ) CSL_FullRestartComplete ( ) ;

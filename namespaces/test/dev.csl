@@ -233,7 +233,8 @@ jcc8_Off //initRegs
 nl "ffx ... " ps nl
 
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
-: ffx ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss 3 w @ _ffx nl wn @ ps ":" ps 1 time wn @ comment nl ;
+//: ffx ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss 3 w @ _ffx nl wn @ ps ":" ps 1 time wn @ comment nl ;
+: ffx ( wn | w ) 1 ti w wn @ _findAny = 3 w @ _ffx nl wn @ ps ":" ps 1 time wn @ comment nl ;
 //: ffx ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss 3 w @ _ffx nl wn @ ps ":" ps 1 time nl ;
 : ffx2 ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss w @ 3 _ffx2 1 time nl ;
 c_syntaxOn
@@ -295,20 +296,6 @@ User
 "cfactorial3_O3" ffx
 "cfactorial4_O3" ffx
 //pause
-: shootout ( n ) 
-    "\n\nshootout begin ...\n" ps
-    {
-        "factorial2" ffx //pause
-        "cfactorial4_O3" ffx
-        "cfactorial4_O3" ffx
-        "factorial2" ffx //pause
-        //"cfactorial3" ffx
-        //n n @ 1 - =
-    }
-    { n n @ 1 - = n @ } while 
-;
-pwi shootout
-3 shootout //pause
 using 
 "faccs" ffx
 "faccs1" ffx
@@ -570,6 +557,73 @@ sp0
 nl nl 92 tfib3 //sp0 pause
 nl 92 dup p fibBN p 
 20 fibBN dup p 6765 == { "ok" ps } { "error" ps } tf2 drop sp0
+: _ifx ( w | j ) 
+    { j 1 = } { j @ reps0 @ <= } { j ++ } 
+    {
+       //j @ w @ wordRun j @ p "." ps p ";" ps dn
+       //j @ w @ wordRun drop // j @ p "." ps p ";" ps
+       j @ w @ wrun drop // j @ p "." ps p ";" ps
+       //j @ w @ wordRun j @ p "." ps p ";" ps //pause
+    }
+    for
+;
+
+: ifx ( n w | k ) 
+    { k 1 = } { k @ n @ <= } { k ++ } 
+    { w @ _ifx } for
+; 
+: _ffx ( n w | t w ) 
+    { } { n @ 0 > } { n -- } 
+    { reps @ w @ ifx } for 
+;
+: comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
+reps0 92 =
+'SHOOTOUT var 
+SHOOTOUT 2 =
+: _shootout ( wn n | m w t ) 
+    { SHOOTOUT @ } 
+    {
+        w wn @ _findAny = { SHOOTOUT @ 1 > } { w @ wdiss } if2
+        3 ti 
+        { m n @ = t n @ = } { m @ 0 > } { m -- } 
+        {
+            { n t @ = } { n @ 0 > } { n -- } { n @ w @ _ffx } for
+        } for
+        nl wn @ ps reps0 @ dup p " = " ps w @ wordRun decimal p nl // test output
+        wn @ comment
+        3 time 
+    }
+    if2
+;
+: fib_shootout ( m | n ) 
+    { "\n\nfib_shootout begin ...\n" ps  n m @ = } { m @ 0 > } { m -- } 
+    {
+        nl nl "m = " ps m @ p nl
+        "fibPTC2?" n @ _shootout
+        "cfib2_O3" n @ _shootout
+        "fibPTC2?" n @ _shootout
+        "cfib2_O3" n @ _shootout
+        "fibPTC2?" n @ _shootout
+        "cfib2_O3" n @ _shootout
+    } for
+    "\nfib_shootout end ...\n" ps
+;
+//pwi fib_shootout //pause
+3 fib_shootout //pause
+: fac_shootout ( m | n ) 
+    reps0 23 =
+    { "\n\nfac_shootout begin ...\n" ps n m @ = } { m @ 0 > } { m -- } 
+    {
+        "factorial2" n @ _shootout //pause
+        "cfactorial4_O3" n @ _shootout
+        "cfactorial4_O3" n @ _shootout
+        "factorial2" n @ _shootout //pause
+        "cfactorial3" n @ _shootout
+    } for
+    "\n\nfac_shootout end ...\n" ps
+;
+//pwi shootout
+3 fac_shootout //pause
 bnOff 
 nl
 // verbosity 1 =
