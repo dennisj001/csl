@@ -827,7 +827,7 @@ typedef void (* DebuggerFunction ) (struct _Debugger *) ;
 typedef struct _Debugger
 {
     uint64 State ;
-    uint64 * SaveDsp, * InitDsp, *RaDsp, *AddressModeSaveDsp, *SaveEdi, *SaveRsp, * WordDsp, * DebugRSP, *DebugRBP,
+    int64 * SaveDsp, * InitDsp, *RaDsp, *AddressModeSaveDsp, *SaveEdi, *SaveRsp, * WordDsp, * DebugRSP, *DebugRBP,
     *DebugRSI, *DebugRDI, * LastRsp, LevelBitNamespaceMap, Insn ;
     int64 RL_ReadIndex, SaveTOS, SaveStackDepth, Key, SaveKey, LastScwi, Esi, Edi, InsnSize ;
     Word * w_Word, *w_Alias, *w_AliasOf, *EntryWord, *LastShowInfoWord, *LastShowEffectsWord, *NextEvalWord ;

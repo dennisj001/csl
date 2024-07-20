@@ -84,7 +84,8 @@ Debugger_Locals_Show ( Debugger * debugger )
 Boolean
 _Debugger_ShouldWeShow ( Debugger * debugger, Word * word, Boolean stepFlag, int64 debugLevel, Boolean force )
 {
-    uint64* dsp = ( GetState_TrueFalse ( debugger, DBG_STEPPING, ( DBG_COMMAND_LINE | DBG_ESCAPED ) ) ) ? ( _DspReg_ = debugger->cs_Cpu->R14d ) : _DspReg_ ;
+    //uint64* dsp = ( GetState_TrueFalse ( debugger, DBG_STEPPING, ( DBG_COMMAND_LINE | DBG_ESCAPED ) ) ) ? ( _DspReg_ = debugger->cs_Cpu->R14d ) : _DspReg_ ;
+    uint64* dsp = _DspReg_ ;
     if ( ! dsp ) CSL_Exception ( STACK_ERROR, 0, QUIT ) ;
     //if ( Is_DebugOn && ( !_LC_ ) && ( _CSL_->DebugLevel >= debugLevel ) && ( force || stepFlag || ( word && ( word != debugger->LastShowEffectsWord ) ) ||
     if ( Is_DebugOn && ( _CSL_->DebugLevel >= debugLevel ) && ( force || stepFlag || ( word && ( word != debugger->LastShowEffectsWord ) ) ||
@@ -98,14 +99,14 @@ _Debugger_ShouldWeShow ( Debugger * debugger, Word * word, Boolean stepFlag, int
 void
 _Debugger_ShowEffects ( Debugger * debugger, Word * word, Boolean stepFlag, int64 debugLevel, Boolean force )
 {
-    uint64* dsp = _DspReg_ ; //GetState ( debugger, DBG_STEPPING ) ? ( _DspReg_ = debugger->cs_Cpu->R14d ) : _DspReg_ ;
+    //uint64* dsp = _DspReg_ ; //GetState ( debugger, DBG_STEPPING ) ? ( _DspReg_ = debugger->cs_Cpu->R14d ) : _DspReg_ ;
     if ( _Debugger_ShouldWeShow ( debugger, word, stepFlag, debugLevel, force ) )
     {
         DebugColors ;
         if ( word && ( word->W_ObjectAttributes & OBJECT_FIELD ) ) Word_PrintOffset ( word, TOS, 0 ) ;
         //&& ( ! ( word->W_MorphismAttributes & (DOT|OBJECT_OPERATOR) ) ) ) Word_PrintOffset ( word, 0, 0 ) ;
         _Debugger_DisassembleWrittenCode ( debugger ) ;
-        Debugger_ShowChange ( debugger, word, stepFlag, dsp ) ;
+        Debugger_ShowChange ( debugger, word, stepFlag ) ;
         //DebugColors ;
         debugger->LastShowEffectsWord = word ;
         //Set_DataStackPointers_FromDebuggerDspReg ( ) ;
@@ -324,20 +325,20 @@ Debugger_ShowStackChange ( Debugger * debugger, Word * word, byte * insert, byte
 }
 
 void
-Debugger_ShowChange ( Debugger * debugger, Word * word, Boolean stepFlag, uint64* dsp )
+Debugger_ShowChange ( Debugger * debugger, Word * word, Boolean stepFlag )
 {
     const char * insert ;
     uint64 change ;
     int64 depthChange ;
     if ( Debugger_IsStepping ( debugger ) )
     {
-        change = dsp - debugger->SaveDsp ;
-        debugger->SaveDsp = dsp ;
+        change = _DspReg_ - debugger->SaveDsp ;
+        debugger->SaveDsp = _DspReg_ ;
     }
     else
     {
-        change = debugger->WordDsp ? ( dsp - debugger->WordDsp ) : 0 ;
-        //debugger->WordDsp = dsp ;
+        change = debugger->WordDsp ? ( _DspReg_ - debugger->WordDsp ) : 0 ;
+        debugger->WordDsp = _DspReg_ ;
     }
     depthChange = DataStack_Depth ( ) - debugger->SaveStackDepth ;
     if ( word && ( debugger->WordDsp && ( GetState ( debugger, DBG_SHOW_STACK_CHANGE ) ) || ( change ) || ( debugger->SaveTOS != TOS ) || ( depthChange ) ) )
@@ -350,7 +351,7 @@ Debugger_ShowChange ( Debugger * debugger, Word * word, Boolean stepFlag, uint64
         if ( GetState ( debugger, DBG_SHOW_STACK_CHANGE ) ) SetState ( debugger, DBG_SHOW_STACK_CHANGE, false ) ;
         if ( depthChange > 0 ) snprintf ( ( char* ) pb_change, 256, "%ld %s%s", depthChange, ( depthChange > 1 ) ? "cells" : "cell", " pushed. " ) ;
         else if ( depthChange ) snprintf ( ( char* ) pb_change, 256, "%ld %s%s", - depthChange, ( depthChange < - 1 ) ? "cells" : "cell", " popped. " ) ;
-        if ( dsp && ( debugger->SaveTOS != TOS ) ) op = ( char* ) "changed" ;
+        if ( _DspReg_ && ( debugger->SaveTOS != TOS ) ) op = ( char* ) "changed" ;
         else op = ( char* ) "set" ;
         snprintf ( ( char* ) c, BUFFER_IX_SIZE, ( char* ) "0x%016lx", ( uint64 ) TOS ) ;
         snprintf ( ( char* ) b, BUFFER_IX_SIZE, ( char* ) "%s %s to %s.", DataStack_Depth ( ) ? "[TOS]" : "TOS", op, c_gd ( c ) ) ;
@@ -375,9 +376,9 @@ Debugger_ShowChange ( Debugger * debugger, Word * word, Boolean stepFlag, uint64
         }
         if ( GetState ( _Context_->Lexer0, KNOWN_OBJECT ) )
         {
-            if ( dsp > debugger->SaveDsp ) iPrintf ( "\nLiteral :> 0x%016lx <: was pushed onto the stack ...", TOS ) ;
-            else if ( dsp < debugger->SaveDsp ) iPrintf ( "\n%s popped %d value off the stack.", insert, ( debugger->SaveDsp - dsp ) ) ;
-            DefaultColors ;
+            if ( _DspReg_ > debugger->SaveDsp ) iPrintf ( "\nLiteral :> 0x%016lx <: was pushed onto the stack ...", TOS ) ;
+            else if ( _DspReg_ < debugger->SaveDsp ) iPrintf ( "\n%s popped %d value off the stack.", insert, ( debugger->SaveDsp - _DspReg_ ) ) ;
+            DefaultColors ;  
         }
         //if ( ( ! ( achange [0] ) ) && ( ( change > 1 ) || ( change < - 1 ) || ( Verbosity () > 1 ) ) ) _Debugger_PrintDataStack ( change + 1 ) ;
         if ( ( ! achange [0] ) && ( change || ( Verbosity ( ) > 1 ) ) ) _Debugger_PrintDataStack ( change + 1 ) ;

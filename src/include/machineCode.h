@@ -63,6 +63,8 @@
 #define JCC8 (0x70)
 #define JCC16 (0x80) //??
 #define JCC32 (0x0f) //0x0f8x
+#define NOOP4 (0x000401f0f) //(0x0f1f4000)
+#define TEST_ISN ()
 // insn types
 #define T_JCC 1
 #define T_JMP 2

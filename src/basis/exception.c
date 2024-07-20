@@ -29,6 +29,7 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
     sigjmp_buf * jb ;
     Word * eword ;
     if ( OVT_CheckThrowState ( signal, restartCondition ) ) return ;
+    _CSL_->IncludeFileStackNumber = 0 ; // we are now back at the command line
     if ( GetState ( _O_, OVT_FRC ) )
     {
         jb = & _O_->JmpBuf0 ;
@@ -423,7 +424,7 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
         {
             byte * b = Buffer_DataCleared ( _CSL_->ScratchB2 ) ;
             sprintf ( ( char* ) b, "Exception : Warning : Class object size is 0. Did you declare 'size' for %s? ",
-                _Context_->CurrentlyRunningWord? _Context_->CurrentlyRunningWord->ContainingNamespace->Name : (byte * ) "" ) ;
+                _Context_->CurrentlyRunningWord ? _Context_->CurrentlyRunningWord->ContainingNamespace->Name : ( byte * ) "" ) ;
             OpenVmTil_Throw ( b, 0, restartCondition, 1, 0 ) ;
             break ;
         }

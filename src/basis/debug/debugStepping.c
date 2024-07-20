@@ -68,7 +68,7 @@ _Debugger_COI_StepInto ( Debugger * debugger, Word * word )
             iPrintf ( "\nstepping into a csl compiled function : %s : .... :> %s ",
             word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
         _Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
-        _Stack_Push ( debugger->ReturnStack, ( int64 ) ( debugger->DebugAddress + debugger->InsnSize ) ) ; // the return address
+        if ( GetState ( debugger, DBG_CAN_STEP ) ) _Stack_Push ( debugger->ReturnStack, ( int64 ) ( debugger->DebugAddress + debugger->InsnSize ) ) ; // the return address
     }
     Debugger_CompileAndStepOneInstruction ( debugger ) ;
 }
@@ -118,13 +118,14 @@ Debugger_DoJccType ( Debugger * debugger, byte * jcAddress )
         // calls words that are then also calling the debugger ... ; eg. interpreter.csl 'doWord'
         uint64 svState = debugger->State ;
         sigjmp_buf svJmpBuf ;
-        memcpy ( svJmpBuf, _Context_->JmpBuf0, sizeof (sigjmp_buf) ) ;
+        memcpy ( svJmpBuf, _Context_->JmpBuf0, sizeof (sigjmp_buf ) ) ;
         byte * svDebugAddress = debugger->DebugAddress + debugger->InsnSize ;
         Debugger_CompileAndStepOneInstruction ( debugger ) ;
         debugger->DebugAddress = svDebugAddress ; // can be reset by Debugger_CompileAndStepOneInstruction
         debugger->State = svState ; // it can be turned off if this word involves debugger eg. 'doWord'
-        memcpy ( _Context_->JmpBuf0, svJmpBuf, sizeof (sigjmp_buf) ) ;
+        memcpy ( _Context_->JmpBuf0, svJmpBuf, sizeof (sigjmp_buf ) ) ;
         // and thus we can continue stepping ; nb! something is not quite right yet??
+
     }
     else Debugger_COI_StepKey ( debugger, word ) ;
 }
@@ -132,48 +133,53 @@ Debugger_DoJccType ( Debugger * debugger, byte * jcAddress )
 void
 Debugger_StepInstructionType ( Debugger * debugger )
 {
-    byte *jcAddress = 0, *dadr, updateFlag = 0 ;
-    if ( debugger->DebugAddress )
+    byte *jcAddress = 0, *dadr = debugger->DebugAddress, updateFlag = 0 ;
+    if ( dadr )
     {
         Debugger_Udis_GetInstructionSize ( debugger ) ;
-        if ( ( * debugger->DebugAddress ) == _RET )
+        if ( ( * dadr ) == _RET )
         {
+            debugger->Key = 's' ; //turn off autorepeat
+            SetState ( debugger, ( DBG_AUTO_MODE | DBG_CONTINUE_MODE ), false ) ;
             debugger->Insn = _RET ;
             updateFlag = Debugger_CASOI_Do_Return_Insn ( debugger ) ;
         }
-        else if ( ( * debugger->DebugAddress == JMP32 ) || ( * debugger->DebugAddress == JMP8 ) )
+        else if ( ( * dadr == JMP32 ) || ( * dadr == JMP8 ) )
         {
-            if ( * debugger->DebugAddress == JMP32 ) debugger->Insn = JMP32 ;
-            else if ( * debugger->DebugAddress == JMP8 ) debugger->Insn = JMP8 ;
-            jcAddress = JumpCallInstructionAddress ( debugger->DebugAddress ) ;
+            if ( * dadr == JMP32 ) debugger->Insn = JMP32 ;
+            else if ( * dadr == JMP8 ) debugger->Insn = JMP8 ;
+            jcAddress = JumpCallInstructionAddress ( dadr ) ;
             Debugger_CheckSkipDebugWord ( debugger, jcAddress ) ;
             debugger->DebugAddress = jcAddress ; // always with jmp
             jcAddress = 0 ;
             return ;
         }
-        else if ( ( * debugger->DebugAddress == CALL32 ) )
+        else if ( * dadr == CALL32 )
         {
             debugger->Insn = CALL32 ;
-            debugger->ReturnAddress = debugger->DebugAddress + 5 ;
-            jcAddress = JumpCallInstructionAddress ( debugger->DebugAddress ) ;
+            debugger->ReturnAddress = dadr + 5 ;
+            jcAddress = JumpCallInstructionAddress ( dadr ) ;
             updateFlag = Debugger_CheckSkipDebugWord ( debugger, jcAddress ) ;
             if ( updateFlag == 2 ) jcAddress = 0 ;
         }
-        else if ( ( ( ( * ( uint16* ) debugger->DebugAddress ) == 0xff49 ) && ( *( debugger->DebugAddress + 2 ) == 0xd2 ) ) ) //CALL/JMP reg : MOD_RM
+        else if ( ( ( ( * ( uint16* ) dadr ) == 0xff49 ) && ( *( dadr + 2 ) == 0xd2 ) ) ) //CALL/JMP reg : MOD_RM
         {
             debugger->Insn = CALL_REG ;
-            debugger->ReturnAddress = debugger->DebugAddress + 3 ;
-            jcAddress = JumpCallInstructionAddress_X64ABI ( debugger->DebugAddress ) ;
+            debugger->ReturnAddress = dadr + 3 ;
+            jcAddress = JumpCallInstructionAddress_X64ABI ( dadr ) ;
             updateFlag = Debugger_CheckSkipDebugWord ( debugger, jcAddress ) ;
             if ( updateFlag == 2 ) jcAddress = 0 ;
+            else if ( updateFlag == 0 )
+            {
+                debugger->DebugAddress += debugger->InsnSize ;
+                updateFlag = 2 ;
+                return ;
+            }
+            //else if ( jcAddress ) debugger->DebugAddress = jcAddress ;
         }
-        else if ( dadr = debugger->DebugAddress, ( ( * dadr == 0x0f ) && ( ( * ( dadr + 1 ) >> 4 ) == 0x8 ) ) 
-            || ( ( * dadr == 0x0f ) && ( ( * ( dadr + 1 ) >> 4 ) == 0x7 ) ) 
-            || ( ( * ( dadr ) >> 4 ) == 0x7 ) ) // jcc8 
+        else if ( ( * ( dadr ) >> 4 ) == 0x7 )
         {
-            //if ( ( * ( dadr + 1 ) >> 4 ) == 0x7 ) debugger->Insn = JCC8 ;
-            if ( ( * ( dadr ) >> 4 ) == 0x7 ) debugger->Insn = JCC8 ;
-            else debugger->Insn = JCC32 ;
+            debugger->Insn = JCC8 ;
             jcAddress = Debugger_DoJcc ( debugger ) ;
             if ( jcAddress ) debugger->DebugAddress = jcAddress ;
             else
@@ -183,14 +189,25 @@ Debugger_StepInstructionType ( Debugger * debugger )
             }
             return ;
         }
-#if 1 // ?? handle by above except TEST        
-        else if ( ( ( ( byte* ) debugger->DebugAddress )[0] >> 4 ) == 7 ) //??
+        else if ( * dadr == 0x0f )
         {
-            debugger->Insn = TEST ;
-            jcAddress = Debugger_DoJcc ( debugger ) ;//??
-            updateFlag = 2 ;
+            if ( ( ( uint32 ) ( * ( uint32 * ) dadr ) ) == NOOP4 )
+            {
+                debugger->DebugAddress += debugger->InsnSize ;
+                updateFlag = 2 ;
+                return ;
+            }
+            else if ( ( ( * ( dadr + 1 ) >> 4 ) == 0x8 ) ) debugger->Insn = JCC32 ;
+            //else if ( ( * ( dadr + 1 ) >> 4 ) == 0x7 ) debugger->Insn = JCC8 ;
+            jcAddress = Debugger_DoJcc ( debugger ) ;
+            if ( jcAddress ) debugger->DebugAddress = jcAddress ;
+            else
+            {
+                debugger->DebugAddress += debugger->InsnSize ;
+                updateFlag = 2 ;
+            }
+            return ;
         }
-#endif        
         if ( jcAddress ) Debugger_DoJccType ( debugger, jcAddress ) ;
         else if ( updateFlag < 3 ) Debugger_CompileAndStepOneInstruction ( debugger ) ;
         //else _RET ...
@@ -201,10 +218,10 @@ int64
 Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
 {
     int64 rtrn = 0 ;
-    if ( Stack_Depth ( debugger->ReturnStack ) )
+    if ( Stack_Depth ( debugger->ReturnStack ) && ( GetState ( debugger, DBG_CAN_STEP ) ) ) //&& ( ! GetState ( debugger, DBG_BRK_INIT|DBG_STEPPING ) ) )
     {
-        _Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
-        CSL_PrintReturnStack ( ) ;
+        //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
+        if ( Verbosity ( ) > 3 ) CSL_PrintReturnStack ( ) ;
         debugger->DebugAddress = ( byte* ) Stack_Pop ( debugger->ReturnStack ) ;
         rtrn = 3 ;
     }
@@ -225,8 +242,10 @@ Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
     }
     if ( ( byte* ) debugger->SaveDsp != ( byte* ) _DspReg_ )
     {
-        iPrintf ( "\ndebugger->SaveDsp != _DspReg_" ) ; //, Pause () ;
+        iPrintf ( "\ndebugger->SaveDsp != _DspReg_" ) ;
+        CSL_PrintDataStack ( ) ;
         iPrintf ( "\n_Debugger_->cs_Cpu->R14d = %lx : _Dsp_Reg_ = %lx : debugger->SaveDsp = %lx", _Debugger_->cs_Cpu->R14d, _DspReg_, debugger->SaveDsp ) ;
+        _DspReg_ = debugger->SaveDsp ; //??
     }
     return rtrn ;
 }
@@ -242,6 +261,7 @@ Debugger_Step ( Debugger * debugger )
     if ( ! GetState ( debugger, DBG_STEPPING ) ) Debugger_PreStartStepping ( debugger ) ;
     else
     {
+        SetState ( debugger, DBG_CAN_STEP, false ) ;
         Debugger_StepInstructionType ( debugger ) ;
         Debugger_AfterStep ( debugger ) ;
     }
@@ -256,7 +276,7 @@ Debugger_CheckSkipDebugWord ( Debugger * debugger, byte * jcAddress )
     if ( word && ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) ) )
     {
         if ( word->W_MorphismAttributes & ( RT_STEPPING_DEBUG ) )
-            SetState_TrueFalse ( debugger, DBG_UDIS|DBG_UDIS_ONE, ( DBG_AUTO_MODE | DBG_INTERPRET_LOOP_DONE ) ) ;
+            SetState_TrueFalse ( debugger, DBG_UDIS | DBG_UDIS_ONE, ( DBG_AUTO_MODE | DBG_INTERPRET_LOOP_DONE ) ) ;
         // we are already stepping here and now, so skip
         if ( GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\nskipping over a debug word : %s : at 0x%-16lx",
             ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;

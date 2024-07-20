@@ -142,7 +142,8 @@ JccInstructionAddress_2Byte ( byte * address )
 byte *
 JccInstructionAddress_1Byte ( byte * address )
 {
-    int32 offset = ( int32 ) * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
+    //int32 offset = ( int8 ) * ( byte* ) ( address + 1 ) ; // 1 : 1 byte opCode
+    int8 offset = GetDispForCallOrJumpFromInsnAddr ( address ) ;
     byte * jcAddress = address + offset + 2 ; // 2 : sizeof 0f jcc insn - 0x7x - includes 1 byte opCode
     return jcAddress ;
 }

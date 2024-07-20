@@ -61,11 +61,11 @@ Word_Eval ( Word * word )
 {
     if ( word )
     {
-        uint64 * svDsp = _DspReg_ ;
         if ( ! sigsetjmp ( _Context_->JmpBuf0, 0 ) ) // siglongjmp from _Debugger_InterpreterLoop
         {
             if ( ! ( GetState ( word, W_STEPPED ) ) ) _Word_Eval ( word ) ;
         }
+        else AdjustDebuggerDsp ( ) ;
         SetState ( word, W_STEPPED, false ) ;
     }
 }

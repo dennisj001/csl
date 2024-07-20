@@ -20,6 +20,13 @@ DBG_Interpret_Loop_Test ( Debugger * debugger )
 }
 
 void
+AdjustDebuggerDsp ( )
+{
+    _DspReg_ = _Debugger_->cs_Cpu->R14d ;
+    Set_DataStackPointer_FromDspReg ( ) ;
+}
+
+void
 Debugger_InterpreterLoop ( Debugger * debugger )
 {
     do
@@ -37,6 +44,7 @@ Debugger_InterpreterLoop ( Debugger * debugger )
     debugger->LastPreSetupWord = debugger->w_Word ;
     SetState ( debugger, ( DBG_STACK_OLD | DBG_INTERPRET_LOOP_DONE ), true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
+    AdjustDebuggerDsp ( ) ;
     if ( GetState ( debugger, ( DBG_SETUP_ADDRESS ) ) )
     {
         SetState ( debugger, ( DBG_SETUP_ADDRESS ), false ) ;
@@ -141,6 +149,7 @@ Debugger_PreSetup ( Debugger * debugger, Word * word, byte * token, byte * addre
 void
 _Debug_Setup ( Word * word, byte * token, byte * address, Boolean force, int64 debugLevel )
 {
+    _Debugger_->SaveDsp = _DspReg_ ;
     Debugger_PreSetup ( _Debugger_, word, token, address, force, debugLevel ) ;
 }
 
@@ -181,6 +190,7 @@ DebugRuntimeBreakpoint ( )
     SetState ( _Debugger_, ( DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ), false ) ;
     Debugger_Interpret ( debugger, debugger->w_Word, 0, debugger->DebugAddress ) ;
     SetState ( debugger, DBG_BRK_INIT | DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
+    AdjustDebuggerDsp ( ) ;
     if ( GetState ( debugger, DBG_STEPPED ) ) //&& ( ! Stack_Depth ( debugger->ReturnStack ) ) )
     {
         SetState ( debugger, DBG_STEPPING, false ) ;
@@ -294,7 +304,7 @@ Debugger_GetDbgAddressFromRsp ( Debugger * debugger, Cpu * cpu )
     d = List_Depth ( retStackList ) ;
     if ( d > 1 )
     {
-        Stack_Init ( debugger->ReturnStack ) ;
+        Stack_Init ( debugger->BreakReturnStack ) ;
         for ( i1 = 0 ; i1 < d ; i1 ++ )
         {
             retAddr = ( byte * ) List_Pop_1Value ( retStackList ) ;
@@ -304,11 +314,11 @@ Debugger_GetDbgAddressFromRsp ( Debugger * debugger, Cpu * cpu )
                 if ( word && ( word == lastWord ) ) continue ;
                 lastWord = word ;
             }
-            Stack_Push ( debugger->ReturnStack, ( uint64 ) retAddr ) ;
+            Stack_Push ( debugger->BreakReturnStack, ( uint64 ) retAddr ) ;
         }
         int64 rsDepthPick = 1 ;
-        debugger->DebugAddress = ( byte* ) _Stack_Pick ( debugger->ReturnStack, rsDepthPick ) ;
-        for ( i2 = 0 ; i2 <= rsDepthPick ; i2 ++ ) Stack_Pop ( debugger->ReturnStack ) ; // pop the intro functions
+        debugger->DebugAddress = ( byte* ) _Stack_Pick ( debugger->BreakReturnStack, rsDepthPick ) ;
+        for ( i2 = 0 ; i2 <= rsDepthPick ; i2 ++ ) Stack_Pop ( debugger->BreakReturnStack ) ; // pop the intro functions
     }
     else debugger->DebugAddress = ( byte* ) cpu->Rsp[0] ;
 done:
@@ -470,10 +480,11 @@ Debugger_Info ( Debugger * debugger )
 }
 
 #if DEBUG
+
 void
 Debugger_Dbg ( Debugger * debugger )
 {
-    dbg (0, debugger->w_Word, 0) ;
+    dbg ( 0, debugger->w_Word, 0 ) ;
 }
 #endif
 

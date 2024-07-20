@@ -2,8 +2,10 @@
 5
 #ifndef _DEV_H_
 #define _DEV_H_
+Interpreter
+: sp ; //stack pause ;
+Root  
 C 
-Root  // stack pause ;
 optimizeOn inlineOn 
 //typecheckOn 
 scOn
@@ -563,11 +565,11 @@ nl 92 dup p fibBN p
        //j @ w @ wordRun j @ p "." ps p ";" ps dn
        //j @ w @ wordRun drop // j @ p "." ps p ";" ps
        j @ w @ wrun drop // j @ p "." ps p ";" ps
-       //j @ w @ wordRun j @ p "." ps p ";" ps //pause
+       //j @ w @ wrun j @ p "." ps p ";" ps //pause
     }
     for
 ;
-
+pwi _ifx
 : ifx ( n w | k ) 
     { k 1 = } { k @ n @ <= } { k ++ } 
     { w @ _ifx } for
@@ -576,10 +578,11 @@ nl 92 dup p fibBN p
     { } { n @ 0 > } { n -- } 
     { reps @ w @ ifx } for 
 ;
+//pwi _ffx
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
-reps0 92 =
 'SHOOTOUT var 
 SHOOTOUT 1 =
+
 : _shootout ( wn n | m w t ) 
     { SHOOTOUT @ } 
     {
@@ -587,18 +590,21 @@ SHOOTOUT 1 =
         3 ti 
         { m n @ = t n @ = } { m @ 0 > } { m -- } 
         {
-            { n t @ = } { n @ 0 > } { n -- } { n @ w @ _ffx } for
+            { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx } for
         } for
-        nl wn @ ps reps0 @ dup p " = " ps w @ wordRun decimal p nl // test output
+        nl wn @ ps reps0 @ dup p " = " ps w @ wrun decimal p nl // test output
         wn @ comment
         3 time 
     }
     if2
 ;
+//pwi _shootout //pause
+//sp 
 : fib_shootout ( m | n ) 
+    //<dbg>
+    reps0 92 =
     { "\n\nfib_shootout begin ...\n" ps  n m @ = } { m @ 0 > } { m -- } 
     {
-        nl nl "m = " ps m @ p nl
         "fibPTC2?" n @ _shootout
         "cfib2_O3" n @ _shootout
         "fibPTC2?" n @ _shootout
@@ -606,9 +612,10 @@ SHOOTOUT 1 =
         "fibPTC2?" n @ _shootout
         "cfib2_O3" n @ _shootout
     } for
-    "\nfib_shootout end ...\n" ps
+    "\nfib_shootout end ...\n" ps 
+    <dbg>
 ;
-//pwi fib_shootout //pause
+pwi fib_shootout //pause
 3 fib_shootout //pause
 : fac_shootout ( m | n ) 
     reps0 23 =
@@ -622,8 +629,10 @@ SHOOTOUT 1 =
     } for
     "\n\nfac_shootout end ...\n" ps
 ;
-//pwi shootout
+pwi fac_shootout
+//verbosity 4 =
 3 fac_shootout //pause
+//sp 
 bnOff 
 nl
 // verbosity 1 =

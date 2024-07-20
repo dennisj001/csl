@@ -68,11 +68,11 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
             dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) srcAddress ) ; //, ( int64 ) end ) ;
             bi->JccCode = Here ;
 #if 1 // this has sometimes *maybe* caused problems ??
-            if ( insn == JCC32 ) 
+            if ( ( insn == JCC32 ) || (insn == JCC8) )
             {
-                byte noop4 [] = { 0x0f, 0x1f, 0x40, 0x00 } ; //nop [rax]
                 //byte noop4 [] = { 0x66, 0x90, 0x66, 0x90 } ; 
                 //byte noop4 [] = { 0x90, 0x90, 0x90, 0x90 } ; 
+                //if (insn == JCC8)
                 int32 offset = GetDispForCallOrJumpFromInsnAddr ( srcAddress ) ;
                 if ( ( ! ( bi->IiFlags & LOGIC_FLAG ) ) && offset && ( CheckOffset ( offset, 1 ) ) )
                 {
@@ -88,6 +88,7 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
 
                     _Compile_Int8 ( newOpCode ) ; // JCC8
                     _Compile_Int8 ( offset + 4 ) ; // 4 : diff in insn sizes
+                    byte noop4 [] = { 0x0f, 0x1f, 0x40, 0x00 } ; //nop [rax]
                     _CompileN ( noop4, 4 ) ;
                     //DBI_OFF ;
 #if 0   

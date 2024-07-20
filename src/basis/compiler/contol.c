@@ -187,7 +187,7 @@ GetDispForCallOrJumpFromInsnAddr ( byte * insnAddr )
         if ( insn == JCC32 )
             disp = * ( int32* ) offsetAddress ;
         else // insn == JCC8
-            disp = ( int32 ) * ( byte* ) offsetAddress ;
+            disp = ( int8 ) * ( byte* ) offsetAddress ;
         return disp ;
     }
     return 0 ;
