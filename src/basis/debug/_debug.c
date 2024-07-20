@@ -1,133 +1,30 @@
 
 #include "../../include/csl.h"
+
 #if DEBUG
+int64 dsDepth = 0 ;
+
 void
-dbg ( int64 index, int64 one, int64 two )
+dbg ( ) //int64 index, int64 one, int64 two )
 {
-#if 0    
-    static int64 svLen = 0 ;
-
-    void
-    dbgp ( Word * ans, Word * scWord, int64 len )
+    int64 dsd = DataStack_Depth () ;
+    if ( ! dsDepth ) dsDepth = dsd ;
+    else if ( dsd > dsDepth )
     {
-        _Namespace_PrintWords ( ans, scWord, 1 ) ;
-        oPrintf ( "\nList_Length = %d", len ) ;
-        if ( len == 2 ) Pause ( ) ;
-        oPrintf ( "\n%s", Context_Location ( ) ) ;
+        dsDepth = dsd ;
+        printf ( "/n ... %ld : %s ... /n", dsd, "+" ) ;
+        CSL_PrintDataStack () ;
     }
-
-    if ( Is_DebugOn )
+    else if ( dsd < dsDepth )
     {
-        int64 len = 0 ;
-        Namespace * ans = ( Word * ) 0x7ffff7b96ed8 ;
-        Word *scWord = ( Word * ) 0x7ffff7b958e0 ;
-        if ( ( len = List_Length ( ans->W_List ) ) == 2 )
-        {
-            if ( svLen == 3 ) dbgp ( ans, scWord, len ) ;
-        }
-        svLen = len ;
-        if ( len == 3 ) dbgp ( ans, scWord, len ) ;
+        dsDepth = dsd ;
+        printf ( "/n ... %ld : %s ... /n", dsd, "-" ) ;
+        CSL_PrintDataStack () ;
     }
-    //if ( ns == (Word *)0x7ffff7b96d30)
-    //    Pause () ;
-#elif 0
-    int64 sd = Stack_Depth ( _DataStack_ ) ; //Stack_Depth ( _CONTEXT_TDI_STACK ) ;
-    return sd ;
-#elif 0
-    Context * cntx = _Context_ ;
-    w = Compiler_PreviousNonDebugWord ( 0 ) ; // 0 : rem: we just popped the WordStack above
-    oPrintf ( "\nword = Compiler_PreviousNonDebugWord ( 0 ) :: %s.%s", w->ContainingNamespace->Name, w->Name ) ;
-    oPrintf ( "\nQualifyingNamespace = %s.%s", cntx->Finder0->QualifyingNamespace->ContainingNamespace->Name, cntx->Finder0->QualifyingNamespace->Name ) ;
-    oPrintf ( "\nBaseObject = %s.%s", cntx->BaseObject->ContainingNamespace->Name, cntx->BaseObject->Name ) ;
-    w = Compiler_PreviousNonDebugWord ( 1 ) ; // 0 : rem: we just popped the WordStack above
-    oPrintf ( "\nword = Compiler_PreviousNonDebugWord ( 1 ) :: %s.%s", w->ContainingNamespace->Name, w->Name ) ;
-    oPrintf ( "\nword = %s.%s", w->ContainingNamespace->Name, w->Name ) ;
-    oPrintf ( "\nQualifyingNamespace = %s.%s", cntx->Finder0->QualifyingNamespace->ContainingNamespace->Name, cntx->Finder0->QualifyingNamespace->Name ) ;
-    oPrintf ( "\nBaseObject = %s.%s", cntx->BaseObject->ContainingNamespace->Name, cntx->BaseObject->Name ) ;
-#elif 1
-    switch ( index )
-    {
-        case 1:
-        {
-            int64 endIndex = ( int64 ) ( ( ByteArray * ) ( 0x7ffff7a93000 ) )->EndIndex ;
-            //oPrintf ( "\n%lx", endIndex ) ;
-            if ( endIndex < 0 )
-            {
-                oPrintf ( "\n%lx", endIndex ) ;
-                Pause ( ) ;
-            }
-            break ;
-        }
-        case 2:
-        {
-            Word * w = ( Word * ) one ;
-            if ( w )
-            {
-                if ( String_Equal ( w->Name, "CodeSpace" ) )
-                {
-                    //oPrintf ( "\n%s", w->Name ) ;
-                    ByteArray * ba = ( ByteArray * ) two ;
-                    byte * endIndex = ba->EndIndex ;
-                    //oPrintf ( "\n%lx", endIndex ) ;
-                    if ( ( int64 ) ba->EndIndex < 0 )
-                    {
-                        oPrintf ( "\n%lx", endIndex ) ;
-                        Pause ( ) ;
-                    }
-                }
-            }
-            break ;
-        }
-        case 3:
-        {
-
-            Word * w = ( Word * ) one ;
-            if ( w )
-            {
-                if ( w->W_PtrToValue == ( uint64* ) 0x7fffecb7c2b1 )
-                {
-                    oPrintf ( "\n%lx", w->W_PtrToValue ) ;
-                    Pause ( ) ;
-                }
-            }
-            break ;
-        }
-        case 0:
-        default:
-        {
-            Word * w = ( Word * ) one ;
-            if ( w && Is_DebugOn )
-            {
-                Word * word = w ;
-                iPrintf ( "\nword : \'%s\' : %s.%s", word->Name, word->ContainingNamespace ? word->ContainingNamespace->Name : ( byte* ) "", word->Name ) ;
-                if ( word->TypeNamespace ) iPrintf ( "\nword : \'%s\' : TypeNamespace = %s.%s", word->Name, word->TypeNamespace->ContainingNamespace->Name, word->TypeNamespace->Name ) ;
-                else iPrintf ( "\nword : \'%s\' : TypeNamespace = 0", word->Name ) ;
-                //Pause () ;
-            }
-            break ;
-        }
-        case 4:
-        {
-            Word * w = ( Word * ) one ;
-            static Namespace * svClassNs ;
-            oPrintf ( "\n%s : size = %ld", w->Name, two ) ;
-            if ( ( ! two ) || String_Equal ( w->Name, "," ) ) Pause ( ) ;
-            if ( svClassNs == w ) Pause ( ) ;
-            svClassNs = w ;
-
-        }
-        case 5:
-        {
-            if ( Is_DebugOn )
-            {
-                TDI * tdi = ( TDI * ) one ;
-                oPrintf ( "\nat %s : namespace name = %s : size = %ld", Context_Location ( ), tdi->Tdi_StructureUnion_Namespace ? tdi->Tdi_StructureUnion_Namespace->Name : ( byte* ) "", tdi->Tdi_StructureUnion_Size ) ;
-            }
-        }
-    }
-#endif    
 }
+
 #endif
+
 // we have the address of a jcc insn 
 // get the address it jccs to
 

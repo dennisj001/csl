@@ -98,10 +98,11 @@ CSL_Pick ( ) // pick
     }
 }
 
-void 
+int64 
 CSL_StackDepth ()
 {
-    DataStack_Push ( DataStack_Depth ( ) ) ;
+    return DataStack_Depth ( ) ;
+    //DataStack_Push (  ) ;
 }
 
 void

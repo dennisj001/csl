@@ -192,6 +192,6 @@ OVT_StackSize ()
 void
 CSL_DataStack_Size ( )
 {
-    DataStack_Push (DataStack_Depth ( )) ;
+    DataStack_Push ( DataStack_Depth ( ) ) ;
 }
 

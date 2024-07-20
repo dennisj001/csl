@@ -68,7 +68,6 @@ _Debugger_COI_StepInto ( Debugger * debugger, Word * word )
             iPrintf ( "\nstepping into a csl compiled function : %s : .... :> %s ",
             word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
         _Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
-        if ( GetState ( debugger, DBG_CAN_STEP ) ) _Stack_Push ( debugger->ReturnStack, ( int64 ) ( debugger->DebugAddress + debugger->InsnSize ) ) ; // the return address
     }
     Debugger_CompileAndStepOneInstruction ( debugger ) ;
 }
@@ -112,7 +111,7 @@ Debugger_DoJccType ( Debugger * debugger, byte * jcAddress )
     if ( IS_CALL_INSN ( debugger->DebugAddress ) ) _Word_ShowSourceCode ( word ) ;
     if ( ( ! word ) || ( ! Debugger_CanWeStep ( debugger, word ) ) )
     {
-        if ( GetState ( debugger, DBG_SHOW ) ) iPrintf ( "\ncalling thru - a non-native (C) subroutine : %s : .... :> %s ",
+        if ( GetState ( debugger, DBG_SHOW ) ) if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru - a non-native (C) subroutine : %s : .... :> %s ",
             word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
         // here we attempt to solve the problem encountered when we are stepping thru code that 
         // calls words that are then also calling the debugger ... ; eg. interpreter.csl 'doWord'
@@ -139,10 +138,13 @@ Debugger_StepInstructionType ( Debugger * debugger )
         Debugger_Udis_GetInstructionSize ( debugger ) ;
         if ( ( * dadr ) == _RET )
         {
+#if 0          
             debugger->Key = 's' ; //turn off autorepeat
             SetState ( debugger, ( DBG_AUTO_MODE | DBG_CONTINUE_MODE ), false ) ;
+#endif          
             debugger->Insn = _RET ;
             updateFlag = Debugger_CASOI_Do_Return_Insn ( debugger ) ;
+            return ;
         }
         else if ( ( * dadr == JMP32 ) || ( * dadr == JMP8 ) )
         {
@@ -169,6 +171,8 @@ Debugger_StepInstructionType ( Debugger * debugger )
             jcAddress = JumpCallInstructionAddress_X64ABI ( dadr ) ;
             updateFlag = Debugger_CheckSkipOrDebugWord ( debugger, jcAddress ) ;
             //debugger->DebugAddress was set in Debugger_CheckSkipOrDebugWord now it is the next insn
+            //if ( GetState ( debugger, DBG_CAN_STEP ) ) 
+            _Stack_Push ( debugger->ReturnStack, (int64) debugger->ReturnAddress ) ; // the return address
             return ; //don't convert below
         }
         else if ( ( * ( dadr ) >> 4 ) == 0x7 )
@@ -211,8 +215,9 @@ Debugger_StepInstructionType ( Debugger * debugger )
 int64
 Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
 {
-    int64 rtrn = 0 ;
-    if ( Stack_Depth ( debugger->ReturnStack ) && ( GetState ( debugger, DBG_CAN_STEP ) ) ) //&& ( ! GetState ( debugger, DBG_BRK_INIT|DBG_STEPPING ) ) )
+    int64 rtrn = 0, sd ;
+    int64 cws = Debugger_CanWeStep ( debugger, debugger->w_Word ) ;
+    if ( ( sd = Stack_Depth ( debugger->ReturnStack ) ) && cws ) // GetState ( debugger, DBG_CAN_STEP ) ) ) //&& ( ! GetState ( debugger, DBG_BRK_INIT|DBG_STEPPING ) ) )
     {
         //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
         if ( Verbosity ( ) > 3 ) CSL_PrintReturnStack ( ) ;
@@ -266,7 +271,8 @@ Debugger_CheckSkipOrDebugWord ( Debugger * debugger, byte * jcAddress )
 {
     Word *word, * word0 = Word_GetFromCodeAddress ( jcAddress ) ;
     word = Word_UnAlias ( word0 ) ;
-    if ( ( word && ( ! Debugger_CanWeStep ( debugger, word ) ) ) || ( word && ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) ) ) )
+    int64 cws = Debugger_CanWeStep ( debugger, word ) ;
+    if ( ( word && ( ! cws  ) ) || ( word && ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) ) ) )
     {
         if ( word->W_MorphismAttributes & ( RT_STEPPING_DEBUG ) )
             SetState_TrueFalse ( debugger, DBG_UDIS | DBG_UDIS_ONE, ( DBG_AUTO_MODE | DBG_INTERPRET_LOOP_DONE ) ) ;
@@ -279,7 +285,7 @@ Debugger_CheckSkipOrDebugWord ( Debugger * debugger, byte * jcAddress )
             debugger->DebugAddress += debugger->InsnSize ; // 3 : sizeof call reg insn
             return 0 ;
         }
-        else iPrintf ( "\ncalling thru a C word : %s : at 0x%-16lx", ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), jcAddress ) ;
+        else if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru and over a C word : %s : at 0x%-16lx", ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), jcAddress ) ;
         AdjustDebuggerDsp ( ) ;
         Block_Eval ( word->Definition ) ;
         debugger->DebugAddress += 3 ; //debugger->InsnSize ; // 3 : sizeof call reg insn
@@ -290,7 +296,7 @@ Debugger_CheckSkipOrDebugWord ( Debugger * debugger, byte * jcAddress )
     {
         debugger->DebugAddress = jcAddress ;
         debugger->w_Word = word ;
-        iPrintf ( "\n ... calling word : %s at 0x%-16lx",
+        if ( Is_DebugShowOn ) iPrintf ( "\n ... calling word : %s at 0x%-16lx",
             ( debugger->w_Word ? ( char* ) c_gd ( debugger->w_Word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
     }
     return 1 ;

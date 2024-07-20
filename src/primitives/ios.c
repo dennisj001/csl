@@ -151,13 +151,6 @@ CSL_Key ( )
 }
 
 void
-CSL_LogOn ( )
-{
-    _O_->LogFlag = true ;
-    if ( ! _CSL_->LogFILE ) _CSL_->LogFILE = fopen ( ( char* ) "csl.log", "w" ) ;
-}
-
-void
 CSL_PrintBufferCopy ( )
 {
     byte *buffer = Buffer_New_pbyte ( BUFFER_SIZE ) ; //[ size ] ; // 8 - bits/byte ; 4 - spacing
@@ -203,11 +196,21 @@ CSL_DebugOutputConcatOff ( )
 }
 
 void
+CSL_LogOn ( )
+{
+    _O_->LogFlag = true ;
+    if ( ! _CSL_->LogFILE ) _CSL_->LogFILE = fopen ( ( char* ) "csl.log", "w" ) ;
+    _CSL_->LogFilename = "csl.log" ; 
+}
+
+void
 CSL_LogAppend ( )
 {
-    byte * logFilename = ( byte* ) DataStack_Pop ( ) ;
+    byte * logFilename ;
+    if ( ! _CSL_->LogFILE ) logFilename = ( byte* ) DataStack_Pop ( ) ;
+    else logFilename = _CSL_->LogFilename ;
     _CSL_->LogFILE = fopen ( ( char* ) logFilename, "a" ) ;
-    CSL_LogOn ( ) ;
+    _O_->LogFlag = true ;
 }
 
 void
@@ -215,7 +218,8 @@ CSL_LogWrite ( )
 {
     byte * logFilename = ( byte* ) DataStack_Pop ( ) ;
     _CSL_->LogFILE = fopen ( ( char* ) logFilename, "w" ) ;
-    CSL_LogOn ( ) ;
+    _CSL_->LogFilename = logFilename ; 
+    _O_->LogFlag = true ;
 }
 
 void

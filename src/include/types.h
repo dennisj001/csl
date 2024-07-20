@@ -957,7 +957,6 @@ typedef struct _CSL
     Stack * ContextStack, * TypeWordStack ;
     Debugger * Debugger0 ;
     LambdaCalculus * LC ;
-    FILE * LogFILE ;
     Cpu * cs_Cpu, * cs_Cpu2 ;
     block CurrentBlock, WordRun, SaveCpuState, SaveCpu2State, RestoreCpuState, RestoreCpu2State, Set_DspReg_FromDataStackPointer, Set_DataStackPointer_FromDspReg ; //, PeekReg, PokeReg ;
     block PopDspToR8AndCall, CallReg_TestRSP, Call_ToAddressThruSREG_TestAlignRSP ; //adjustRSPAndCall, adjustRSP ;
@@ -972,6 +971,8 @@ typedef struct _CSL
     *StringInsertB3, *StringInsertB4, *StringInsertB5, *StringInsertB6, *StringInsertB7, *StrCatBuffer, *InputLine ;
     Buffer *TabCompletionBuf, *LC_OutB, * LC_PrintB, * LC_DefineB, *DebugB, *DebugB1, *DebugB2, *DebugB3, *DebugB4, *ScratchB1, *ScratchB2,
     *ScratchB3, *ScratchB4, *ScratchB5, *StringMacroB, *TabCompletion, *DebuggerEscape, *Preprocessor, *FormatRemoval ; // token buffer, tab completion backup, source code scratch pad, 
+    byte * LogFilename ;
+    FILE * LogFILE ;
     StrTokInfo Sti ;
     dllist * CSL_N_M_Node_WordList ;
     SourceCodeInfo SCI ;

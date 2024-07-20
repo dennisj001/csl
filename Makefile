@@ -14,7 +14,7 @@ SOURCES = src/basis/compiler/machineCode.c src/basis/compiler/_compile.c src/bas
 	src/basis/core/string.c src/basis/core/dobject.c src/basis/core/preprocessor.c\
 	src/basis/lists.c src/basis/mem.c src/basis/debug/debugDisassembly.c src/basis/typeCheck.c\
 	src/basis/linux.c src/basis/exception.c src/basis/recycle.c src/basis/compiler/locals.c\
-	src/basis/debug/debugger.c src/basis/interpreter.c src/basis/debug/_debug.c src/basis/lc/lambdaCalculus.c src/basis/lc/lcDebug.c\
+	src/basis/debug/_debug.c src/basis/debug/debugger.c src/basis/interpreter.c src/basis/lc/lambdaCalculus.c src/basis/lc/lcDebug.c\
 	src/basis/lc/apply.c src/basis/lc/eval.c src/basis/lc/read.c src/basis/lc/print.c src/basis/lc/special.c \
 	src/primitives/strings.c src/primitives/bits.c src/primitives/maths.c src/primitives/openvmtils.c\
 	src/primitives/ios.c src/primitives/parsers.c src/primitives/interpreters.c src/primitives/namespaces.c src/primitives/systems.c\

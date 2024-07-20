@@ -302,8 +302,6 @@ CPrimitive CPrimitives [] = {
     { "cr", 0, 0, 0, CSL_CarriageReturn, 0, 0, 0, "Io", "Root" },
     { "tab", 0, 0, 0, CSL_TAB, 0, 0, 0, "Io", "Root" },
     { "space", 0, 0, 0, CSL_SPACE, 0, 0, 0, "Io", "Root" },
-    { "logAppend", 0, 0, 0, CSL_LogAppend, 0, 0, 0, "Io", "Root" },
-    { "logWrite", 0, 0, 0, CSL_LogWrite, 0, 0, 0, "Io", "Root" },
     //{ "_pbc", 0, 0, 0, _CSL_PrintBufferCopy, 0, 0, 0, "Io", "Root" },
     { "pbc", 0, 0, 0, CSL_PrintBufferCopy, 0, 0, 0, "Io", "Root" },
     { "pbclr", 0, 0, 0, CSL_PrintBufferClear, 0, 0, 0, "Io", "Root" },
@@ -313,6 +311,8 @@ CPrimitive CPrimitives [] = {
     { "dpbOff", 0, 0, 0, CSL_DebugOutputOff, 0, 0, 0, "Io", "Root" },
     { "logOn", 0, 0, 0, CSL_LogOn, 0, 0, 0, "Io", "Root" },
     { "logOff", 0, 0, 0, CSL_LogOff, 0, 0, 0, "Io", "Root" },
+    { "logAppend", 0, 0, 0, CSL_LogAppend, 0, 0, 0, "Io", "Root" },
+    { "logWrite", 0, 0, 0, CSL_LogWrite, 0, 0, 0, "Io", "Root" },
 
     { "dump", 0, 0, 0, CSL_Dump, 0, 0, 0, "Debug", "Root" },
     { "dis", 0, 0, 0, CSL_Disassemble, 0, 0, 0, "Debug", "Root" },
@@ -352,14 +352,15 @@ CPrimitive CPrimitives [] = {
     { "dsn", 0, 0, 0, Debugger_ShowOn, DEBUG_WORD, 0, 0, "Debug", "Root" },
     { "udis1", 0, 0, 0, Udis1Insn, PREFIXABLE, 0, 0, "Debug", "Root" },
     { "udis1x", 0, 0, 0, Udis1InsnX, PREFIXABLE, 0, 0, "Debug", "Root" },
-    //{ "dbg", 0, 0, 0, (block) dbg, IMMEDIATE, 0, 0, "Debug", "Root" },
-
+#if DEBUG    
+    { "dbg", 0, 0, 0, (block) dbg, IMMEDIATE, 0, 0, "Debug", "Root" },
+#endif
+    
     { "_include", 0, 0, 0, CSL_IncludeFile, 0, 0, 0, "System", "Root" },
     { "reset", 0, 0, 0, CSL_WarmInit, 0, 0, 0, "System", "Root" },
     { "init", 0, 0, 0, CSL_WarmInit, 0, 0, 0, "System", "Root" },
     { "warmInit", 0, 0, 0, CSL_WarmInit, 0, 0, 0, "System", "Root" },
     { "stackInit", 0, 0, 0, CSL_DataStack_Init, 0, 0, 0, "System", "Root" },
-    { "stackDepth", 0, 0, 0, CSL_DataStack_Size, 0, 0, 0, "System", "Root" },
     { "filename", 0, 0, 0, CSL_Filename, 0, 0, 0, "System", "Root" },
     { "throw", 0, 0, 0, CSL_Throw, 0, 0, 0, "System", "Root" },
     { "lineNumber", 0, 0, 0, CSL_LineNumber, 0, 0, 0, "System", "Root" },
@@ -511,7 +512,8 @@ CPrimitive CPrimitives [] = {
     { "dropN", 0, 0, 0, CSL_DropN, IMMEDIATE | CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "_ndrop", 0, 0, 0, CSL_DropN, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "pick", 0, 0, 0, CSL_Pick, IMMEDIATE | KEYWORD | CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
-    { "depth", 0, 0, 0, CSL_StackDepth, KEYWORD | CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
+    { "depth", 0, 0, 0, (block) CSL_StackDepth, KEYWORD | CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
+    { "stackDepth", 0, 0, 0, CSL_DataStack_Size, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "_swap", 0, 0, 0, CSL_Swap, 0, 0, 0, "Stack", "Root" },
     { "dsp", 0, 0, 0, CSL_Dsp, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "setDsp", 0, 0, 0, Rpn_SetDspReg, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },

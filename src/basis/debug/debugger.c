@@ -1,16 +1,6 @@
 
 #include "../../include/csl.h"
 
-#if 0
-
-void
-dbg_new ( Word * w )
-{
-    if ( ( uint64 ) w == 0x7ffff4928020 )
-        iPrintf ( "\n got it at %s", Context_Location ( ) ) ;
-}
-#endif
-
 Boolean
 DBG_Interpret_Loop_Test ( Debugger * debugger )
 {
@@ -42,6 +32,7 @@ Debugger_InterpreterLoop ( Debugger * debugger )
         }
         SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, false ) ;
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
+        dbg () ;
     }
     while ( DBG_Interpret_Loop_Test ( debugger ) ) ;
     debugger->LastPreSetupWord = debugger->w_Word ;
@@ -483,11 +474,10 @@ Debugger_Info ( Debugger * debugger )
 }
 
 #if DEBUG
-
 void
 Debugger_Dbg ( Debugger * debugger )
 {
-    dbg ( 0, debugger->w_Word, 0 ) ;
+    dbg () ;//0, (int64) debugger->w_Word, 0 ) ;
 }
 #endif
 
@@ -877,7 +867,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterTable [ 'f' ] = 40 ;
 
     debugger->CharacterTable [ 'u' ] = 42 ;
-    debugger->CharacterTable [ 'T' ] = 43 ;
+    debugger->CharacterTable [ 'j' ] = 43 ;
 
     // debugger : system related
     debugger->CharacterFunctionTable [ 0 ] = Debugger_Default ;

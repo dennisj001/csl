@@ -1,6 +1,6 @@
 
 #define LINUX //1
-#define DEBUG 0
+#define DEBUG 1
 #define CLANG 0
 #define SIGJMP_BUF 0
 #define OLD_Setcc 1
@@ -28,7 +28,7 @@
 #if DEBUG 
 #define d1( x ) x
 #define d0( x ) 
-#define dbg( i, p1, p2 ) dbg ( i, p1, p2 )
+//#define dbg( i, p1, p2 ) dbg ( i, p1, p2 )
 #else 
 #define d1( x ) x
 #define d0( x ) 
@@ -36,7 +36,7 @@
 #define D0( x ) 
 #define dbi0( x )  
 #define dbi1( x ) if ( DBI ) x 
-#define dbg( i, p1, p2 ) //D1 ( dbg ( i, p1, p2 ) )
+//#define dbg( i, p1, p2 ) //D1 ( dbg ( i, p1, p2 ) )
 #endif
 
 //#define dO3( x ) x

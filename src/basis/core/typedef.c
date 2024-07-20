@@ -91,7 +91,7 @@ TD_Identifier ( int64 t_type )
         if ( tdi->Tdi_StructureUnion_Namespace ) id = TD_Do_IdentifierAlias ( identifier, tdi->Tdi_StructureUnion_Size ) ;
         else tdi->Tdi_StructureUnion_Namespace = id = DataObject_New ( CLASS, 0, identifier, 0, 0, 0, 0, 0, tdi->Tdi_InNamespace, 0, - 1, - 1 ) ;
         TD_PostStructId_Init ( id ) ;
-        dbg ( 5, ( int64 ) tdi, 0 ) ;
+        //dbg ( 5, ( int64 ) tdi, 0 ) ;
     }
     else CSL_TD_Error ( "TD_Identifier : No identifier type given", identifier ) ;
 
