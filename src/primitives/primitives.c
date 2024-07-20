@@ -511,6 +511,7 @@ CPrimitive CPrimitives [] = {
     { "dropN", 0, 0, 0, CSL_DropN, IMMEDIATE | CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "_ndrop", 0, 0, 0, CSL_DropN, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "pick", 0, 0, 0, CSL_Pick, IMMEDIATE | KEYWORD | CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
+    { "depth", 0, 0, 0, CSL_StackDepth, KEYWORD | CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "_swap", 0, 0, 0, CSL_Swap, 0, 0, 0, "Stack", "Root" },
     { "dsp", 0, 0, 0, CSL_Dsp, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },
     { "setDsp", 0, 0, 0, Rpn_SetDspReg, CATEGORY_OP_STACK, 0, 0, "Stack", "Root" },

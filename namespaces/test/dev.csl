@@ -559,6 +559,9 @@ sp0
 nl nl 92 tfib3 //sp0 pause
 nl 92 dup p fibBN p 
 20 fibBN dup p 6765 == { "ok" ps } { "error" ps } tf2 drop sp0
+'DS_DEPTH var
+: sdt { depth DS_DEPTH @ > } { DS_DEPTH ++ nl "+" ps nl pause } if2 ;
+DS_DEPTH depth =
 : _ifx ( w | j ) 
     { j 1 = } { j @ reps0 @ <= } { j ++ } 
     {
@@ -580,10 +583,12 @@ pwi _ifx
 ;
 //pwi _ffx
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
+
 'SHOOTOUT var 
 SHOOTOUT 1 =
 
 : _shootout ( wn n | m w t ) 
+    //sdt
     { SHOOTOUT @ } 
     {
         w wn @ _findAny = { SHOOTOUT @ 1 > } { w @ wdiss } if2
@@ -592,11 +597,12 @@ SHOOTOUT 1 =
         {
             { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx } for
         } for
+        3 time 
         nl wn @ ps reps0 @ dup p " = " ps w @ wrun decimal p nl // test output
         wn @ comment
-        3 time 
     }
     if2
+    //<dbg> sdt
 ;
 //pwi _shootout //pause
 //sp 
@@ -615,7 +621,7 @@ SHOOTOUT 1 =
     "\nfib_shootout end ...\n" ps 
     //<dbg>
 ;
-pwi fib_shootout //pause
+// pwi fib_shootout //pause
 3 fib_shootout //pause
 : fac_shootout ( m | n ) 
     reps0 23 =
@@ -629,7 +635,7 @@ pwi fib_shootout //pause
     } for
     "\n\nfac_shootout end ...\n" ps
 ;
-pwi fac_shootout
+// pwi fac_shootout
 //verbosity 4 =
 3 fac_shootout //pause
 //sp 

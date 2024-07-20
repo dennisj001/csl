@@ -2308,6 +2308,7 @@ void CSL_Dup(void);
 void CSL_Tos(void);
 void CSL_NDup(void);
 void CSL_Pick(void);
+void CSL_StackDepth(void);
 void CSL_Swap(void);
 void CSL_PrintNDataStack(void);
 void CSL_PrintReturnStack(void);

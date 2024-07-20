@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.939.600" ) 
+#define VERSION ((byte*) "0.939.610" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 

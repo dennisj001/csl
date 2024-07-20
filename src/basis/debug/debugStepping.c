@@ -28,7 +28,7 @@ Debugger_CompileOneInstruction ( Debugger * debugger, Boolean showFlag )
 {
     ByteArray * svcs = Get_CompilerSpace ( ) ;
     _ByteArray_Init ( debugger->StepInstructionBA ) ; // we are only compiling one insn here so clear our BA before each use
-    byte * disasmStart = debugger->StepInstructionBA->StartIndex ;
+    //byte * disasmStart = debugger->StepInstructionBA->StartIndex ;
     Set_CompilerSpace ( debugger->StepInstructionBA ) ; // now compile to this space
     _Compile_Save_C_CpuState ( _CSL_, showFlag > 1 ) ; //&& ( Verbosity () >= 3 ) ) ; // save our c compiler cpu register state
     _Compile_Restore_Debugger_CpuState ( debugger, showFlag > 1 ) ; //&& ( Verbosity () >= 3 ) ) ; // restore our runtime state before the current insn
@@ -168,19 +168,8 @@ Debugger_StepInstructionType ( Debugger * debugger )
             debugger->ReturnAddress = dadr + 3 ;
             jcAddress = JumpCallInstructionAddress_X64ABI ( dadr ) ;
             updateFlag = Debugger_CheckSkipOrDebugWord ( debugger, jcAddress ) ;
-            if ( updateFlag == 2 )
-            {
-                jcAddress = 0 ; // call thru word
-                return ;
-            }
-            else if ( updateFlag == 0 ) return ;
-            else if ( ( updateFlag == 1 ) && jcAddress )
-            {
-                debugger->DebugAddress = jcAddress ;
-                jcAddress = 0 ; //don't convert below
-                iPrintf ( "\n ... calling word : %s at 0x%-16lx",
-                    ( debugger->w_Word ? ( char* ) c_gd ( debugger->w_Word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
-            }
+            //debugger->DebugAddress was set in Debugger_CheckSkipOrDebugWord now it is the next insn
+            return ; //don't convert below
         }
         else if ( ( * ( dadr ) >> 4 ) == 0x7 )
         {
@@ -301,6 +290,8 @@ Debugger_CheckSkipOrDebugWord ( Debugger * debugger, byte * jcAddress )
     {
         debugger->DebugAddress = jcAddress ;
         debugger->w_Word = word ;
+        iPrintf ( "\n ... calling word : %s at 0x%-16lx",
+            ( debugger->w_Word ? ( char* ) c_gd ( debugger->w_Word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
     }
     return 1 ;
 }
