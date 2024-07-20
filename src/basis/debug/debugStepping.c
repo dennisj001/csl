@@ -149,8 +149,8 @@ Debugger_StepInstructionType ( Debugger * debugger )
             if ( * dadr == JMP32 ) debugger->Insn = JMP32 ;
             else if ( * dadr == JMP8 ) debugger->Insn = JMP8 ;
             jcAddress = JumpCallInstructionAddress ( dadr ) ;
-            Debugger_CheckSkipDebugWord ( debugger, jcAddress ) ;
-            debugger->DebugAddress = jcAddress ; // always with jmp
+            //debugger->DebugAddress = jcAddress ; // always with jmp
+            Debugger_CheckSkipOrDebugWord ( debugger, jcAddress ) ;
             jcAddress = 0 ;
             return ;
         }
@@ -159,7 +159,7 @@ Debugger_StepInstructionType ( Debugger * debugger )
             debugger->Insn = CALL32 ;
             debugger->ReturnAddress = dadr + 5 ;
             jcAddress = JumpCallInstructionAddress ( dadr ) ;
-            updateFlag = Debugger_CheckSkipDebugWord ( debugger, jcAddress ) ;
+            updateFlag = Debugger_CheckSkipOrDebugWord ( debugger, jcAddress ) ;
             if ( updateFlag == 2 ) jcAddress = 0 ;
         }
         else if ( ( ( ( * ( uint16* ) dadr ) == 0xff49 ) && ( *( dadr + 2 ) == 0xd2 ) ) ) //CALL/JMP reg : MOD_RM
@@ -167,15 +167,20 @@ Debugger_StepInstructionType ( Debugger * debugger )
             debugger->Insn = CALL_REG ;
             debugger->ReturnAddress = dadr + 3 ;
             jcAddress = JumpCallInstructionAddress_X64ABI ( dadr ) ;
-            updateFlag = Debugger_CheckSkipDebugWord ( debugger, jcAddress ) ;
-            if ( updateFlag == 2 ) jcAddress = 0 ;
-            else if ( updateFlag == 0 )
+            updateFlag = Debugger_CheckSkipOrDebugWord ( debugger, jcAddress ) ;
+            if ( updateFlag == 2 )
             {
-                debugger->DebugAddress += debugger->InsnSize ;
-                updateFlag = 2 ;
+                jcAddress = 0 ; // call thru word
                 return ;
             }
-            //else if ( jcAddress ) debugger->DebugAddress = jcAddress ;
+            else if ( updateFlag == 0 ) return ;
+            else if ( ( updateFlag == 1 ) && jcAddress )
+            {
+                debugger->DebugAddress = jcAddress ;
+                jcAddress = 0 ; //don't convert below
+                iPrintf ( "\n ... calling word : %s at 0x%-16lx",
+                    ( debugger->w_Word ? ( char* ) c_gd ( debugger->w_Word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
+            }
         }
         else if ( ( * ( dadr ) >> 4 ) == 0x7 )
         {
@@ -268,23 +273,35 @@ Debugger_Step ( Debugger * debugger )
 }
 
 Boolean
-Debugger_CheckSkipDebugWord ( Debugger * debugger, byte * jcAddress )
+Debugger_CheckSkipOrDebugWord ( Debugger * debugger, byte * jcAddress )
 {
     Word *word, * word0 = Word_GetFromCodeAddress ( jcAddress ) ;
     word = Word_UnAlias ( word0 ) ;
-
-    if ( word && ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) ) )
+    if ( ( word && ( ! Debugger_CanWeStep ( debugger, word ) ) ) || ( word && ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) ) ) )
     {
         if ( word->W_MorphismAttributes & ( RT_STEPPING_DEBUG ) )
             SetState_TrueFalse ( debugger, DBG_UDIS | DBG_UDIS_ONE, ( DBG_AUTO_MODE | DBG_INTERPRET_LOOP_DONE ) ) ;
         // we are already stepping here and now, so skip
-        if ( GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\nskipping over a debug word : %s : at 0x%-16lx",
-            ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
-        debugger->DebugAddress += debugger->InsnSize ; // 3 : sizeof call reg insn
+        if ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) )
+        {
+            debugger->DebugAddress = jcAddress ;
+            if ( GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\nskipping over a debug word : %s : at 0x%-16lx",
+                ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
+            debugger->DebugAddress += debugger->InsnSize ; // 3 : sizeof call reg insn
+            return 0 ;
+        }
+        else iPrintf ( "\ncalling thru a C word : %s : at 0x%-16lx", ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), jcAddress ) ;
+        AdjustDebuggerDsp ( ) ;
+        Block_Eval ( word->Definition ) ;
+        debugger->DebugAddress += 3 ; //debugger->InsnSize ; // 3 : sizeof call reg insn
         if ( GetState ( debugger, DBG_EVAL_MODE ) ) SetState ( debugger, ( DBG_CONTINUE_MODE ), false ) ;
         return 2 ;
     }
-    else debugger->w_Word = word ;
+    else
+    {
+        debugger->DebugAddress = jcAddress ;
+        debugger->w_Word = word ;
+    }
     return 1 ;
 }
 

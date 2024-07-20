@@ -613,7 +613,7 @@ SHOOTOUT 1 =
         "cfib2_O3" n @ _shootout
     } for
     "\nfib_shootout end ...\n" ps 
-    <dbg>
+    //<dbg>
 ;
 pwi fib_shootout //pause
 3 fib_shootout //pause

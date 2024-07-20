@@ -22,8 +22,11 @@ DBG_Interpret_Loop_Test ( Debugger * debugger )
 void
 AdjustDebuggerDsp ( )
 {
-    _DspReg_ = _Debugger_->cs_Cpu->R14d ;
-    Set_DataStackPointer_FromDspReg ( ) ;
+    if ( _Debugger_->cs_Cpu->R14d )
+    {
+        _DspReg_ = _Debugger_->cs_Cpu->R14d ;
+        Set_DataStackPointer_FromDspReg ( ) ;
+    }
 }
 
 void

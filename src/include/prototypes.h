@@ -1505,7 +1505,7 @@ void Debugger_DoJccType(Debugger *debugger, byte *jcAddress);
 void Debugger_StepInstructionType(Debugger *debugger);
 int64 Debugger_CASOI_Do_Return_Insn(Debugger *debugger);
 void Debugger_Step(Debugger *debugger);
-Boolean Debugger_CheckSkipDebugWord(Debugger *debugger, byte *jcAddress);
+Boolean Debugger_CheckSkipOrDebugWord(Debugger *debugger, byte *jcAddress);
 int64 Debugger_CanWeStep(Debugger *debugger, Word *word);
 void Debugger_Stepping_Off(Debugger *debugger);
 byte *Debugger_DoJcc(Debugger *debugger);
