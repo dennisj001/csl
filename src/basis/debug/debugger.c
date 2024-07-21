@@ -690,6 +690,7 @@ _Debugger_ShowOff ( Debugger * debugger )
 {
     DebugShow_Off ;
     SetState ( debugger, DBG_SHOW, false ) ;
+    SetState ( _CSL_, _DEBUG_SHOW_, false ) ;
 }
 
 void
@@ -697,6 +698,7 @@ _Debugger_ShowOn ( Debugger * debugger )
 {
     DebugShow_On ;
     SetState ( debugger, DBG_SHOW | DBG_UDIS, true ) ;
+    SetState ( _CSL_, _DEBUG_SHOW_, true ) ;
 }
 
 void

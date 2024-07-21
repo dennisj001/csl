@@ -284,9 +284,9 @@ Debugger_DoState ( Debugger * debugger )
         snprintf ( prompt, 16, _CSL_->DebugLevel ? "<dbg%ld>" : "<dbg>", _CSL_->DebugLevel ) ;
     else snprintf ( prompt, 16, _CSL_->DebugLevel ? "dbg%ld" : "dbg", _CSL_->DebugLevel ) ;
     if ( GetState ( debugger, DBG_INFO ) ) Debugger_ShowInfo ( debugger, prompt, 0 ) ;
-    else if ( GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, prompt ) ;
+    else if ( GetState ( debugger, DBG_SHOW ) && GetState ( debugger, DBG_PROMPT ) ) Debugger_ShowState ( debugger, prompt ) ;
         //else if ( ( GetState ( debugger, DBG_STEPPING ) ) && ( ! GetState ( debugger, DBG_CONTINUE_MODE ) ) )
-    else if ( ( GetState ( debugger, DBG_STEPPING | DBG_START_STEPPING ) ) && ( ! GetState ( debugger, DBG_CONTINUE_MODE ) ) )
+    else if ( GetState ( debugger, DBG_SHOW ) && ( GetState ( debugger, DBG_STEPPING | DBG_START_STEPPING ) ) && ( ! GetState ( debugger, DBG_CONTINUE_MODE ) ) )
     {
         if ( GetState ( debugger, DBG_START_STEPPING ) && GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\n ... Next stepping instruction ..." ) ;
         SetState ( debugger, DBG_START_STEPPING, false ) ;

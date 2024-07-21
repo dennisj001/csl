@@ -348,8 +348,8 @@ CPrimitive CPrimitives [] = {
     { "info", 0, 0, 0, CSL_DebugInfo, 0, 0, 0, "Debug", "Root" },
     { "localsShow", 0, 0, 0, _CSL_Debugger_Locals_Show, DEBUG_WORD, 0, 0, "Debug", "Root" },
     { "stop", 0, 0, 0, CSL_DebugStop, DEBUG_WORD, 0, 0, "Debug", "Root" },
-    { "dsf", 0, 0, 0, Debugger_ShowOff, DEBUG_WORD, 0, 0, "Debug", "Root" },
-    { "dsn", 0, 0, 0, Debugger_ShowOn, DEBUG_WORD, 0, 0, "Debug", "Root" },
+    { "dsOff", 0, 0, 0, Debugger_ShowOff, 0, 0, 0, "Debug", "Root" },
+    { "dsOn", 0, 0, 0, Debugger_ShowOn, 0, 0, 0, "Debug", "Root" },
     { "udis1", 0, 0, 0, Udis1Insn, PREFIXABLE, 0, 0, "Debug", "Root" },
     { "udis1x", 0, 0, 0, Udis1InsnX, PREFIXABLE, 0, 0, "Debug", "Root" },
 #if DEBUG    

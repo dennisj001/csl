@@ -564,14 +564,15 @@ nl 92 dup p fibBN p
 : sdt { depth DS_DEPTH @ > } { DS_DEPTH depth = nl "+" ps nl pause } if2 ;
 DS_DEPTH depth =
 #endif
-reps 1000 =
-reps0 92 =
+reps 23 =
+reps0 1000 =
+//: dbg ;
 : _ifx ( w | j )
     { j 1 = } { j @ reps0 @ <= } { j ++ } 
     {
        //j @ w @ wordRun j @ p "." ps p ";" ps dn
        //j @ w @ wordRun drop // j @ p "." ps p ";" ps
-       j @ w @ wrun drop // j @ p "." ps p ";" ps
+       j @ w @ wrun drop dbg // j @ p "." ps p ";" ps
        //j @ w @ wrun j @ p "." ps p ";" ps //pause
     }
     for
@@ -579,11 +580,12 @@ reps0 92 =
 pwi _ifx
 : ifx ( n w | k ) 
     { k 1 = } { k @ n @ <= } { k ++ } 
-    { w @ _ifx } for
+    { w @ _ifx dbg } for
 ; 
 : _ffx ( n w | t w ) 
-    { } { n @ 0 > } { n -- } 
-    { reps @ w @ ifx } for 
+    { n @ 0 > } 
+    { reps @ w @ ifx dbg n -- }  
+    while
 ;
 //pwi _ffx
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
@@ -592,15 +594,17 @@ pwi _ifx
 SHOOTOUT 1 =
 
 : _shootout ( wn n | m w t ) 
-    //sdt
+    //<dbg>
     { SHOOTOUT @ } 
     {
-        w wn @ _findAny = { SHOOTOUT @ 1 > } { w @ wdiss } if2
+        w wn @ _findAny = 
+        { SHOOTOUT @ 1 > } { w @ wdiss } if2
         3 ti 
         { m n @ = t n @ = } { m @ 0 > } { m -- } 
         {
-            { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx } for
+            { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx dbg } for
         } for
+        //dsOn
         3 time 
         nl wn @ ps reps0 @ dup p " = " ps w @ wrun decimal p nl // test output
         wn @ comment
@@ -612,6 +616,7 @@ SHOOTOUT 1 =
 //sp 
 //logOn
 : fib_shootout ( m | n )
+    //dsOff
     //<dbg>
     { "\n\nfib_shootout begin ...\n" ps  n m @ = } { m @ 0 > } { m -- } 
     {

@@ -7,19 +7,22 @@ int64 dsDepth = 0 ;
 void
 dbg ( ) //int64 index, int64 one, int64 two )
 {
-    int64 dsd = DataStack_Depth () ;
+    Debugger * debugger = _Debugger_ ;
+    int64 dsd = DataStack_Depth ( ) ;
     if ( ! dsDepth ) dsDepth = dsd ;
     else if ( dsd > dsDepth )
     {
         dsDepth = dsd ;
-        printf ( "/n ... %ld : %s ... /n", dsd, "+" ) ;
+        printf ( "\n ... %s : %ld : %s ... \n", "+++", dsd, "+++" ) ;
         CSL_PrintDataStack () ;
+        _Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
     }
     else if ( dsd < dsDepth )
     {
         dsDepth = dsd ;
-        printf ( "/n ... %ld : %s ... /n", dsd, "-" ) ;
+        printf ( "\n ... %s : %ld : %s ... \n", "---", dsd, "---" ) ;
         CSL_PrintDataStack () ;
+        _Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
     }
 }
 

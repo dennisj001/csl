@@ -217,7 +217,7 @@ Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
 {
     int64 rtrn = 0, sd ;
     int64 cws = Debugger_CanWeStep ( debugger, debugger->w_Word ) ;
-    if ( ( sd = Stack_Depth ( debugger->ReturnStack ) ) && cws ) // GetState ( debugger, DBG_CAN_STEP ) ) ) //&& ( ! GetState ( debugger, DBG_BRK_INIT|DBG_STEPPING ) ) )
+    if ( ( sd = Stack_Depth ( debugger->ReturnStack ) ) ) //&& cws ) // GetState ( debugger, DBG_CAN_STEP ) ) ) //&& ( ! GetState ( debugger, DBG_BRK_INIT|DBG_STEPPING ) ) )
     {
         //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
         if ( Verbosity ( ) > 3 ) CSL_PrintReturnStack ( ) ;
@@ -239,7 +239,7 @@ Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
         SetState ( debugger, DBG_SETUP_ADDRESS, false ) ;
         rtrn = 4 ;
     }
-    if ( ( byte* ) debugger->SaveDsp != ( byte* ) _DspReg_ )
+    if ( GetState ( debugger, DBG_SHOW ) && ( byte* ) debugger->SaveDsp != ( byte* ) _DspReg_ )
     {
         iPrintf ( "\ndebugger->SaveDsp != _DspReg_" ) ;
         CSL_PrintDataStack ( ) ;
