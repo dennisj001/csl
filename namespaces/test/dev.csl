@@ -640,6 +640,7 @@ reps0 23 =
 ;
 // pwi fac_shootout
 //verbosity 4 =
+reps0 99 =
 3 fac_shootout //pause
 //reps 2 = reps0 2 = 1 fac_shootout //pause
 //sp 

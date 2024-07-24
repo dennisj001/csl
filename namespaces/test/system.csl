@@ -60,20 +60,6 @@ Root
 sp
 jcc8_Off
 String Shell Interpreter
-#if 0
-: $$ 
-    ""
-    { token dup ";" strcmp } 
-    { 
-        { dup "." strcmp } { strcat " " strcat } { strcat } if3
-    } 
-    while 
-    drop location "$$" ps dup nl ps nl _sh return
-;  // allows more than one shell command on a ';' separated line 
-'$$ find wdiss sp0
-//$$ls -al /usr/local ; $$ls -al . ; 
-//s pause
-#endif
 "streol" 'getStringToEndOfLine find alias
 : $ streol _sh ;  
 
