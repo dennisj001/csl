@@ -5,24 +5,37 @@
 int64 dsDepth = 0 ;
 
 void
-dbg ( ) //int64 index, int64 one, int64 two )
+_dbg ( ) //int64 index, int64 one, int64 two )
 {
-    Debugger * debugger = _Debugger_ ;
-    int64 dsd = DataStack_Depth ( ) ;
-    if ( ! dsDepth ) dsDepth = dsd ;
-    else if ( dsd > dsDepth )
+    //Debugger * debugger = _Debugger_ ;
+    AdjustR14WithDsp ( ) ;
+    int64 diff = 0, dsd = DataStack_Depth ( ) ;
+    if ( ! dsDepth ) 
     {
         dsDepth = dsd ;
-        printf ( "\n ... %s : %ld : %s ... \n", "+++", dsd, "+++" ) ;
-        CSL_PrintDataStack () ;
-        _Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
+        oPrintf ( "\n dbg: ... %s : %ld.%ld : %s ...", "+++", diff, dsd, "+++" ) ;
+    }
+    else if ( dsd > dsDepth )
+    {
+        diff = dsd - dsDepth ;
+        dsDepth = dsd ;
+        oPrintf ( "\n dbg: ... %s : %ld.%ld : %s ...", "+++", diff, dsd, "+++" ) ;
+        //CSL_PrintDataStack () ;
+        //if ( ! GetState ( debugger, DBG_STEPPING ) ) 
+        //_Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
+        //CSL_PrintDataStack () ; 
+        //Pause () ;
     }
     else if ( dsd < dsDepth )
     {
+        diff = dsDepth - dsd ;
         dsDepth = dsd ;
-        printf ( "\n ... %s : %ld : %s ... \n", "---", dsd, "---" ) ;
-        CSL_PrintDataStack () ;
-        _Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
+        oPrintf ( "\n dbg: ... %s : %ld.%ld : %s ...", "---", diff, dsd, "---" ) ;
+        //CSL_PrintDataStack () ;
+        //if ( ! GetState ( debugger, DBG_STEPPING ) ) 
+        //_Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
+        //CSL_PrintDataStack () ;
+        //Pause () ;
     }
 }
 

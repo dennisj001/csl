@@ -353,7 +353,7 @@ CPrimitive CPrimitives [] = {
     { "udis1", 0, 0, 0, Udis1Insn, PREFIXABLE, 0, 0, "Debug", "Root" },
     { "udis1x", 0, 0, 0, Udis1InsnX, PREFIXABLE, 0, 0, "Debug", "Root" },
 #if DEBUG    
-    { "dbg", 0, 0, 0, (block) dbg, IMMEDIATE, 0, 0, "Debug", "Root" },
+    { "dbg", 0, 0, 0, (block) _dbg, IMMEDIATE, 0, 0, "Debug", "Root" },
 #endif
     
     { "_include", 0, 0, 0, CSL_IncludeFile, 0, 0, 0, "System", "Root" },

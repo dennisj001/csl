@@ -339,10 +339,8 @@ c_syntaxOff
 "\n\nnew $ test\n" ps
 $ls -al . ;
 $ etc/script ; 
-$$ etc/lispScript ; 
-$$ls -al /usr/local ; 
-$$ ls -al . ;
-//: sp0 s pause ; sp0
+//$$ etc/lispScript ; ls -al /usr/local ; ls -al . ;
+//s pause 
 
 C
 sp0

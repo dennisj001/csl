@@ -299,6 +299,7 @@ _CSL_Source ( Word *word, int64 addToHistoryFlag )
         if ( word->W_MorphismAttributes & ALIAS )
         {
             aword = Word_UnAlias ( word ) ; //word->W_AliasOf ;
+            //aword = Word_Root (word) ;
             if ( aword ) iPrintf ( "%s alias for %s", name, ( char* ) c_gd ( aword->Name ) ) ;
         }
         else if ( word->W_MorphismAttributes & CPRIMITIVE )

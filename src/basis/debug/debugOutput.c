@@ -75,8 +75,9 @@ _Debugger_Locals_Show_Loop ( Cpu * cpu, Word * scWord )
 void
 Debugger_Locals_Show ( Debugger * debugger )
 {
-    Word * scWord = Compiling ? _Context_->CurrentWordBeingCompiled : debugger->w_Word ? debugger->w_Word :
-        ( debugger->DebugAddress ? Word_UnAlias ( Word_GetFromCodeAddress ( debugger->DebugAddress ) ) : _Context_->CurrentlyRunningWord ) ;
+    Word * scWord = Compiling ? _Context_->CurrentWordBeingCompiled : //Debugger_GetWordFromAddress ( debugger ) ; //debugger->w_Word :
+        debugger->DebugAddress ? Word_UnAlias ( Word_GetFromCodeAddress ( debugger->DebugAddress ) ) : 
+            _Context_->CurrentlyRunningWord ? _Context_->CurrentlyRunningWord : debugger->w_Word ;
     if ( scWord && ( scWord->W_NumberOfVariables || _Context_->Compiler0->NumberOfVariables ) )
         _Debugger_Locals_Show_Loop ( debugger->cs_Cpu, scWord ) ;
 }

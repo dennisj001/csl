@@ -112,7 +112,8 @@ void
 CSL_Word_Run ( )
 {
     Word * word = ( Word* ) DataStack_Pop ( ) ;
-    Word_Morphism_Run ( word ) ;
+    //Word_Morphism_Run ( word ) ;
+    _Block_Eval ( word->Definition ) ;
 }
 
 void

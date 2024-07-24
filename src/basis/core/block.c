@@ -1,6 +1,6 @@
 #include "../../include/csl.h"
 
-inline void
+void
 _Block_Eval ( block blck )
 {
     ( ( block ) blck ) ( ) ;

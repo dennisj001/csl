@@ -65,7 +65,7 @@ Word_Eval ( Word * word )
         {
             if ( ! ( GetState ( word, W_STEPPED ) ) ) _Word_Eval ( word ) ;
         }
-        else AdjustDebuggerDsp ( ) ;
+        else AdjustR14WithDsp ( ) ;
         SetState ( word, W_STEPPED, false ) ;
     }
 }

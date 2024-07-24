@@ -60,6 +60,7 @@ Root
 sp
 jcc8_Off
 String Shell Interpreter
+#if 0
 : $$ 
     ""
     { token dup ";" strcmp } 
@@ -70,14 +71,15 @@ String Shell Interpreter
     drop location "$$" ps dup nl ps nl _sh return
 ;  // allows more than one shell command on a ';' separated line 
 '$$ find wdiss sp0
+//$$ls -al /usr/local ; $$ls -al . ; 
+//s pause
+#endif
 "streol" 'getStringToEndOfLine find alias
 : $ streol _sh ;  
 
 bnOff
 : sp ; //stack pause ; sp
 #if 1 //doScript
-$$ls -al /usr/local ; $$ls -al . ; 
-//s pause
 $etc/script 
 $etc/lispScript 
 sp

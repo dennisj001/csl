@@ -10,7 +10,7 @@ DBG_Interpret_Loop_Test ( Debugger * debugger )
 }
 
 void
-AdjustDebuggerDsp ( )
+AdjustR14WithDsp ( )
 {
     if ( _Debugger_->cs_Cpu->R14d )
     {
@@ -25,6 +25,7 @@ Debugger_InterpreterLoop ( Debugger * debugger )
     do
     {
         Debugger_DoState ( debugger ) ;
+        //_dbg () ;
         if ( ! GetState ( _Debugger_, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ) )
         {
             while ( ( debugger->Key = Key ( ) ) == - 1 ) ;
@@ -32,13 +33,12 @@ Debugger_InterpreterLoop ( Debugger * debugger )
         }
         SetState ( _Debugger_, DBG_AUTO_MODE_ONCE, false ) ;
         debugger->CharacterFunctionTable [ debugger->CharacterTable [ debugger->Key ] ] ( debugger ) ;
-        dbg () ;
     }
     while ( DBG_Interpret_Loop_Test ( debugger ) ) ;
     debugger->LastPreSetupWord = debugger->w_Word ;
     SetState ( debugger, ( DBG_STACK_OLD | DBG_INTERPRET_LOOP_DONE ), true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
-    AdjustDebuggerDsp ( ) ;
+    AdjustR14WithDsp ( ) ;
     if ( GetState ( debugger, ( DBG_SETUP_ADDRESS ) ) )
     {
         SetState ( debugger, ( DBG_SETUP_ADDRESS ), false ) ;
@@ -184,7 +184,7 @@ DebugRuntimeBreakpoint ( )
     SetState ( _Debugger_, ( DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE ), false ) ;
     Debugger_Interpret ( debugger, debugger->w_Word, 0, debugger->DebugAddress ) ;
     SetState ( debugger, DBG_BRK_INIT | DBG_RUNTIME_BREAKPOINT | DEBUG_SHTL_OFF, false ) ;
-    AdjustDebuggerDsp ( ) ;
+    AdjustR14WithDsp ( ) ;
     if ( GetState ( debugger, DBG_STEPPED ) ) //&& ( ! Stack_Depth ( debugger->ReturnStack ) ) )
     {
         SetState ( debugger, DBG_STEPPING, false ) ;
@@ -477,7 +477,7 @@ Debugger_Info ( Debugger * debugger )
 void
 Debugger_Dbg ( Debugger * debugger )
 {
-    dbg () ;//0, (int64) debugger->w_Word, 0 ) ;
+    _dbg () ;//0, (int64) debugger->w_Word, 0 ) ;
 }
 #endif
 
