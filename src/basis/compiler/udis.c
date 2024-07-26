@@ -54,7 +54,7 @@ _Udis_Init ( ud_t * ud )
 }
 
 int64
-Debugger_UdisOneInstruction (Debugger * debugger, Word * word, byte * address, byte * prefix, byte * postfix )
+Debugger_UdisOneInstructionWithSourceCode (Debugger * debugger, Word * word, byte * address, byte * prefix, byte * postfix )
 {
     ud_t * ud = debugger->Udis ;
     if ( address && GetState ( debugger, DBG_UDIS|DBG_UDIS_ONE ) )
@@ -65,6 +65,7 @@ Debugger_UdisOneInstruction (Debugger * debugger, Word * word, byte * address, b
         isize = ud_disassemble ( ud ) ;
         SC_ShowSourceCode_In_Word_At_Address (word, address ) ;
         _Udis_PrintInstruction ( ud, address, prefix, postfix ) ; //, debugger->DebugAddress ) ;
+        debugger->LastDisAddress = address ;
         return isize ;
     }
     return 0 ;

@@ -30,7 +30,7 @@ _Debugger_Disassemble ( Debugger * debugger, Word * word, byte* address, int64 n
         if ( GetState ( debugger, DBG_UDIS_ONE ) ) SetState ( debugger, DBG_UDIS_ONE, false ) ;
         ud_t * udis = Debugger_UdisInit ( debugger ) ;
         size = _Udis_Disassemble (udis, word, address, ( number > ( 3 * K ) ) ? ( 3 * K ) : number, (byte*) "", (byte*) "", cflag ) ;
-        debugger->LastDisStart = address ;
+        debugger->LastDisAddress = address ;
         return size ; 
     }
 }
@@ -39,7 +39,7 @@ void
 Udis1Insn ( )
 {
     byte * address = ( byte* ) DataStack_Pop ( ) ;
-    Debugger_UdisOneInstruction ( _Debugger_, 0, address, "", "" ) ; //byte * prefix, byte * postfix )
+    Debugger_UdisOneInstructionWithSourceCode ( _Debugger_, 0, address, "", "" ) ; //byte * prefix, byte * postfix )
 }
 
 void
@@ -76,7 +76,7 @@ Debugger_Dis ( Debugger * debugger )
         if ( debugger->DebugAddress )
         {
             iPrintf ( "\nNext instruction ..." ) ;
-            Debugger_UdisOneInstruction ( debugger, 0, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "" ) ; // the next instruction
+            Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "\n", ( byte* ) "" ) ; // the next instruction
         }
 #endif        
     }
@@ -109,7 +109,7 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
             _Debugger_Disassemble ( debugger, word, compiledToAddr, codeSize,
                 ( word->W_MorphismAttributes & ( CPRIMITIVE | DLSYM_WORD | DEBUG_WORD ) ? 1 : 0 ) ) ;
         }
-        //else Debugger_DisassembleAccumulated ( debugger ) ;
+        else Debugger_DisassembleAccumulated ( debugger ) ;
         debugger->PreHere = Here ;
     }
 }

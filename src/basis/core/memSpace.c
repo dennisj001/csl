@@ -10,7 +10,7 @@ void
 MemChunk_Account ( int64 size, int64 allocType, int64 flag )
 {
     //return ; // debug
-    if ( (allocType & ( MMAP | PRE_STATIC_MEM | STATIC | HISTORY ) ))
+    if ( ( allocType & ( MMAP | PRE_STATIC_MEM | STATIC | HISTORY ) ) )
     {
         if ( _OSMS_ )
         {
@@ -149,6 +149,7 @@ void
 OVT_Static_New ( )
 {
     OVT_StaticMemSystem * osms = _OSMS_ = ( OVT_StaticMemSystem * ) MemChunk_Allocate ( sizeof ( OVT_StaticMemSystem ), MMAP ) ; //_OVT_Static_AllocMem ( sizeof ( OVT_StaticMemSystem ) ) ;
+    // don't know about this ?? if this makes sense here or its setup or will ever be used or needed but
     MemChunk_Account ( sizeof ( OVT_StaticMemSystem ), PRE_STATIC_MEM, MEM_ALLOC ) ; // couldn't be accounted before _OSMS_ was created
     osms->OVT_StaticMemList = _dllist_New ( PRE_STATIC_MEM ) ;
     OVT_MemSystem * oms = _OMS_ = ( OVT_MemSystem * ) MemChunk_Allocate ( sizeof ( OVT_MemSystem ), PRE_STATIC_MEM ) ;
@@ -157,6 +158,7 @@ OVT_Static_New ( )
     _NamedByteArray_Init ( osms->StaticMemSpace, ( byte* ) "StaticSpace", STATIC_MEM_SIZE, STATIC ) ;
     osms->HistorySpace_MemChunkStringList = _dllist_New ( STATIC ) ;
     oms->OvtMemChunkList = _dllist_New ( STATIC ) ;
+    if ( ! sigsetjmp ( osms->JmpBuf0, 0 ) ) ; //?? // nb. siglongjmp always comes to beginning of the block 
 }
 
 void
@@ -176,7 +178,7 @@ OVT_Static_Delete ( OVT_StaticMemSystem * osms )
     PRE_STATIC_MEM_Munmap_List ( osms->OVT_StaticMemList ) ;
     PRE_STATIC_MEM_Munmap ( ( byte * ) _OMS_, sizeof ( OVT_MemSystem ) ) ;
     PRE_STATIC_MEM_Munmap ( ( byte * ) osms, sizeof ( OVT_StaticMemSystem ) ) ;
-    printf ( "\nmmaped = %ld", mmaped ), fflush ( stdout ) ; 
+    printf ( "\nmmaped = %ld", mmaped ), fflush ( stdout ) ;
 }
 
 void
@@ -259,9 +261,9 @@ MemorySpace_Init ( MemorySpace * ms )
     OpenVmTil * ovt = _O_ ;
     MemorySpace * oldMs = ovt->MemorySpace0 ;
 
-    ms->DictionarySpace = ( oldMs && oldMs->DictionarySpace ) ? oldMs->DictionarySpace : 
+    ms->DictionarySpace = ( oldMs && oldMs->DictionarySpace ) ? oldMs->DictionarySpace :
         NBA_MemSpace_New ( ms, ( byte* ) "DictionarySpace", ovt->DictionarySize, DICTIONARY ) ;
-    ms->CodeSpace = ( oldMs && oldMs->CodeSpace ) ? oldMs->CodeSpace : 
+    ms->CodeSpace = ( oldMs && oldMs->CodeSpace ) ? oldMs->CodeSpace :
         NBA_MemSpace_New ( ms, ( byte* ) "CodeSpace", ovt->MachineCodeSize, CODE ) ;
 
     ms->LispSpace = NBA_MemSpace_New ( ms, ( byte* ) "LispSpace", ovt->LispSpaceSize, LISP ) ;
@@ -282,7 +284,7 @@ MemorySpace_Init ( MemorySpace * ms )
         ms->ContextSpace = cnba ;
     }
     _O_CodeByteArray = ms->CodeSpace->ba_CurrentByteArray ; //init CompilerSpace ptr
-    if ( Verbosity () > 2 ) iPrintf ( "\nSystem Memory has been initialized.  " ) ;
+    if ( Verbosity ( ) > 2 ) iPrintf ( "\nSystem Memory has been initialized.  " ) ;
 }
 
 void

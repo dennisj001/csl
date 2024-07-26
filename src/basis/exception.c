@@ -114,7 +114,7 @@ _OpenVmTil_ShowExceptionInfo ( )
     if ( GetState ( debugger, DBG_STEPPING ) )
     {
         Debugger_Registers ( debugger ) ;
-        Debugger_UdisOneInstruction ( debugger, 0, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;
+        Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ;
     }
     Debugger_ShowInfo ( debugger, _O_->ExceptionMessage, _O_->Signal ) ;
     if ( word != _Context_->LastEvalWord ) _CSL_Source ( word, 0 ) ;
@@ -365,9 +365,9 @@ _OpenVmTil_LongJmp_WithMsg ( int64 restartCondition, byte * msg, int64 pauseFlag
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr (uc) necessary 
 {
-    d0 ( iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ) ;
+    if ( signal != SIGWINCH ) iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ; // 28 = SIGWINCH window resizing
     if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) ) OVT_Exit ( ) ;
-    //if ( _O_ )
+    if ( _O_ )
     {
         _O_->Signal = signal ;
         _O_->SigAddress = si->si_addr ; //( Is_DebugOn && _Debugger_->DebugAddress ) ? _Debugger_->DebugAddress : si->si_addr ;
@@ -394,7 +394,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
             else OVT_Throw ( _O_->Signal, _O_->RestartCondition, 1 ) ;
         }
     }
-    //else  _OVT_SigLongJump ( & _OSMS_->JmpBuf0 ) ; // ?! doesn't work
+    else  _OVT_SigLongJump ( & _OSMS_->JmpBuf0 ) ; // ?! doesn't work
 }
 
 void

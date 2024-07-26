@@ -188,7 +188,7 @@ _Compile_Save_Debugger_CpuState ( Debugger * debugger, int64 showFlag )
 {
     Compile_CpuState_Save ( debugger->cs_Cpu ) ;
     if ( showFlag ) Compile_Call_TestRSP ( ( byte* ) CSL_Debugger_UdisOneInsn ) ;
-    if ( ( Verbosity ( ) > 3 ) && ( debugger->cs_Cpu->Rsp != debugger->LastRsp ) ) Debugger_PrintReturnStackWindow ( ) ;
+    if ( ( Verbosity ( ) > 3 ) && ( debugger->cs_Cpu->Rsp != (uint64*) debugger->LastRsp ) ) Debugger_PrintReturnStackWindow ( ) ;
     if ( showFlag ) Compile_Call_TestRSP ( ( byte* ) CSL_Debugger_CheckSaveCpuStateShow ) ;
 }
 

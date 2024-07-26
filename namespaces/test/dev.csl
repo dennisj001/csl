@@ -591,8 +591,10 @@ pwi _ffx //pause
 SHOOTOUT 1 =
 
 : _shootout ( wn n | m w t ) 
+    //<dbg>
     { SHOOTOUT @ } 
     {
+        //"hi" ps // testing only!
         w wn @ _findUsing = { SHOOTOUT @ 1 > } { w @ wdiss } if2
         3 ti 
         { m n @ = t n @ = } { m @ 0 > } { m -- } 
@@ -600,7 +602,7 @@ SHOOTOUT 1 =
             { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx } for
         } for
         nl wn @ ps 3 time 
-        wn @ ps reps0 @ dup p " = "ps w @ wordRun decimal p nl // test output 
+        wn @ ps reps0 @ p " = "ps reps0 @ w @ wordRun decimal p nl // test output 
         wn @ comment nl
     }
     if2
@@ -622,7 +624,7 @@ SHOOTOUT 1 =
 //<dbg>
 ;
 //pwi fib_shootout //pause
-reps0 23 =
+reps0 92 =
 3 fib_shootout // pause
 //reps 2 = reps0 2 = 1 fib_shootout //pause
 //logOff pause
@@ -640,7 +642,7 @@ reps0 23 =
 ;
 // pwi fac_shootout
 //verbosity 4 =
-reps0 99 =
+reps0 23 =
 3 fac_shootout //pause
 //reps 2 = reps0 2 = 1 fac_shootout //pause
 //sp 

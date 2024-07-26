@@ -100,17 +100,14 @@ _Debugger_ShouldWeShow ( Debugger * debugger, Word * word, Boolean stepFlag, int
 void
 _Debugger_ShowEffects ( Debugger * debugger, Word * word, Boolean stepFlag, int64 debugLevel, Boolean force )
 {
-    //uint64* dsp = _DspReg_ ; //GetState ( debugger, DBG_STEPPING ) ? ( _DspReg_ = debugger->cs_Cpu->R14d ) : _DspReg_ ;
     if ( _Debugger_ShouldWeShow ( debugger, word, stepFlag, debugLevel, force ) )
     {
         DebugColors ;
         if ( word && ( word->W_ObjectAttributes & OBJECT_FIELD ) ) Word_PrintOffset ( word, TOS, 0 ) ;
-        //&& ( ! ( word->W_MorphismAttributes & (DOT|OBJECT_OPERATOR) ) ) ) Word_PrintOffset ( word, 0, 0 ) ;
         _Debugger_DisassembleWrittenCode ( debugger ) ;
         Debugger_ShowChange ( debugger, word, stepFlag ) ;
-        //DebugColors ;
+        //DefaultColors ;
         debugger->LastShowEffectsWord = word ;
-        //Set_DataStackPointers_FromDebuggerDspReg ( ) ;
     }
     if ( ! GetState ( debugger, DBG_STEPPING ) ) Debugger_Setup_ResetState ( debugger ) ;
     debugger->ShowLine = 0 ;
@@ -205,7 +202,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal )
     if ( ( _O_->SigSegvs < 2 ) && GetState ( debugger, DBG_STEPPING ) )
     {
         iPrintf ( "\nDebug Stepping Address : 0x%016lx", ( uint64 ) debugger->DebugAddress ) ;
-        Debugger_UdisOneInstruction ( debugger, 0, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
+        Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
     }
     if ( ( ! sif ) && ( ! GetState ( debugger, DBG_STEPPING ) ) && ( GetState ( debugger, DBG_INFO ) ) ) _Debugger_ShowInfo ( debugger, prompt, signal, 1 ) ;
     if ( prompt == _O_->ExceptionMessage ) _O_->ExceptionMessage = 0 ;
@@ -253,7 +250,7 @@ Debugger_ShowState ( Debugger * debugger, byte * prompt )
         if ( word ) _CSL_Source ( word, 0 ) ;
 
         if ( GetState ( debugger, DBG_STEPPING ) )
-            Debugger_UdisOneInstruction ( debugger, 0, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ; // current insn
+            Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ; // current insn
     }
 }
 
@@ -292,7 +289,9 @@ Debugger_DoState ( Debugger * debugger )
         if ( GetState ( debugger, DBG_START_STEPPING ) && GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\n ... Next stepping instruction ..." ) ;
         SetState ( debugger, DBG_START_STEPPING, false ) ;
         debugger->cs_Cpu->Rip = ( uint64 * ) debugger->DebugAddress ;
-        Debugger_UdisOneInstruction ( debugger, debugger->w_Word, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
+        if ( debugger->DebugAddress != debugger->LastDisAddress ) 
+            Debugger_UdisOneInstructionWithSourceCode ( debugger, debugger->w_Word, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
+        debugger->LastDisAddress = 0 ;
     }
     if ( _LC_ && _LC_->DebuggerState && GetState ( debugger, DBG_LC_DEBUG ) ) LC_Debug_Output ( _LC_ ) ;
 }

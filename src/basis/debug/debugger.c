@@ -414,15 +414,21 @@ Debugger_Using ( Debugger * debugger )
 void
 Debugger_Continue ( Debugger * debugger )
 {
+    Word * word ;
     if ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) || ( GetState ( debugger, DBG_STEPPING ) && debugger->DebugAddress ) )
     {
         // always step thru code : only way known to maintain correct stack !! 
         SetState ( debugger, ( DBG_CONTINUE_MODE ), true ) ;
         if ( debugger->DebugAddress )
         {
+            debugger->OutWord = 0 ;
             debugger->Key = debugger->SaveKey ;
-            // continue stepping thru
+            // continue stepping thru to end of word
+            word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+            debugger->OutWord = word ;
             Debugger_StepLoop ( debugger ) ;
+            debugger->OutWord = 0 ;
+            //Debugger_Step ( debugger ) ;
         }
         SetState ( debugger, ( DBG_CONTINUE_MODE ), false ) ;
         if ( ! GetState ( debugger, DBG_STEPPING ) ) DebugOff ;
@@ -474,10 +480,11 @@ Debugger_Info ( Debugger * debugger )
 }
 
 #if DEBUG
+
 void
 Debugger_Dbg ( Debugger * debugger )
 {
-    _dbg () ;//0, (int64) debugger->w_Word, 0 ) ;
+    _dbg ( ) ; //0, (int64) debugger->w_Word, 0 ) ;
 }
 #endif
 
@@ -821,7 +828,7 @@ Debugger_TableSetup ( Debugger * debugger )
     int64 i ;
     for ( i = 0 ; i < 128 ; i ++ ) debugger->CharacterTable [ i ] = 0 ;
     debugger->CharacterTable [ 0 ] = 0 ;
-    debugger->CharacterTable [ 'o' ] = 1 ;
+    debugger->CharacterTable [ 'o' ] = 3 ;
     debugger->CharacterTable [ 'i' ] = 1 ;
     debugger->CharacterTable [ 's' ] = 1 ;
     debugger->CharacterTable [ 'h' ] = 1 ;
@@ -875,6 +882,7 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 0 ] = Debugger_Default ;
     debugger->CharacterFunctionTable [ 1 ] = Debugger_Step ;
     debugger->CharacterFunctionTable [ 2 ] = Debugger_Eval ;
+    debugger->CharacterFunctionTable [ 3 ] = Debugger_Out ; // step out of word
 
     // debugger internal
     debugger->CharacterFunctionTable [ 4 ] = Debugger_Dis ;

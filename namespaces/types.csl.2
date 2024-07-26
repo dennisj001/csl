@@ -1,5 +1,16 @@
 // see readme.txt for a text description
 // TODO : types, database, garbage collection : integration
+cOn
+C
+'Experimental namespace
+Experimental
+type Pointer ; Pointer.size = 8 ;
+type block ; block.size = 8 ;
+type Location ; Location.size = 8 ;
+type int64 ; int64.size = 8 ;
+#define BITFIELDS 1
+#define ENUM 0
+#if 0
 typedef char int8 ;
 typedef unsigned char uint8 ;
 typedef uint8 ubyte ;
@@ -16,6 +27,8 @@ typedef Pointer Struct ;
 
 typedef char * CString ;
 typedef byte CharSet ;
+#endif
+
 typedef void (* VoidFunction ) (void) ;
 typedef void (*vFunction_1_Arg ) ( int64 ) ;
 typedef void (*vFunction_1_UArg ) ( uint64 ) ;
@@ -24,8 +37,8 @@ typedef int64( *cFunction_0_Arg ) ( ) ;
 typedef int64( *cFunction_1_Arg ) ( int64 ) ;
 typedef
 int64( *cFunction_2_Arg ) ( int64, int64 ) ;
-typedef VoidFunction block ; // code block
-typedef int ( *mpf2andOutFunc ) ( mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t ) ;
+//typedef VoidFunction block ; // code block
+//typedef int ( *mpf2andOutFunc ) ( mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t ) ;
 typedef struct
 {
     int64 *InitialTosPointer ;
@@ -117,10 +130,12 @@ typedef struct
 } dllist ;
 #define Head l_List.n_Head
 #define Tail l_List.n_Tail
+#if ENUM
 enum types
 {
     BOOL, BYTE, INTEGER, STRING, T_BIGNUM, FLOAT, POINTER, X64CODE, WORD, WORD_LOCATION, ARROW, CARTESIAN_PRODUCT
 } ;
+#endif
 typedef struct
 {
     union
@@ -660,7 +675,7 @@ typedef struct
     Namespace * QualifyingNamespace ;
 } Finder ;
 
-struct _Interpreter ;
+//struct _Interpreter ;
 typedef struct SourceCodeInfo
 {
     int64 SciIndex, SciQuoteMode, SciFileIndexScStart, SciFileIndexScEnd ;
@@ -822,18 +837,18 @@ typedef struct _Interpreter
     dllist * InterpList ;
 } Interpreter ;
 
-struct _Debugger ;
+//struct _Debugger ;
 typedef void (* DebuggerFunction ) (struct _Debugger *) ;
 typedef struct _Debugger
 {
     uint64 State ;
-    int64 * SaveDsp, * InitDsp, *RaDsp, *AddressModeSaveDsp, *SaveEdi, *SaveRsp, * WordDsp, * DebugRSP, *DebugRBP ;
-    int64 *DebugRSI, *DebugRDI, * LastRsp, LevelBitNamespaceMap, Insn ;
+    int64 * SaveDsp, * InitDsp, *RaDsp, *AddressModeSaveDsp, *SaveEdi, *SaveRsp, * WordDsp, * DebugRSP, *DebugRBP,
+    *DebugRSI, *DebugRDI, * LastRsp, LevelBitNamespaceMap, Insn ;
     int64 RL_ReadIndex, SaveTOS, SaveStackDepth, Key, SaveKey, LastScwi, Esi, Edi, InsnSize ;
-    Word * w_Word, *w_Alias, *w_AliasOf, *EntryWord, *LastShowInfoWord, *LastShowEffectsWord, *NextEvalWord ;
-    Word *LocalsNamespace, *LastPreSetupWord, *SteppedWord, *CurrentlyRunningWord, *LastSourceCodeWord, *SubstitutedWord ;//, *OutWord ;
+    Word * w_Word, *w_Alias, *w_AliasOf, *EntryWord, *LastShowInfoWord, *LastShowEffectsWord, *NextEvalWord, *OutWord ;
+    Word *LocalsNamespace, *LastPreSetupWord, *SteppedWord, *CurrentlyRunningWord, *LastSourceCodeWord, *SubstitutedWord ;
     byte *Menu, * Token, *DebugAddress, *ReturnAddress, *CopyRSP, *CopyRBP, *LastSourceCodeAddress ;
-    byte * PreHere, *SpecialPreHere, *StartHere, *LastDisAddress, *ShowLine, * Filename ;
+    byte * PreHere, *SpecialPreHere, *StartHere, *LastDisStart, *ShowLine, * Filename ;
     block SaveCpuState, RestoreCpuState ;
     Stack *ReturnStack, *BreakReturnStack, *LocalsCompilingNamespacesStack ;
     Cpu * cs_Cpu ;
@@ -842,7 +857,6 @@ typedef struct _Debugger
     DebuggerFunction CharacterFunctionTable [ 48 ] ;
     ud_t * Udis ;
     dllist * DebugWordList ;
-    Word * OutWord ;
 } Debugger ;
 typedef struct
 {
@@ -851,7 +865,8 @@ typedef struct
     long BigNum_Printf_Precision ;
     long BigNum_Printf_Width ;
     int64 ExceptionFlag ;
-    struct timespec Timers [ 8 ] ;
+    //struct timespec Timers [ 8 ] ;
+    int64 Timers [ 8 ] ;
 } System ;
 typedef struct
 {
@@ -892,15 +907,18 @@ typedef struct _CombinatorInfo
     union
     {
         int64 CI_i32_Info ;
+#if BITFIELDS
         struct
         {
-            unsigned BlockLevel : 16 ;
-            unsigned ParenLevel : 16 ;
+            int64 BlockLevel : 16 ;
+            int64 ParenLevel : 16 ;
         } ;
+#else   int32 Block_Paren_Level ;
+#endif
     } ;
 } CombinatorInfo ;
 
-struct _CSL ;
+//struct _CSL ;
 typedef struct _LambdaCalculus
 {
     uint64 State, DebuggerState, DebuggerSetupFlag ;
@@ -929,11 +947,14 @@ typedef struct
 {
     union
     {
+#if BITFIELDS
         struct
         {
-            unsigned CharFunctionTableIndex : 16 ;
-            unsigned CharType : 16 ;
+            int64 CharFunctionTableIndex : 16 ;
+            int64 CharType : 16 ;
         } ;
+#else   int32 CharInfo ;
+#endif
         int64 CharInfo ;
     } ;
 } CharacterType ;
@@ -1063,17 +1084,18 @@ typedef struct
     int64 CSLSize, BufferSpaceSize, StringSpaceSize, Thrown ;
     Buffer *PrintBuffer, *PrintBufferCopy, *PrintBufferConcatCopy ;
     sigjmp_buf JmpBuf0 ;
-    struct timespec Timer ;
+    //struct timespec Timer ;
+    int64 Timer ;
     byte Pblc, Pbf8 [8] ; // Print Buffer last char/first 8 char 
 } OpenVmTil ;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first
 typedef struct
 {
-    const char * ccp_Name ;
+    char * ccp_Name ;
     union
     {
-        const char * pb_TypeSignature ;
+        char * pb_TypeSignature ;
         char TypeSignature [8] ;
         uint64 uint64_TypeSignature ;
     } ;
@@ -1088,7 +1110,7 @@ typedef struct
 } CPrimitive ;
 typedef struct
 {
-    const char * ccp_Name ;
+    char * ccp_Name ;
     uint64 ui64_MorphismAttributes ;
     uint64 ui64_ObjectAttributes ;
     block blk_CallHook ;
@@ -1102,18 +1124,21 @@ typedef struct ppibs
     union
     {
         int64 int64_Ppibs ; // for ease of initializing and conversion
+#if BITFIELDS
         struct
         {
-            //unsigned State : 1 ; // status of whether we should do an ifBlock or not
-            //unsigned Status : 1 ;
-            unsigned AccumStatus : 1 ; // status of whether we should do an ifBlock or not
-            unsigned Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            unsigned IfCond : 1 ; // status of whether we should do an ifBlock or not
-            unsigned ElifCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            unsigned SvIfCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            //unsigned Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            //unsigned DoItStatus : 1 ; // controls whether we do nested if block
-        } ;
+            //int64 State : 1 ; // status of whether we should do an ifBlock or not
+            //int64 Status : 1 ;
+            int64 AccumStatus : 1 ; // status of whether we should do an ifBlock or not
+            int64 Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            int64 IfCond : 1 ; // status of whether we should do an ifBlock or not
+            int64 ElifCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            int64 SvIfCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            //int64 Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            //int64 DoItStatus : 1 ; // controls whether we do nested if block
+         } ;
+#else   int64 Status ;         
+#endif
     } ;
     byte * Filename ;
     int64 LineNumber ;
