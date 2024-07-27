@@ -441,6 +441,25 @@ Debugger_Continue ( Debugger * debugger )
     }
 }
 
+void
+Debugger_Out ( Debugger * debugger )
+{
+    Word * word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+    debugger->OutWord = word ;
+    iPrintf ( "\n ... stepping out of word : %s at 0x%-16lx",
+        ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
+    debugger->Key = 's' ;
+    Debugger_StepLoop ( debugger ) ;
+#if 0    
+    //_Block_Eval ( (block) debugger->DebugAddress ) ;
+    _Block_Eval ( word->Definition ) ;
+    AdjustR14WithDsp ( ) ;
+    //CSL_PrintDataStack () ; 
+    debugger->DebugAddress += debugger->InsnSize ; //debugger->InsnSize ; // 3 : sizeof call reg insn
+    if ( GetState ( debugger, DBG_EVAL_MODE ) ) SetState ( debugger, ( DBG_CONTINUE_MODE ), false ) ;
+#endif            
+}
+
 // by 'eval' we stop debugger->Stepping and //continue thru this word as if we hadn't stepped
 
 void

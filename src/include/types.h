@@ -831,7 +831,7 @@ typedef struct _Debugger
     int64 *DebugRSI, *DebugRDI, * LastRsp, LevelBitNamespaceMap, Insn ;
     int64 RL_ReadIndex, SaveTOS, SaveStackDepth, Key, SaveKey, LastScwi, Esi, Edi, InsnSize ;
     Word * w_Word, *w_Alias, *w_AliasOf, *EntryWord, *LastShowInfoWord, *LastShowEffectsWord, *NextEvalWord ;
-    Word *LocalsNamespace, *LastPreSetupWord, *SteppedWord, *CurrentlyRunningWord, *LastSourceCodeWord, *SubstitutedWord ;//, *OutWord ;
+    Word *LocalsNamespace, *LastPreSetupWord, *SteppedWord, *CurrentlyRunningWord, *LastSourceCodeWord, *SubstitutedWord ; //, *OutWord ;
     byte *Menu, * Token, *DebugAddress, *ReturnAddress, *CopyRSP, *CopyRBP, *LastSourceCodeAddress ;
     byte * PreHere, *SpecialPreHere, *StartHere, *LastDisAddress, *ShowLine, * Filename ;
     block SaveCpuState, RestoreCpuState ;
@@ -842,7 +842,7 @@ typedef struct _Debugger
     DebuggerFunction CharacterFunctionTable [ 48 ] ;
     ud_t * Udis ;
     dllist * DebugWordList ;
-    Word * OutWord ;
+    Word * OutWord ; //for some compiler error (gcc 13/14) reason this has to be here else it breaks the debug <dbg> code!!??
 } Debugger ;
 typedef struct
 {

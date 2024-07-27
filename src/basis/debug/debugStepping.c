@@ -67,7 +67,7 @@ Debugger_CompileAndStepOneInstruction ( Debugger * debugger )
 void
 Debugger_StepLoop ( Debugger * debugger )
 {
-    SetState ( debugger, ( DBG_UDIS ), false ) ; // turn off disassembly
+    //SetState ( debugger, ( DBG_UDIS ), false ) ; // turn off disassembly
     byte * dadr = debugger->DebugAddress ;
     Word * word ;
     while ( dadr )
@@ -324,15 +324,6 @@ Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
     }
 #endif    
     return rtrn ;
-}
-
-void
-Debugger_Out ( Debugger * debugger )
-{
-    Word * word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
-    debugger->OutWord = word ;
-    debugger->Key = 's' ;
-    Debugger_StepLoop ( debugger ) ;
 }
 
 void
