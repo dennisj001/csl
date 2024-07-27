@@ -4,8 +4,8 @@
 Boolean
 DBG_Interpret_Loop_Test ( Debugger * debugger )
 {
-    Boolean rtn = ( ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) || GetState ( debugger, DBG_STEPPING ) ||
-        ( ( GetState ( debugger, DBG_AUTO_MODE ) ) && ( ! ( GetState ( debugger, DBG_EVAL_AUTO_MODE ) ) ) ) ) ;
+    Boolean rtn = ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ; //( ( ! GetState ( debugger, DBG_INTERPRET_LOOP_DONE ) ) || ( GetState ( debugger, DBG_STEPPING ) ||
+    //( ( GetState ( debugger, DBG_AUTO_MODE ) ) && ( ! ( GetState ( debugger, DBG_EVAL_AUTO_MODE ) ) ) ) ) ) ;
     return rtn ;
 }
 
@@ -36,18 +36,21 @@ Debugger_InterpreterLoop ( Debugger * debugger )
     }
     while ( DBG_Interpret_Loop_Test ( debugger ) ) ;
     debugger->LastPreSetupWord = debugger->w_Word ;
+    DebugModeOff ;
     SetState ( debugger, ( DBG_STACK_OLD | DBG_INTERPRET_LOOP_DONE ), true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
-    AdjustR14WithDsp ( ) ;
+    //AdjustR14WithDsp ( ) ;
     if ( GetState ( debugger, ( DBG_SETUP_ADDRESS ) ) )
     {
-        SetState ( debugger, ( DBG_SETUP_ADDRESS ), false ) ;
+        //SetState ( debugger, ( DBG_SETUP_ADDRESS ), false ) ;
+        ClearState ( debugger ) ;
         SetState ( debugger->w_Word, W_STEPPED, true ) ;
     }
     else if ( GetState ( debugger, DBG_STEPPED ) //&& ( ! Stack_Depth ( debugger->ReturnStack ) )
         && ( ! ( GetState ( debugger, DBG_RUNTIME_BREAKPOINT ) ) ) )
     {
-        SetState ( debugger, DBG_STEPPING, false ) ;
+        //SetState ( debugger, DBG_STEPPING, false ) ;
+        ClearState ( debugger ) ;
         siglongjmp ( _Context_->JmpBuf0, 1 ) ;
     }
 }
@@ -226,7 +229,11 @@ Debugger_Init ( Debugger * debugger, Cpu * cpu, Word * word, byte * address )
     DebugColors ;
     if ( address ) debugger->DebugAddress = address ;
     if ( ! GetState ( debugger, DBG_BRK_INIT ) ) debugger->State = DBG_MENU | DBG_INFO | DBG_PROMPT ;
-    if ( debugger->DebugAddress ) debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+    if ( ! word )
+    {
+        if ( debugger->DebugAddress ) debugger->w_Word = word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;
+    }
+    else debugger->w_Word = word ;
     debugger->Menu =
         "\nDebug Menu at : \n%s :\n(m)enu, so(U)rce, dum(p), (e)val, (d)is, dis(a)ccum, dis(A)ccum, (r)egisters, (l)ocals, (v)ariables, (I)nfo, (W)dis, s(h)ow, debu(g) "
         "\n(R)eturnStack, sto(P), (S)tate, (c)ontinue, (s)tep, (o)ver, (i)nto, o(u)t, t(h)ru, s(t)ack, auto(z), (V)erbosity, (q)uit, a(B)ort, (u)dis toggle"
@@ -240,10 +247,11 @@ Debugger_Off ( Debugger * debugger, int64 debugOffFlag )
     if ( Is_DebugOn )
     {
         _Debugger_Init ( debugger ) ;
-        SetState ( debugger->cs_Cpu, CPU_SAVED, false ) ;
-        SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE | DBG_EVAL_AUTO_MODE | DBG_SHOW, false ) ;
+        //SetState ( debugger->cs_Cpu, CPU_SAVED, false ) ;
+        //SetState ( _Debugger_, DBG_BRK_INIT | DBG_ACTIVE | DBG_STEPPING | DBG_PRE_DONE | DBG_AUTO_MODE | DBG_EVAL_AUTO_MODE | DBG_SHOW, false ) ;
         if ( debugOffFlag ) DebugOff ;
     }
+    debugger->State = 0 ;
 }
 
 void
@@ -251,7 +259,7 @@ Debugger_On ( Debugger * debugger )
 {
     if ( ( ! Is_DebugOn ) || GetState ( debugger, ( DBG_BRK_INIT | DBG_RUNTIME_BREAKPOINT ) ) )
     {
-        Debugger_Init ( debugger, debugger->cs_Cpu, 0, 0 ) ;
+        Debugger_Init ( debugger, debugger->cs_Cpu, debugger->w_Word, 0 ) ;
         DebugOn ;
         DebugShow_On ;
     }

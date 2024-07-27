@@ -559,8 +559,6 @@ sp0
 nl nl 92 tfib3 //sp0 pause
 nl 92 dup p fibBN p 
 20 fibBN dup p 6765 == { "ok" ps } { "error" ps } tf2 drop sp0
-reps 1000 =
-reps0 92 =
 : dbg _dbg ;
 //cOff
 : _ifx ( w | j )
@@ -613,38 +611,62 @@ SHOOTOUT 1 =
 : fib_shootout ( m | n )
     { "\n\nfib_shootout begin ...\n" ps  n m @ = } { m @ 0 > } { m -- } 
     {
+#if 0 //DEBUG_ON 
+        "fibPTC2?" n @ _shootout 
+#else
         "fibPTC2?" n @ _shootout 
         "cfib2_O3" n @ _shootout
         "fibPTC2?" n @ _shootout
         "cfib2_O3" n @ _shootout
         "fibPTC2?" n @ _shootout
         "cfib2_O3" n @ _shootout 
+#endif
     } for
     "\nfib_shootout end ...\n" ps 
 //<dbg>
 ;
 //pwi fib_shootout //pause
 reps0 92 =
+#if DEBUG_ON 
+reps 2 = 
+reps0 2 = 
+1 d: fib_shootout 
+stack pause
+#else
+reps 1000 =
+reps0 92 =
 3 fib_shootout // pause
-//reps 2 = reps0 2 = 1 fib_shootout //pause
+#endif
 //logOff pause
 : fac_shootout ( m | n ) 
     { "\n\nfac_shootout begin ...\n" ps n m @ = } { m @ 0 > } { m -- } 
     {
+#if DEBUG_ON
+        "factorial2" n @ _shootout //pause
+#else
         "factorial2" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
+        "factorial2" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
         "factorial2" n @ _shootout //pause
         "cfactorial3" n @ _shootout
+#endif
     } for
     "\n\nfac_shootout end ...\n" ps
 //<dbg>
 ;
 // pwi fac_shootout
 //verbosity 4 =
+#if DEBUG_ON 
+reps 2 = 
+reps0 2 = 
+1 d: fac_shootout 
+stack pause
+#else
+reps 1000 =
 reps0 23 =
 3 fac_shootout //pause
-//reps 2 = reps0 2 = 1 fac_shootout //pause
+#endif
 //sp 
 bnOff 
 nl

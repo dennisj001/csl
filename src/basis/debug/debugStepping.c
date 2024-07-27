@@ -301,8 +301,8 @@ Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
     }
     else
     {
-        if ( GetState ( debugger, ( DBG_AUTO_MODE | DBG_CONTINUE_MODE ) ) )
-            Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
+        //if ( GetState ( debugger, ( DBG_AUTO_MODE | DBG_CONTINUE_MODE ) ) )
+        //    Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
         SetState ( debugger, DBG_STACK_OLD, true ) ;
         debugger->CopyRSP = 0 ;
         if ( GetState ( debugger, DBG_BRK_INIT ) ) SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED,

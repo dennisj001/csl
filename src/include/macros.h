@@ -52,6 +52,7 @@
 
 #define Calculate_FrameSize( numberOfLocals )  ( ( numberOfLocals + 1 ) * CELL ) // 1 : space for fp
 
+#define ClearState( obj ) ( (obj)->State = 0 ) 
 #define _GetState( aState, state ) ( (aState) & (state) ) 
 #define GetState( obj, state ) ((obj) && _GetState( (obj)->State, (state) )) 
 #define GetState_TrueFalse( obj, _true, _false )  (obj) ? ( ( _GetState( (obj)->State, (_true) ) ) && ( ! _GetState( (obj)->State, (_false) ))  ) : 0

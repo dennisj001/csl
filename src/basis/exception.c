@@ -234,14 +234,17 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
                 }
                 case 'd':
                 {
-                    DebugOff ;
+                    //DebugOff ;
+                    //byte * token =  Lexer_ReadToken ( _Lexer_ ) ;
+                    //debugger->w_Word = Interpreter_ReadNextTokenToWord ( _Interpreter_ ) ;
+
                     _CSL_DebugOn ( ) ;
                     //Debugger_On ( Debugger * debugger )
-                    SetState ( _Debugger_, DBG_INFO | DBG_MENU | DBG_PROMPT, true ) ;
-                    SetState ( debugger, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE, false ) ; // stop auto mode and get next key command code
-                    Debugger_InterpreterLoop ( debugger ) ;
-                    //goto done ;
-                    break ;
+                    //SetState ( _Debugger_, DBG_INFO | DBG_MENU | DBG_PROMPT, true ) ;
+                    //SetState ( debugger, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE, false ) ; // stop auto mode and get next key command code
+                    //Debugger_InterpreterLoop ( debugger ) ;
+                    goto done ;
+                    //break ;
                 }
                 case ESC:
                 {
