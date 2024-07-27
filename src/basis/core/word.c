@@ -376,7 +376,7 @@ _Word_ShowSourceCode ( Word * word0 )
         }
         else scd = ( byte* ) "C Primitive" ;
         name = c_gd ( word->Name ) ;
-        if ( Is_DebugOn && GetState ( _Debugger_, DBG_STEPPING ) && ( ! GetState ( _Debugger_, DBG_UDIS ) ) ) return ;
+        if ( Is_DebugOn && GetState ( _Debugger_, DBG_STEPPING ) && ( ! GetState ( _CSL_, DBG_UDIS ) ) ) return ;
         iPrintf ( "\nSourceCode for %s.%s :> \n%s",
             word->S_ContainingNamespace ? word->S_ContainingNamespace->Name : ( byte* ) "", name, scd ) ;
     }

@@ -57,7 +57,7 @@ int64
 Debugger_UdisOneInstructionWithSourceCode (Debugger * debugger, Word * word, byte * address, byte * prefix, byte * postfix )
 {
     ud_t * ud = debugger->Udis ;
-    if ( address && GetState ( debugger, DBG_UDIS|DBG_UDIS_ONE ) )
+    if ( address && GetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE ) )
     {
         int64 isize ;
         ud_set_input_buffer ( ud, address, 16 ) ;
@@ -75,7 +75,7 @@ int64
 _Udis_Disassemble (ud_t *ud, Word * word, byte* iaddress, int64 number, byte * prefix, byte * postfix, int64 cflag )
 {
     int64 isize, size = 0 ;
-    if ( ( ((int64) iaddress) > 0 ) && GetState ( _Debugger_, DBG_UDIS|DBG_UDIS_ONE ) )
+    if ( ( ((int64) iaddress) > 0 ) && GetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE ) )
     {
         char * iasm ;
         byte * address = 0 ;

@@ -518,8 +518,8 @@ Debugger_Dbg ( Debugger * debugger )
 void
 Debugger_UdisToggle ( Debugger * debugger )
 {
-    if ( GetState ( debugger, DBG_UDIS | DBG_UDIS_ONE ) ) SetState ( debugger, DBG_UDIS | DBG_UDIS_ONE, false ) ;
-    else SetState ( debugger, DBG_UDIS, true ) ;
+    if ( GetState ( _CSL_, DBG_UDIS_ONE ) ) SetState ( _CSL_, DBG_UDIS_ONE, false ) ;
+    else SetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE, true ) ;
 }
 
 void
@@ -788,7 +788,7 @@ Debugger_New ( uint64 type )
     SetState ( debugger, DBG_INTERPRET_LOOP_DONE, false ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     Debugger_UdisNew ( debugger ) ;
-    SetState ( debugger, DBG_UDIS, true ) ;
+    SetState ( _CSL_, DBG_UDIS, true ) ;
 
     return debugger ;
 }

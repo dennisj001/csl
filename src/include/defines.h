@@ -589,8 +589,6 @@
 #define DBG_SHOW ( (uint64) 1 << 41 )
 #define DBG_SOURCE ( (uint64) 1 << 42 )
 #define DBG_CANT_STEP_EVAL ( (uint64) 1 << 43 )
-#define DBG_UDIS ( (uint64) 1 << 44 )
-#define DBG_UDIS_ONE ( (uint64) 1 << 45 )
 #define DBG_EVAL_MODE ( (uint64) 1 << 46 )
 //#define _DBG_UDIS_ONE ( (uint64) 1 << 46 )
 
@@ -610,6 +608,8 @@
 #define DBG_TYPECHECK_ON ( (uint64) 1 << 14 )
 #define DEFINES_MACROS_ON ( (uint64) 1 << 15 )
 //#define TYPECHECK_OFF ( (uint64) 1 << 15 )
+#define DBG_UDIS ( (uint64) 1 << 15 )
+#define DBG_UDIS_ONE ( (uint64) 1 << 16 )
 
 // State Flags --
 // ? sytem flags ?? -- not all -- todo here

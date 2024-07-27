@@ -286,7 +286,7 @@ Debugger_DoState ( Debugger * debugger )
         //else if ( ( GetState ( debugger, DBG_STEPPING ) ) && ( ! GetState ( debugger, DBG_CONTINUE_MODE ) ) )
     else if ( GetState ( debugger, DBG_SHOW ) && ( GetState ( debugger, DBG_STEPPING | DBG_START_STEPPING ) ) && ( ! GetState ( debugger, DBG_CONTINUE_MODE ) ) )
     {
-        if ( GetState ( debugger, DBG_START_STEPPING ) && GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\n ... Next stepping instruction ..." ) ;
+        if ( GetState ( debugger, DBG_START_STEPPING ) && GetState ( _CSL_, DBG_UDIS ) ) iPrintf ( "\n ... Next stepping instruction ..." ) ;
         SetState ( debugger, DBG_START_STEPPING, false ) ;
         debugger->cs_Cpu->Rip = ( uint64 * ) debugger->DebugAddress ;
         if ( debugger->DebugAddress != debugger->LastDisAddress ) 

@@ -124,7 +124,7 @@ _Debugger_COI_StepInto ( Debugger * debugger, Word * word )
     if ( ( * debugger->DebugAddress == CALL32 ) || ( ( ( * ( uint16* ) debugger->DebugAddress ) == 0xff49 )//CALL/JMP reg : MOD_RM
         && ( *( debugger->DebugAddress + 2 ) == 0xd2 ) ) ) // call r10
     {
-        if ( GetState ( debugger, DBG_SHOW ) && GetState ( debugger, DBG_UDIS ) )
+        if ( GetState ( debugger, DBG_SHOW ) && GetState ( _CSL_, DBG_UDIS ) )
             iPrintf ( "\nstepping into a csl compiled function : %s : .... :> %s ",
             word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
         _Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
@@ -177,13 +177,13 @@ Debugger_CheckSkipDebugOrCallThruWord ( Debugger * debugger, byte * jcAddress )
     else if ( ( word && ( ! Debugger_CanWeStep ( debugger, word ) ) ) || ( word && ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) ) ) )
     {
         if ( word->W_MorphismAttributes & ( RT_STEPPING_DEBUG ) )
-            SetState_TrueFalse ( debugger, DBG_UDIS | DBG_UDIS_ONE, ( DBG_AUTO_MODE | DBG_INTERPRET_LOOP_DONE ) ) ;
+            SetState_TrueFalse ( _CSL_, DBG_UDIS_ONE, ( DBG_AUTO_MODE | DBG_INTERPRET_LOOP_DONE ) ) ;
         // we are already stepping here and now, so skip
         if ( word->W_MorphismAttributes & ( DEBUG_WORD | RT_STEPPING_DEBUG ) )
         {
             Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
             //debugger->DebugAddress = jcAddress ;
-            if ( GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\nskipping over a debug word : %s : at 0x%-16lx",
+            if ( GetState ( _CSL_, DBG_UDIS ) ) iPrintf ( "\nskipping over a debug word : %s : at 0x%-16lx",
                 ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
             debugger->DebugAddress += debugger->InsnSize ; // 3 : sizeof call reg insn
             return 4 ;

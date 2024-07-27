@@ -25,12 +25,12 @@ int64
 _Debugger_Disassemble ( Debugger * debugger, Word * word, byte* address, int64 number, int64 cflag )
 {
     int64 size = 0 ;
-    if ( GetState ( debugger, DBG_UDIS|DBG_UDIS_ONE ) )
+    if ( GetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE ) )
     {
-        if ( GetState ( debugger, DBG_UDIS_ONE ) ) SetState ( debugger, DBG_UDIS_ONE, false ) ;
         ud_t * udis = Debugger_UdisInit ( debugger ) ;
         size = _Udis_Disassemble (udis, word, address, ( number > ( 3 * K ) ) ? ( 3 * K ) : number, (byte*) "", (byte*) "", cflag ) ;
         debugger->LastDisAddress = address ;
+        SetState ( _CSL_, DBG_UDIS_ONE, false ) ;
         return size ; 
     }
 }
@@ -46,10 +46,10 @@ void
 Udis1InsnX ( )
 {
     Debugger * debugger = _Debugger_ ;
-    int64 svu = GetState ( debugger, DBG_UDIS|DBG_UDIS_ONE ) ;
-    SetState ( debugger, DBG_UDIS|DBG_UDIS_ONE, true ) ;
+    int64 svu = GetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE ) ;
+    SetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE, true ) ;
     Udis1Insn ( ) ;
-    SetState ( debugger, DBG_UDIS|DBG_UDIS_ONE, svu ) ;
+    SetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE, svu ) ;
 }
 
 void
@@ -104,7 +104,7 @@ _Debugger_DisassembleWrittenCode ( Debugger * debugger )
         {
             NamedByteArray * nba = Get_CompilerSpace ( )->OurNBA ;
             byte * csName = nba ? ( byte * ) c_gd ( nba->NBA_Name ) : ( byte* ) "" ;
-            if ( GetState ( debugger, DBG_UDIS ) ) iPrintf ( "\nCode compiled to %s for word :> %s <: %4d bytes : at 0x%lx at %s", csName,
+            if ( GetState ( _CSL_, DBG_UDIS ) ) iPrintf ( "\nCode compiled to %s for word :> %s <: %4d bytes : at 0x%lx at %s", csName,
                 c_gn ( String_CB ( word->Name ) ), codeSize, compiledToAddr, Context_Location ( ) ) ;
             _Debugger_Disassemble ( debugger, word, compiledToAddr, codeSize,
                 ( word->W_MorphismAttributes & ( CPRIMITIVE | DLSYM_WORD | DEBUG_WORD ) ? 1 : 0 ) ) ;

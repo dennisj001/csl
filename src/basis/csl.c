@@ -125,7 +125,7 @@ void
 CSL_DataStack_Init ( )
 {
     _CSL_DataStack_Init ( _CSL_ ) ;
-    if ( Verbosity () > 2 ) iPrintf ( "\nData Stack reset." ) ;
+    if ( Verbosity ( ) > 2 ) iPrintf ( "\nData Stack reset." ) ;
 }
 
 void
@@ -186,7 +186,7 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     csl->TokenBuffer = Buffer_DataCleared ( csl->TokenB ) ;
     SetState ( csl, CSL_RUN | CO_ON | INLINE_ON, true ) ;
 
-    if ( Verbosity () > 2 ) iPrintf ( "\nSystem Memory is being reallocated.  " ) ;
+    if ( Verbosity ( ) > 2 ) iPrintf ( "\nSystem Memory is being reallocated.  " ) ;
 
     csl->ContextStack = Stack_New ( 256, allocType ) ;
     csl->TypeWordStack = Stack_New ( _O_->DataStackSize, allocType ) ;
@@ -227,7 +227,7 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     csl->SC_QuoteMode = 0 ;
     csl->EndBlockWord = Finder_FindWord_InOneNamespace ( _Finder_, ( byte* ) "C_Syntax", ( byte* ) "}" ) ;
     csl->BeginBlockWord = Finder_FindWord_InOneNamespace ( _Finder_, ( byte* ) "Reserved", ( byte* ) "{" ) ;
-    SetState ( csl, SOURCE_CODE_ON, true ) ;
+    SetState ( csl, DBG_UDIS|DBG_UDIS_ONE | SOURCE_CODE_ON, true ) ;
 }
 
 void
@@ -249,7 +249,7 @@ CSL_ResetMemory ( CSL * csl )
     OVT_MemListFree_Buffers ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
     _OVT_MemListFree_CSLInternal ( ) ;
-    if ( Verbosity () > 1 ) OVT_ShowMemoryAllocated ( ) ;
+    if ( Verbosity ( ) > 1 ) OVT_ShowMemoryAllocated ( ) ;
 }
 
 CSL *
@@ -328,7 +328,7 @@ CSL_DebugLevel ( )
 }
 
 void
-CSL_SaveDebugInfo (Word * word)
+CSL_SaveDebugInfo ( Word * word )
 {
     word = word ? word : _Context_->CurrentWordBeingCompiled ? _Context_->CurrentWordBeingCompiled : 0 ;
     if ( word )
@@ -399,7 +399,7 @@ void
 _CSL_FinishWordDebugInfo ( Word * word )
 {
     if ( word && ( ! GetState ( _CSL_, ( RT_DEBUG_ON | GLOBAL_SOURCE_CODE_MODE ) ) ) ) CSL_DeleteDebugInfo ( ) ;
-    else CSL_SaveDebugInfo (word) ;
+    else CSL_SaveDebugInfo ( word ) ;
 }
 
 void
@@ -436,7 +436,7 @@ int64
 _CSL_TerminalLineWidth ( CSL * csl )
 {
     int64 tw = GetTerminalWidth ( ), i = 0 ;
-    if ( tw == 0 ) tw = 140 ; 
+    if ( tw == 0 ) tw = 140 ;
     //while ( tw == 0 ) iPrintf ( "\rGetTerminalWidth ...\r%c[J", ESC ), tw = GetTerminalWidth ( ), i ++ ;
     if ( tw != csl->TerminalLineWidth ) csl->TerminalLineWidth = tw ;
     return csl->TerminalLineWidth ;
