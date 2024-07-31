@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.940.101" ) 
+#define VERSION ((byte*) "0.940.141" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -98,23 +98,24 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     ovt->StartedTimes = startedTimes ;
     OVT_GetStartupOptions ( ovt ) ;
 
-    allocSize = 430 * K ;
+    allocSize = 1 * M ; //430 * K ;
     ovt->InternalObjectsSize = 1 * M ;
     ovt->ObjectSpaceSize = 1 * M ;
     ovt->LispSpaceSize = 1 * M ;
     ovt->LispTempSize = 1 * M ;
     ovt->LispCopySize = 1 * M ;
-    ovt->CompilerTempObjectsSize = 1 * M ; //2 * allocSize ;
+    ovt->CompilerTempObjectsSize = 4 * M ; //2 * allocSize ;
     ovt->BufferSpaceSize = allocSize ; //35 * ( sizeof ( Buffer ) + BUFFER_SIZE ) ;
     ovt->MachineCodeSize = allocSize ;
     ovt->StringSpaceSize = allocSize ;
-    ovt->DictionarySize = 1 * M ; //100 * K ;
-    ovt->CSLSize = ( 190 * K ) ;
+    ovt->DictionarySize = 4 * M ; //100 * K ;
+    ovt->CSLSize = 1 * M ; //( 190 * K ) ;
     ovt->OpenVmTilSize = ( 6 * K ) ;
     ovt->DataStackSize = 8 * K ; //1 * MB ; //8 * MB ;
-    ovt->TempObjectsSize = 1 * M ; //200 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
-    ovt->WordRecylingSize = 1 * K * ( sizeof (Word ) + sizeof (WordData ) ) ; //50 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
+    ovt->TempObjectsSize = 4 * M ; //200 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
+    ovt->WordRecylingSize = 1 * M ; //2 * K * ( sizeof (Word ) + sizeof (WordData ) ) ; //50 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
     ovt->SessionObjectsSize = 1 * M ; //50 * K ;
+    ovt->ContextSize = 2 * M ; 
 
     _OpenVmTil_Init ( ovt ) ;
     Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;

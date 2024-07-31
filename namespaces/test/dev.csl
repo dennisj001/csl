@@ -585,25 +585,20 @@ pwi _ifx //pause
 pwi _ffx //pause
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
 
-'SHOOTOUT var 
-SHOOTOUT 1 =
+'WDISS_ON var 
+WDISS_ON 0 =
 
 : _shootout ( wn n | m w t ) 
     //<dbg>
-    { SHOOTOUT @ } 
+    w wn @ _findUsing = { WDISS_ON @ 0 > } { w @ wdiss } if2
+    3 ti 
+    { m n @ = t n @ = } { m @ 0 > } { m -- } 
     {
-        //"hi" ps // testing only!
-        w wn @ _findUsing = { SHOOTOUT @ 1 > } { w @ wdiss } if2
-        3 ti 
-        { m n @ = t n @ = } { m @ 0 > } { m -- } 
-        {
-            { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx } for
-        } for
-        nl wn @ ps 3 time 
-        wn @ ps reps0 @ p " = "ps reps0 @ w @ wordRun decimal p nl // test output 
-        wn @ comment nl
-    }
-    if2
+        { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx } for
+    } for
+    nl wn @ ps 3 time 
+    wn @ ps reps0 @ p " = "ps reps0 @ w @ wordRun decimal p nl // test output 
+    wn @ comment nl
 ;
 //pwi _shootout //pause
 //sp 
@@ -675,15 +670,6 @@ namespaceTreeWithWords
 Interpreter
 sp0
 
-
-#if 0 // this works
-lcOn scOn
-(define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
-tick fibc find wdiss
-(fibc 20)
-lcOff sp0
-#endif
-
 #if 1 // this works
 bnOn cOn 
 void ctof0 ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
@@ -709,7 +695,7 @@ d: : hi 1 2 + p ; hi
 //stringMacrosOff
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
-#if 0 // this works
+#if DEBUG_ON //0 // this works
 C
 scOn
 cOn 
@@ -773,12 +759,11 @@ CountChange ( int64 amount )
     value0 = countChange ( amount ) ;
     oPrintf ( "\n%ld", value0 ) ;
 }
-//pwi countChange
 //logOn
 countChange (100) ; p
 countChangec (100 ) ; drop
-countChangec (1000 ) ; drop
-CountChange (1000) ; 
+ti(4) ; countChangec (1000 ) ; drop time(4) ;
+ti(4) ; CountChange (1000) ; time(4) ;
 //logOff
 cOff
 

@@ -9,7 +9,7 @@ _Context_DataObject_Run ( Context * cntx )
 }
 
 void
-Context_DataObject_Run ()
+Context_DataObject_Run ( )
 {
     _Context_DataObject_Run ( _Context_ ) ;
 }
@@ -18,7 +18,7 @@ void
 _Context_Prompt ( Context * cntx, int64 control )
 {
     //if ( Verbosity () && (( control && ( ! IS_INCLUDING_FILES ) ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
-    if ( (control && Verbosity ()) && ( ( ! IS_INCLUDING_FILES )  || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
+    if ( ( control && Verbosity ( ) ) && ( ( ! IS_INCLUDING_FILES ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
         Context_DoPrompt ( cntx ) ;
 }
 
@@ -54,16 +54,6 @@ Context_CurrentWord ( )
     return _Context_CurrentWord ( _Context_ ) ;
 }
 
-Context *
-_Context_Allocate ( )
-{
-    NBA * nba = NBA_MemSpace_New ( _O_->MemorySpace0, ( byte* ) String_New ( ( byte* ) "ContextSpace", STRING_MEM ), 10 * K, OPENVMTIL ) ;
-    _O_->MemorySpace0->ContextSpace = nba ;
-    Context * cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), OPENVMTIL ) ;
-    cntx->ContextNba = nba ;
-    return cntx ;
-}
-
 void
 Context_SetSpecialTokenDelimiters ( Context * cntx, byte * specialDelimiters, uint64 allocType )
 {
@@ -90,10 +80,9 @@ Context_SetDefaultTokenDelimiters ( Context * cntx, byte * delimiters, uint64 al
 }
 
 Context *
-_Context_Init ( Context * cntx0, Context * cntx )
+_Context_Init ( Context * cntx )
 {
-    if ( cntx0 && cntx0->System0 ) cntx->System0 = System_Copy ( cntx0->System0, CONTEXT ) ; // nb : in this case System is copied -- DataStack is shared
-    else cntx->System0 = System_New ( CONTEXT ) ;
+    cntx->System0 = System_New ( CONTEXT ) ;
     List_Init ( _CSL_->CSL_N_M_Node_WordList ) ;
     Context_SetDefaultTokenDelimiters ( cntx, ( byte* ) " \n\r\t", CONTEXT ) ;
     Context_SetSpecialTokenDelimiters ( cntx, 0, CONTEXT ) ;
@@ -104,19 +93,53 @@ _Context_Init ( Context * cntx0, Context * cntx )
     cntx->Compiler0 = cntx->Interpreter0->Compiler0 ;
     cntx->PreprocessorStackList = _dllist_New ( CONTEXT ) ;
     cntx->TDI_StructUnionStack = _Stack_Allocate ( 64, CONTEXT ) ;
-    //if ( ! GetState ( cntx, TDI_PARSING ) )
-    //    Stack_Init ( cntx->TDI_StructUnionStack ) ;
+    return cntx ;
+}
+
+Context *
+_Context_Allocate ( )
+{
+    Context * cntx ;
+    if ( ! _O_->MemorySpace0->ContextSpace )
+    {
+        _O_->MemorySpace0->ContextSpace = NBA_MemSpace_New ( _O_->MemorySpace0, 
+            ( byte* ) String_New ( ( byte* ) "ContextSpace", STRING_MEM ), _O_->ContextSize, OPENVMTIL ) ;
+        cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), OPENVMTIL ) ;
+    }
+    else cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), CONTEXT ) ;
+    cntx->ContextNba = _O_->MemorySpace0->ContextSpace ;
     return cntx ;
 }
 
 Context *
 _Context_New ( CSL * csl )
 {
-    Context * cntx = _Context_Allocate ( ), *cntx0 = csl->Context0 ;
-    _Context_ = csl->Context0 = cntx ;
-    _Context_Init ( cntx0, cntx ) ;
+    Context * cntx = _Context_Allocate ( ), *cntx0 ;
+    cntx0 = csl->Context0 ; // old context
+    _Context_ = csl->Context0 = cntx ; // new context
+    //if ( cntx0 && cntx0->System0 ) cntx->System0 = System_Copy ( cntx0->System0, CONTEXT ) ; // nb : in this case System is copied -- DataStack is shared
+    //else 
+    _Context_Init ( cntx ) ;
     cntx->ContextDataStack = csl->DataStack ; // nb. using the same one and only DataStack
     return cntx ;
+}
+
+Context *
+CSL_Context_PushNew ( CSL * csl )
+{
+    uint64 svState = csl->Context0->State ;
+    _Stack_Push ( csl->ContextStack, ( int64 ) csl->Context0 ) ;
+    Context * cntx = _Context_New ( csl ) ;
+    cntx->State = svState ;
+    return cntx ;
+}
+
+void
+CSL_Context_PopDelete ( CSL * csl )
+{
+    Context * cntx = ( Context* ) _Stack_Pop ( csl->ContextStack ) ;
+    _Context_ = csl->Context0 = cntx ;
+    _O_->MemorySpace0->ContextSpace = cntx->ContextNba ;
 }
 
 void
@@ -141,27 +164,6 @@ void
 _Context_Run ( Context * cntx, ContextFunction contextFunction )
 {
     contextFunction ( cntx ) ;
-}
-
-Context *
-CSL_Context_PushNew ( CSL * csl )
-{
-    uint64 svState = csl->Context0->State ;
-    _Stack_Push ( csl->ContextStack, ( int64 ) csl->Context0 ) ;
-    Context * cntx = _Context_New ( csl ) ;
-    cntx->State = svState ;
-    return cntx ;
-}
-
-void
-CSL_Context_PopDelete ( CSL * csl )
-{
-    NBA * cnba = csl->Context0->ContextNba ;
-    Context * cntx = ( Context* ) _Stack_Pop ( csl->ContextStack ) ;
-    //Compiler_DeleteDebugInfo ( cntx->Compiler0 ) ;
-    _Context_ = csl->Context0 = cntx ;
-    _O_->MemorySpace0->ContextSpace = cntx->ContextNba ;
-    NamedByteArray_Delete ( cnba, 0 ) ;
 }
 
 void
@@ -267,18 +269,18 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
             if ( ! flispFlag )
             {
                 if ( interpretFlag == 1 ) Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_FILE | END_OF_STRING ) ;
-                else if ( interpretFlag == 2 ) Interpret_UntilFlagged2WithInit ( cntx->Interpreter0, END_OF_FILE | END_OF_STRING ) ;// used with preprocessor
+                else if ( interpretFlag == 2 ) Interpret_UntilFlagged2WithInit ( cntx->Interpreter0, END_OF_FILE | END_OF_STRING ) ; // used with preprocessor
             }
 
             _CSL_->IncludeFileStackNumber -- ;
-            if ( Verbosity () > 2 ) iPrintf ( "\n%s included\n", filename ) ;
+            if ( Verbosity ( ) > 2 ) iPrintf ( "\n%s included\n", filename ) ;
         }
         else
         {
-            
+
             byte * buf = Buffer_DataCleared ( _CSL_->ScratchB1 ) ;
-            snprintf ( buf, BUFFER_SIZE, "\nError : _Context_IncludeFile : \"%s\" : not found!\n", (char*) filename ) ;
-                //_Context_Location ( ( Context* ) _CSL_->ContextStack->StackPointer [0] ) ) ;
+            snprintf ( buf, BUFFER_SIZE, "\nError : _Context_IncludeFile : \"%s\" : not found!\n", ( char* ) filename ) ;
+            //_Context_Location ( ( Context* ) _CSL_->ContextStack->StackPointer [0] ) ) ;
             _Error ( buf, QUIT ) ;
         }
     }
@@ -287,7 +289,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
 void
 CSL_ContextNew_IncludeFile ( byte * filename, int flispFlag )
 {
-    if ( Verbosity () ) iPrintf ( "\nincluding %s at %s ...\n", filename, Context_Location () ) ;
+    if ( Verbosity ( ) ) iPrintf ( "\nincluding %s at %s ...\n", filename, Context_Location ( ) ) ;
     _CSL_Contex_NewRun_3 ( _CSL_, _Context_IncludeFile, filename, 1, flispFlag ) ;
 }
 
@@ -339,7 +341,7 @@ Context_GetState ( Context * cntx, Word * word )
         //if ( IS_NAMESPACE_RELATED_TYPE ( word ) )
         {
             if ( word->W_ObjectAttributes & ( C_TYPE | C_CLASS | STRUCT | OBJECT | THIS ) ) CSL_Set_QidInNamespace ( word ) ;
-            if ( word && ( word->W_ObjectAttributes & ( OBJECT_FIELD ) ) && ( typeNamespace = TypeNamespace_Get ( word ) ) ) 
+            if ( word && ( word->W_ObjectAttributes & ( OBJECT_FIELD ) ) && ( typeNamespace = TypeNamespace_Get ( word ) ) )
                 Finder_SetQualifyingNamespace ( cntx->Finder0, typeNamespace ) ;
             else Finder_SetQualifyingNamespace ( cntx->Finder0, word ) ;
         }

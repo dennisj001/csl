@@ -303,15 +303,15 @@ Debugger_CASOI_Do_Return_Insn ( Debugger * debugger )
     {
         //if ( GetState ( debugger, ( DBG_AUTO_MODE | DBG_CONTINUE_MODE ) ) )
         //    Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
-        SetState ( debugger, DBG_STACK_OLD, true ) ;
+        //SetState ( debugger, DBG_STACK_OLD, true ) ;
         debugger->CopyRSP = 0 ;
-        if ( GetState ( debugger, DBG_BRK_INIT ) ) SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED,
-            DBG_ACTIVE | DBG_BRK_INIT | DBG_STEPPING ) ;
-        else SetState_TrueFalse ( debugger, DBG_INTERPRET_LOOP_DONE | DBG_STEPPED,
+        if ( GetState ( debugger, DBG_BRK_INIT ) ) SetState_TrueFalse ( debugger, DBG_STACK_OLD | DBG_INTERPRET_LOOP_DONE | DBG_STEPPED,
+            DBG_ACTIVE | DBG_BRK_INIT | DBG_STEPPING | DBG_SETUP_ADDRESS ) ;
+        else SetState_TrueFalse ( debugger, DBG_STACK_OLD | DBG_INTERPRET_LOOP_DONE | DBG_STEPPED,
             DBG_ACTIVE | DBG_STEPPING | DBG_SETUP_ADDRESS ) ;
         debugger->DebugAddress = 0 ;
         SetState ( debugger->cs_Cpu, CPU_SAVED, false ) ;
-        SetState ( debugger, DBG_SETUP_ADDRESS, false ) ;
+        //SetState ( debugger, DBG_SETUP_ADDRESS, false ) ;
         rtrn = 4 ;
     }
 #if 0    

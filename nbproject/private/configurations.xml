@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="bin">
+      </df>
+      <df name="etc">
+      </df>
+      <df name="misc">
+      </df>
+      <df name="namespaces">
+        <df name="compiler">
+        </df>
+        <df name="test">
+        </df>
+      </df>
+      <df name="src">
+        <df name="basis">
+          <df name="compiler">
+            <in>_compile.c</in>
+            <in>arrays.c</in>
+            <in>bit.c</in>
+            <in>blocks.c</in>
+            <in>combinators.c</in>
+            <in>compile.c</in>
+            <in>contol.c</in>
+            <in>cpu.c</in>
+            <in>locals.c</in>
+            <in>logic.c</in>
+            <in>machineCode.c</in>
+            <in>math.c</in>
+            <in>mcPrimitives.c</in>
+            <in>memory.c</in>
+            <in>optimize.c</in>
+            <in>runtime.c</in>
+            <in>stack.c</in>
+            <in>udis.c</in>
+          </df>
+          <df name="core">
+            <in>_readline.c</in>
+            <in>array.c</in>
+            <in>block.c</in>
+            <in>charSet.c</in>
+            <in>classes.c</in>
+            <in>compiler.c</in>
+            <in>conditionals.c</in>
+            <in>cstack.c</in>
+            <in>dataObjectNew.c</in>
+            <in>dataObjectRun.c</in>
+            <in>dataStack.c</in>
+            <in>dllist.c</in>
+            <in>dobject.c</in>
+            <in>finder.c</in>
+            <in>interpret.c</in>
+            <in>io.c</in>
+            <in>lexer.c</in>
+            <in>memSpace.c</in>
+            <in>namespace.c</in>
+            <in>parse.c</in>
+            <in>preprocessor.c</in>
+            <in>readTable.c</in>
+            <in>readline.c</in>
+            <in>sequence.c</in>
+            <in>sockets.c</in>
+            <in>string.c</in>
+            <in>symbol.c</in>
+            <in>syntax.c</in>
+            <in>system.c</in>
+            <in>typedef.c</in>
+            <in>word.c</in>
+          </df>
+          <df name="debug">
+            <in>_debug.c</in>
+            <in>debugDisassembly.c</in>
+            <in>debugOutput.c</in>
+            <in>debugStepping.c</in>
+            <in>debugger.c</in>
+            <in>debuggerSteppingSetup.c</in>
+          </df>
+          <df name="lc">
+            <in>apply.c</in>
+            <in>eval.c</in>
+            <in>lambdaCalculus.c</in>
+            <in>lcDebug.c</in>
+            <in>print.c</in>
+            <in>read.c</in>
+            <in>special.c</in>
+          </df>
+          <in>atom.c</in>
+          <in>bigNum.c</in>
+          <in>bigNum.gmp.c</in>
+          <in>colors.c</in>
+          <in>context.c</in>
+          <in>csl.c</in>
+          <in>exception.c</in>
+          <in>history.c</in>
+          <in>init.c</in>
+          <in>interpreter.c</in>
+          <in>interpreters.c</in>
+          <in>linux.c</in>
+          <in>lists.c</in>
+          <in>mem.c</in>
+          <in>openVmTil.c</in>
+          <in>recycle.c</in>
+          <in>repl.c</in>
+          <in>sourceCode.c</in>
+          <in>system.c</in>
+          <in>tabCompletion.c</in>
+          <in>typeCheck.c</in>
+          <in>x.c</in>
+        </df>
+        <df name="include">
+          <in>_proto.h</in>
+          <in>csl.h</in>
+          <in>defines.h</in>
+          <in>ext.h</in>
+          <in>lc.h</in>
+          <in>lisp.h</in>
+          <in>machineCode.h</in>
+          <in>machineCodeMacros.h</in>
+          <in>macros.h</in>
+          <in>old.h</in>
+          <in>os.h</in>
+          <in>prototypes.h</in>
+          <in>types.h</in>
+          <in>udis86.h</in>
+        </df>
+        <df name="primitives">
+          <in>bits.c</in>
+          <in>cmaths.c</in>
+          <in>compilers.c</in>
+          <in>contexts.c</in>
+          <in>dataObjectNews.c</in>
+          <in>debuggers.c</in>
+          <in>disassembler.c</in>
+          <in>file.c</in>
+          <in>fltlisp.c</in>
+          <in>fltlread.c</in>
+          <in>interpreters.c</in>
+          <in>ios.c</in>
+          <in>ls9.c</in>
+          <in>maths.c</in>
+          <in>memorys.c</in>
+          <in>namespaces.c</in>
+          <in>openvmtils.c</in>
+          <in>parsers.c</in>
+          <in>primitives.c</in>
+          <in>stacks.c</in>
+          <in>strings.c</in>
+          <in>syntaxes.c</in>
+          <in>systems.c</in>
+          <in>words.c</in>
+        </df>
+        <in>init_csl.c</in>
+      </df>
+    </df>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <rundir>.</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+  </confs>
+</configurationDescriptor>

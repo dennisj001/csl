@@ -454,6 +454,18 @@ Lisp OpenVmTil
 postfixOn 
 Root
  
+#if 1 // this works
+bnOn cOn 
+void ctof ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
+void ctof ( c ) { c *= 1.8 ; c += 32 ; nl ; p (c) ; } //ctof1 ( 11.41) ;
+cOff 
+: ctof ( c ) c 1.8 *=  c 32 += nl c @ p ; //11.41 ctof 
+: ftoc ( f ) f 32 -= f 1.8 /= f @ p ; //60 ftoc 
+bnOff
+: ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
+: ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
+sp0
+#endif
 //: ash _sh ; prefix
 
 //================================================================================

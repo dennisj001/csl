@@ -219,6 +219,7 @@ CSL_ForCombinator ( )
         d0 ( _CSL_SC_WordList_Show ( ( byte* ) "for combinator : before doPostBlock", 0, 0 ) ) ;
         BlockInfo * bidpb = Block_CopyCompile ( ( byte* ) doPostBlock, 1, 0 ) ;
         byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
+#if 1 // JCC8 setup       
         if ( ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
         {
             svHere = Here ;
@@ -241,6 +242,7 @@ CSL_ForCombinator ( )
                 goto done ;
             }
         }
+#endif        
         if ( svHere )
         {
             SetHere ( svHere ) ;

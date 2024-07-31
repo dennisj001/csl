@@ -37,7 +37,7 @@ ByteArray *
 ByteArray_Init ( ByteArray * ba, int64 size, uint64 type )
 {
     // we want to keep track of how much data for each type separate from MemChunk accounting
-    ba->BA_MemChunk.mc_AllocType = type ; 
+    ba->BA_MemChunk.mc_AllocType = type ;
     ba->BA_DataSize = size ;
     ba->BA_AllocSize = size + sizeof (ByteArray ) ;
     ba->BA_AAttribute = type ;
@@ -91,7 +91,7 @@ SetPreHere_ForDebug ( byte * address )
 }
 
 void
-ByteArray_SetHere_AndForDebug (ByteArray * ba, byte * address)
+ByteArray_SetHere_AndForDebug ( ByteArray * ba, byte * address )
 {
     if ( address )
     {
@@ -102,9 +102,9 @@ ByteArray_SetHere_AndForDebug (ByteArray * ba, byte * address)
 }
 
 void
-SetHere (byte * address)
+SetHere ( byte * address )
 {
-    if ( address ) ByteArray_SetHere_AndForDebug (_O_->CodeByteArray, address) ;
+    if ( address ) ByteArray_SetHere_AndForDebug ( _O_->CodeByteArray, address ) ;
 }
 
 byte *
@@ -227,7 +227,7 @@ _NamedByteArray_Init ( NamedByteArray * nba, byte * name, int64 size, int64 atyp
     nba->NBA_DataSize = nba->OriginalSize = size ;
     nba->MemInitial = size ;
     nba->SmallestRemaining = size ;
-    nba->LargestRemaining = size ; 
+    nba->LargestRemaining = size ;
     nba->TotalAllocSize = sizeof ( NamedByteArray ) ;
     Set_NbaSymbolNode_To_NBA ( nba ) ;
     nba->NBA_MemChunk.mc_unmap = nba->NBA_MemChunk.mc_unmap ;
@@ -272,30 +272,21 @@ _ByteArray_AppendSpace_MakeSure ( ByteArray * ba, int64 size ) // size in bytes
     {
         while ( ba->MemRemaining < size )
         {
-            int64 largestRemaining = 0 ;
-            // check the other bas in the nba list to see if any have enough remaining
+            dlnode * node, *nodeNext ;
+            for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
             {
-                dlnode * node, *nodeNext ;
-                for ( node = dllist_First ( ( dllist* ) & nba->NBA_BaList ) ; node ; node = nodeNext )
-                {
-                    if ( node == nodeNext ) break ; // ?? TODO : should need this
-                    nodeNext = dlnode_Next ( node ) ;
-                    ba = Get_BA_Symbol_To_BA ( node ) ;
-                    if ( ba )
-                    {
-                        if ( ba->MemRemaining > largestRemaining ) largestRemaining = ba->MemRemaining ;
-                        if ( ba->MemRemaining >= size ) goto done ;
-                    }
-                }
+                nodeNext = dlnode_Next ( node ) ;
+                ba = Get_BA_Symbol_To_BA ( node ) ;
+                if ( ba && ( ba->MemRemaining >= size ) ) goto done ;
             }
             _O_->ReAllocations ++ ;
-            ++ nba->Allocations ;
+            nba->Allocations ++ ;
             //size = ( size > ( 100 * K ) ) ? size : ( 100 * K ) ;
             //nba->NBA_DataSize *= ++ nba->Allocations ;
             //if ( nba->NBA_DataSize > 10 * M ) nba->NBA_DataSize = 10 * M ;
-            nba->NBA_DataSize = (size > nba->NBA_DataSize) ? size : nba->NBA_DataSize ;
+            nba->NBA_DataSize = ( size > nba->NBA_DataSize ) ? size : nba->NBA_DataSize ;
             //if ( size > NBA_DataSize)
-            if ( Verbosity () > 2 ) NBA_PrintInfo ( nba ) ;
+            if ( Verbosity ( ) > 2 ) NBA_PrintInfo ( nba ) ;
             //ba = _NamedByteArray_AddNewByteArray ( nba, (size > nba->NBA_DataSize) ? size : nba->NBA_DataSize ) ;
             ba = _NamedByteArray_AddNewByteArray ( nba, nba->NBA_DataSize ) ;
         }
@@ -313,6 +304,8 @@ _ByteArray_AppendSpace ( ByteArray * ba, int64 size ) // size in bytes
 {
     while ( ba->MemRemaining < size )
     {
+        //if ( String_Equal ( ba->OurNBA->NBA_Symbol.Name, (byte*) "ObjectSpace") ) 
+        //    Pause () ;
         ba = _ByteArray_AppendSpace_MakeSure ( ba, size ) ;
     }
     ba->StartIndex = ba->EndIndex ; // move index to end of the last append
@@ -426,7 +419,7 @@ NamedByteArray_Delete ( NamedByteArray * nba, Boolean reinitFlag )
             ba = Get_BA_Symbol_To_BA ( node ) ;
             _Mem_ChunkFree ( ( MemChunk * ) ba ) ;
         }
-        if ( ! reinitFlag ) _Mem_ChunkFree ( ( MemChunk * ) nba ) ; 
+        if ( ! reinitFlag ) _Mem_ChunkFree ( ( MemChunk * ) nba ) ;
         else _NamedByteArray_Init ( nba, nba->NBA_MemChunk.mc_Name, nba->NBA_DataSize, nba->NBA_AAttribute ) ;
     }
 }

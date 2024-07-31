@@ -82,7 +82,8 @@ pwi bexp pwi bexp0
 7 bexp0 p sp0 
 7 ! p 8 ! p 8 ! p
 nl 7 ! p
-//pause
+nl "50 ! = " ps 50 ! fprint nl sp0
+pause
 //"!" ' qexp find alias
 //"!" ' aexp find alias
 //"!" ' bexp find alias
