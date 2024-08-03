@@ -28,7 +28,7 @@ _Debugger_Disassemble ( Debugger * debugger, Word * word, byte* address, int64 n
     if ( GetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE ) )
     {
         ud_t * udis = Debugger_UdisInit ( debugger ) ;
-        size = _Udis_Disassemble (udis, word, address, ( number > ( 3 * K ) ) ? ( 3 * K ) : number, (byte*) "", (byte*) "", cflag ) ;
+        size = _Udis_Disassemble (udis, word, address, ( number > ( 3 * K ) ) ? ( 3 * K ) : number, cflag ) ;
         debugger->LastDisAddress = address ;
         SetState ( _CSL_, DBG_UDIS_ONE, false ) ;
         return size ; 

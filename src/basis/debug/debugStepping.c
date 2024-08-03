@@ -88,62 +88,6 @@ Debugger_StepLoop ( Debugger * debugger )
     SetState ( debugger, ( DBG_UDIS ), true ) ;
 }
 
-#if 0
-
-void
-Debugger_DoJccType ( Debugger * debugger, byte * jcAddress )
-{
-    if ( ( ! debugger->ReturnAddress ) && Stack_Depth ( debugger->ReturnStack ) )
-        debugger->ReturnAddress = ( byte* ) Stack_Top ( debugger->ReturnStack ) ;
-    Word * word = Word_UnAlias ( Word_GetFromCodeAddress ( jcAddress ) ) ;
-    if ( IS_CALL_INSN ( debugger->DebugAddress ) ) _Word_ShowSourceCode ( word ) ;
-    if ( ( ! word ) || ( ! Debugger_CanWeStep ( debugger, word ) ) )
-    {
-        if ( GetState ( debugger, DBG_SHOW ) ) if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru - a non-native (C) subroutine : %s : .... :> %s ",
-                word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
-        // here we attempt to solve the problem encountered when we are stepping thru code that 
-        // calls words that are then also calling the debugger ... ; eg. interpreter.csl 'doWord'
-        uint64 svState = debugger->State ;
-        sigjmp_buf svJmpBuf ;
-        memcpy ( svJmpBuf, _Context_->JmpBuf0, sizeof (sigjmp_buf ) ) ;
-        byte * svDebugAddress = debugger->DebugAddress + debugger->InsnSize ;
-        Debugger_CompileAndStepOneInstruction ( debugger ) ;
-        debugger->DebugAddress = svDebugAddress ; // can be reset by Debugger_CompileAndStepOneInstruction
-        debugger->State = svState ; // it can be turned off if this word involves debugger eg. 'doWord'
-        memcpy ( _Context_->JmpBuf0, svJmpBuf, sizeof (sigjmp_buf ) ) ;
-        // and thus we can continue stepping ; nb! something is not quite right yet??
-
-    }
-    else Debugger_COI_StepKey ( debugger, word ) ;
-}
-
-void
-_Debugger_COI_StepInto ( Debugger * debugger, Word * word )
-{
-    while ( word->W_MorphismAttributes & ( ALIAS ) ) word = word->W_AliasOf ;
-    if ( ( * debugger->DebugAddress == CALL32 ) || ( ( ( * ( uint16* ) debugger->DebugAddress ) == 0xff49 )//CALL/JMP reg : MOD_RM
-        && ( *( debugger->DebugAddress + 2 ) == 0xd2 ) ) ) // call r10
-    {
-        if ( GetState ( debugger, DBG_SHOW ) && GetState ( _CSL_, DBG_UDIS ) )
-            iPrintf ( "\nstepping into a csl compiled function : %s : .... :> %s ",
-            word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
-        _Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
-    }
-    Debugger_CompileAndStepOneInstruction ( debugger ) ;
-}
-
-void
-Debugger_COI_StepKey ( Debugger * debugger, Word * word )
-{
-    if ( ( ( debugger->Key == 'o' ) || ( debugger->Key == 'h' ) ) ) //|| ( debugger->Key == 'c' ) || ( debugger->Key == 'z' ) ) && ( debugger->ReturnAddress ) )
-    {
-        debugger->Key = 0 ;
-        Debugger_StepLoop ( debugger ) ;
-    }
-    else _Debugger_COI_StepInto ( debugger, word ) ;
-}
-#endif
-
 void
 Do_JcAddress ( byte * jcAddress )
 {
@@ -151,7 +95,7 @@ Do_JcAddress ( byte * jcAddress )
     if ( jcAddress )
     {
         debugger->DebugAddress = jcAddress ;
-        Debugger_CompileAndStepOneInstruction ( debugger ) ;
+        //Debugger_CompileAndStepOneInstruction ( debugger ) ;
     }
     else
     {
@@ -209,7 +153,7 @@ Debugger_CheckSkipDebugOrCallThruWord ( Debugger * debugger, byte * jcAddress )
         if ( Is_DebugShowOn && GetState ( debugger, ( DBG_UDIS ) ) ) iPrintf ( "\n ... calling word : %s at 0x%-16lx",
             ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), debugger->DebugAddress ) ;
         _Stack_Push ( debugger->ReturnStack, ( int64 ) debugger->ReturnAddress ) ; // the return address
-        Debugger_CompileAndStepOneInstruction ( debugger ) ;
+        //Debugger_CompileAndStepOneInstruction ( debugger ) ;
         return 0 ;
     }
 }
@@ -249,7 +193,7 @@ Debugger_StepInstructionType ( Debugger * debugger )
             Debugger_CheckSkipDebugOrCallThruWord ( debugger, jcAddress ) ;
             return ;
         }
-        else if ( ( ( ( * ( uint16* ) dadr ) == 0xff49 ) && ( *( dadr + 2 ) == 0xd2 ) ) ) //CALL/JMP reg : MOD_RM
+        else if ( ( ( ( * ( uint16* ) dadr ) == 0xff49 ) && ( ( *( dadr + 2 ) == 0xd2 ) || ( *( dadr + 2 ) == 0xd3 ) ) ) ) //CALL/JMP reg : MOD_RM
         {
             debugger->Insn = CALL_REG ;
             debugger->ReturnAddress = dadr + debugger->InsnSize ;
@@ -432,4 +376,60 @@ Debugger_DoJcc ( Debugger * debugger )
     }
     return jcAddress ;
 }
+
+#if 0
+
+void
+Debugger_DoJccType ( Debugger * debugger, byte * jcAddress )
+{
+    if ( ( ! debugger->ReturnAddress ) && Stack_Depth ( debugger->ReturnStack ) )
+        debugger->ReturnAddress = ( byte* ) Stack_Top ( debugger->ReturnStack ) ;
+    Word * word = Word_UnAlias ( Word_GetFromCodeAddress ( jcAddress ) ) ;
+    if ( IS_CALL_INSN ( debugger->DebugAddress ) ) _Word_ShowSourceCode ( word ) ;
+    if ( ( ! word ) || ( ! Debugger_CanWeStep ( debugger, word ) ) )
+    {
+        if ( GetState ( debugger, DBG_SHOW ) ) if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru - a non-native (C) subroutine : %s : .... :> %s ",
+                word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
+        // here we attempt to solve the problem encountered when we are stepping thru code that 
+        // calls words that are then also calling the debugger ... ; eg. interpreter.csl 'doWord'
+        uint64 svState = debugger->State ;
+        sigjmp_buf svJmpBuf ;
+        memcpy ( svJmpBuf, _Context_->JmpBuf0, sizeof (sigjmp_buf ) ) ;
+        byte * svDebugAddress = debugger->DebugAddress + debugger->InsnSize ;
+        Debugger_CompileAndStepOneInstruction ( debugger ) ;
+        debugger->DebugAddress = svDebugAddress ; // can be reset by Debugger_CompileAndStepOneInstruction
+        debugger->State = svState ; // it can be turned off if this word involves debugger eg. 'doWord'
+        memcpy ( _Context_->JmpBuf0, svJmpBuf, sizeof (sigjmp_buf ) ) ;
+        // and thus we can continue stepping ; nb! something is not quite right yet??
+
+    }
+    else Debugger_COI_StepKey ( debugger, word ) ;
+}
+
+void
+_Debugger_COI_StepInto ( Debugger * debugger, Word * word )
+{
+    while ( word->W_MorphismAttributes & ( ALIAS ) ) word = word->W_AliasOf ;
+    if ( ( * debugger->DebugAddress == CALL32 ) || ( ( ( * ( uint16* ) debugger->DebugAddress ) == 0xff49 )//CALL/JMP reg : MOD_RM
+        && ( *( debugger->DebugAddress + 2 ) == 0xd2 ) ) ) // call r10
+    {
+        if ( GetState ( debugger, DBG_SHOW ) && GetState ( _CSL_, DBG_UDIS ) )
+            iPrintf ( "\nstepping into a csl compiled function : %s : .... :> %s ",
+            word ? ( char* ) c_gd ( word->Name ) : "", Context_Location ( ) ) ;
+        _Debugger_Disassemble ( _Debugger_, 0, ( byte* ) debugger->DebugAddress, 0, 1 ) ;
+    }
+    Debugger_CompileAndStepOneInstruction ( debugger ) ;
+}
+
+void
+Debugger_COI_StepKey ( Debugger * debugger, Word * word )
+{
+    if ( ( ( debugger->Key == 'o' ) || ( debugger->Key == 'h' ) ) ) //|| ( debugger->Key == 'c' ) || ( debugger->Key == 'z' ) ) && ( debugger->ReturnAddress ) )
+    {
+        debugger->Key = 0 ;
+        Debugger_StepLoop ( debugger ) ;
+    }
+    else _Debugger_COI_StepInto ( debugger, word ) ;
+}
+#endif
 

@@ -669,7 +669,6 @@ asm: iax
 
                                     //"\nshould show : c3                    ret" ps      
 ;asm
-
 ' iax find wdiss sp0
 
 : _Compile_Test_Imm ( mod, rm, disp, imm )

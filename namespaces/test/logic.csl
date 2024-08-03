@@ -45,10 +45,10 @@ sp
 1 lt10 0 lt10
 : tnot ( n ) n @ not dup n store n @ dup p return tos ; "I.I" typeSignature
 ' tnot find wdiss //pause
-1 not 0 "tnot1_assert" assert
-0 not 1 "tnot2_assert" assert
-0 tnot 1 "tnot3_assert" assert
-1 tnot 0 "tnot4_assert" assert 
+1 not 0 "tnot_1_assert" assert
+0 not 1 "tnot_2_assert" assert
+0 tnot 1 "tnot_3_assert" assert
+1 tnot 0 "tnot_4_assert" assert 
 sp
 : tnot2 ( n m | v ) n @ m @ | not dup v store p return ( v @ ) ;  
 ' tnot2 find wdiss 

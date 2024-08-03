@@ -120,8 +120,8 @@ LocalsRegParameterOrder_Init ( Boolean n )
 Boolean
 LocalsRegParameterOrder_Optimized ( Boolean n )
 {
-    //Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
-    Boolean regOrder [] = { RCX, RDX, RDI, RSI, R8D, R9D, R10D, R11D } ;
+    Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
+    //Boolean regOrder [] = { RCX, RDX, RDI, RSI, R8D, R9D, R10D, R11D } ;
     return regOrder [n] ;
 }
 
@@ -298,13 +298,12 @@ Compile_Move ( uint8 direction, uint8 mod, uint8 reg, uint8 rm, uint8 operandSiz
                 if ( direction == TO_REG )
                 {
                     opCode = 0xb8 | rm ; //0xc7 ;
-                    controlFlags = 0 ;
                     modRm = 0 ; //0xc0 | rm ;//, controlFlags = ( MODRM_B ) ;
                 }
                 else if ( direction == TO_MEM )
                 {
                     opCode = 0xc7 ; //0xc7 ;
-                    controlFlags = ( MODRM_B ) ;
+                    controlFlags |= ( MODRM_B ) ;
                     modRm = ( mod << 6 ) | rm ; //, controlFlags = ( MODRM_B ) ;
                 }
                 _Compile_Write_Instruction_X64 ( 0, 0, opCode, modRm, controlFlags, 0, 0, 0, imm, immSize ) ;
@@ -852,46 +851,6 @@ _Compile_Test ( Boolean mod, Boolean reg, Boolean rm, Boolean controlFlags, int6
 {
 
     Compile_CalculateWrite_Instruction_X64 ( 0, 0xf7, mod, reg, rm, REX_W | MODRM_B | controlFlags, 0, disp, 0, imm, 0 ) ; //??
-}
-
-/* from Intel Instruction set reference : JMP insn
-A relative offset (rel8, rel16, or rel32) is generally specified as a label in assembly code, but at the machine code
-level, it is encoded as a signed 8-, 16-, or 32-bit immediate value. This value is added to the value in the EIP
-register. (Here, the EIP register contains the address of the instruction following the JMP instruction). When using
-relative offsets, the opcode (for short vs. near jumps) and the operand-size attribute (for near relative jumps)
-determines the size of the target operand (8, 16, or 32 bits).
- */
-byte *
-Calculate_Address_FromOffset_ForCallOrJump ( byte * address )
-{
-    byte * iaddress = 0 ;
-    int64 offset ;
-    if ( ( * address == JMP8 ) || IS_INSN_JCC8 ( * address ) )
-    {
-        offset = * ( ( int8 * ) ( address + 1 ) ) ;
-        iaddress = address + offset + 1 + BYTE_SIZE ;
-    }
-    else if ( ( * address == JMP32 ) || ( * address == CALL32 ) )
-    {
-        offset = * ( ( int32 * ) ( address + 1 ) ) ;
-        iaddress = address + offset + 1 + INT32_SIZE ;
-    }
-    else if ( ( ( * address == 0x0f ) && ( ( * ( address + 1 ) >> 4 ) == 0x8 ) ) )
-    {
-        offset = * ( ( int32 * ) ( address + 2 ) ) ;
-        iaddress = address + offset + 2 + INT32_SIZE ;
-    }
-    else if ( ( ( * ( uint16* ) address ) == 0xff49 ) && ( ( *( address + 2 ) == 0xd2 ) || ( *( address + 2 ) == 0xd3 ) ) ) // call r10/r11
-    {
-        if ( ( ( * ( uint16* ) ( address - 20 ) ) == 0xbb49 ) ) iaddress = ( byte* ) ( * ( ( uint64* ) ( address - 18 ) ) ) ; //mov r11, 0xxx in Compile_Call_TestRSP  
-        else iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
-    }
-    else if ( ( ( * ( uint16* ) address ) == 0xff48 ) && ( *( address + 2 ) == 0xd3 ) ) // call rax
-    {
-
-        iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
-    }
-    return iaddress ;
 }
 
 void

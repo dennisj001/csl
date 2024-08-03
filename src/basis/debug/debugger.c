@@ -36,7 +36,7 @@ Debugger_InterpreterLoop ( Debugger * debugger )
     }
     while ( DBG_Interpret_Loop_Test ( debugger ) ) ;
     debugger->LastPreSetupWord = debugger->w_Word ;
-    DebugModeOff ;
+    if ( debugger->Key != 'e' ) DebugModeOff ;
     SetState ( debugger, ( DBG_STACK_OLD | DBG_INTERPRET_LOOP_DONE ), true ) ;
     SetState ( debugger, DBG_STEPPING, false ) ;
     //AdjustR14WithDsp ( ) ;

@@ -22,7 +22,7 @@ _Udis_PrintInstruction ( ud_t * ud, byte * address, byte * prefix, byte * postfi
         format = ( byte* ) c_gd ( format ) ;
         formats = ( byte* ) c_gd ( formats ) ;
     }
-    if ( GetState ( _Debugger_, DBG_STEPPING ) ) iPrintf ( formats, prefix, ( int64 ) ud_insn_off ( ud ), 
+    if ( GetState ( _Debugger_, DBG_STEPPING ) ) iPrintf ( formats, prefix, ( int64 ) ud_insn_off ( ud ),
         ud_insn_hex ( ud ), c_gu ( ud_insn_asm ( ud ) ), c_gu ( postfix ) ) ;
     else iPrintf ( format, prefix, ( int64 ) ud_insn_off ( ud ), ud_insn_hex ( ud ), ud_insn_asm ( ud ), postfix ) ;
 }
@@ -54,16 +54,16 @@ _Udis_Init ( ud_t * ud )
 }
 
 int64
-Debugger_UdisOneInstructionWithSourceCode (Debugger * debugger, Word * word, byte * address, byte * prefix, byte * postfix )
+Debugger_UdisOneInstructionWithSourceCode ( Debugger * debugger, Word * word, byte * address, byte * prefix, byte * postfix )
 {
     ud_t * ud = debugger->Udis ;
-    if ( address && GetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE ) )
+    if ( address && GetState ( _CSL_, DBG_UDIS | DBG_UDIS_ONE ) )
     {
         int64 isize ;
         ud_set_input_buffer ( ud, address, 16 ) ;
         ud_set_pc ( ud, ( int64 ) address ) ;
         isize = ud_disassemble ( ud ) ;
-        SC_ShowSourceCode_In_Word_At_Address (word, address ) ;
+        SC_ShowSourceCode_In_Word_At_Address ( word, address ) ;
         _Udis_PrintInstruction ( ud, address, prefix, postfix ) ; //, debugger->DebugAddress ) ;
         debugger->LastDisAddress = address ;
         return isize ;
@@ -72,10 +72,10 @@ Debugger_UdisOneInstructionWithSourceCode (Debugger * debugger, Word * word, byt
 }
 
 int64
-_Udis_Disassemble (ud_t *ud, Word * word, byte* iaddress, int64 number, byte * prefix, byte * postfix, int64 cflag )
+_Udis_Disassemble ( ud_t *ud, Word * word, byte* iaddress, int64 number, int64 cflag )
 {
     int64 isize, size = 0 ;
-    if ( ( ((int64) iaddress) > 0 ) && GetState ( _CSL_, DBG_UDIS|DBG_UDIS_ONE ) )
+    if ( ( ( ( int64 ) iaddress ) > 0 ) && GetState ( _CSL_, DBG_UDIS | DBG_UDIS_ONE ) )
     {
         char * iasm ;
         byte * address = 0 ;
@@ -87,7 +87,7 @@ _Udis_Disassemble (ud_t *ud, Word * word, byte* iaddress, int64 number, byte * p
             iasm = ( char* ) ud_insn_asm ( ud ) ;
             address = ( byte* ) ( uint64 ) ud_insn_off ( ud ) ;
             //if ( word ) 
-            SC_ShowSourceCode_In_Word_At_Address (word, address ) ;
+            if ( word ) SC_ShowSourceCode_In_Word_At_Address ( word, address ) ;
             _Udis_PrintInstruction ( ud, address, ( byte* ) "", ( byte* ) "" ) ;
             if ( ( cflag && String_Equal ( ( byte* ) "ret", ( byte* ) iasm ) ) ) //|| String_Equal ( ( byte* ) "invalid", ( byte* ) iasm ) )
             {
@@ -102,5 +102,13 @@ _Udis_Disassemble (ud_t *ud, Word * word, byte* iaddress, int64 number, byte * p
         while ( ( isize && ( number > 0 ) ) ) ;
         size = address - iaddress + 1 ; // 1 : include last iaddress 
     }
-    return (( size > 0 ) ? size : 0 ) ; 
+    return (( size > 0 ) ? size : 0 ) ;
+}
+
+int64
+Udis_Disassemble ( byte* iaddress, int64 number, int64 cflag )
+{
+    ud_t * ud = Debugger_UdisInit ( _Debugger_ ) ;
+    _Udis_Disassemble ( ud, 0, iaddress, number ? number : 256, 1 ) ;
+
 }

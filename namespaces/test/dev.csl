@@ -625,8 +625,8 @@ reps0 92 =
 #if DEBUG_ON 
 reps 2 = 
 reps0 2 = 
-1 d: fib_shootout 
-stack pause
+1 fib_shootout 
+//stack pause
 #else
 reps 1000 =
 reps0 92 =
@@ -651,12 +651,12 @@ reps0 92 =
 //<dbg>
 ;
 // pwi fac_shootout
-//verbosity 4 =
+// verbosity 4 =
 #if DEBUG_ON 
 reps 2 = 
 reps0 2 = 
-1 d: fac_shootout 
-stack pause
+1 fac_shootout 
+//stack pause
 #else
 reps 1000 =
 reps0 23 =
@@ -695,12 +695,12 @@ d: : hi 1 2 + p ; hi
 //stringMacrosOff
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
+
 #if DEBUG_ON //0 // this works
-C
-scOn
-cOn 
+C scOn cOn 
+
 int64
-fd ( int koc)
+fd ( int64 koc ) //| REG rtrn )
 {
    int64 rtrn ;
    if ( koc == 1) rtrn = 1 ;
@@ -710,23 +710,14 @@ fd ( int koc)
    else if ( koc == 5) rtrn = 50 ;
    return rtrn ;
 }
-//pwi fd sp0
-/*
-(define (cc amount kinds-of-coins)                                                                                                                        
-  (cond ((= amount 0) 1)                                                                                                                                  
-        ((or (< amount 0) (= kinds-of-coins 0)) 0)                                                                                                        
-        (else (+ (cc amount                                                                                                                               
-                     (- kinds-of-coins 1))                                                                                                                
-                 (cc (- amount (first-denomination kinds-of-coins))
-                     kinds-of-coins)
-))))
-*/
 
 int64
-cc1 ( int64 amount, int64 koc)
-//cc1 ( REG amount, REG koc) // doesn't work ??
+//cc1 ( REG amount, REG koc ) //| REG rtrn, REG one, REG two ) 
+//cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) 
+//cc1 ( REG amount, REG koc | REG rtrn ) //REG one, REG two ) // doesn't work ??
+cc1 ( int64 amount, int64 koc | rtrn, one, two ) 
 {
-    int64 rtrn, one, two ;
+    //int64 rtrn, one, two ;
     if (amount == 0) rtrn = 1  ;
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
@@ -738,20 +729,16 @@ cc1 ( int64 amount, int64 koc)
         two = cc1 (amount - fd (koc), koc) ;
         rtrn = one + two ;
 #endif
-    }
-    //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
-    //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
+    }   
     return rtrn ;
+//<dbg> 
 }
-pwi cc1 
-pwi countChangec
 int64 
 countChange ( int amount)
 {
   int64 rtrn = cc1 ( amount, 5)  ;
   return rtrn ;
 }
-//pwi countchange
 void
 CountChange ( int64 amount )
 {
@@ -760,14 +747,45 @@ CountChange ( int64 amount )
     oPrintf ( "\n%ld", value0 ) ;
 }
 //logOn
-countChange (100) ; p
+countChange (100) ; p 
 countChangec (100 ) ; drop
 ti(4) ; countChangec (1000 ) ; drop time(4) ;
 ti(4) ; CountChange (1000) ; time(4) ;
+//pause
 //logOff
 cOff
+'fd findAny wdiss  
+'cc1 findAny wdiss //pause
+//pwi countchange
 
 #endif // ifdef _DEV_H_
 rdim 
 2 + 7 assertStkChk // stack checking
 //pause
+
+#if 0
+int64
+//cc1 ( int64 amount, int64 koc | rtrn, one, two )
+cc1 ( REG amount, REG koc | REG rtrn ) // doesn't work ??
+//cc1 ( REG amount, REG koc ) // doesn't work ??
+//cc1 ( REG amount, REG koc) // doesn't work ??
+{
+    //int64 rtrn, one, two ;
+    if (amount == 0) rtrn = 1  ;
+    else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
+    else 
+    {
+#if 1
+        rtrn = cc1 ( amount, koc - 1) d: + cc1 (amount - fd (koc), koc) ; // compiles but give wrong result
+#else // this works
+        one = cc1 ( amount, koc - 1) ;
+        two = cc1 (amount - fd (koc), koc) ;
+        rtrn = one + two ;
+#endif
+    }
+    //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
+    //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
+    return rtrn ;
+}
+#endif
+//vb(1) ;

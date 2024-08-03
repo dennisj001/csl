@@ -21,15 +21,16 @@ CSL_EndCombinator ( int64 quotesUsed, int64 moveFlag )
     Combinator * combinator ;
     if ( C_SyntaxOn ) combinator = _Context_->SC_CurrentCombinator ;
     else combinator = _Context_->CurrentCombinator ;
-    compiler->BreakPoint = Here ;
+    byte * here = Here ;
+    compiler->BreakPoint = here ;
     if ( combinator->W_MorphismAttributes & BREAK_COMBINATOR )
-        CSL_InstallGotoCallPoints_Keyed ( ( BlockInfo* ) bi, GI_CONTINUE | GI_BREAK, 0, 0 ) ;
-    CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, 0, 1 ) ;
+        CSL_InstallGotoCallPoints_Keyed ( ( BlockInfo* ) bi, GI_CONTINUE | GI_BREAK, here, 0 ) ;
+    CSL_InstallGotoCallPoints_Keyed ( bi, GI_JCC_TO_FALSE, here, 1 ) ;
     compiler->CombinatorLevel -- ;
-    compiler->CombinatorEndsAt = Here ;
+    compiler->CombinatorEndsAt = here ;
     // copy back into OriginalActualCodeStart, original code space, from where we started, CombinatorStartsAt, in CSL_BeginCombinator
-    if ( moveFlag && Compiling ) BI_Block_Copy ( bi, bi->OriginalActualCodeStart,
-        compiler->CombinatorStartsAt, compiler->CombinatorEndsAt - compiler->CombinatorStartsAt, 1 ) ; // 0 : can't generally peephole optimize (arrayTest.csl problems) ??
+    if ( moveFlag && Compiling ) BI_Block_Copy (bi, bi->OriginalActualCodeStart,
+        compiler->CombinatorStartsAt, compiler->CombinatorEndsAt - compiler->CombinatorStartsAt) ; // 0 : can't generally peephole optimize (arrayTest.csl problems) ??
     _Stack_DropN ( compiler->CombinatorBlockInfoStack, quotesUsed ) ;
     if ( GetState ( compiler, LC_COMBINATOR_MODE ) ) _Stack_Pop ( _LC_->CombinatorInfoStack ) ; //??
 }
@@ -44,7 +45,7 @@ CSL_BeginCombinator ( int64 quotesUsed )
     //BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
     BlockInfo *bi = BlockInfo_GetCbsStackPick ( quotesUsed - 1 ) ;
     compiler->CombinatorStartsAt = Here ;
-    SetOffsetForCallOrJump ( bi->PtrToJmpInsn, compiler->CombinatorStartsAt, T_JMP, JMP32 ) ;
+    CalculateOffsetForCallOrJump (bi->PtrToJmpInsn, compiler->CombinatorStartsAt, T_JMP) ;
     compiler->CombinatorLevel ++ ;
     return bi ;
 }
@@ -150,13 +151,13 @@ CSL_WhileCombinator ( )
             //if ( bic2->JccCode ) SetHere ( bic2->JccCode ) ; // overwrite 'ret' insn
             //else 
             SetHere ( bicJcc2Code ) ; // overwrite 'ret' insn
-            int32 offset = CalculateDispForCallOrJump ( Here, bid->CopiedToStart, JCC8, T_JCC ) ;
+            int32 offset = CalculateOffsetForCallOrJump (Here, bid->CopiedToStart, T_JCC ) ;
             if ( CheckOffset ( offset, 1 ) )
             {
                 _Compile_Jcc ( JCC8, bic2->Ttt, ! bic2->N, offset ) ;
                 GotoInfo_Remove ( ( dlnode* ) bic2->BI_Gi ), bic2->BI_Gi = 0 ;
-                SetOffsetForCallOrJump ( bicJcc2Code, bid->CopiedToStart, T_JCC, 0 ) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
-                SetOffsetForCallOrJump ( bicJccCode, Here, T_JCC, 0 ) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
+                CalculateOffsetForCallOrJump (bicJcc2Code, bid->CopiedToStart, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
+                CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
                 goto done ;
             }
         }
@@ -169,7 +170,7 @@ CSL_WhileCombinator ( )
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ; // for controlBlock
 done:
 #if T1           
-        if ( rcmpl ) SetOffsetForCallOrJump ( bicJccCode, Here, T_JCC, 0 ) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
+        if ( rcmpl ) CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
 #endif            
         CSL_EndCombinator ( 2, 1 ) ;
         //SetState ( _CSL_, JCC8_ON, svJccState ) ;
@@ -233,12 +234,12 @@ CSL_ForCombinator ( )
 #endif    
             if ( bic2->JccCode ) SetHere ( bic2->JccCode ) ; // overwrite 'ret' insn
             else SetHere ( bic2->JccAddedCode ) ; // overwrite 'ret' insn
-            int32 offset = CalculateDispForCallOrJump ( Here, bid->CopiedToStart, JCC8, T_JCC ) ;
+            int32 offset = CalculateOffsetForCallOrJump (Here, bid->CopiedToStart, T_JCC ) ;
             if ( CheckOffset ( offset, 1 ) ) //( offset >= (2^7)-1 ) && ( offset <= (2^7) ) )
             {
                 _Compile_Jcc ( JCC8, bic1->Ttt, ! bic1->N, offset ) ;
                 GotoInfo_Remove ( ( dlnode* ) bic2->BI_Gi ), bic2->BI_Gi = 0 ;
-                SetOffsetForCallOrJump ( bicJccCode, Here, T_JCC, 0 ) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
+                CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
                 goto done ;
             }
         }
@@ -296,12 +297,12 @@ CSL_DoWhileDoCombinator ( )
             BlockInfo *bic2 = BI_CopyCompile ( bico, ( byte* ) controlBlock, 1 ) ;
             if ( bic2->JccCode ) SetHere ( bic2->JccCode ) ; // overwrite 'ret' insn
             else SetHere ( bic2->JccAddedCode ) ; // overwrite 'ret' insn
-            int32 offset = CalculateDispForCallOrJump ( Here, bid->CopiedToStart, JCC8, T_JCC ) ;
+            int32 offset = CalculateOffsetForCallOrJump (Here, bid->CopiedToStart, T_JCC ) ;
             if ( CheckOffset ( offset, 1 ) )
             {
                 _Compile_Jcc ( JCC8, bic1->Ttt, ! bic1->N, offset ) ;
                 GotoInfo_Remove ( ( dlnode* ) bic2->BI_Gi ), bic2->BI_Gi = 0 ;
-                SetOffsetForCallOrJump ( bicJccCode, Here, T_JCC, 0 ) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
+                CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
                 goto done ;
             }
         }
@@ -339,7 +340,7 @@ _CSL_DoWhileCombinator ( block controlBlock, block doBlock )
         compiler->ContinuePoint = Here ;
         BlockInfo * bid = Block_CopyCompile ( ( byte* ) doBlock, 1, 0 ) ;
         BlockInfo * bic = Block_CopyCompile ( ( byte* ) controlBlock, 0, 1 ) ; // 3 : use old version for jmp to back ref ??
-        SetOffsetForCallOrJump ( bic->JccCode ? bic->JccCode : bic->JccAddedCode, bid->CopiedToStart, T_JCC, 0 ) ;
+        CalculateOffsetForCallOrJump (bic->JccCode ? bic->JccCode : bic->JccAddedCode, bid->CopiedToStart, T_JCC) ;
         GotoInfo_Remove ( ( dlnode* ) bic->BI_Gi ), bic->BI_Gi = 0 ;
         CSL_EndCombinator ( 2, 1 ) ;
     }

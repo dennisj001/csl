@@ -97,7 +97,14 @@ void
 _Word_Compile ( Word * word )
 {
     Compiler_Word_SCHCPUSCA ( word, 0 ) ;
-    if ( ! word->Definition ) CSL_SetupRecursiveCall ( ) ;
+    if ( ! word->Definition )
+    {
+        CSL_SetupRecursiveCall ( ) ;
+#if 0        
+        if ( ( word->W_TypeAttributes & WT_C_SYNTAX ) && ( ! ( word->W_MorphismAttributes & VOID_RETURN ) ) )
+            CSL_CompileAndRecord_PushAccum ( ) ;
+#endif        
+    }
     else if ( ( GetState ( _CSL_, INLINE_ON ) ) && ( word->W_MorphismAttributes & INLINE ) && ( word->S_CodeSize ) ) _Compile_WordInline ( word ) ;
     else Compile_CallWord_Check_X84_ABI_RSP_ADJUST ( word ) ;
     word->W_MySourceCodeWord = _Context_->CurrentWordBeingCompiled ;

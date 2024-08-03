@@ -1,35 +1,7 @@
-called: /usr/bin/ld
+called: /usr/bin/gcc
 	/home/dennisj/csl
-	/usr/bin/ld
-	-plugin
-	/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/liblto_plugin.so
-	-plugin-opt=/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/lto-wrapper
-	-plugin-opt=-fresolution=/tmp/ccOI53pb.res
-	-plugin-opt=-pass-through=-lgcc
-	-plugin-opt=-pass-through=-lgcc_s
-	-plugin-opt=-pass-through=-lc
-	-plugin-opt=-pass-through=-lgcc
-	-plugin-opt=-pass-through=-lgcc_s
-	--build-id
-	--eh-frame-hdr
-	--hash-style=gnu
-	-m
-	elf_x86_64
-	-dynamic-linker
-	/lib64/ld-linux-x86-64.so.2
-	-pie
-	-o
-	bin/csl-gdb
-	/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/../../../../lib/Scrt1.o
-	/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/../../../../lib/crti.o
-	/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/crtbeginS.o
-	-L/usr/local/lib
-	-L/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0
-	-L/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/../../../../lib
-	-L/lib/../lib
-	-L/usr/lib/../lib
-	-L/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/../../..
-	src/basis/compiler/machineCode.o
+	gcc
+	-ggdb
 	src/basis/compiler/_compile.o
 	src/basis/compiler/memory.o
 	src/basis/compiler/combinators.o
@@ -129,6 +101,10 @@ called: /usr/bin/ld
 	src/basis/openVmTil.o
 	src/primitives/ls9.o
 	src/basis/debug/debuggerSteppingSetup.o
+	src/basis/compiler/machineCode.o
+	-o
+	bin/csl-gdb
+	-L/usr/local/lib
 	-ludis86
 	-lrt
 	-lc
@@ -136,19 +112,6 @@ called: /usr/bin/ld
 	-lm
 	-lmpfr
 	-lgmp
-	-lgcc
-	--push-state
-	--as-needed
-	-lgcc_s
-	--pop-state
-	-lc
-	-lgcc
-	--push-state
-	--as-needed
-	-lgcc_s
-	--pop-state
-	/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/crtendS.o
-	/usr/lib/gcc/x86_64-pc-linux-gnu/13.3.0/../../../../lib/crtn.o
 
 called: /usr/bin/gcc
 	/home/dennisj/csl

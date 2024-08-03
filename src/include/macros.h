@@ -263,6 +263,7 @@
 #define DBI_N( n ) (GetState ( _Debugger_, DBG_ASM_SHOW_ON ) && ( Verbosity () > n ) )
 #define IS_INCLUDING_FILES ( _CSL_ && _CSL_->IncludeFileStackNumber )
 #define Is_DbiOn _O_->Dbi
+#define RegOrder(n) LocalsRegParameterOrder_Optimized ( (n) )
 
 #define C_SyntaxOn ( GetState ( _Context_, (C_SYNTAX|INFIX_MODE)) )
 #define InfixOn ( GetState ( _Context_, INFIX_MODE) )

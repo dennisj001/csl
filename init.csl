@@ -303,7 +303,7 @@ System
 : wdiss ( pword ) 0 pword @ _wdiss ; //debugWord      // don't add wdiss words to history list
 : wdissl ( pword ) logOn 0 pword @ _wdiss logOff ; //debugWord      // don't add wdiss words to history list
 'wi ' wdiss find alias
-: pwdiss tokenQID _findUsing wdiss ; // nb. a prefix function
+: pwdiss tokenQID _findAny wdiss ; // nb. a prefix function
 'pwi 'pwdiss find alias
 //pwi wdiss //pause
 : fload ftoken include ;
@@ -585,6 +585,86 @@ cOff
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
+#if 0 //DEBUG_ON //0 // this works
+c_syntaxOn
+int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
+'_fib1c find wdiss
+_fib1c (20) ; 
+c_syntaxOff
+dup p 6765 _assert0 
+C
+scOn
+cOn 
+int64
+fd ( int koc)
+{
+   int64 rtrn ;
+   if ( koc == 1) rtrn = 1 ;
+   else if ( koc == 2) rtrn = 5 ;
+   else if ( koc == 3) rtrn = 10 ;
+   else if ( koc == 4) rtrn = 25 ;
+   else if ( koc == 5) rtrn = 50 ;
+   return rtrn ;
+}
+//pwi fd sp0
+/*
+(define (cc amount kinds-of-coins)                                                                                                                        
+  (cond ((= amount 0) 1)                                                                                                                                  
+        ((or (< amount 0) (= kinds-of-coins 0)) 0)                                                                                                        
+        (else (+ (cc amount                                                                                                                               
+                     (- kinds-of-coins 1))                                                                                                                
+                 (cc (- amount (first-denomination kinds-of-coins))
+                     kinds-of-coins)
+))))
+*/
+int64
+//cc1 ( int64 amount, int64 koc | rtrn, one, two )
+cc1 ( REG amount, REG koc | REG rtrn ) // doesn't work ??
+//cc1 ( REG amount, REG koc) // doesn't work ??
+{
+    //int64 rtrn, one, two ;
+    if (amount == 0) rtrn = 1  ;
+    else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
+    else 
+    {
+#if 1
+        rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; // compiles but give wrong result
+#else // this works
+        one = cc1 ( amount, koc - 1) ;
+        two = cc1 (amount - fd (koc), koc) ;
+        rtrn = one + two ;
+#endif
+    }
+    //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
+    //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
+    return rtrn ;
+}
+//vb(1) ;
+pwi cc1 //pause
+//pwi countChangec
+int64 
+countChange ( int amount)
+{
+  int64 rtrn = cc1 ( amount, 5)  ;
+  return rtrn ;
+}
+//pwi countchange
+void
+CountChange ( int64 amount )
+{
+    int64 value0 ;
+    value0 = countChange ( amount ) ;
+    oPrintf ( "\n%ld", value0 ) ;
+}
+//logOn
+countChange (100) ; p //pause
+countChangec (100 ) ; drop
+ti(4) ; countChangec (1000 ) ; drop time(4) ;
+ti(4) ; CountChange (1000) ; time(4) ;
+//logOff
+cOff
+
+#endif // ifdef _DEV_H_
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff

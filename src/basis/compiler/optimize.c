@@ -140,9 +140,17 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
         }
         else if ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) //&& ( ! IS_NON_MORPHISM_TYPE(optInfo->wordn) ) )
         {
-            if ( optInfo->wordArg2 ) optInfo->xBetweenArg1AndArg2 = optInfo->wordn ;
+            if ( optInfo->wordArg2 )
+            {
+                optInfo->xBetweenArg1AndArg2 = optInfo->wordn ;
+#if 0               
+                if ( ( optInfo->wordn->W_TypeAttributes & WT_C_SYNTAX ) && ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_EQUAL | CATEGORY_OP_STORE ) ) )
+                    optInfo->wordArg1 = optInfo->wordn ;
+#endif                
+            }
+                //if ( optInfo->wordArg2 ) optInfo->xBetweenArg1AndArg2 = optInfo->wordn ;
             else optInfo->wordArg2 = optInfo->wordn ;
-            break ; // no optimization possible if ( ( ! optInfo->wordArg2 ) && ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) )
+            break ; // if C_SyntaxOn assume value is in RAX else TOS //no optimization possible if ( ( ! optInfo->wordArg2 ) && ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) )
         }
         else if ( optInfo->wordArg2 )
         {
@@ -439,20 +447,34 @@ CO_WordArg2Op_Or_xBetweenArg1AndArg2 ( Compiler * compiler )
                 optInfo->CO_Mod = MEM ;
                 optInfo->rtrn = 1 ;
             }
+#if 1           
             else if ( ! ( ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_EQUAL ) ) && CO_EqualCheck ( compiler ) ) )
             {
                 Compiler_Word_SCHCPUSCA ( optInfo->wordArg2, 1 ) ;
-                //if ( ! optInfo->xBetweenArg1AndArg2 )  
+#if 1                
+                //if ( ( ! optInfo->xBetweenArg1AndArg2 ) && 
                 //    ( optInfo->xBetweenArg1AndArg2 && ( optInfo->xBetweenArg1AndArg2->StackPushRegisterCode) ) ) 
+                //if ( ( optInfo->wordArg2_Op && optInfo->wordArg2->StackPushRegisterCode ) || 
+                //    ( optInfo->xBetweenArg1AndArg2 && optInfo->xBetweenArg1AndArg2->StackPushRegisterCode ) || (! C_SyntaxOn ) )
                 // assume arg is on the stack - dsp[0]
+                //if ( ! (optInfo->xBetweenArg1AndArg2 && (optInfo->xBetweenArg1AndArg2->W_TypeAttributes & WT_C_SYNTAX) ))
                 {
                     //assume arg1 is ACC
-                    Compile_Move_Reg_To_Reg ( OREG, ACC, 0 ) ;
+                    Word_SetCoding ( optInfo->wordn, Here ) ;
+                    Compile_Move_Reg_To_Reg ( OREG, ( optInfo->wordArg2 && ( optInfo->wordArg2->W_ObjectAttributes & REGISTER_VARIABLE ) ) ? optInfo->wordArg2->RegToUse : ACC, 0 ) ;
                     _Compile_Stack_PopToReg ( DSP, ACC ) ;
+                    //Debugger_ShowState ( _Debugger_, "optDbg" ) ;
+                    //_Debugger_ShowInfo ( _Debugger_, "optDbg", 0, 1 ) ;
+                    //Debugger_DoState ( _Debugger_ ) ;
+                    //DEBUG_SHOW ( optInfo->wordn, 0, 0 ) ;
                 }
+                //else assume arg is in RAX
+#endif                
                 optInfo->CO_Reg = ACC | REG_LOCK_BIT ; // REG_LOCK_BIT : let Setup_MachineCodeInsnParameters know we have a parameter for it in case of ACC == 0
                 optInfo->CO_Rm = OREG ;
+                //optInfo->rtrn = CO_DONE ; // new testing
             }
+#endif            
             else Word_Check_ReSet_To_Here_StackPushRegisterCode ( optInfo->wordArg2 ) ; // the rest of the code will be handled in CO_Equal
         }
     }
@@ -890,14 +912,18 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
     Compiler_Word_SCHCPUSCA ( optInfo->opWord, 1 ) ;
     if ( op == STORE )
     {
+        //Word * dstWord = optInfo->wordArg1, * srcWord = optInfo->wordArg2 ;
+        //if ( dstWord && ( dstWord->W_ObjectAttributes & REGISTER_VARIABLE ) ) dstReg = dstWord->RegToUse ;
+        //else dstReg = ACC ;
+
         Word * dstWord = optInfo->wordArg2, * srcWord = optInfo->wordArg1 ;
-        Boolean dstReg = OREG /*arg2*/, srcReg = ACC ; // arg1
+        Boolean dstReg = ( optInfo->wordArg2 && optInfo->wordArg2->RegToUse ) ? optInfo->wordArg2->RegToUse : OREG /*arg2*/, srcReg = ( optInfo->wordArg1 && optInfo->wordArg1->RegToUse ) ? optInfo->wordArg1->RegToUse : ACC ; // arg1
 
         if ( optInfo->wordArg1_literal ) // srcWord
         {
             if ( CO_X_Literal ( dstWord, optInfo->wordArg1, lvalueSize, srcReg, dstReg, srcWord ) == DONE ) goto done ; //return ;
         }
-        else if ( optInfo->wordArg2 && ( optInfo->wordArg2->W_ObjectAttributes & REGISTER_VARIABLE ) )
+        else if ( srcWord && dstWord && ( dstWord->W_ObjectAttributes & REGISTER_VARIABLE ) )
         {
             dstReg = dstWord->RegToUse ;
             srcReg = srcWord->RegToUse ;
@@ -923,6 +949,17 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
         if ( srcWord && ( srcWord->W_ObjectAttributes & O_POINTER ) ) //GetState ( _Context_, (C_SYNTAX | INFIX_MODE) ) ) //if ( GetState ( srcWord, IS_RVALUE ) || GetState ( _Interpreter_->LastWord, IS_RVALUE ) ) 
             Compile_Move_Rm_To_Reg ( srcReg, srcReg, 0, lvalueSize ) ;
         //Compile_Move_Reg_To_Rm ( dstReg, srcReg, 0, lvalueSize ) ; //optInfo->wordArg1->ObjectSize ) ; // dst = reg ; src = rm
+#if 1     
+        if ( ( ! srcWord ) && ( optInfo->wordn && //( optInfo->wordn->W_TypeAttributes & WT_C_SYNTAX ) && ( ! ( optInfo->wordn->W_MorphismAttributes & VOID_RETURN ) ) &&
+            dstWord && ( dstWord->W_ObjectAttributes & REGISTER_VARIABLE ) ) )
+        {
+            SetHere ( optInfo->wordn->Coding ) ;
+            if ( ( optInfo->wordn->W_TypeAttributes & WT_C_SYNTAX ) && ( ! ( optInfo->wordn->W_MorphismAttributes & VOID_RETURN ) ) )
+                Compile_Move_Reg_To_Reg ( dstReg, ACC, 0 ) ;
+            else Compile_Move_Reg_To_Reg ( dstReg, srcReg, 0 ) ;
+        }
+        else
+#endif        
         Compile_Move_Reg_To_Rm ( dstReg, srcReg, 0, dstWord ? dstWord->CompiledDataFieldByteSize : lvalueSize ) ;
         //DBI_OFF ;
         goto done ;
@@ -931,7 +968,7 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
     {
         Word * dstWord = optInfo->wordArg1, * srcWord = optInfo->wordArg2 ;
         Boolean dstReg = ACC /*arg1*/, srcReg = OREG ; // arg2
-        if ( optInfo->wordArg1 && ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) ) dstReg = optInfo->wordArg1->RegToUse ;
+        if ( dstWord && ( dstWord->W_ObjectAttributes & REGISTER_VARIABLE ) ) dstReg = dstWord->RegToUse ;
         else dstReg = ACC ;
         if ( ( srcWord && ( srcWord->W_ObjectAttributes & REGISTER_VARIABLE ) ) || optInfo->wordArg2_Op )
         {
@@ -971,7 +1008,7 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
                 if ( word->StackPushRegisterCode )
                 {
                     byte * src = word->StackPushRegisterCode + STACK_PUSH_REGISTER_CODE_SIZE ;
-                    BI_Block_Copy ( 0, word->StackPushRegisterCode, src, Here - src, 0 ) ;
+                    BI_Block_Copy (0, word->StackPushRegisterCode, src, Here - src) ;
                 }
                 compiler->OptInfo->wordArg0_ForOpEqual = 0 ;
                 goto done ; //return ;

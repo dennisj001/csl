@@ -38,7 +38,7 @@ _CompileFromUptoRET ( byte * data )
 void
 _Compile_WordInline ( Word * word ) // , byte * dstAddress )
 {
-    BI_Block_Copy (0, 0, ( byte* ) word->Definition, word->S_CodeSize , 0) ;
+    BI_Block_Copy (0, 0, ( byte* ) word->Definition, word->S_CodeSize ) ;
 }
 
 void

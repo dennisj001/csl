@@ -143,7 +143,7 @@ Compiler_LocalsNamespace_FindOrNew ( Compiler * compiler )
 Word *
 Compiler_LocalWord_New ( Compiler * compiler, byte * name, int64 morphismAttributes, int64 objectAttributes, int64 lispAttributes, int64 allocType )
 {
-    if ( ( ! GetState ( compiler, DOING_C_TYPE ) && ( ! GetState ( _LC_, LC_BLOCK_COMPILE ) ) ) ) 
+    if ( ( ! GetState ( compiler, DOING_C_TYPE ) && ( ! GetState ( _LC_, LC_BLOCK_COMPILE ) ) ) )
         compiler->LocalsNamespace = Compiler_LocalsNamespace_FindOrNew ( compiler ) ;
     Word * word = _Compiler_LocalWord_New ( compiler, name, morphismAttributes, objectAttributes, lispAttributes, allocType ) ;
     return word ;
@@ -174,7 +174,7 @@ Compile_Init_LocalRegisterParamenterVariables ( Compiler * compiler )
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = dlnode_Next ( node ) ) //, i -- )
     {
         Word * word = ( Word* ) dobject_Get_M_Slot ( ( dobject* ) node, SCN_T_WORD ) ;
-        _Compile_Move_StackN_To_Reg (word->RegToUse, ( frameFlag ? FP : DSP ), Compiler_ParameterVar_Offset ( compiler, word ) , 0) ;
+        _Compile_Move_StackN_To_Reg ( word->RegToUse, ( frameFlag ? FP : DSP ), Compiler_ParameterVar_Offset ( compiler, word ), 0 ) ;
     }
 }
 
@@ -182,7 +182,7 @@ void
 _Compiler_AddLocalFrame ( Compiler * compiler )
 {
     Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
-    _Compile_Move_Reg_To_StackN (DSP, 1, FP , 0) ; // save pre fp
+    _Compile_Move_Reg_To_StackN ( DSP, 1, FP, 0 ) ; // save pre fp
     _Compile_LEA ( FP, DSP, 0, CELL ) ; // set new fp
     Compile_ADDI ( REG, DSP, 0, 1 * CELL, INT32_SIZE ) ; // 1 : fp - add stack frame -- this value is going to be reset 
     compiler->FrameSizeCellOffset = ( int64* ) ( Here - INT32_SIZE ) ; // in case we have to add to the framesize with nested locals
@@ -250,7 +250,7 @@ CSL_DoReturnWord ( Word * word )
 // it is probably the messiest function in csl along with DBG_PrepareSourceCodeString
 
 void
-Compiler_RemoveLocalFrame ( Compiler * compiler )
+Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
 {
     Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
     if ( ! GetState ( _Context_, LISP_MODE ) ) Compiler_WordStack_SCHCPUSCA ( 0, 0 ) ;
@@ -260,18 +260,24 @@ Compiler_RemoveLocalFrame ( Compiler * compiler )
     if ( compiler->NumberOfArgs ) parameterVarsSubAmount = ( compiler->NumberOfArgs - returnValueFlag ) * CELL ;
     if ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs )
     {
-        if ( ( returnValueFlag ) && ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
+        //if ( ( returnValueFlag ) || (! _LC_ ) ) //&& ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
+        if ( returnValueFlag && ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
+        //if ( ( ! _LC_ ) ) //&& ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
         {
             byte add_r14_0x8__mov_r14_rax [ ] = { 0x49, 0x83, 0xc6, 0x08, 0x49, 0x89, 0x06 } ; //"add r14, 0x8,  mov [r14], rax"
             if ( ! memcmp ( add_r14_0x8__mov_r14_rax, Here - 7, 7 ) )
             {
                 CSL_AdjustDbgSourceCodeAddress ( Here, Here - 7 ) ;
                 _ByteArray_UnAppendSpace ( _O_CodeByteArray, 7 ) ;
+                //byte * here = Here ;
+                //CSL_InstallGotoCallPoints_Keyed ( bi, GI_RETURN, 0, 0 ) ;
+                //BI_Block_AdjustJmps (bi, bi->bp_First, here - bi->bp_First ) ;
+                //BI_Block_AdjustJmps (BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize)
             }
         }
         // remove the incoming parameters -- like in C
         _Compile_LEA ( DSP, FP, 0, - CELL ) ; // restore sp - release locals stack frame
-        _Compile_Move_StackN_To_Reg (FP, DSP, 1 , 0) ; // restore the saved pre fp - cf AddLocalsFrame
+        _Compile_Move_StackN_To_Reg ( FP, DSP, 1, 0 ) ; // restore the saved pre fp - cf AddLocalsFrame
     }
     if ( ( parameterVarsSubAmount > 0 ) && ( ! IsWordRecursive ) ) Compile_SUBI ( REG, DSP, 0, parameterVarsSubAmount, 0 ) ; // remove stack variables ; recursive handled below
         // add a place on the stack for return value
@@ -286,7 +292,7 @@ Compiler_RemoveLocalFrame ( Compiler * compiler )
         {
             if ( returnVariable->W_ObjectAttributes & REGISTER_VARIABLE )
             {
-                _Compile_Move_Reg_To_StackN (DSP, 0, returnVariable->RegToUse , 0) ;
+                _Compile_Move_Reg_To_StackN ( DSP, 0, returnVariable->RegToUse, 0 ) ;
                 return ;
             }
         }
@@ -452,7 +458,7 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
             }
             if ( objectTypeNamespace )
             {
-                CSL_LocalObject_Init (word, objectTypeNamespace , 0) ;
+                CSL_LocalObject_Init ( word, objectTypeNamespace, 0 ) ;
                 Word_TypeChecking_SetSigInfoForAnObject ( word ) ;
             }
             else if ( typeNamespace ) word->CompiledDataFieldByteSize = typeNamespace->CompiledDataFieldByteSize ;

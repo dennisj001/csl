@@ -120,12 +120,12 @@ CSL_FinalizeBlocks ( BlockInfo * bi )
     {
         Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
         CSL_InstallGotoCallPoints_Keyed ( bi, GI_RETURN, 0, 0 ) ;
-        Compiler_RemoveLocalFrame ( compiler ) ;
+        Compiler_RemoveLocalFrame ( bi, compiler ) ;
         bi->bp_First = bi->LocalFrameStart ; // default 
     }
     else
     {
-        if ( compiler->NumberOfRegisterVariables ) Compiler_RemoveLocalFrame ( compiler ) ;
+        if ( compiler->NumberOfRegisterVariables ) Compiler_RemoveLocalFrame ( bi, compiler ) ;
         bi->bp_First = bi->AfterLocalFrame ;
     }
 }
@@ -140,7 +140,7 @@ _CSL_EndBlock1 ( BlockInfo * bi )
     DataStack_Push ( ( int64 ) bi->bp_First ) ;
     bi->bp_Last = Here ;
     Compiler_CalculateAndSetPreviousJmpOffset ( bi->PtrToJmpInsn ) ;
-    SetOffsetForCallOrJump ( bi->PtrToJmpInsn, Here, T_JMP, 0 ) ;
+    CalculateOffsetForCallOrJump (bi->PtrToJmpInsn, Here, T_JMP) ;
 }
 
 byte *

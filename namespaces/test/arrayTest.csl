@@ -350,8 +350,8 @@ Ar9
     oPrintf ( "\nar9.ar[0][246][67] = %lx", ar9.ar[0][246][67]) 
     a9dump ( 0 246 67 ar9 )
 ;
-jcc8_On
-//scOff
+jcc8_Off
+scOn
 ' a9 find wdiss s //pause
 #if 1
 Ar9 'arr9 new 
@@ -424,7 +424,7 @@ c_syntaxOff
 //verbosity 1 = logOff pause
 
 #if 1
-cOn
+cOn 
 jcc8_Off
 sp0
 
@@ -479,17 +479,18 @@ CSL_a10 (  )
 #endif
 }
 #ifdef CSL_PARAM
-pwi CSL_a9 
+pwi CSL_a9 //pause
 hp ( arr9 ) ;
 oPrintf ( "\n%s = %ld", "arr9->dimSize", arr9->dimSize ) ; sp0
 CSL_a9 ( arr9 ) ; 
 //pwi c_a9 d: c_a9 ( arr9 ) ;
 #else
-pwi CSL_a10
+pwi CSL_a10 //pause
 hp ( arr10 ) ;
 oPrintf ( "\n%s = %ld", "arr10->dimSize", arr10->dimSize ) ; sp0
 CSL_a10 ( ) ; 
 #endif
+//pause
 sp0 
 cOff
 //'ct0 d: notUsing

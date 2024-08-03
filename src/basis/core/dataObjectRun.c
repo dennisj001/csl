@@ -128,10 +128,36 @@ _Do_Compile_Variable ( Word * word )
             else return ; //// this compilation is delayed to _CSL_C_Infix_Equal/Op
         }
     }
+#if 0
     else _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
 
     if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
         _Word_CompileAndRecord_PushReg ( word, ( word->W_ObjectAttributes & REGISTER_VARIABLE ) ? word->RegToUse : ACC, true, 0 ) ;
+#elif 1    
+    else if ( ! ( word->W_ObjectAttributes & REGISTER_VARIABLE ) ) _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
+    if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
+    {
+        _Word_CompileAndRecord_PushReg ( word, ( word->W_ObjectAttributes & REGISTER_VARIABLE ) ? word->RegToUse : ACC, true, 0 ) ;
+    }
+        //else if ( word->W_ObjectAttributes & REGISTER_VARIABLE ) _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
+#else    
+    else if ( word->W_ObjectAttributes & REGISTER_VARIABLE )
+    {
+        //_Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
+        if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
+        {
+            _Word_CompileAndRecord_PushReg ( word, word->RegToUse, true, 0 ) ;
+        }
+    }
+    else
+    {
+        _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
+        if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
+        {
+            _Word_CompileAndRecord_PushReg ( word, ACC, true, 0 ) ;
+        }
+    }
+#endif    
 }
 
 void
@@ -227,7 +253,7 @@ CSL_Do_Object ( Word * word )
         }
     }
     if ( ( ! GetState ( compiler, ARRAY_MODE ) ) && ( ! GetState ( cntx, IS_FORWARD_DOTTED ) )
-        && ( ! GetState ( cntx, IS_REVERSE_DOTTED ) ) && ( ! (word->W_ObjectAttributes & LOCAL_OBJECT) ) ) cntx->BaseObject = 0 ;
+        && ( ! GetState ( cntx, IS_REVERSE_DOTTED ) ) && ( ! ( word->W_ObjectAttributes & LOCAL_OBJECT ) ) ) cntx->BaseObject = 0 ;
     Do_Variable ( word ) ;
 }
 
@@ -257,6 +283,7 @@ Compile_C_FunctionDeclaration ( byte * token1 )
     SetState ( _Compiler_, C_COMBINATOR_PARSING, true ) ;
     CSL_C_Syntax_On ( ) ;
     Word * word = Word_New ( token1 ) ; // "("
+    word->W_TypeAttributes |= WT_C_SYNTAX ;
     CSL_WordList_PushWord ( word ) ;
     Compiler_Word_SCHCPUSCA ( word, 0 ) ;
     DataStack_Push ( ( int64 ) word ) ;
@@ -264,7 +291,7 @@ Compile_C_FunctionDeclaration ( byte * token1 )
     CSL_LocalsAndStackVariablesBegin ( ) ;
     do // the rare occurence of any tokens between closing locals right paren ')' and beginning block '}'
     {
-        if ( (token = Lexer_ReadToken ( _Lexer_ )) )
+        if ( ( token = Lexer_ReadToken ( _Lexer_ ) ) )
         {
             if ( String_Equal ( token, "s{" ) )
             {
@@ -382,7 +409,7 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
                     if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) objectAttributes |= ( OBJECT | STRUCT ) ;
                     word->W_ObjectAttributes = ( LOCAL_VARIABLE | objectAttributes ) ; //| ns->W_ObjectAttributes ) ;
                     Compiler_LocalWord_UpdateCompiler ( _Compiler_, word, LOCAL_VARIABLE | objectAttributes ) ;
-                    if ( strchr ( (char*) pntoken, '[' ) )
+                    if ( strchr ( ( char* ) pntoken, '[' ) )
                     {
                         byte * token = Compile_ArrayDeclaration ( ns, word ) ;
                         if ( token[0] = ';' ) break ;
@@ -390,7 +417,7 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
                     else if ( ns->W_ObjectAttributes & ( OBJECT | STRUCT ) ) CSL_LocalObject_Init ( word, ns, 0 ) ;
                     else _Word_Add ( word, 0, lns ) ;
                 }
-                if ( strchr ( (char*) pntoken, '=' ) )
+                if ( strchr ( ( char* ) pntoken, '=' ) )
                 {
                     Compiler_Set_LHS ( word ) ;
                     token = _Compile_C_TypeDeclaration ( ) ;

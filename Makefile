@@ -1,5 +1,5 @@
 
-SOURCES = src/basis/compiler/machineCode.c src/basis/compiler/_compile.c src/basis/compiler/memory.c\
+SOURCES = src/basis/compiler/_compile.c src/basis/compiler/memory.c\
 	src/basis/compiler/combinators.c src/basis/compiler/math.c src/basis/compiler/cpu.c src/basis/compiler/mcPrimitives.c\
 	src/basis/compiler/stack.c src/basis/compiler/logic.c src/basis/compiler/contol.c src/basis/core/dataObjectRun.c\
 	src/basis/core/block.c src/basis/compiler/blocks.c src/basis/core/conditionals.c src/basis/compiler/compile.c src/basis/core/system.c\
@@ -21,7 +21,7 @@ SOURCES = src/basis/compiler/machineCode.c src/basis/compiler/_compile.c src/bas
 	src/primitives/compilers.c src/primitives/words.c  src/primitives/file.c src/primitives/stacks.c \
 	src/primitives/debuggers.c src/primitives/memorys.c src/primitives/primitives.c src/primitives/contexts.c\
 	src/primitives/disassembler.c src/primitives/syntaxes.c src/primitives/cmaths.c src/primitives/dataObjectNews.c src/basis/openVmTil.c\
-	src/primitives/ls9.c src/basis/debug/debuggerSteppingSetup.c 
+	src/primitives/ls9.c src/basis/debug/debuggerSteppingSetup.c src/basis/compiler/machineCode.c 
 	#src/init_csl.c
 	#src/primitives/fltlisp.c src/primitives/fltread.c src/primitives/s9.c src/primitives/s9core.c
 	
@@ -210,7 +210,7 @@ cproto :
 	sudo apt-get install cproto
 
 TAR_OUT = -f ../csl.tar.xz *
-EXCLUDE = --exclude=nbproject --exclude=.vscode --exclude=misc --exclude=objects --exclude=build --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=*-gdb --exclude=*.png --exclude=*.o --exclude=*.kdev* --exclude=*.log --exclude=csl.*
+EXCLUDE = --exclude=nbproject --exclude=.vscode --exclude=misc --exclude=objects --exclude=build --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=*-gdb --exclude=*.png --exclude=*.o --exclude=*.kdev* --exclude=*.log --exclude=.csl.*
 tar.xz :	
 	tar -c --xz --exclude=lib --exclude=archive $(EXCLUDE) $(TAR_OUT) 
 

@@ -56,42 +56,47 @@ register. (Here, the EIP register contains the address of the instruction follow
 relative offsets, the opcode (for short vs. near jumps) and the operand-size attribute (for near relative jumps)
 determines the size of the target operand (8, 16, or 32 bits).
  */
-int32
-CalculateDispForCallOrJump ( byte * insnAddr, byte * jmpToAddr, byte insn, byte insnType )
+/* from Intel Instruction set reference : JMP insn
+A relative offset (rel8, rel16, or rel32) is generally specified as a label in assembly code, but at the machine code
+level, it is encoded as a signed 8-, 16-, or 32-bit immediate value. This value is added to the value in the EIP
+register. (Here, the EIP register contains the address of the instruction following the JMP instruction). When using
+relative offsets, the opcode (for short vs. near jumps) and the operand-size attribute (for near relative jumps)
+determines the size of the target operand (8, 16, or 32 bits).
+ */
+byte *
+Calculate_Address_FromOffset_ForCallOrJump ( byte * address )
 {
-    BlockInfo *bi = BlockInfo_Allocate ( ) ;
-    bi->InsnAddress = insnAddr ;
-    bi->JmpToAddress = jmpToAddr ;
-    bi->Insn = insn ;
-    bi->InsnType = insnType ;
-#if TEST_0    
-    int32 disp = _CalculateDispForCallOrJumpOrJcc ( &bi ),
-        dispA = CalculateDispForCallOrJumpA ( insnAddress, jmpToAddress, insn, insnType ) ;
-    if ( disp != dispA )
-        Error ( "\nError : CalculateDispForCallOrJump : displacements not equal!", PAUSE ) ;
-#elif 1   
-    int32 disp = _CalculateDispForCallOrJumpOrJcc ( bi ) ;
-#else    
-    int32 disp = CalculateDispForCallOrJumpA ( insnAddress, jmpToAddress, insn, insnType ) ;
-#endif    
-    return disp ;
+    byte * iaddress = 0 ;
+    int64 offset ;
+    if ( ( * address == JMP8 ) || IS_INSN_JCC8 ( * address ) )
+    {
+        offset = * ( ( int8 * ) ( address + 1 ) ) ;
+        iaddress = address + offset + 1 + BYTE_SIZE ;
+    }
+    else if ( ( * address == JMP32 ) || ( * address == CALL32 ) )
+    {
+        offset = * ( ( int32 * ) ( address + 1 ) ) ;
+        iaddress = address + offset + 1 + INT32_SIZE ;
+    }
+    else if ( ( ( * address == 0x0f ) && ( ( * ( address + 1 ) >> 4 ) == 0x8 ) ) )
+    {
+        offset = * ( ( int32 * ) ( address + 2 ) ) ;
+        iaddress = address + offset + 2 + INT32_SIZE ;
+    }
+    else if ( ( ( * ( uint16* ) address ) == 0xff49 ) && ( ( *( address + 2 ) == 0xd2 ) || ( *( address + 2 ) == 0xd3 ) ) ) // call r10/r11
+    {
+        if ( ( ( * ( uint16* ) ( address - 20 ) ) == 0xbb49 ) ) iaddress = ( byte* ) ( * ( ( uint64* ) ( address - 18 ) ) ) ; //mov r11, 0xxx in Compile_Call_TestRSP  
+        else iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
+    }
+    else if ( ( ( * ( uint16* ) address ) == 0xff48 ) && ( *( address + 2 ) == 0xd3 ) ) // call rax
+    {
+        iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
+    }
+    return iaddress ;
 }
 
 int32
-SetOffsetForCallOrJump ( byte * insnAddr, byte * jmpToAddr, byte insnType, byte insn )
-{
-    //BlockInfo bi ;
-    BlockInfo *bi = BlockInfo_Allocate ( ) ;
-    bi->InsnAddress = insnAddr ;
-    bi->JmpToAddress = jmpToAddr ;
-    bi->Insn = insn ;
-    bi->InsnType = insnType ;
-    int32 offset = _SetOffsetForCallOrJump ( bi ) ;
-    return offset ;
-}
-
-int32
-_CalculateDispForCallOrJumpOrJcc ( BlockInfo * bi ) //( byte * insnAddress, byte * jmpToAddr, byte insn, byte insnType )
+BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi ) //( byte * insnAddress, byte * jmpToAddr, byte insn, byte insnType )
 {
     if ( ! bi->Insn )
     {
@@ -157,23 +162,40 @@ _CalculateDispForCallOrJumpOrJcc ( BlockInfo * bi ) //( byte * insnAddress, byte
     done :
     return bi->Disp ;
 }
-// disp = disp
 
 int32
-_SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, byte insnType, byte insn )
+SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, byte insnType, byte insn )
 {
-    _CalculateDispForCallOrJumpOrJcc ( bi ) ; //( insnAddr, jmpToAddr, insn, insnType ) ;
+    int32 disp = bi->Disp = BI_CalculateOffsetForCallOrJumpOrJcc ( bi ) ; //( insnAddr, jmpToAddr, insn, insnType ) ;
     byte * offsetAddress = bi->InsnAddress + bi->InsnSize ; //insnAddr + insnSize ;
     if ( IS_INSN_JCC8 ( bi->Insn ) || ( bi->Insn == JMP8 ) ) //|| ( insn == JCC8 ) )
     {
-        if ( ( bi->Disp > - 127 ) && ( bi->Disp < 128 ) ) * ( ( int8* ) offsetAddress ) = ( byte ) bi->Disp ;
-        //else Error ( "\nError : _CalculateDispForCallOrJump : disp to large for instruction!", QUIT ) ;
+        if ( ( disp > - 127 ) && ( disp < 128 ) ) * ( ( int8* ) offsetAddress ) = ( byte ) disp ;
+#if 0 // this error hasn't caused any problems ??!        
+        else 
+        {
+            iPrintf ( "\nPossible error for 8 bit jmp/jcc : _SetOffsetForCallOrJump : insnAddress = 0x%lx : jmpToAddress = 0x%lx : disp = 0x%lx : %ld", 
+                bi->InsnAddress, bi->JmpToAddress, disp, disp ) ;
+            Udis_Disassemble ( bi->InsnAddress, disp + 32 , 1 ) ;
+            Error ( "\nError : _CalculateDispForCallOrJump : disp to large for instruction!", CONTINUE ) ; //QUIT ) ;
+            //return -1 ;
+        }
+#endif         
     }
-    else * ( ( int32* ) ( offsetAddress ) ) = bi->Disp ;
-    return bi->Disp ;
+    else * ( ( int32* ) ( offsetAddress ) ) = disp ;
+    return disp ;
 }
 
-#if 1
+int32
+CalculateOffsetForCallOrJump (byte * insnAddr, byte * jmpToAddr, byte insnType )
+{
+    BlockInfo *bi = BlockInfo_Allocate ( ) ; // just COMPILER_TEMP
+    bi->InsnAddress = insnAddr ;
+    bi->JmpToAddress = jmpToAddr ;
+    bi->Insn = 0 ; //insn ;// correct previous useages
+    bi->InsnType = insnType ;
+    return SetOffsetForCallOrJump ( bi ) ; //nb bi->Disp is set 
+}
 
 int32
 GetDispForCallOrJumpFromInsnAddr ( byte * insnAddr )
@@ -192,7 +214,6 @@ GetDispForCallOrJumpFromInsnAddr ( byte * insnAddr )
     }
     return 0 ;
 }
-#endif
 
 // JE, JNE, JZ, JNZ, ... see machineCode.h
 // optimize JCC32 for JCC8 
@@ -225,13 +246,13 @@ Compile_Jcc ( int64 ttt, int64 n, byte * jmpToAddr, byte insn )
     int32 disp ;
     if ( jmpToAddr )
     {
-        disp = CalculateDispForCallOrJump ( Here, jmpToAddr, JCC8, T_JCC ) ;
+        disp = CalculateOffsetForCallOrJump (Here, jmpToAddr, T_JCC ) ;
         if ( ( disp >= - 127 ) && ( disp <= 128 ) )
         {
             _Compile_Jcc ( JCC8, ttt, n, disp ) ;
             return compiledAtAddress ;
         }
-        else disp = CalculateDispForCallOrJump ( Here, jmpToAddr, JCC32, T_JCC ) ;
+        else disp = CalculateOffsetForCallOrJump (Here, jmpToAddr, T_JCC ) ;
     }
     else disp = 0 ; // allow this function to be used to have a delayed compile of the actual address
     SetCompilerField ( CurrentTopBlockInfo, JccCode, Here ) ;
@@ -293,7 +314,7 @@ _Compile_JumpToDisp ( int32 disp, byte insn )
 void
 Compile_JumpToAddress ( byte * jmpToAddr, byte insn ) // runtime
 {
-    int32 disp = CalculateDispForCallOrJump ( Here, jmpToAddr, insn, T_JMP ) ;
+    int32 disp = CalculateOffsetForCallOrJump (Here, jmpToAddr, T_JMP ) ;
     _Compile_JumpToDisp ( disp, insn ) ;
 }
 
@@ -489,7 +510,8 @@ AdjustGotoInfo ( dlnode * node, int64 srcAddress )
     if ( gi->CompiledAtAddress == ( byte* ) srcAddress )
     {
         gi->CompiledAtAddress = Here ;
-        if ( gi->GI_BlockInfo && ( ( BlockInfo * ) gi->GI_BlockInfo )->JccCode == ( byte* ) srcAddress ) ( ( BlockInfo * ) gi->GI_BlockInfo )->JccCode = Here ;
+        if ( gi->GI_BlockInfo && ( ( BlockInfo * ) gi->GI_BlockInfo )->JccCode == ( byte* ) srcAddress ) 
+            ( ( BlockInfo * ) gi->GI_BlockInfo )->JccCode = Here ;
 #if 1            
         if ( Is_DebugOn )
         {
@@ -511,9 +533,10 @@ AdjustLabel ( dlnode * node, int64 address )
         gi->LabeledAddress = Here ;
 }
 
-void
+int64
 GotoInfo_ResetOffsetAndRemove ( GotoInfo * gi, byte * address, Boolean removeFlag )
 {
+    int64 rtrn = 0 ;
     if ( ( gi->GI_CAttribute & ( GI_JCC_TO_FALSE | GI_JCC_TO_TRUE ) ) )
     {
         if ( ! address ) address = Here ;
@@ -521,12 +544,13 @@ GotoInfo_ResetOffsetAndRemove ( GotoInfo * gi, byte * address, Boolean removeFla
         BlockInfo * bi = ( ( BlockInfo * ) gi->GI_BlockInfo ) ;
         byte * jmpToAddress = bi->JmpToAddress ;
         //Compiler_Word_SCHCPUSCA ( gi->GI_Word, 1 ) ;
-        byte insn = * compiledAtAddress ;
-        if ( ( insn == JCC32 ) || IS_INSN_JCC8 ( * compiledAtAddress ) ) //|| ( insn == NOOP ) )
-            SetOffsetForCallOrJump ( compiledAtAddress, jmpToAddress ? jmpToAddress : Here, T_JCC, 0 ) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
-        else return ; // insn move for some reason
+        //byte insn = 
+        bi->Insn = * compiledAtAddress ;
+        if ( ( bi->Insn == JCC32 ) || IS_INSN_JCC8 ( bi->Insn ) ) //|| ( insn == NOOP ) )
+            rtrn = CalculateOffsetForCallOrJump (compiledAtAddress, jmpToAddress ? jmpToAddress : Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
+        else return rtrn ; // insn move for some reason
 #if 1            
-        if ( Is_DebugOn )
+        if ( ( rtrn == -1 ) || Is_DebugOn )
         {
             char * format0 = ( gi->GI_CAttribute & GI_JCC_TO_TRUE ) ? "\nGotoInfo_ResetOffsetAndRemove : GI_JCC_TO_TRUE : %.24s : OriginalAddress = %lx : CompiledAtAddress = %lx" :
                 "\nGotoInfo_ResetOffsetAndRemove : GI_JCC_TO_FALSE : %.24s : OriginalAddress = %lx : CompiledAtAddress = %lx" ;
@@ -537,9 +561,10 @@ GotoInfo_ResetOffsetAndRemove ( GotoInfo * gi, byte * address, Boolean removeFla
 #endif            
         gi->AddressSet = true ;
     }
-    else SetOffsetForCallOrJump ( gi->CompiledAtAddress, address, 0, 0 ) ;
+    else rtrn = CalculateOffsetForCallOrJump (gi->CompiledAtAddress, address, 0) ;
 
     if ( removeFlag ) GotoInfo_Remove ( ( dlnode* ) gi ) ;
+    return rtrn ;
 }
 
 int64
@@ -708,7 +733,7 @@ Compiler_CalculateAndSetPreviousJmpOffset ( byte * jmpToAddress )
     {
         byte * insnAddr = ( byte* ) Stack_Pop ( _Compiler_->PointerToJmpInsnStack ) ;
         //SetOffsetForCallOrJump ( insnAddr ? insnAddr : Here, jmpToAddress, T_JMP, 0 ) ;
-        SetOffsetForCallOrJump ( insnAddr ? insnAddr : Here, jmpToAddress, 0, 0 ) ;
+        CalculateOffsetForCallOrJump (insnAddr ? insnAddr : Here, jmpToAddress, 0) ;
     }
 }
 

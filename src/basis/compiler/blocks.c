@@ -1,8 +1,59 @@
 
 #include "../../include/csl.h"
 
+#if 0
 BlockInfo *
-BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize, int64 control )
+BI_Block_AdjustJmps ( BlockInfo * bi, byte * srcAddress, int64 bsize )
+{
+    Compiler * compiler = _Compiler_ ;
+    //if ( ! bi ) bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
+    //byte * saveHere = Here, *svHere = 0 ;
+    ud_t * ud = Debugger_UdisNew ( _Debugger_ ) ;
+    int64 isize, left, insnSize ;
+    //if ( dstAddress ) SetHere ( dstAddress ) ;
+    //bi->CopiedToStart = Here ;
+    for ( left = bsize ; ( left > 0 ) ; srcAddress += isize )
+    {
+        //CO_PeepHole_Optimize ( ) ;
+        isize = _Udis_GetInstructionSize ( ud, srcAddress ) ;
+        left -= isize ;
+        //CSL_AdjustDbgSourceCodeAddress ( srcAddress, Here ) ;
+        //CSL_AdjustLabels ( srcAddress ) ;
+        byte insn = ( * srcAddress ) ;
+        if ( ( insn == JMP32 ) || ( insn == JMP8 ) )
+        {
+            int64 insnSize = 1 ;
+            int64 offset ;
+            int64 offsetSize ;
+            if ( insn == JMP32 ) offset = * ( int32* ) ( srcAddress + isize ), offsetSize = 4 ; // 1 : 1 byte JMPI32 opCode - e9
+            else offset = * ( int8 * ) ( srcAddress + isize ), offsetSize = 1 ;
+            byte * oaddress = Calculate_Address_FromOffset_ForCallOrJump ( srcAddress ) ;
+            byte * here = Here ;
+
+            //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) srcAddress, insnSize + offsetSize, 1 ) ;
+            if ( oaddress == here + 7 )
+            {
+                //SetOffsetForCallOrJump ( srcAddress + isize, here ) ;
+                int32 noffset = ( ( here ) - ( srcAddress + insnSize + offsetSize ) ) ; // operandSize sizeof offset //call/jmp insn x64/x86 mode //sizeof (cell) ) ; // we have to go back the instruction size to get to the start of the insn 
+                if ( offsetSize == 4 )
+                {
+                    //int32 noffset = _CalculateOffsetForCallOrJump ( srcAddress + isize, here-7, offsetSize ) ;
+                    * ( ( int32* ) (srcAddress + insnSize) ) = (int32) noffset ;
+                }
+                else
+                {
+                    //int8 noffset = _CalculateOffsetForCallOrJump ( srcAddress + isize, here-7, offsetSize ) ;
+                    * ( ( int8* ) (srcAddress + insnSize) ) = (int8) noffset ;
+                }
+                //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) srcAddress, insnSize + offsetSize, 1 ) ;
+            }
+        }
+    }
+}
+#endif
+
+BlockInfo *
+BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize )
 {
     Compiler * compiler = _Compiler_ ;
     if ( ! bi ) bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
@@ -57,18 +108,19 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
         else if ( ( insn == JMP32 ) || ( insn == JMP8 ) )
         {
             insnSize = 1 ;
-            int32 offset ;
-            if ( insn == JMP32 ) offset = * ( int32* ) ( srcAddress + insnSize ) ; // 1 : 1 byte JMPI32 opCode - e9
-            else offset = * ( int8 * ) ( srcAddress + insnSize ) ;
-            if ( offset ) dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) ( srcAddress ) ) ;
-            else dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) srcAddress ) ; //, ( int64 ) end ) ;
+            //int32 offset ;
+            //if ( insn == JMP32 ) offset = * ( int32* ) ( srcAddress + insnSize ) ; // 1 : 1 byte JMPI32 opCode - e9
+            //else offset = * ( int8 * ) ( srcAddress + insnSize ) ;
+            //if ( offset ) dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) ( srcAddress ) ) ;
+            //else 
+            dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) srcAddress ) ; //, ( int64 ) end ) ;
         }
         else if ( ( insn == JCC32 ) || IS_INSN_JCC8 ( insn ) )
         {
             dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) srcAddress ) ; //, ( int64 ) end ) ;
             bi->JccCode = Here ;
 #if 1 // this has sometimes *maybe* caused problems ??
-            if ( ( insn == JCC32 ) || (insn == JCC8) )
+            if ( ( insn == JCC32 ) || ( insn == JCC8 ) )
             {
                 //byte noop4 [] = { 0x66, 0x90, 0x66, 0x90 } ; 
                 //byte noop4 [] = { 0x90, 0x90, 0x90, 0x90 } ; 
@@ -117,7 +169,7 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
 BlockInfo *
 BI_CopyCompile ( BlockInfo *bi, byte * srcAddress, Boolean cntrlBlkFlg )
 {
-    BI_Block_Copy ( bi, Here, srcAddress ? srcAddress : bi->bp_First, bi->bp_Last - bi->bp_First, 1 ) ;
+    BI_Block_Copy ( bi, Here, srcAddress ? srcAddress : bi->bp_First, bi->bp_Last - bi->bp_First ) ;
     if ( cntrlBlkFlg ) Compile_BlockLogicTest ( bi ) ;
     return bi ;
 }

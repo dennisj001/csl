@@ -69,7 +69,7 @@
 #define T_JCC 1
 #define T_JMP 2
 #define T_CALL 4
-#define IS_INSN_JCC8( insn ) (( (byte)insn >> 4 ) == 0x7 )
+#define IS_INSN_JCC8( insn ) ( ( (byte)insn != 0x0f ) && (( (byte)insn >> 4 ) == 0x7 ) )
 #define IsSetCcInsn( addr ) (( (* addr) == 0x0f ) && ( ((*(addr+1)) >> 4) == 0x9 ))  //( ((*addr+1) >> 4) == 0x9 )) 
 #define CALL_REG 0xff
 #define MOD_RM_R8 0x10
@@ -186,28 +186,29 @@
 
 //Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
 // csl uses RAX, RDX, R8D, R9D, R14, R15, RBX
-#define ACCUMULATOR_REG  RAX                     // rax
-#define ACC                            ACCUMULATOR_REG
-#define CPU_ACCUM                RAX
-#define ACCUM                        ACCUMULATOR_REG
-#define RETURN_REG               ACC
-#define RETURN_REG_2           RDX                     // rdx
-#define OPERAND_REG            RCX                     // rcx
-#define OP_REG                       OPERAND_REG
-#define OREG                          OPERAND_REG
-#define CPU_OREG                  RCX
-#define OPERAND_2_REG        RBX                     // rbx
-#define OREG2                        OPERAND_2_REG 
-#define CPU_OREG2                RBX
-#define THRU_REG                   R10 //RAX //R9                      // r9
-#define SCRATCH_REG             R11 //RBX //R8 //RDX                      // r8 // eax/edx are both used sometimes by ops ebx/ecx are not ?
-#define SREG                            SCRATCH_REG
+#define ACCUMULATOR_REG         RAX                     // rax
+#define ACC                     ACCUMULATOR_REG
+#define CPU_ACCUM               RAX
+#define ACCUM                   ACCUMULATOR_REG
+#define RETURN_REG              ACC
+#define RETURN_REG_2            RDX                     // rdx
+#define OPERAND_REG             RCX                     // rcx
+#define OP_REG                  OPERAND_REG
+#define OREG                    OPERAND_REG
+#define CPU_OREG                RCX
+#define OPERAND_2_REG           RBX                     // rbx
+#define OREG2                   OPERAND_2_REG 
+#define TEMP_REG                OPERAND_2_REG 
+#define CPU_OREG2               RBX
+#define THRU_REG                (RegOrder(7)) // LocalsRegParameterOrder_Optimized ( Boolean n )  //R10 //RAX //R9                      // r9
+#define SCRATCH_REG             (RegOrder(6)) // { regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ; regOrder[n] ; } //R11 //RBX //R8 //RDX                      // r8 // eax/edx are both used sometimes by ops ebx/ecx are not ?
+#define SREG                    SCRATCH_REG
 #define DIV_MUL_REG_2           RDX                     // rdx
-#define CALL_THRU_REG          THRU_REG                // R9
-#define SCRATCH_REG2           THRU_REG                      // r8 // eax/edx are both used sometimes by ops ebx/ecx are not ?
-#define SREG2                          SCRATCH_REG2
+#define CALL_THRU_REG           THRU_REG                // R9
+#define SCRATCH_REG2            THRU_REG                      // r8 // eax/edx are both used sometimes by ops ebx/ecx are not ?
+#define SREG2                   SCRATCH_REG2
 #if DSP_IS_GLOBAL_REGISTER 
-register int64 *_DspReg_          asm ( "r14" ) ;
+register int64 *_DspReg_        asm ( "r14" ) ;
 register uint64 *_Fp_           asm ( "r15" ) ;
 #endif
 #define STACK_POINTER           R14D                    // r14
@@ -218,9 +219,9 @@ register uint64 *_Fp_           asm ( "r15" ) ;
 #define FP                      FRAME_POINTER
 
 //register uint64 *_RspReg_ asm ( "r10" ) ;
-#define CSL_RETURN_STACK_POINTER         RBX         // rbx
-#define CSL_RSP                             CSL_RETURN_STACK_POINTER
-#define CPU_CSL_RSP                         RBX
+#define CSL_RETURN_STACK_POINTER    RBX         // rbx
+#define CSL_RSP                     CSL_RETURN_STACK_POINTER
+#define CPU_CSL_RSP                 RBX
 
 // EFLAGS
 #define CARRY_FLAG ( 1 << 0 )
