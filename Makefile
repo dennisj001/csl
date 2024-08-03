@@ -177,18 +177,18 @@ udis :
 	sudo ldconfig
 	
 _gmp : 
-	wget https://gmplib.org/download/gmp/gmp-6.2.1.tar.lz
-	tar -xvf gmp-6.2.1.tar.lz
-	cd gmp-6.2.1 && \
+	wget https://gmplib.org/download/gmp/gmp-6.3.0.tar.lz
+	tar -xvf gmp-6.3.0.tar.lz
+	cd gmp-6.3.0 && \
 	./configure --enable-shared && \
 	make && \
 	sudo make install && \
 	sudo ldconfig
 	
 _mpfr :	
-	wget https://www.mpfr.org/mpfr-current/mpfr-4.1.0.tar.xz
-	tar xvf mpfr-4.1.0.tar.xz
-	cd mpfr-4.1.0 && \
+	wget https://www.mpfr.org/mpfr-current/mpfr-4.2.1.tar.xz
+	tar xvf mpfr-4.2.1.tar.xz
+	cd mpfr-4.2.1 && \
 	./configure --enable-shared && \
 	make && \
 	sudo make install && \
@@ -200,9 +200,9 @@ gmp :
 	sudo apt-get install libgmp10 libgmp-dev
 	
 _cproto :
-	wget https://launchpad.net/ubuntu/+archive/primary/+files/cproto_4.7m.orig.tar.gz 
-	tar -xvf cproto_4.7m.orig.tar.gz
-	cd cproto-4.7m && \
+	wget https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/cproto/4.7o-7/cproto_4.7o.orig.tar.gz
+	tar -xvf cproto_4.7o.orig.tar.gz
+	cd cproto-4.7o && \
 	./configure --enable-shared && \
 	make && \
 	sudo make install
