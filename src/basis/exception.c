@@ -40,8 +40,8 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
         if ( signal )
         {
             if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) || ( signal == SIGHUP ) ) OVT_Exit ( ) ;
-            else if ( signal & ( SIGSEGV | SIGBUS ) ) _O_->SigSegvs ++ ;
-            else if ( signal == SIGBUS )
+            else if ( (signal == SIGSEGV) || (signal == SIGBUS ) ) _O_->SigSegvs ++ ;
+            else if ( (signal == SIGBUS) || (signal == SIGCHLD) )
             {
                 jb = & _O_->JmpBuf0 ;
                 OVT_SetRestartCondition ( _O_, INITIAL_START ) ;
@@ -368,7 +368,7 @@ _OpenVmTil_LongJmp_WithMsg ( int64 restartCondition, byte * msg, int64 pauseFlag
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr (uc) necessary 
 {
-    if ( signal != SIGWINCH ) iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ; // 28 = SIGWINCH window resizing
+    if ( ( signal != SIGWINCH ) && ( signal != SIGCHLD ) ) iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ; // 28 = SIGWINCH window resizing
     if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) ) OVT_Exit ( ) ;
     if ( _O_ )
     {

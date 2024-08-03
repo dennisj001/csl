@@ -711,18 +711,18 @@ fd ( int64 koc ) //| REG rtrn )
    return rtrn ;
 }
 
-int64
 //cc1 ( REG amount, REG koc ) //| REG rtrn, REG one, REG two ) 
 //cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) 
-//cc1 ( REG amount, REG koc | REG rtrn ) //REG one, REG two ) // doesn't work ??
-cc1 ( int64 amount, int64 koc | rtrn, one, two ) 
+//cc1 ( int64 amount, int64 koc | rtrn, one, two ) 
+int64
+cc1 ( REG amount, REG koc | REG rtrn ) // doesn't work ??
 {
     //int64 rtrn, one, two ;
     if (amount == 0) rtrn = 1  ;
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
     {
-#if 0
+#if 1
         rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; // compiles but give wrong result
 #else // this works
         one = cc1 ( amount, koc - 1) ;
@@ -730,9 +730,12 @@ cc1 ( int64 amount, int64 koc | rtrn, one, two )
         rtrn = one + two ;
 #endif
     }   
+    //int64 a, k, r ; // o, t ;
+    //a = amount ; k = koc ; r = rtrn ; //o = one ; t = two ;
+    //oPrintf ("\ncc1 : amount = %ld : koc = %ld : rtrn = %ld : o = %ld : t = %ld", a, k, r, o, t ) ;
     return rtrn ;
-//<dbg> 
 }
+pwi cc1
 int64 
 countChange ( int amount)
 {
@@ -754,8 +757,8 @@ ti(4) ; CountChange (1000) ; time(4) ;
 //pause
 //logOff
 cOff
-'fd findAny wdiss  
-'cc1 findAny wdiss //pause
+//'fd findAny wdiss  
+
 //pwi countchange
 
 #endif // ifdef _DEV_H_

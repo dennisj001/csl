@@ -20,10 +20,10 @@
 #include "../include/csl.h"
 
 value_t FL_NIL, T, FL_LAMBDA, FL_MACRO, FL_LABEL, FL_QUOTE ;
-value_t lv ; // last value
+//value_t lv ; // last value
 FILE *f ; // input file
 Boolean cli = false ;
-int64 lic ; // last input char 
+//int64 lic ; // last input char 
 
 // error utilities ------------------------------------------------------------
 

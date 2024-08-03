@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.940.172" ) 
+#define VERSION ((byte*) "0.940.176" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -32,7 +32,7 @@ openvmtil ( int64 argc, char * argv [ ] )
 }
 
 void
-_OpenVmTil_Init ( OpenVmTil * ovt )
+OpenVmTil_Init ( OpenVmTil * ovt )
 {
     ovt->MemorySpace0 = MemorySpace_New ( ovt, "DefaultMemorySpace" ) ;
     ovt->CSL_InternalSpace = NBA_OvtNew ( ( byte* ) "CSLInternalSpace", ovt->CSLSize, T_CSL ) ;
@@ -75,7 +75,7 @@ _OpenVmTil_Init ( OpenVmTil * ovt )
     ovt->PrintBuffer = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     ovt->PrintBufferCopy = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     ovt->PrintBufferConcatCopy = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
-    _OpenVmTil_ColorsInit ( ovt ) ;
+    OpenVmTil_ColorsInit ( ovt ) ;
 }
 
 OpenVmTil *
@@ -89,7 +89,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
         startedTimes = ovt->StartedTimes ;
     }
 
-    ovt = _OpenVmTil_Allocate ( ovt ) ;
+    ovt = OpenVmTil_Allocate ( ovt ) ;
     TimerInit ( &ovt->Timer ) ;
 
     OVT_SetRestartCondition ( ovt, restartCondition ) ;
@@ -117,7 +117,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     ovt->SessionObjectsSize = 1 * M ; //50 * K ;
     ovt->ContextSize = 2 * M ; 
 
-    _OpenVmTil_Init ( ovt ) ;
+    OpenVmTil_Init ( ovt ) ;
     Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;
     return ovt ;
 }

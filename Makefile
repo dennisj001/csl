@@ -21,15 +21,16 @@ SOURCES = src/basis/compiler/_compile.c src/basis/compiler/memory.c\
 	src/primitives/compilers.c src/primitives/words.c  src/primitives/file.c src/primitives/stacks.c \
 	src/primitives/debuggers.c src/primitives/memorys.c src/primitives/primitives.c src/primitives/contexts.c\
 	src/primitives/disassembler.c src/primitives/syntaxes.c src/primitives/cmaths.c src/primitives/dataObjectNews.c src/basis/openVmTil.c\
-	src/primitives/ls9.c src/basis/debug/debuggerSteppingSetup.c src/basis/compiler/machineCode.c 
+	src/primitives/ls9.c src/basis/debug/debuggerSteppingSetup.c src/basis/compiler/machineCode.c
+	#src/primitives/fltlisp.c src/primitives/fltread.c\
+	#src/primitives/s9.c src/primitives/s9core.c
 	#src/init_csl.c
-	#src/primitives/fltlisp.c src/primitives/fltread.c src/primitives/s9.c src/primitives/s9core.c
 	
 S9_SOURCES = src/primitives/s9.c src/primitives/s9core.c
 
 INCLUDES = src/include/machineCode.h src/include/defines.h src/include/types.h \
 	src/include/csl.h src/include/macros.h src/include/lc.h\
-	src/include/machineCodeMacros.h src/include/lisp.h
+	src/include/machineCodeMacros.h #src/include/lisp.h
 	
 S9_INCLUDES = src/include/s9core.h src/include/s9ext.h	
 PROTOTYPES = src/include/prototypes.h
@@ -210,7 +211,7 @@ cproto :
 	sudo apt-get install cproto
 
 TAR_OUT = -f ../csl.tar.xz *
-EXCLUDE = --exclude=nbproject --exclude=.vscode --exclude=misc --exclude=objects --exclude=build --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=*-gdb --exclude=*.png --exclude=*.o --exclude=*.kdev* --exclude=*.log --exclude=.csl.*
+EXCLUDE = --exclude=nbproject --exclude=.vscode --exclude=misc --exclude=objects --exclude=build --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=*-gdb --exclude=*.png --exclude=*.o --exclude=*.kdev* --exclude=*.log --exclude=.csl.* --exclude=bin/cs*
 tar.xz :	
 	tar -c --xz --exclude=lib --exclude=archive $(EXCLUDE) $(TAR_OUT) 
 
@@ -231,6 +232,11 @@ all.xz :
 
 _all : realClean install
 	make xz
+	
+small : 
+	$(EXCLUDE) = $(EXCLUDE) --exclude=bin/cs*
+	make tar.xz
+	mv ../csl.tar.xz ../backup/csl-small.tar.xz
 
 _install : 
 	-cp ./init.csl ./namespaces/

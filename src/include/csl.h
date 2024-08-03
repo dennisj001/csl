@@ -12,6 +12,7 @@
 #include "machineCodeMacros.h"
 #include "prototypes.h"
 #include "lc.h"
+
 extern OVT_MemSystem *_OMS_ ;
 extern OVT_StaticMemSystem * _OSMS_ ;
 extern OpenVmTil * _O_;

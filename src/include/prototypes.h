@@ -483,7 +483,7 @@ void OVT_Static_New(void);
 void PRE_STATIC_MEM_Munmap_List(dllist *list);
 void OVT_Static_Delete(OVT_StaticMemSystem *osms);
 void OpenVmTil_Delete(OpenVmTil *ovt);
-OpenVmTil *_OpenVmTil_Allocate(OpenVmTil *ovt);
+OpenVmTil *OpenVmTil_Allocate(OpenVmTil *ovt);
 void OVT_FullRestartCompleteDelete(void);
 byte *Mem_Allocate(int64 size, uint64 allocType);
 void *sl9_malloc(int size);
@@ -1335,7 +1335,7 @@ void RL_TabCompletionInfo_Init(ReadLiner *rl);
 Word *_TabCompletion_Compare(Word *word);
 Word *TC_Tree_Map(TabCompletionInfo *tci, MapFunction mf, Word *wordi);
 /* src/basis/colors.c */
-void _OpenVmTil_ColorsInit(OpenVmTil *ovt);
+void OpenVmTil_ColorsInit(OpenVmTil *ovt);
 void Console(void);
 void _ShowRGB(int64 fr, int64 fg, int64 fb, int64 br, int64 bg, int64 bb);
 void _String_ShowRGB(byte *buf, int64 fr, int64 fg, int64 fb, int64 br, int64 bg, int64 bb);
@@ -2346,7 +2346,7 @@ void CSL_Typedef(void);
 /* src/basis/openVmTil.c */
 int main(int argc, char *argv[ ]);
 void openvmtil(int64 argc, char *argv[ ]);
-void _OpenVmTil_Init(OpenVmTil *ovt);
+void OpenVmTil_Init(OpenVmTil *ovt);
 OpenVmTil *OpenVmTil_New(OpenVmTil *ovt, int64 argc, char *argv[ ]);
 void OpenVmTil_Run(int64 argc, char *argv[ ]);
 void Ovt_RunInit(OpenVmTil *ovt);

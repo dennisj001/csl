@@ -60,6 +60,7 @@ CPrimitive CPrimitives [] = {
     { ";;;", 0, 0, 0, CSL_CommentToEndOfLine, IMMEDIATE | KEYWORD | COMMENT, 0, W_COMMENT, "Lisp", "Root" },
     { "lcDbOn", 0, 0, 0, ( block ) CSL_LC_DebugOn, 0, 0, T_LC_IMMEDIATE, "Lisp", "Root" },
     { "lcDbOff", 0, 0, 0, ( block ) CSL_LC_DebugOff, 0, 0, T_LC_IMMEDIATE, "Lisp", "Root" },
+    { "oPrintf", 0, 0, 0, ( block ) oPrintf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, 0, "Lisp", "Root" },
 
     { "'", 0, 0, 0, CSL_SingleQuote, IMMEDIATE | KEYWORD, 0, 0, "Forth", "Root" },
     { "1,", 0, 0, 0, Compile_Int8, 0, 0, 0, "Forth", "Root" },
@@ -71,7 +72,6 @@ CPrimitive CPrimitives [] = {
     { "rpn", 0, 0, 0, CSL_PostfixModeOn, 0, 0, 0, "Forth", "Root" },
 
 
-    { "oPrintf", 0, 0, 0, ( block ) oPrintf, LISP_C_RTL_ARGS | LISP_VOID_RETURN, 0, 0, "C", "Root" },
     { "iPrintf", 0, 0, 0, ( block ) iPrintf, C_PREFIX_RTL_ARGS | LISP_VOID_RETURN, 0, 0, "C", "Root" },
     { "oPrintf", 0, 0, 0, ( block ) oPrintf, C_PREFIX_RTL_ARGS | LISP_VOID_RETURN, 0, 0, "C", "Root" },
     { "sprintf", 0, 0, 0, ( block ) sprintf, C_PREFIX_RTL_ARGS, 0, 0, "C", "Root" },

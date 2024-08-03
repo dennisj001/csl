@@ -3,7 +3,7 @@
 #if 0
 
 void
-_OpenVmTil_ColorsInit ( OpenVmTil * ovt )
+OpenVmTil_ColorsInit ( OpenVmTil * ovt )
 {
     Colors_Init6 ( &_O_->Alert, 0, 0, 0, 255, 0, 0 ) ;
     Colors_Init6 ( &_O_->Debug, 255, 255, 255, 0, 0, 255 ) ;
@@ -20,7 +20,7 @@ _OpenVmTil_ColorsInit ( OpenVmTil * ovt )
 #else
 
 void
-_OpenVmTil_ColorsInit ( OpenVmTil * ovt )
+OpenVmTil_ColorsInit ( OpenVmTil * ovt )
 {
     Colors_Init6 ( &ovt->Alert, 255, 0, 0, 0, 0, 0 ) ;
     Colors_Init6 ( &ovt->Debug, 0, 0, 255, 0, 0, 0 ) ;

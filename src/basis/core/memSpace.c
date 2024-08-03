@@ -193,7 +193,7 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
 }
 
 OpenVmTil *
-_OpenVmTil_Allocate ( OpenVmTil * ovt )
+OpenVmTil_Allocate ( OpenVmTil * ovt )
 {
     if ( ! _OSMS_ ) OVT_Static_New ( ) ;
     OpenVmTil_Delete ( ovt ) ; // first delete a previous ovt - it could have been corrupted by a software error

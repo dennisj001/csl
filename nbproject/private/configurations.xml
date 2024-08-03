@@ -2,6 +2,11 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name="archive">
+        <in>fltlisp.c</in>
+        <in>fltlread.c</in>
+        <in>lisp.h</in>
+      </df>
       <df name="bin">
       </df>
       <df name="etc">
@@ -113,11 +118,9 @@
           <in>defines.h</in>
           <in>ext.h</in>
           <in>lc.h</in>
-          <in>lisp.h</in>
           <in>machineCode.h</in>
           <in>machineCodeMacros.h</in>
           <in>macros.h</in>
-          <in>old.h</in>
           <in>os.h</in>
           <in>prototypes.h</in>
           <in>types.h</in>
@@ -149,7 +152,6 @@
           <in>systems.c</in>
           <in>words.c</in>
         </df>
-        <in>init_csl.c</in>
       </df>
     </df>
   </logicalFolder>
