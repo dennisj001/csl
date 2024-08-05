@@ -672,6 +672,7 @@ CSL_If_ConditionalExpression ( )
                     ( byte* ) "endif", ( byte* ) ":", ( byte* ) ")", ( byte* ) "#", 0, 1, 0 ) ;
                 if ( ( token == 0 ) || ( String_Equal ( token, "endif" ) ) ) return ;
                 Parse_SkipUntil_EitherToken_OrNewline ( ( byte* ) "endif", 0 ) ;
+                //Parse_SkipUntil_EitherToken_OrNewline ( ( byte* ) "endif", "\n" ) ;
             }
             else
             {

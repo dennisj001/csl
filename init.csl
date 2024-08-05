@@ -377,8 +377,11 @@ dscOn
 Root Io
 : Error "\nerror :" ps location pause ;
 cOn Root
-int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } 
-"hi" "hi" StringEqual != 0 ? noop : abort
+int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } //remember : strcmp returns a diff => returns 0 when there is no difference
+StringEqual ( "hi" "hi" ) != 0 ? noop : abort // remember : so StringEqual returns true (1) when strings are equal
+StringEqual ( "hi" "hi" ) == 0 ? abort : noop
+StringEqual ( "hi" "hi" ) ? noop : abort
+StringEqual ("hi" "hey") != 0 ? abort : noop
 StringEqual ("hi" "hey") == 0 ? noop : abort
 Dlsym libc 
 void pbAssert ( argin ) 
@@ -473,7 +476,9 @@ sp0
 Root
 // rtw : recycle some test/debug words 
 : rtw "test" purgeAll "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
-: atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable "7" atoi 7 _assert sp0
+: atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable 
+//pwi atoi 
+"7" atoi 7 _assert //pause
 #if startupMacros
 stringMacrosOn
 #endif
@@ -585,13 +590,14 @@ cOff
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
-#if 0 //DEBUG_ON //0 // this works
+#if 0 //DEBUG_ON 
 c_syntaxOn
+//int _fib1c ( REG n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
 int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
-'_fib1c find wdiss
-_fib1c (20) ; 
+pwi _fib1c
+_fib1c (20) ; dup p 6765 _assert
 c_syntaxOff
-dup p 6765 _assert0 
+//dup p 6765 _assert0 
 C
 scOn
 cOn 
@@ -618,8 +624,8 @@ fd ( int koc)
 ))))
 */
 int64
-//cc1 ( int64 amount, int64 koc | rtrn, one, two )
-cc1 ( REG amount, REG koc | REG rtrn ) // doesn't work ??
+cc1 ( int64 amount, int64 koc | rtrn, one, two )
+//cc1 ( REG amount, REG koc | REG rtrn ) // doesn't work ??
 //cc1 ( REG amount, REG koc) // doesn't work ??
 {
     //int64 rtrn, one, two ;
@@ -627,7 +633,7 @@ cc1 ( REG amount, REG koc | REG rtrn ) // doesn't work ??
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
     {
-#if 1
+#if 0
         rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; // compiles but give wrong result
 #else // this works
         one = cc1 ( amount, koc - 1) ;

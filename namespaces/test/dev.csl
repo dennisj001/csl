@@ -370,7 +370,8 @@ _fibn0 ( n | fib )
     }
     return fib ;
 }
-//' _fibn0 find d: wdiss sp0 _fibn0 ( 20 ) dup p 6765 _assert //sp0
+//' _fibn0 find d: wdiss sp0 
+_fibn0 ( 20 ) dup p 6765 _assert //sp0
 int
 fibPTC? ( n ) 
 {

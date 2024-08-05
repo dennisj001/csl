@@ -3,7 +3,8 @@
 
 // some of these could probably be combined
 byte *
-Interpret_C_Until_NotIncluding_Token5 ( Interpreter * interp, byte * end1, byte * end2, byte* end3, byte* end4, byte* end5, byte * delimiters, Boolean newlineBreakFlag, Boolean charsFlag )
+Interpret_C_Until_NotIncluding_Token5 ( Interpreter * interp, byte * end1, byte * end2, byte* end3, byte* end4, byte* end5, byte * delimiters, 
+    Boolean newlineBreakFlag, Boolean charsFlag )
 {
     byte * token ;
     int64 inChar ;
