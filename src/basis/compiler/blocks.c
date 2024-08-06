@@ -107,12 +107,6 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
         }
         else if ( ( insn == JMP32 ) || ( insn == JMP8 ) )
         {
-            insnSize = 1 ;
-            //int32 offset ;
-            //if ( insn == JMP32 ) offset = * ( int32* ) ( srcAddress + insnSize ) ; // 1 : 1 byte JMPI32 opCode - e9
-            //else offset = * ( int8 * ) ( srcAddress + insnSize ) ;
-            //if ( offset ) dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) ( srcAddress ) ) ;
-            //else 
             dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) srcAddress ) ; //, ( int64 ) end ) ;
         }
         else if ( ( insn == JCC32 ) || IS_INSN_JCC8 ( insn ) )
@@ -120,11 +114,8 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
             dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) srcAddress ) ; //, ( int64 ) end ) ;
             bi->JccCode = Here ;
 #if 1 // this has sometimes *maybe* caused problems ??
-            if ( ( insn == JCC32 ) || ( insn == JCC8 ) )
+            if ( GetState ( _CSL_, JCC8_ON ) && (( insn == JCC32 ) || ( insn == JCC8 ) ))
             {
-                //byte noop4 [] = { 0x66, 0x90, 0x66, 0x90 } ; 
-                //byte noop4 [] = { 0x90, 0x90, 0x90, 0x90 } ; 
-                //if (insn == JCC8)
                 int32 offset = GetDispForCallOrJumpFromInsnAddr ( srcAddress ) ;
                 if ( ( ! ( bi->IiFlags & LOGIC_FLAG ) ) && offset && ( CheckOffset ( offset, 1 ) ) )
                 {

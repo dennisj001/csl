@@ -429,7 +429,7 @@ Debugger_Continue ( Debugger * debugger )
         SetState ( debugger, ( DBG_CONTINUE_MODE ), true ) ;
         if ( debugger->DebugAddress )
         {
-            debugger->OutWord = 0 ;
+            //debugger->OutWord = 0 ;
             debugger->Key = debugger->SaveKey ;
             // continue stepping thru to end of word
             word = Word_GetFromCodeAddress ( debugger->DebugAddress ) ;

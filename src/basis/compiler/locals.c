@@ -299,7 +299,9 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
         byte mov_rax_r14 [ ] = { 0x49, 0x89, 0x06 } ;
         //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) Here - 3, 3, 1 ) ;
         int64 test = memcmp ( mov_rax_r14, Here - 3, 3 ) ; //remember : memcmp returns a diff => returns 0 when there is no difference
-        if ( ( IsWordRecursive ) && ( ! test ) ) return ;
+        //if ( ( IsWordRecursive ) && ( ! test ) ) 
+        if ( ! test ) 
+            return ;
         Compile_Move_ACC_To_TOS ( DSP ) ;
     }
 }

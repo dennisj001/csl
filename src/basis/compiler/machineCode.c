@@ -849,8 +849,78 @@ Compile_IMUL ( Boolean mod, Boolean reg, Boolean rm, Boolean controlFlags, Boole
 void
 _Compile_Test ( Boolean mod, Boolean reg, Boolean rm, Boolean controlFlags, int64 disp, int64 imm )
 {
-
     Compile_CalculateWrite_Instruction_X64 ( 0, 0xf7, mod, reg, rm, REX_W | MODRM_B | controlFlags, 0, disp, 0, imm, 0 ) ; //??
+}
+
+byte *
+Compile_UninitializedJccEqualZero ( )
+{
+    byte * compiledAtAddress = Here ;
+    _Compile_Jcc ( JCC32, TTT_ZERO, N_0, 0 ) ;
+    return compiledAtAddress ;
+}
+
+byte *
+Compile_UninitializedJccNotEqualZero ( )
+{
+    byte * compiledAtAddress = Here ;
+    _Compile_Jcc ( JCC32, TTT_ZERO, N_1, 0 ) ;
+    return compiledAtAddress ;
+}
+
+void
+_Compile_JumpToDisp ( int32 disp, byte insn )
+{
+    if ( ( insn != JMP32 ) && ( ( disp > - 127 ) && ( disp <= 128 ) ) )
+        Compile_CalculateWrite_Instruction_X64 ( 0, JMP8, 0, 0, 0, DISP_B, 0, disp, BYTE, 0, 0 ) ;
+    else Compile_CalculateWrite_Instruction_X64 ( 0, JMP32, 0, 0, 0, DISP_B, 0, disp, INT32_SIZE, 0, 0 ) ;
+}
+
+void
+Compile_JumpToAddress ( byte * jmpToAddr, byte insn ) // runtime
+{
+    int32 disp = CalculateOffsetForCallOrJump (Here, jmpToAddr, T_JMP ) ;
+    _Compile_JumpToDisp ( disp, insn ) ;
+}
+
+void
+Compile_JumpToRegAddress ( Boolean reg )
+{
+    _Compile_Group5 ( JMP, 0, reg, 0, 0, 0 ) ;
+}
+
+void
+_Compile_UninitializedJmpOrCall ( Boolean jmpOrCall ) // jmpOrCall : CALL32/JMP32
+{
+    Compile_CalculateWrite_Instruction_X64 ( 0, jmpOrCall, 0, 0, 0, DISP_B, 0, 0, INT32_SIZE, 0, 0 ) ;
+}
+
+void
+_Compile_JumpWithOffset ( int64 disp )
+{
+    _Compile_JumpToDisp ( disp, 0 ) ;
+}
+
+byte *
+_Compile_UninitializedCall ( )
+{
+    byte * compiledAtAddress = Here ;
+    _Compile_UninitializedJmpOrCall ( CALL32 ) ;
+    return compiledAtAddress ;
+}
+
+byte *
+Compile_UninitializedJump ( )
+{
+    byte * compiledAtAddress = Here ;
+    _Compile_UninitializedJmpOrCall ( JMP32 ) ;
+    return compiledAtAddress ;
+}
+
+void
+_Compile_CallReg ( Boolean reg, Boolean regOrMem )
+{
+    _Compile_Group5 ( CALL, regOrMem, reg, 0, 0, 0 ) ;
 }
 
 void
@@ -881,6 +951,7 @@ _Compile_Call_ThruReg_TestAlignRSP ( Boolean thruReg )
     _Compile_JumpToDisp ( 3, JMP8 ) ; 
     _Compile_CallReg ( thruReg, REG ) ;
     //DBI_OFF ;
+    //Pause () ;
 }
 
 void
@@ -895,7 +966,6 @@ Compile_Call_ToAddressThruReg_TestAlignRSP ( byte * address, Boolean thruReg )
 void
 Compile_Call_ToAddressThruSREG_TestAlignRSP ( )
 {
-
     _Compile_Call_ThruReg_TestAlignRSP ( SREG ) ;
 }
 

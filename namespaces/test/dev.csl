@@ -697,7 +697,7 @@ d: : hi 1 2 + p ; hi
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 
-#if DEBUG_ON //0 // this works
+#if 1 //DEBUG_ON //0 // this works
 C scOn cOn 
 
 int64

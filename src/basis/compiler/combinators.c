@@ -142,7 +142,7 @@ CSL_WhileCombinator ( )
 #endif
         svHere = 0 ;
         byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
-        if ( ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
+        if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
         {
             svHere = Here ;
             BlockInfo *bic1 = BlockInfo_Copy ( bico ) ;
@@ -221,7 +221,7 @@ CSL_ForCombinator ( )
         BlockInfo * bidpb = Block_CopyCompile ( ( byte* ) doPostBlock, 1, 0 ) ;
         byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
 #if 1 // JCC8 setup       
-        if ( ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
+        if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
         {
             svHere = Here ;
             BlockInfo *bic1 = BlockInfo_Copy ( bic ) ;
@@ -290,7 +290,7 @@ CSL_DoWhileDoCombinator ( )
 
 #if 1 // untested
         byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode, * bicCopiedToStart = bic->CopiedToStart ;
-        if ( ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
+        if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
         {
             svHere = Here ;
             BlockInfo *bic1 = BlockInfo_Copy ( bico ) ;
