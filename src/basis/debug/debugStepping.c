@@ -93,8 +93,6 @@ Debugger_StepLoop ( Debugger * debugger )
     SetState ( debugger, ( DBG_UDIS ), true ) ;
 }
 
-#if 1
-
 void
 Do_JcAddress ( byte * jcAddress )
 {
@@ -108,14 +106,12 @@ Do_JcAddress ( byte * jcAddress )
         debugger->DebugAddress += debugger->InsnSize ;
     }
 }
-#endif     
 
 Boolean
 Debugger_CheckSkipDebugOrCallThruWord ( Debugger * debugger, byte * jcAddress )
 {
     Word *word, * word0 = Word_GetFromCodeAddress ( jcAddress ) ;
     word = Word_UnAlias ( word0 ) ;
-    //int64 cws = Debugger_CanWeStep ( debugger, word ) ;
     if ( word && String_Equal ( word->Name, "<dbg>" ) )
     {
         //Debugger_UdisOneInstruction ( debugger, 0, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
@@ -143,10 +139,12 @@ Debugger_CheckSkipDebugOrCallThruWord ( Debugger * debugger, byte * jcAddress )
             if ( word->W_MorphismAttributes & ( CSL_ASM_WORD ) )
             {
                 debugger->DebugAddress = jcAddress ;
+                _Stack_Push ( debugger->ReturnStack, ( int64 ) debugger->ReturnAddress ) ; // the return address
             }
             else
             {
-                if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru and over a C word : %s : at 0x%-16lx", ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), jcAddress ) ;
+                if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru and over a C word : %s : at 0x%-16lx", 
+                    ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), jcAddress ) ;
                 _Block_Eval ( word->Definition ) ;
                 AdjustR14WithDsp ( ) ;
                 //CSL_PrintDataStack () ; 
@@ -191,9 +189,7 @@ Debugger_StepInstructionType ( Debugger * debugger )
             else if ( * dadr == JMP8 ) debugger->Insn = JMP8 ;
             jcAddress = JumpCallInstructionAddress ( dadr ) ;
             Do_JcAddress ( jcAddress ) ;
-            //debugger->DebugAddress = jcAddress ; // always with jmp
             //Debugger_CheckSkipDebugOrCallThruWord ( debugger, jcAddress ) ;
-            //Do_JcAddress ( jcAddress ) ;
             return ;
         }
         else if ( * dadr == CALL32 )
@@ -212,13 +208,13 @@ Debugger_StepInstructionType ( Debugger * debugger )
             else if ( ( *( dadr + 2 ) == 0xd3 ) ) jcAddress = ( byte* ) debugger->cs_Cpu->R11d ;
             else jcAddress = JumpCallInstructionAddress_X64ABI ( dadr ) ;
             Debugger_CheckSkipDebugOrCallThruWord ( debugger, jcAddress ) ;
-            return ; //don't convert below
+            return ; 
         }
-        else if ( ( * ( dadr ) >> 4 ) == 0x7 )
+        else if ( ( * ( dadr ) >> 4 ) == 0x7 ) // JCC8
         {
             debugger->Insn = JCC8 ;
-            debugger->DebugAddress = Debugger_DoJcc ( debugger ) ;
-            //Do_JcAddress ( jcAddress ) ;
+            jcAddress = Debugger_DoJcc ( debugger ) ;
+            Do_JcAddress ( jcAddress ) ;
             return ;
         }
         else if ( * dadr == 0x0f )
@@ -228,12 +224,11 @@ Debugger_StepInstructionType ( Debugger * debugger )
                 debugger->DebugAddress += debugger->InsnSize ;
                 return ;
             }
-            else if ( ( ( * ( dadr + 1 ) >> 4 ) == 0x8 ) )
+            else if ( ( ( * ( dadr + 1 ) >> 4 ) == 0x8 ) ) // JCC32
             {
                 debugger->Insn = JCC32 ;
-                //else if ( ( * ( dadr + 1 ) >> 4 ) == 0x7 ) debugger->Insn = JCC8 ;
-                debugger->DebugAddress = Debugger_DoJcc ( debugger ) ;
-                //Do_JcAddress ( jcAddress ) ;
+                jcAddress = Debugger_DoJcc ( debugger ) ;
+                Do_JcAddress ( jcAddress ) ;
                 return ;
             }
             return ;
