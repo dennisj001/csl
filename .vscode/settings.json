@@ -1,9 +1,0 @@
-{
-    "makefile.launchConfigurations": [
-        {
-            "cwd": "/home/dennisj/csl/bin",
-            "binaryPath": "/home/dennisj/csl/bin/csl-gdb",
-            "binaryArgs": []
-        }
-    ]
-}

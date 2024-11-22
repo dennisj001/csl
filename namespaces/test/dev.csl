@@ -196,7 +196,8 @@ jcc8_On optRegs
 pwi factorial2 
 7 factorial2 5040 _assert //pause
 jcc8_Off //initRegs
-'reps0 var
+'reps0 var 
+'reps1 var
 : _ifx ( w | j ) 
     { j 1 = } { j @ reps0 @ <= } { j ++ } 
     {
@@ -560,6 +561,7 @@ sp0
 nl nl 92 tfib3 //sp0 pause
 nl 92 dup p fibBN p 
 20 fibBN dup p 6765 == { "ok" ps } { "error" ps } tf2 drop sp0
+//pause
 : dbg _dbg ;
 //cOff
 : _ifx ( w | j )
@@ -587,17 +589,18 @@ pwi _ffx //pause
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
 
 'WDISS_ON var 
-WDISS_ON 0 =
+WDISS_ON 1 =
 
 : _shootout ( wn n | m w t ) 
     //<dbg>
     w wn @ _findUsing = { WDISS_ON @ 0 > } { w @ wdiss } if2
-    3 ti 
+    4 ti 
     { m n @ = t n @ = } { m @ 0 > } { m -- } 
     {
         { n t @ = nl "m = " ps m @ p } { n @ 0 > } { n -- } { n @ w @ _ffx } for
     } for
-    nl wn @ ps 3 time 
+    nl wn @ ps 
+    4 time 
     wn @ ps reps0 @ p " = "ps reps0 @ w @ wordRun decimal p nl // test output 
     wn @ comment nl
 ;
@@ -623,6 +626,7 @@ WDISS_ON 0 =
 ;
 //pwi fib_shootout //pause
 reps0 92 =
+reps1 3 = 
 #if DEBUG_ON 
 reps 2 = 
 reps0 2 = 
@@ -631,7 +635,7 @@ reps0 2 =
 #else
 reps 1000 =
 reps0 92 =
-3 fib_shootout // pause
+reps1 @ fib_shootout // pause
 #endif
 //logOff pause
 : fac_shootout ( m | n ) 
@@ -661,7 +665,7 @@ reps0 2 =
 #else
 reps 1000 =
 reps0 23 =
-3 fac_shootout //pause
+reps1 @ fac_shootout //pause
 #endif
 //sp 
 bnOff 
@@ -671,7 +675,6 @@ namespaceTreeWithWords
 Interpreter
 sp0
 
-#if 1 // this works
 bnOn cOn 
 void ctof0 ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
 void ctof1 ( c ) { c *= 1.8 ; c += 32 ; nl ; p (c) ; } //ctof1 ( 11.41) ;
@@ -682,7 +685,6 @@ bnOff
 : ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
 : ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
 sp0
-#endif
 
 
 //tc demo lisp
@@ -697,14 +699,13 @@ d: : hi 1 2 + p ; hi
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 
-#if 1 //DEBUG_ON //0 // this works
+#if 0 //DEBUG_ON //0 // this works
 C scOn cOn 
 
 int64
-fd ( REG int64 koc | REG rtrn )
-//fd ( int64 koc | rtrn )
+fd ( int64 koc ) //| REG rtrn )
 {
-   //int64 rtrn ;
+   int64 rtrn ;
    if ( koc == 1) rtrn = 1 ;
    else if ( koc == 2) rtrn = 5 ;
    else if ( koc == 3) rtrn = 10 ;

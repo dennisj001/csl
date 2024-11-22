@@ -375,9 +375,9 @@ CO_2Args_Or_WordArg1_Op ( Compiler * compiler )
                     compiler->OptInfo->rtrn = CO_DONE ;
                     return ;
                 }
-                else
+                //else
 #endif                
-                    if ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) SetHere ( optInfo->wordArg1->Coding ? optInfo->wordArg1->Coding : optInfo->wordArg2->Coding ) ;
+                if ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) SetHere ( optInfo->wordArg1->Coding ? optInfo->wordArg1->Coding : optInfo->wordArg2->Coding ) ;
                 else if ( optInfo->wordArg1->StackPushRegisterCode ) _Set_To_Here_Word_StackPushRegisterCode ( optInfo->wordArg1 ) ;
                 else
                 {

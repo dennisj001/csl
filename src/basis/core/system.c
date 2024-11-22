@@ -5,14 +5,13 @@ void
 TimerInit ( struct timespec * timer )
 {
     clock_gettime ( CLOCK_REALTIME, timer ) ;
-    //clock_gettime ( CLOCK_MONOTONIC, &system->Timers [ i ] ) ;
+    //clock_gettime ( CLOCK_MONOTONIC, timer ) ;
 }
 
 void
 _System_TimerInit ( System * system, int64 i )
 {
-    clock_gettime ( CLOCK_REALTIME, &system->Timers [ i ] ) ;
-    //clock_gettime ( CLOCK_MONOTONIC, &system->Timers [ i ] ) ;
+    TimerInit ( &system->Timers [ i ] ) ;
 }
 
 void
@@ -62,15 +61,15 @@ _System_Time ( System * system, uint64 timer, char * format, byte * toString )
 void
 System_Time ( System * system, uint64 timer, char * string, int64 tflag )
 {
-    byte buffer [ 64 ] ;
+    byte buffer [ 256 ] ;
     _System_Time ( system, timer, ( char* ) "%ld.%09ld", buffer ) ;
-    if ( tflag && ( Verbosity () ) ) iPrintf ( "%s [ %d ] : elapsed time = %s seconds\n", string, timer, buffer ) ;
+    if ( tflag && ( Verbosity () ) ) iPrintf ( "%s [ %d ] : elapsed time = %s seconds at %s\n", string, timer, buffer, Context_Location ( ) ) ;
 }
 
 void
 OVT_Time ( char * string, int64 tflag )
 {
-    byte buffer [ 64 ] ;
+    byte buffer [ 256 ] ;
     //_System_Time ( system, timer, ( char* ) "%ld.%09ld", buffer ) ;
     Time ( &_O_->Timer,  ( char* ) "%ld.%09ld", buffer ) ;
     if ( tflag && ( Verbosity () ) ) iPrintf ( "%s : elapsed time = %s seconds", string, buffer ) ;

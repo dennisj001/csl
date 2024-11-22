@@ -292,8 +292,7 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
         {
             if ( returnVariable->W_ObjectAttributes & REGISTER_VARIABLE )
             {
-                //_Compile_Move_Reg_To_StackN ( DSP, 0, returnVariable->RegToUse, 0 ) ;
-                _Compile_Stack_PushReg ( DSP, returnVariable->RegToUse, 0 ) ;
+                _Compile_Move_Reg_To_StackN ( DSP, 0, returnVariable->RegToUse, 0 ) ;
                 return ;
             }
         }

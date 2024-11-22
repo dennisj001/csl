@@ -593,20 +593,21 @@ cOff
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
 #if 0 //DEBUG_ON 
-//jcc8_Off // must be on here !
-c_syntaxOn scOn
+jcc8_On // must be on here !
+c_syntaxOn
 int _fib1cr ( REG n ) { if ( n < 2 ) { n ; } else { _fib1cr ( n - 1 ) + _fib1cr ( n - 2 ) ; }  }
 int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
 pwi _fib1c
+pwi _fib1cr
 _fib1c (20) ; dup p 6765 _assert
 //_fib1cr (20) ; dup p 6765 _assert
-pwi _fib1cr
 c_syntaxOff
 C
+scOn
 cOn 
 int64
-fd ( koc | rtrn )
-//fd ( REG koc | REG rtrn )
+fd ( REG int64 koc | REG int64 rtrn )
+//fd ( int64 koc | int64 rtrn )
 {
    //int64 rtrn ;
    if ( koc == 1) rtrn = 1 ;
@@ -628,52 +629,32 @@ pwi fd sp0
 ))))
 */
 int64
-cc1r ( REG amount, REG koc | REG rtrn ) // gives wrong result ??
+cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ??
+//cc1 ( REG amount, REG koc | REG rtrn ) // gives wrong result ??
+//cc1 ( int64 amount, int64 koc | rtrn, one, two )
+//cc1 ( REG amount, REG koc) // doesn't work ??
 {
+    //int64 rtrn, one, two ;
     if (amount == 0) rtrn = 1  ;
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
     {
-        rtrn = cc1r ( amount, koc - 1) + cc1r (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
-    }
-    //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
-    //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
-//<dbg> 
-    return rtrn ;
-}
-pwi cc1r //pause
-int64
-cc1 ( amount, koc | rtrn, one, two )
-{
-    if (amount == 0) rtrn = 1  ;
-    else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
-    else 
-    {
+#if 1 //
+        rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
+#else // no REGs this works
         one = cc1 ( amount, koc - 1) ;
         two = cc1 (amount - fd (koc), koc) ;
         rtrn = one + two ;
+#endif
     }
     //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
     //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
 //<dbg> 
     return rtrn ;
 }
+//vb(1) ;
 pwi cc1 //pause
-int64 
-countChanger ( int amount)
-{
-  int64 rtrn = cc1r ( amount, 5)  ;
-  return rtrn ;
-}
-//pwi countchange
-void
-CountChanger ( int64 amount )
-{
-    int64 value0 ;
-    value0 = countChanger ( amount ) ;
-    //<dbg>
-    oPrintf ( "\n%ld", value0 ) ;
-}
+//pwi countChangec
 int64 
 countChange ( int amount)
 {
@@ -692,11 +673,8 @@ CountChange ( int64 amount )
 //logOn
 //stack pause
 CountChange (100) ; stack //pause
-CountChanger (100) ; stack //pause
 countChangec (100 ) ; drop
-//pwi countChangec
 ti(4) ; countChangec (1000 ) ; drop time(4) ;
-ti(4) ; CountChanger (1000) ; time(4) ; stack
 ti(4) ; CountChange (1000) ; time(4) ; stack
 //logOff
 cOff

@@ -100,7 +100,7 @@ _CSL_Key ( ReadLiner * rl )
 void
 _CSL_PrintString ( byte * string ) //  '."'
 {
-    printf ( "%s", string ) ;
+    oPrintf ( "%s", string ) ;
     fflush (stdout) ;
 }
 

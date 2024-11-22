@@ -174,7 +174,7 @@ void l0040 ( a b c )
     if ( ( a == 1 ) && ( ( b == 1 ) || ( c == 1 ) ) ) return 1  ; 
     else return 0 ; 
 }
-//pwi l0040 sp1
+//pwi l0040 sp
 l0040 ( 0 0 0 ) ; 0 _assert
 l0040 ( 1 0 0 ) ; 0 _assert 
 l0040 ( 0 1 0 ) ; 0 _assert
@@ -204,7 +204,7 @@ void l0050 ( a b c )
     if ( ( a == 1 ) || ( ( b == 1 ) && ( c == 1 ) ) )return 1  ; 
     else return 0 ; 
 }
-//pwi l0050 sp1
+pwi l0050 sp
 l0050 ( 0 0 0 ) ; 0 _assert
 l0050 ( 1 0 0 ) ; 1 _assert 
 l0050 ( 0 1 0 ) ; 0 _assert
@@ -219,8 +219,8 @@ void l0051 ( a b c )
     if ( ( a == 1 ) || ( b == 1 ) && ( c == 1 ) )return 1  ; 
     else return 0 ; 
 }
-//pwi l0051 pause sp0
-//sp1
+pwi l0051 //pause sp0
+//sp
 l0051 ( 0 0 0 ) ; 0 _assert
 l0051 ( 1 0 0 ) ; 0 _assert 
 l0051 ( 0 1 0 ) ; 0 _assert
@@ -235,7 +235,7 @@ void l0060 ( a b c )
     if ( ( ( a == 1 ) && ( b == 1 ) ) || ( c == 1 ) ) return 1  ; 
     else return 0 ; 
 }
-//pwi l0060 sp0
+pwi l0060 sp0
 l0060 ( 0 0 0 ) ; 0 _assert
 l0060 ( 1 0 0 ) ; 0 _assert 
 l0060 ( 0 1 0 ) ; 0 _assert
@@ -251,7 +251,7 @@ void l0052 ( a b c d )
     //if ( ( a == 1 ) && ( b == 1 ) || ( c == 1 ) && ( d == 1 ) )return 1  ; 
     else return 0 ; 
 }
-//pwi l0052 sp0
+pwi l0052 sp0
 l0052 ( 1 0 0 0 ) ; 0 _assert 
 l0052 ( 0 1 0 0 ) ; 0 _assert
 l0052 ( 0 0 1 0 ) ; 0 _assert
@@ -270,7 +270,7 @@ void l0061 ( a b c d )
     if ( ( ( a == 1 ) || ( b == 1 ) ) && ( ( c == 1 ) || ( d == 1 ) ) )return 1  ; 
     else return 0 ; 
 }
-//pwi l0061 sp0
+pwi l0061 sp0
 l0061 ( 1 0 1 0 ) ; 1 _assert 
 l0061 ( 0 1 0 1 ) ; 1 _assert
 l0061 ( 0 0 1 0 ) ; 0 _assert
@@ -306,7 +306,7 @@ l0030 ( 1 1 0 0 ) ; 0 _assert
 l0030 ( 1 1 0 1 ) ; 1 _assert
 cOff
 //pwi l0031 sp0
-#if 1 
+#if 0
 : l0031 ( a b c d ) { a @ 1 == b @ 1 == && c @ 1 == || d @ 1 == && } { return 1  } { return 0  } ifElse ; prefixable
 pwi l0031 //pause
 l0031 ( 1 0 0 0 )  0 _assert 
@@ -342,12 +342,11 @@ l0031 ( 0 1 1 1 )
 l0031 ( 0 0 1 1 )  
 l0031 ( 1 1 0 0 )  
 l0031 ( 1 1 0 1 )  
-cpbOff 
-dpbOff
 C_Syntax
 pbAssert ( " 0 0 0 0 0 0 0 0 1 0 1 1 0 1" ) ; //pause 
+cpbOff 
 dpbOff
-//pwi l0031 
+pwi l0031 
 
 #endif
 

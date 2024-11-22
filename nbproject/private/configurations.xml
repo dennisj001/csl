@@ -8,6 +8,16 @@
       </df>
       <df name="bin">
       </df>
+      <df name="build">
+        <df name="config">
+        </df>
+        <df name="Debug">
+        </df>
+        <df name="obj">
+        </df>
+        <df name="out">
+        </df>
+      </df>
       <df name="etc">
       </df>
       <df name="namespaces">
@@ -179,6 +189,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>

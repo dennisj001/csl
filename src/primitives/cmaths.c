@@ -222,14 +222,3 @@ CSL_CountChange ()
     printf ( "\n%ld", value0 ) ;
     fflush ( stdout ) ;
 }
-#if 0
-void 
-cl0030 (  ) 
-{
-    int64 a = _DspReg_ [ 0 ], b = _DspReg_ [ -1 ], c =_DspReg_ [ 2 ], d = _DspReg_ [ -3 ] ;
-    DataStack_DropN ( 4 ) ;
-    
-    if ( ( a == 1 ) && ( b == 1 ) || ( c == 1 ) && ( d == 1 ) ) DataStack_Push (1)  ; 
-    else DataStack_Push (0) ; 
-}
-#endif

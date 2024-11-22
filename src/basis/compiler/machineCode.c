@@ -72,7 +72,7 @@
 //                      REX_B  IMM_B  DISP_B SIB_B   MODRM_B
 
 void
-_Compile_Write_Instruction_X64 ( Boolean rex, uint8 opCode0, uint8 opCode1, Boolean modRm, int16 controlFlags, Boolean sib, 
+_Compile_Write_Instruction_X64 ( Boolean rex, uint8 opCode0, uint8 opCode1, Boolean modRm, int16 controlFlags, Boolean sib,
     int64 disp, Boolean dispSize, int64 imm, Boolean immSize )
 {
     d1 ( byte * here = Here ) ;
@@ -276,6 +276,7 @@ Compile_CalculateWrite_Instruction_X64 ( uint8 opCode0, uint8 opCode1, Boolean m
 
 // size refers to size of the operand or immediate
 // mod :: TO_REG == 3 : TO_MEM == 0,1,2 depending on disp size ; 0 == no disp ; 1 == 8 bit disp ; 2 == 32 bit disp
+
 void
 Compile_Move ( uint8 direction, uint8 mod, uint8 reg, uint8 rm, uint8 operandSize,
     uint8 sib, int64 disp, uint8 dispSize, int64 imm, uint8 immSize )
@@ -311,7 +312,7 @@ Compile_Move ( uint8 direction, uint8 mod, uint8 reg, uint8 rm, uint8 operandSiz
                 return ;
             }
             controlFlags |= ( IMM_B | REX_W ) ;
-            if ( imm < ( int64 ) 0xffffffff )  // sign extend 32 bit to 64 bit -> smaller faster insn
+            if ( imm < ( int64 ) 0xffffffff ) // sign extend 32 bit to 64 bit -> smaller faster insn
             {
                 //DBI_ON ;
                 opCode = 0xc7 ;
@@ -497,7 +498,7 @@ _Compile_X_Group1 ( Boolean code, Boolean toRegOrMem, Boolean mod, Boolean reg, 
         else if ( operandSize == 4 ) opCode |= rm ;
         Compile_CalculateWrite_Instruction_X64 ( opCode0, opCode, mod, reg, rm, controlFlags, sib, disp, 0, 0, operandSize ) ;
     }
-    else //if ( osize == 8 ) 
+    else //if ( osize >= 8 ) 
     {
         Compile_CalculateWrite_Instruction_X64 ( 0, opCode, mod, reg, rm, controlFlags, sib, disp, 0, 0, operandSize ) ;
     }
@@ -533,7 +534,7 @@ _Compile_X_Group1_Immediate ( Boolean code, Boolean mod, Boolean rm, int64 disp,
     // we always sign extend so opCodes 0x80 and 0x82 are not being used
     // 1000 00sw 
     //DBI_ON ;
-    if ( ( code == CMP ) || ( code == XOR ) )SetCompilerField ( CurrentTopBlockInfo, CmpCode, Here ) ;
+    if ( ( code == CMP ) || ( code == XOR ) ) SetCompilerField ( CurrentTopBlockInfo, CmpCode, Here ) ;
     byte opCode = 0x80 ;
     int64 controlFlags = ( IMM_B | MODRM_B | ( disp ? DISP_B : 0 ) ) ;
     //if ( ( mod == MEM ) && ( ( iSize > 4 ) || ( imm >= 0x100000000 ) ) )
@@ -765,7 +766,7 @@ _Compile_SETccRm ( Boolean setTtn, Boolean setNegFlag, Boolean rm )
     rex = 0x41 ; //Calculate_Rex ( 0, reg, 0, 0 ) ; //REX_B ) ; //( immSize == 8 ) || ( controlFlag & REX_B ) ) ;
     opCode0 = ( byte ) 0x0f ;
     opCode1 = ( ( 0x9 << 4 ) | ( setTtn << 1 ) | setNegFlag ) ;
-            //CalculateModRmByte ( Boolean mod, Boolean reg, Boolean rm, Boolean sib, int64 disp )
+    //CalculateModRmByte ( Boolean mod, Boolean reg, Boolean rm, Boolean sib, int64 disp )
     modRm = rm ; //CalculateModRmByte ( MEM, 0, rm, 0, 0 ) ;
     //_Compile_Write_Instruction_X64 ( int8 rex, uint8 opCode0, uint8 opCode1, int8 modRm, int16 controlFlags, int8 sib, int64 disp, int8 dispSize, int64 imm, int8 immSize )
     _Compile_Write_Instruction_X64 ( rex, opCode0, opCode1, modRm, MODRM_B, 0, 0, 0, 0, 0 ) ; //controlFlags, sib, disp, dispSize, imm, immSize ) ;
@@ -800,10 +801,10 @@ Compile_Logical_X_Group1 ( Compiler * compiler, int64 op, Boolean ttt, Boolean n
         //_Compile_Group1 ( int64 code, int64 toRegOrMem, int64 mod, int64 reg, int64 rm, int64 sib, int64 disp, int64 osize )
         _Compile_X_Group1 ( op, REG, MEM, ACC, DSP, 0, CELL, CELL ) ;
 #if OLD_Setcc            
-            _Compile_Stack_DropN ( DSP, 2 ) ; 
+        _Compile_Stack_DropN ( DSP, 2 ) ;
 #else            
-            _Compile_Stack_DropN ( DSP, 1 ) ; 
-            Compile_MoveImm_To_TOS ( R14, 0, 8 ) ;
+        _Compile_Stack_DropN ( DSP, 1 ) ;
+        Compile_MoveImm_To_TOS ( R14, 0, 8 ) ;
 #endif            
     }
 
@@ -879,7 +880,7 @@ _Compile_JumpToDisp ( int32 disp, byte insn )
 void
 Compile_JumpToAddress ( byte * jmpToAddr, byte insn ) // runtime
 {
-    int32 disp = CalculateOffsetForCallOrJump (Here, jmpToAddr, T_JMP ) ;
+    int32 disp = CalculateOffsetForCallOrJump ( Here, jmpToAddr, T_JMP ) ;
     _Compile_JumpToDisp ( disp, insn ) ;
 }
 
@@ -948,7 +949,7 @@ _Compile_Call_ThruReg_TestAlignRSP ( Boolean thruReg )
     Compile_TEST_AL_ImmByte ( 0x8 ) ;
     Compile_Jcc ( TTT_ZERO, N_0, Here + 15, JCC8 ) ;
     Compile_CallThru_AdjustRSP ( thruReg, REG ) ;
-    _Compile_JumpToDisp ( 3, JMP8 ) ; 
+    _Compile_JumpToDisp ( 3, JMP8 ) ;
     _Compile_CallReg ( thruReg, REG ) ;
     //DBI_OFF ;
     //Pause () ;

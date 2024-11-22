@@ -10,19 +10,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/csl/namespaces/test/lisp.csl</file>
-            <file>file:/home/dennisj/csl/src/include/ext.h</file>
-            <file>file:/home/dennisj/csl/src/include/csl.h</file>
-            <file>file:/home/dennisj/csl/src/include/os.h</file>
-            <file>file:/home/dennisj/csl/src/basis/core/dllist.c</file>
-            <file>file:/home/dennisj/csl/init.csl</file>
-            <file>file:/home/dennisj/csl/src/basis/debug/debugDisassembly.c</file>
-            <file>file:/home/dennisj/csl/src/basis/compiler/udis.c</file>
             <file>file:/home/dennisj/csl/src/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/csl/src/basis/exception.c</file>
-            <file>file:/home/dennisj/csl/src/primitives/systems.c</file>
-            <file>file:/home/dennisj/csl/etc/script</file>
-            <file>file:/home/dennisj/csl/src/basis/compiler/contol.c</file>
+            <file>file:/home/dennisj/csl/namespaces/test/dev.csl</file>
         </group>
     </open-files>
 </project-private>

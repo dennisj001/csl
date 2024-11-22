@@ -495,13 +495,14 @@ Compile_LogicalAnd ( Compiler * compiler )
 {
     BlockInfo *bi = ( BlockInfo * ) Stack_Top ( _Compiler_->CombinatorBlockInfoStack ) ;
     bi->IiFlags |= LOGIC_FLAG ;
+    //_Compile_X_Group1_Immediate ( XOR, REG, RAX, 0, 0xffffffff, 8 ) ;
     Compile_Logical_X_Group1 ( _Compiler_, AND, TTT_ZERO, N_0 ) ;
+    DBI_OFF ;
     Rllafl * r = bi->BI_Rllafl ;
     if ( r && ( r->rtrn & LT_2_RPAREN_NEXT ) && ( ! ( r->rtrn & LT_END_OF_BLOCK ) ) )
         CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
 }
-#endif
-#if 1
+#elif 1
 
 void
 Compile_LogicalAnd ( Compiler * compiler )
@@ -879,3 +880,15 @@ Interpreter_Logic_CheckPrefix ( Word * word )
     }
 }
 
+#if 0
+void 
+CSL_TestAnd (  ) 
+{
+    int64 a = _DspReg_ [ 0 ], b = _DspReg_ [ -1 ] ; //, c =_DspReg_ [ 2 ], d = _DspReg_ [ -3 ] ;
+    DataStack_DropN ( 2 ) ;
+    
+    //if ( ( a == 1 ) && ( b == 1 ) || ( c == 1 ) && ( d == 1 ) ) DataStack_Push (1)  ; 
+    //else DataStack_Push (0) ; 
+    DataStack_Push ( a && b ) ;
+}
+#endif
