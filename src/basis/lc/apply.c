@@ -4,10 +4,11 @@
 void
 _Interpreter_LC_InterpretWord ( Interpreter *interp, ListObject * l0 )
 {
-    Word * word = l0->Lo_CSL_Word ; byte c ;
+    Word * word = l0->Lo_CSL_Word ;
+    byte c ;
     if ( ! word ) word = l0 ;
-    if ( kbhit ( ) ) 
-        Pause ( ) ; 
+    if ( kbhit ( ) )
+        Pause ( ) ;
     Interpreter_DoWord ( interp, word, word->W_RL_Index, word->W_SC_Index ) ;
 }
 
@@ -361,13 +362,15 @@ Word_CompileRun_C_ArgList ( Word * word ) // C protocol - x64 : left to right ar
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
     Compiler * compiler = cntx->Compiler0 ;
-    byte *svDelimiters = lexer->TokenDelimiters ;
+    byte *svDelimiters = lexer->TokenDelimiters, csyntax ;
     ListObject * l0 ;
 
     byte * token = _Lexer_ReadToken ( lexer, ( byte* ) " ,;\n\r\t" ) ;
     if ( word->W_MorphismAttributes & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
     {
         if ( ( ! token ) || strcmp ( "(", ( char* ) token ) ) Error ( " : Syntax error : C RTL Args : no '('", ABORT ) ; // should be '('
+        csyntax = C_SyntaxOn ;
+        if ( ! csyntax ) Namespace_ActivateAsPrimary ( "C_Syntax" ), SetState ( cntx, C_SYNTAX, true ) ;
     }
     lc->ParenLevel = 1 ;
     if ( word->W_MorphismAttributes & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
@@ -385,6 +388,10 @@ Word_CompileRun_C_ArgList ( Word * word ) // C protocol - x64 : left to right ar
         _LC_Apply_C_LtoR_ArgList ( lc, l0, word ) ;
         LC_LispNamespacesOff ( ) ;
         SetState ( compiler, LC_ARG_PARSING | LC_C_RTL_ARG_PARSING, false ) ;
+    }
+    if ( word->W_MorphismAttributes & ( C_PREFIX | C_PREFIX_RTL_ARGS ) )
+    {
+        if ( ! csyntax ) Namespace_RemoveFromUsingList ( "C_Syntax" ), SetState ( cntx, C_SYNTAX, false ) ;
     }
     _CSL_Namespace_InNamespaceSet ( backgroundNamespace ) ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, COMPILER_TEMP ) ;

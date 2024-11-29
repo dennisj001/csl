@@ -506,15 +506,6 @@ Debugger_Info ( Debugger * debugger )
     SetState ( debugger, DBG_INFO, true ) ;
 }
 
-#if DEBUG
-
-void
-Debugger_Dbg ( Debugger * debugger )
-{
-    _dbg ( ) ; //0, (int64) debugger->w_Word, 0 ) ;
-}
-#endif
-
 void
 Debugger_UdisToggle ( Debugger * debugger )
 {
@@ -955,4 +946,13 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 43 ] = Debugger_Dbg ;
 #endif    
 }
+
+#if DEBUG
+
+void
+Debugger_Dbg ( Debugger * debugger )
+{
+    _dbg ( ) ; //0, (int64) debugger->w_Word, 0 ) ;
+}
+#endif
 

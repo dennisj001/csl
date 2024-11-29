@@ -350,6 +350,14 @@ _Namespace_SetState_AsUsing ( Namespace * ns )
     _Namespace_SetState ( ns, USING ) ;
 }
 
+Namespace * 
+Namespace_AreWeUsing ( byte * name )
+{
+    Namespace * ns = Namespace_Find ( name ) ;
+    if ( GetState ( ns, USING ) ) return ns ;
+    else return 0 ;
+}
+
 void
 Namespace_SetAsNotUsing ( byte * name )
 {

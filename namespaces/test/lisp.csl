@@ -331,7 +331,6 @@ sp
 lispOff 
 C
 "\nending lisp.csl\n" ddps
-
 #if doScript
 String
 $ls -al /usr/local ; 
@@ -339,8 +338,8 @@ $etc/script ;
 $etc/lispScript ; 
 : hi 1 2 + p ; hi nl
 $ls  -al ;
-//pause
-: hi ( a b | c ) c a @ b @ + = oPrintf ("\n%d", c ) ; 1 2 hi nl //pause
+: hi ( a b | c ) c a @ b @ + = oPrintf ("\n%d", c ) ; 1 2 hi 1 _assert nl //pause
+//stack pause
 verbosity 1 =
 sp
 #endif

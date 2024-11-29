@@ -1,6 +1,6 @@
 
 #define LINUX //1
-#define DEBUG 1
+#define DEBUG 0
 #define CLANG 0
 #define SIGJMP_BUF 0
 #define OLD_Setcc 1
