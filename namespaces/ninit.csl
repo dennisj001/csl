@@ -10,7 +10,7 @@ doDemo 1 =
 doDemo @ { demo0 } if1 //stack pause
 
 Shell
-if ( _doDemo ) 5 demo endif 
+if ( _doDemo ) demo endif 
 shellOff
 lispOff
 bnOff

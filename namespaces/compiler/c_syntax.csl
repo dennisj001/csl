@@ -595,12 +595,13 @@ void node-p3 ( txt, poftxt )
     byte * buffer1 = &buffer.buf ;
     sprintf ( buffer1, "node -p \" %s \" > %s", txt, poftxt ) ;
     ash ( buffer1 ) ;
-    //printf ( "\n &buffer[5] = %s\n", &buffer [5] ) ;
+    printf ( "\n buffer.buf[5] = %s\n", buffer.buf [5] ) ;
 }
 node-p3 ( "1+1007", "./node.txt" ) ; 
 cOff
 $cat node.txt
 pwi node-p3  
+//pause
 : ash ( str ) str @ ps nl str @ _sh ; 
 : node-p4 ( txt, poftxt ) 
     sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) 
