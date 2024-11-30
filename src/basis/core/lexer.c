@@ -69,6 +69,7 @@ Lexer_ParseToken_ToWord ( Lexer * lexer, byte * token, int64 tsrli, int64 scwi )
 }
 
 // csl preprocessor - string (macros) defines only
+
 int64
 Lexer_StringMacros_Do ( Lexer * lexer )
 {
@@ -294,7 +295,6 @@ Lexer_IsWordPrefixing ( Lexer * lexer, Word * word )
 byte *
 Lexer_Peek_NextToken ( Lexer * lexer, Boolean evalFlag, Boolean skipDbgCommentsFlag )
 {
-    ReadLiner * rl = _ReadLiner_ ;
     byte * token = _Lexer_Next_Token ( lexer, 0, evalFlag, 0, skipDbgCommentsFlag ) ; // 0 : peekFlag off because we are reAdding it below
     CSL_PushToken_OnTokenList ( token ) ;
     return token ;
@@ -827,6 +827,15 @@ Semi ( Lexer * lexer ) // ';':
                 SetState ( lexer, LEXER_DONE, true ) ;
                 return ;
             }
+            else if ( nextChar == ';' ) // beginning of ';;'
+            {
+                if ( GetState ( _Compiler_, LC_ARG_PARSING ) )
+                {
+                    ReadLine_UnGetChar ( lexer->ReadLiner0 ) ;
+                    SetState ( lexer, LEXER_DONE, true ) ;
+                    return ;
+                }
+            }
         }
     }
     Lexer_Default ( lexer ) ;
@@ -943,7 +952,7 @@ RightCurlyBracket ( Lexer * lexer )
 void
 LeftCurlyBracket ( Lexer * lexer )
 {
-    if ( GetState ( _Context_, TDI_PARSING ) && ( lexer->TokenWriteIndex == 0 ))
+    if ( GetState ( _Context_, TDI_PARSING ) && ( lexer->TokenWriteIndex == 0 ) )
     {
         _Lexer_AppendByteToSourceCode ( lexer, ' ', 0 ) ;
         //Lexer_AppendInputedToTokenBuffer ( lexer ) ;

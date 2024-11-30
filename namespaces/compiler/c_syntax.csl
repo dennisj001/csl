@@ -604,22 +604,26 @@ pwi node-p3
 //pause
 : ash ( str ) str @ ps nl str @ _sh ; 
 : node-p4 ( txt, poftxt ) 
-    sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) 
+    sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) // c_syntax in a forth word with parenthesis
+    printf ( "\n buffer.buf[5] = %s\n", buffer.buf [5] ) 
     buffer ash
+    printf ( "\n buffer.buf[5] = %s\n", buffer.buf [5] ) 
 ;;
 "1+107" "./node.txt" node-p4 
+node-p4 ( "1+107" "./node.txt" ) 
 pwi node-p4  
 $cat node.txt
 : node-p5 ( txt, poftxt ) 
     sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) 
     buffer ash
+    printf ( "\n buffer.buf[5] = %s\n", buffer.buf [5] ) 
 ;;
 pwi node-p5  
 "1+1007" "./node.txt" node-p5
 node-p5 ( "1+1007" "./node.txt" ) 
 $cat node.txt 
 "1+107" "./node.txt" node-p4
-node-p4 ( "1+107" "./node.txt" ) 
+//node-p4 ( "1+107" "./node.txt" ) 
 $cat node.txt 
 2 + 7 assertStkChk // stack checking
 sp0

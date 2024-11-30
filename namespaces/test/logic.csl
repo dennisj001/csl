@@ -306,7 +306,7 @@ l0030 ( 1 1 0 0 ) ; 0 _assert
 l0030 ( 1 1 0 1 ) ; 1 _assert
 cOff
 //pwi l0031 sp0
-#if 0
+#if 1
 : l0031 ( a b c d ) { a @ 1 == b @ 1 == && c @ 1 == || d @ 1 == && } { return 1  } { return 0  } ifElse ; prefixable
 pwi l0031 //pause
 l0031 ( 1 0 0 0 )  0 _assert 
@@ -323,7 +323,7 @@ l0031 ( 0 1 1 1 )  1 _assert
 l0031 ( 0 0 1 1 )  1 _assert
 l0031 ( 1 1 0 0 )  0 _assert
 l0031 ( 1 1 0 1 )  1 _assert
-#else
+//#else
 pbclr
 dpbOn
 cpbOn
