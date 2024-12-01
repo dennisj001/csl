@@ -571,6 +571,7 @@ void node-p1 ( txt, poftxt )
 {
     byte * buffer1 = &buffer.buf ;
     sprintf ( buffer1, "node -p \" %s \" > %s", txt, poftxt ) ;
+    printf ( "\n buffer.buf[3] = %s\n", buffer.buf [3] ) ;
     ash ( buffer1 ) ;
 }
 node-p1 ( "1+392", "./node.txt") ; //, abuf ) ;
@@ -583,6 +584,7 @@ void node-p2 ( txt, poftxt )
     byte * buffer1 = &buffer.buf ;
     sprintf ( buffer1, "node -p \" %s \" > %s", txt, poftxt ) ;
     ash ( buffer1 ) ;
+    printf ( "\n buffer.buf[4] = %s\n", buffer.buf [4] ) ;
 }
 node-p2 ( "1+10", "./node.txt" ) ; 
 cOff
@@ -607,7 +609,7 @@ pwi node-p3
     sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) // c_syntax in a forth word with parenthesis
     printf ( "\n buffer.buf[5] = %s\n", buffer.buf [5] ) 
     buffer ash
-    printf ( "\n buffer.buf[5] = %s\n", buffer.buf [5] ) 
+    printf ( "\n buffer.buf[2] = %s\n", buffer.buf [2] ) 
 ;;
 "1+107" "./node.txt" node-p4 
 node-p4 ( "1+107" "./node.txt" ) 
@@ -616,7 +618,7 @@ $cat node.txt
 : node-p5 ( txt, poftxt ) 
     sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) 
     buffer ash
-    printf ( "\n buffer.buf[5] = %s\n", buffer.buf [5] ) 
+    printf ( "\n buffer.buf[6] = %s\n", buffer.buf [6] ) 
 ;;
 pwi node-p5  
 "1+1007" "./node.txt" node-p5

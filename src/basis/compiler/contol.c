@@ -42,59 +42,6 @@ CheckOffset ( int64 offset, byte offsetSize ) // offsetSize in bytes
     }
     return r ;
 }
-// compileAtAddress is the address of the disp to be compiled
-// for compileAtAddress of the disp : where the space has *already* been allocated
-// call 32BitOffset ; <- intel call instruction format
-// endOfCallingInstructionAddress + disp = jmpToAddr
-// endOfCallingInstructionAddress = compileAtAddress + 4 ; for ! 32 bit disp only !
-// 		-> disp = jmpToAddr - compileAtAddress - 4
-
-/* from Intel Instruction set reference : JMP insn
-A relative disp (rel8, rel16, or rel32) is generally specified as a label in assembly code, but at the machine code
-level, it is encoded as a signed 8-, 16-, or 32-bit immediate value. This value is added to the value in the EIP
-register. (Here, the EIP register contains the address of the instruction following the JMP instruction). When using
-relative offsets, the opcode (for short vs. near jumps) and the operand-size attribute (for near relative jumps)
-determines the size of the target operand (8, 16, or 32 bits).
- */
-/* from Intel Instruction set reference : JMP insn
-A relative offset (rel8, rel16, or rel32) is generally specified as a label in assembly code, but at the machine code
-level, it is encoded as a signed 8-, 16-, or 32-bit immediate value. This value is added to the value in the EIP
-register. (Here, the EIP register contains the address of the instruction following the JMP instruction). When using
-relative offsets, the opcode (for short vs. near jumps) and the operand-size attribute (for near relative jumps)
-determines the size of the target operand (8, 16, or 32 bits).
- */
-byte *
-Calculate_Address_FromOffset_ForCallOrJump ( byte * address )
-{
-    byte * iaddress = 0 ;
-    int64 offset ;
-    if ( ( * address == JMP8 ) || IS_INSN_JCC8 ( * address ) )
-    {
-        offset = * ( ( int8 * ) ( address + 1 ) ) ;
-        iaddress = address + offset + 1 + BYTE_SIZE ;
-    }
-    else if ( ( * address == JMP32 ) || ( * address == CALL32 ) )
-    {
-        offset = * ( ( int32 * ) ( address + 1 ) ) ;
-        iaddress = address + offset + 1 + INT32_SIZE ;
-    }
-    else if ( ( ( * address == 0x0f ) && ( ( * ( address + 1 ) >> 4 ) == 0x8 ) ) )
-    {
-        offset = * ( ( int32 * ) ( address + 2 ) ) ;
-        iaddress = address + offset + 2 + INT32_SIZE ;
-    }
-    else if ( ( ( * ( uint16* ) address ) == 0xff49 ) && ( ( *( address + 2 ) == 0xd2 ) || ( *( address + 2 ) == 0xd3 ) ) ) // call r10/r11
-    {
-        if ( ( ( * ( uint16* ) ( address - 20 ) ) == 0xbb49 ) ) iaddress = ( byte* ) ( * ( ( uint64* ) ( address - 18 ) ) ) ; //mov r11, 0xxx in Compile_Call_TestRSP  
-        else iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
-    }
-    else if ( ( ( * ( uint16* ) address ) == 0xff48 ) && ( *( address + 2 ) == 0xd3 ) ) // call rax
-    {
-        iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
-    }
-    return iaddress ;
-}
-
 int32
 BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi ) //( byte * insnAddress, byte * jmpToAddr, byte insn, byte insnType )
 {
