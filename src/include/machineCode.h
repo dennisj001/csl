@@ -184,8 +184,38 @@
 #endif
 #define NO_INDEX ( 0x4 ) // for sib byte with no index
 
-//Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
-// csl uses RAX, RDX, R8D, R9D, R14, R15, RBX
+#if 0
+	index : kernel/git/torvalds/linux.git
+            root/arch/x86/entry/calling.h
+ x86 function call convention, 64-bit:
+ -------------------------------------
+  arguments           |  callee-saved      | extra caller-saved | return
+ [callee-clobbered]   |                    | [callee-clobbered] |
+ ---------------------------------------------------------------------------
+ rdi rsi rdx rcx r8-9 | rbx rbp [*] r12-15 | r10-11             | rax, rdx [**]
+
+ ( rsp is obviously invariant across normal function calls. (gcc can 'merge'
+   functions when it sees tail-call optimization possibilities) rflags is
+   clobbered. Leftover arguments are passed over the stack frame.)
+
+ [*]  In the frame-pointers case rbp is fixed to the stack frame.
+
+ [**] for struct return values wider than 64 bits the return convention is a
+      bit more complex: up to 128 bits width we return small structures
+      straight in rax, rdx. For structures larger than that (3 words or
+      larger) the caller puts a pointer to an on-stack return struct
+      [allocated in the caller_s stack frame] into the first argument - i.e.
+      into rdi. All other arguments shift up by one in this case.
+      Fortunately this case is rare in the kernel.
+#endif
+
+#define REG_ORDER { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } //System V AMD64 ABI
+#define CSL_REG_ORDER { RDI, RSI, R8D, R9D } 
+#define NUM_CSL_REGS 4      
+#define THRU_REG                R11D //(RegOrder(7)) 
+#define CALL_THRU_REG           THRU_REG                // R11D
+#define SCRATCH_REG             R10D //(RegOrder(6)) 
+#define SREG                    SCRATCH_REG             // R10D
 #define ACCUMULATOR_REG         RAX                     // rax
 #define ACC                     ACCUMULATOR_REG
 #define CPU_ACCUM               RAX
@@ -200,13 +230,7 @@
 #define OREG2                   OPERAND_2_REG 
 #define TEMP_REG                OPERAND_2_REG 
 #define CPU_OREG2               RBX
-#define THRU_REG                (RegOrder(7)) // LocalsRegParameterOrder_Optimized ( Boolean n )  //R10 //RAX //R9                      // r9
-#define SCRATCH_REG             (RegOrder(6)) // { regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ; regOrder[n] ; } //R11 //RBX //R8 //RDX                      // r8 // eax/edx are both used sometimes by ops ebx/ecx are not ?
-#define SREG                    SCRATCH_REG
 #define DIV_MUL_REG_2           RDX                     // rdx
-#define CALL_THRU_REG           THRU_REG                // R9
-#define SCRATCH_REG2            THRU_REG                      // r8 // eax/edx are both used sometimes by ops ebx/ecx are not ?
-#define SREG2                   SCRATCH_REG2
 #if DSP_IS_GLOBAL_REGISTER 
 register int64 *_DspReg_        asm ( "r14" ) ;
 register uint64 *_Fp_           asm ( "r15" ) ;

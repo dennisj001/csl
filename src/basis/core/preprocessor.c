@@ -178,7 +178,7 @@ GetEndifStatus ( )
 // dragons here ... ??
 
 void
-SkipPreprocessorCode ( Boolean skipControl )
+SkipPreprocessorCode ()
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -243,24 +243,22 @@ SkipPreprocessorCode ( Boolean skipControl )
 #endif                    
                     else if ( String_Equal ( token1, "else" ) )
                     {
-                        if ( ifLevel ) continue ;
+                        if ( ifLevel ) continue ; 
                         if ( GetElseStatus ( ) ) goto done ;
                     }
                     else if ( String_Equal ( token1, "elif" ) )
                     {
-                        if ( ifLevel ) continue ;
+                        if ( ifLevel ) continue ; 
                         if ( GetElifStatus ( ) ) goto done ;
-                    }
+                     }
                     else if ( String_Equal ( token1, "endif" ) )
                     {
-                        if ( GetEndifStatus ( ) ) goto done ;
+                        if ( GetEndifStatus ( ) ) goto done ; 
                         ifLevel -- ;
                     }
                     else if ( String_Equal ( token1, "define" ) ) continue ;
                     else if ( String_Equal ( token1, "defined" ) ) continue ;
                     else if ( String_Equal ( token1, "undef" ) ) continue ;
-                        //else if ( String_Equal ( token1, "ifdef" ) ) continue ;
-                        //else if ( String_Equal ( token1, "ifndef" ) ) continue ;
                     else if ( String_Equal ( token1, "include" ) ) continue ;
                     else if ( String_Equal ( token1, "error" ) ) continue ;
                     else if ( String_Equal ( token1, "warning" ) ) continue ;
@@ -273,7 +271,8 @@ SkipPreprocessorCode ( Boolean skipControl )
     while ( token ) ;
 done:
     if ( Compiling ) SetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ), svState ) ;
-    SetState ( _CSL_, DEFINES_MACROS_ON, true ) ;
+    SetState ( _CSL_, SOURCE_CODE_ON|DEFINES_MACROS_ON, true ) ;
+    //SetState ( _CSL_, SOURCE_CODE_ON, true ) ;
     //DebugOff ;
     _CSL_->DebugLevel = svDebugLevel ;
 }
@@ -281,25 +280,28 @@ done:
 void
 CSL_If_ConditionalInterpret ( )
 {
-    if ( ! PP_IfStatus ( 1, 0 ) ) SkipPreprocessorCode ( PP_SKIP ) ;
+    if ( ! PP_IfStatus ( 1, 0 ) ) SkipPreprocessorCode () ; 
+    //if ( ! PP_IfStatus ( 1, 0 ) ) { SetState ( _CSL_, SOURCE_CODE_ON, false ) ; SkipPreprocessorCode () ; }
 }
 
 void
 CSL_Elif_ConditionalInterpret ( )
 {
-    if ( ! GetElifStatus ( ) ) SkipPreprocessorCode ( PP_ELIF ) ;
+    if ( ! GetElifStatus ( ) ) SkipPreprocessorCode () ;
+    //if ( ! GetElifStatus ( ) ) { SetState ( _CSL_, SOURCE_CODE_ON, false ) ; SkipPreprocessorCode () ; }
 }
 
 void
 CSL_Else_ConditionalInterpret ( )
 {
-    if ( ! GetElseStatus ( ) ) SkipPreprocessorCode ( PP_ELSE ) ;
+    if ( ! GetElseStatus ( ) ) SkipPreprocessorCode () ;
+    //if ( ! GetElseStatus ( ) ) { SetState ( _CSL_, SOURCE_CODE_ON, false ) ; SkipPreprocessorCode () ; }
 }
 
 void
 CSL_Endif_ConditionalInterpret ( )
 {
-    if ( ! GetEndifStatus ( ) ) SkipPreprocessorCode ( PP_SKIP ) ;
+    if ( ! GetEndifStatus ( ) ) SkipPreprocessorCode () ;
 }
 
 byte *
@@ -403,7 +405,7 @@ void
 CSL_IfDef_Preprocessor ( )
 {
     int64 defined = _CSL_Defined ( ) ;
-    if ( ! ( PP_IfStatus ( 0, defined ) ) ) SkipPreprocessorCode ( PP_IFDEF ) ;
+    if ( ! ( PP_IfStatus ( 0, defined ) ) ) SkipPreprocessorCode () ;
 }
 
 // ? untested 
@@ -412,7 +414,7 @@ void
 CSL_Ifndef_Preprocessor ( )
 {
     int64 defined = _CSL_Defined ( ) ;
-    if ( ! ( PP_IfStatus ( 0, ! defined ) ) ) SkipPreprocessorCode ( PP_IFDEF ) ; //PP_IFDEF ) ;
+    if ( ! ( PP_IfStatus ( 0, ! defined ) ) ) SkipPreprocessorCode () ; //PP_IFDEF ) ;
 }
 
 #if 1 // include preprocessor

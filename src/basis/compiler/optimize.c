@@ -955,7 +955,8 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
         {
             SetHere ( optInfo->wordn->Coding ) ;
             if ( ( optInfo->wordn->W_TypeAttributes & WT_C_SYNTAX ) && ( ! ( optInfo->wordn->W_MorphismAttributes & VOID_RETURN ) ) )
-                Compile_Move_Reg_To_Reg ( dstReg, ACC, 0 ) ;
+                //Compile_Move_Reg_To_Reg ( dstReg, ACC, 0 ) ;
+                _Compile_Move_StackN_To_Reg ( dstReg, DSP, 0, 0 ) ;
             else Compile_Move_Reg_To_Reg ( dstReg, srcReg, 0 ) ;
         }
         else

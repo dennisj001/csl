@@ -95,16 +95,12 @@ Compiler_Init_AccumulatedOffsetPointers ( Compiler * compiler, Word * word )
 void
 Compiler_OptimizeRegisters ( void )
 {
-    //Context_ClearQidInNamespace ( ) ;
-    //_Compiler_->LHS_Word = 0 ; // nb. : after NEW_INTERPRET
     _Compiler_->Lrpo = LocalsRegParameterOrder_Optimized ;
 }
 
 void
 Compiler_InitRegisters ( void )
 {
-    //Context_ClearQidInNamespace ( ) ;
-    //_Compiler_->LHS_Word = 0 ; // nb. : after NEW_INTERPRET
     _Compiler_->Lrpo = LocalsRegParameterOrder_Init ;
 }
 

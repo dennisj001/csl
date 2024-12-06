@@ -194,22 +194,4 @@ Do_C_Pointer_StackAccess ( byte * ptr )
 }
 
 // c ffi : foreign function interface
-#if 0
-
-void
-Compile_PushWord_Call_CSL_Function ( Word * word, byte * cFunction )
-{
-    //DBI_ON ;
-    _Compile_Stack_Push ( DSP, RAX, ( int64 ) word ) ;
-    Compile_Call ( ( byte* ) cFunction ) ;
-    //DBI_OFF ;
-}
-
-void
-Compile_CallCFunctionWithParameter_TestAlignRSP ( byte * cFunction, Word * word )
-{
-    Compile_MoveImm_To_Reg ( RDI, ( int64 ) word, CELL ) ; // RDI is x64 abi first parameter 
-    Compile_Call_ToAddressThruReg_TestAlignRSP ( cFunction, CALL_THRU_REG ) ; // compile call cFunction with RDI value as arg
-}
-#endif
 

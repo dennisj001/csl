@@ -106,18 +106,43 @@ ppxe dup @ 1 + =
 
 #endif // if 0 : endif
 
+
 #endif // ifndef _PP_H_
+
+#if 0
+#elif 1
+#if 0
+"\npreprocessor test error 12\n" ps epause
+ppxe dup @ 1 + =
+#else
+"\npreprocessor test ok3\n" ps apause
+ppx dup @ 1 + =
+#endif
+#endif
+
+#if 0
+#else 
+#if 0
+"\npreprocessor test error 13\n" ps epause
+ppxe dup @ 1 + =
+#else
+"\npreprocessor test ok4\n" ps apause
+ppx dup @ 1 + =
+#endif
+#endif
+
 
 sp
 #if 1 // there is still one obscure error here which doesn't affect much
-ppx @ dup "\nppx =" ps p 2 _assert 
+ppx @ dup "\nppx =" ps p 4 _assert 
 ppxe @ dup "\nppxe =" ps p 0 _assert 
 apause
 #else 
-ppx @ "\nppx =" ps p ": should be 2" ps 
+ppx @ "\nppx =" ps p ": should be 4" ps 
 ppxe @ "\nppxe =" ps p ": should be 0" ps 
 //"\nthere is still one obscure error here which probably doesn't affect much??\n" ps
 #endif
+
 sp
 2 + 7 assertStkChk // stack checking 
 //pause

@@ -419,7 +419,11 @@ typedef struct _WordData
         uint8 Opt_Reg ;
         uint8 SrcReg ;
         uint8 DstReg ;
-        uint8 RegFlags ; // future uses available here !!
+        union
+        {
+            uint8 RegFlags ; // future uses available here !!
+            uint8 NumberOfRegisterVariables ; // future uses available here !!
+        } ;
         uint8 OpInsnGroup ;
         uint8 OpInsnCode ;
     } ;
@@ -511,6 +515,7 @@ typedef struct _WordData
 #define W_StartCharRlIndex W_WordData->StartCharRlIndex
 #define W_SC_WordIndex W_WordData->SC_WordIndex
 #define W_CSLWord W_WordData->CSLWord
+#define W_NumberOfRegisterVariables W_WordData->NumberOfRegisterVariables
 #define Lo_CSL_Word W_WordData->CSLWord 
 
 struct NamedByteArray ;
@@ -805,7 +810,6 @@ typedef struct
     Stack * InfixOperatorStack ;
     dllist * OptimizeInfoList ;
     BlockInfo * CurrentTopBlockInfo ;
-    //TypeDefStructCompileInfo * C_Tdi ;
     LocalsRegParameterOrder Lrpo ;
 } Compiler ;
 typedef struct _Interpreter

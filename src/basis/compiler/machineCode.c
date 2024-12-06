@@ -100,19 +100,21 @@ OperandSize ( int64 operand )
     else size = 8 ;
     return size ;
 }
-
 Boolean
 LispRegParameterOrder ( Boolean n )
 {
-    Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
+    Boolean regOrder [] = REG_ORDER ; //REG_ORDER ; //{ RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
+    //Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
     //Boolean regOrder [] = { RCX, RDX, RDI, RSI, R8D, R9D, R10D, R11D } ;
     return regOrder [n] ;
 }
 
+// no difference at this point 
 Boolean
 LocalsRegParameterOrder_Init ( Boolean n )
 {
-    Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
+    Boolean regOrder [] = CSL_REG_ORDER ; //REG_ORDER ; //{ RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
+    //Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
     //Boolean regOrder [] = { RCX, RDX, RDI, RSI, R8D, R9D, R10D, R11D } ;
     return regOrder [n] ;
 }
@@ -120,7 +122,7 @@ LocalsRegParameterOrder_Init ( Boolean n )
 Boolean
 LocalsRegParameterOrder_Optimized ( Boolean n )
 {
-    Boolean regOrder [] = { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
+    Boolean regOrder [] = CSL_REG_ORDER ; //{ RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } ;
     //Boolean regOrder [] = { RCX, RDX, RDI, RSI, R8D, R9D, R10D, R11D } ;
     return regOrder [n] ;
 }
@@ -958,10 +960,8 @@ _Compile_Call_ThruReg_TestAlignRSP ( Boolean thruReg )
 void
 Compile_Call_ToAddressThruReg_TestAlignRSP ( byte * address, Boolean thruReg )
 {
-
     Compile_MoveImm_To_Reg ( thruReg, ( int64 ) address, CELL ) ;
     _Compile_Call_ThruReg_TestAlignRSP ( thruReg ) ;
-    //Compile_Call ( (byte*) _CSL_->Call_ToAddressThruSREG_TestAlignRSP ) ;
 }
 
 void
@@ -981,7 +981,6 @@ Compile_Call_TestRSP ( byte * address )
 void
 Compile_Call_X84_ABI_RSP_ADJUST ( byte * address )
 {
-
     Compile_Call_TestRSP ( address ) ;
 }
 
@@ -994,7 +993,6 @@ Compile_CallWord_Check_X84_ABI_RSP_ADJUST ( Word * word )
         // there is an slight overhead for CPRIMITIVE functions to align RSP for ABI-X64
         Compile_Call_TestRSP ( ( byte* ) word->Definition ) ;
     }
-
     else Compile_Call ( ( byte* ) word->Definition ) ;
 }
 

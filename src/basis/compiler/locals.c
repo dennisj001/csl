@@ -152,16 +152,19 @@ Compiler_LocalWord_New ( Compiler * compiler, byte * name, int64 morphismAttribu
 //nb. correct only if Compiling !!
 
 inline Boolean
-IsFrameNecessary ( int64 numberOfNonRegisterLocals, int64 numberOfNonRegisterArgs )
+IsFrameNecessary ( int64 numberOfLocals, int64 numberOfArgs )
+//IsFrameNecessary ( int64 numberOfNonRegisterLocals, int64 numberOfNonRegisterArgs )
 {
-    return ( ( numberOfNonRegisterLocals || numberOfNonRegisterArgs ) ? true : false ) ;
+    return ( ( numberOfLocals || numberOfArgs ) ? true : false ) ;
+    //return ( ( numberOfNonRegisterLocals || numberOfNonRegisterArgs ) ? true : false ) ;
 }
 
 inline Boolean
 Compiler_IsFrameNecessary ( Compiler * compiler )
 {
     //return ( ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs ) ? true : false ) ;
-    return IsFrameNecessary ( compiler->NumberOfNonRegisterLocals, compiler->NumberOfNonRegisterArgs ) ;
+    return IsFrameNecessary ( compiler->NumberOfLocals, compiler->NumberOfArgs ) ;
+    //return IsFrameNecessary ( compiler->NumberOfNonRegisterLocals, compiler->NumberOfNonRegisterArgs ) ;
 }
 
 void
@@ -192,7 +195,8 @@ _Compiler_AddLocalFrame ( Compiler * compiler )
 void
 Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 {
-    int64 size = compiler->NumberOfNonRegisterLocals ;
+    int64 size = compiler->NumberOfLocals ; // new save/restore regs setup
+    //int64 size = compiler->NumberOfNonRegisterLocals ; 
     int64 fsize = compiler->LocalsFrameSize = ( ( ( size <= 0 ? 0 : size ) + 1 ) * CELL ) ; //1 : the frame pointer 
     if ( fsize ) *( ( int32* ) ( compiler->FrameSizeCellOffset ) ) = fsize ; //compiler->LocalsFrameSize ; //+ ( IsSourceCodeOn ? 8 : 0 ) ;
 }
@@ -258,11 +262,12 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
     Word * returnVariable = compiler->ReturnVariableWord ; //? compiler->ReturnVariableWord : compiler->ReturnWord ; //?  compiler->ReturnLParenVariableWord :  compiler->ReturnWord ;
     Boolean returnValueFlag = GetState ( compiler, RETURN_TOS ) || returnVariable ;
     if ( compiler->NumberOfArgs ) parameterVarsSubAmount = ( compiler->NumberOfArgs - returnValueFlag ) * CELL ;
-    if ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs )
+    //if ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs )
+    if ( compiler->NumberOfLocals || compiler->NumberOfArgs )
     {
         //if ( ( returnValueFlag ) || (! _LC_ ) ) //&& ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
         if ( returnValueFlag && ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
-        //if ( ( ! _LC_ ) ) //&& ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
+            //if ( ( ! _LC_ ) ) //&& ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
         {
             byte add_r14_0x8__mov_r14_rax [ ] = { 0x49, 0x83, 0xc6, 0x08, 0x49, 0x89, 0x06 } ; //"add r14, 0x8,  mov [r14], rax"
             if ( ! memcmp ( add_r14_0x8__mov_r14_rax, Here - 7, 7 ) )
@@ -288,19 +293,17 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
     if ( returnValueFlag || IsWordRecursive )
     {
         Compiler_Word_SCHCPUSCA ( returnVariable, 0 ) ; // compiler->ReturnWord, 0 ) ;
-        if ( returnVariable )
+        if ( returnVariable && ( returnVariable->W_ObjectAttributes & REGISTER_VARIABLE ) )
         {
-            if ( returnVariable->W_ObjectAttributes & REGISTER_VARIABLE )
-            {
-                _Compile_Move_Reg_To_StackN ( DSP, 0, returnVariable->RegToUse, 0 ) ;
-                return ;
-            }
+            if ( returnVariable->RegToUse != RAX ) Compile_Move_Reg_To_Reg ( RAX, returnVariable->RegToUse, 0 ) ;
+            _Compile_Move_Reg_To_StackN ( DSP, 0, returnVariable->RegToUse, 0 ) ;
+            return ;
         }
         byte mov_rax_r14 [ ] = { 0x49, 0x89, 0x06 } ;
         //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) Here - 3, 3, 1 ) ;
         int64 test = memcmp ( mov_rax_r14, Here - 3, 3 ) ; //remember : memcmp returns a diff => returns 0 when there is no difference
         //if ( ( IsWordRecursive ) && ( ! test ) ) 
-        if ( ! test ) 
+        if ( ! test )
             return ;
         Compile_Move_ACC_To_TOS ( DSP ) ;
     }
@@ -336,7 +339,7 @@ Boolean
 ScanParametersForREGvars ( )
 {
     byte * ils = String_New ( _ReadLiner_->InputLineString, TEMPORARY ) ;
-    return ( strstr ( ils, "REG" ) || strstr ( ils, "REG" ) ) ;
+    return ( strstr ( ils, "REG" ) || strstr ( ils, "reg" ) ) ;
 }
 
 Namespace *
@@ -439,9 +442,9 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
                 objectAttributes |= LOCAL_VARIABLE ;
                 if ( lispMode ) lispAttributes |= T_LISP_SYMBOL ; // no ltype yet for _CSL_LocalWord
             }
-            if ( regFlag == true )
-                //if ( ( regFlag == true ) || ((numberOfVariables < 4) && ( GetState ( _CSL_, CO_ON ) ) ) )
+            if ( ( regFlag == true ) && ( numberOfRegisterVariables < NUM_CSL_REGS ) )
             {
+                if ( numberOfRegisterVariables == 0 ) _dllist_Init ( compiler->RegisterParameterList ) ;
                 objectAttributes |= REGISTER_VARIABLE ;
                 numberOfRegisterVariables ++ ;
                 numberOfVariables -- ;
@@ -451,7 +454,7 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
             //if ( lispMode ) 
             dllist_AddNodeToTail ( localsNs->W_List, ( dlnode* ) word ) ;
             if ( _Context_->CurrentWordBeingCompiled ) _Context_->CurrentWordBeingCompiled->W_TypeSignatureString [numberOfVariables ++] = '_' ;
-            if ( regFlag == true )
+            if ( ( regFlag == true ) && ( regToUseIndex < NUM_CSL_REGS ) )
             {
                 //word->RegToUse = LocalsRegParameterOrder ( regToUseIndex ++ ) ; //, numberOfVariables ) ;
                 word->RegToUse = compiler->Lrpo ( regToUseIndex ++ ) ; //, numberOfVariables ) ;
@@ -478,7 +481,16 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
     compiler->State |= getReturn ;
 
     // we support nested locals and may have locals in other blocks so the indices are cumulative
-    if ( numberOfRegisterVariables ) Compile_Init_LocalRegisterParamenterVariables ( compiler ) ; // word->NumberOfRegisterVariables = numberOfRegisterVariables
+    if ( numberOfRegisterVariables )
+    {
+        Compile_Init_LocalRegisterParamenterVariables ( compiler ) ; // word->NumberOfRegisterVariables = numberOfRegisterVariables
+        //word->W_NumberOfRegisterVariables = (uint8) numberOfRegisterVariables ;
+        if ( _Context_->CurrentWordBeingCompiled )
+        {
+            _Context_->CurrentWordBeingCompiled->W_NumberOfRegisterVariables = ( uint8 ) numberOfRegisterVariables ;
+            _Context_->CurrentWordBeingCompiled->W_List = localsNs->W_List ;
+        }
+    }
 
     finder->FoundWord = 0 ;
     Lexer_SetTokenDelimiters ( lexer, svDelimiters, COMPILER_TEMP ) ;

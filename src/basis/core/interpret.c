@@ -51,14 +51,14 @@ _Interpreter_Before_DoInfixPrefixableWord ( Interpreter * interp, Word * word )
     SetState ( compiler, ( DOING_AN_INFIX_WORD | DOING_BEFORE_AN_INFIX_WORD ), true ) ;
     SetState ( compiler, INFIX_WORD_ALREADY_OPTIMIZED, false ) ;
     Interpreter_Logic_CheckPrefix ( word ) ;
-    if ( GetState ( _Context_, C_SYNTAX ) && 
+    if ( GetState ( _Context_, C_SYNTAX ) &&
         ( word->W_MorphismAttributes & ( CATEGORY_BIG_NUM_OP_OPEQUAL | CATEGORY_OP_EQUAL | CATEGORY_OP_OPEQUAL ) ) )
     {
         if ( ( word->W_MorphismAttributes & ( CATEGORY_BIG_NUM_OP_OPEQUAL ) ) &&
             ( ( compiler->LHS_Word ) && ( Namespace_IsUsing ( ( byte* ) "BigNum" ) ) ) )
         {
             _Compile_GetVarLitObj_LValue_To_Reg ( compiler->LHS_Word, ACC, 0 ) ;
-            _Word_CompileAndRecord_PushReg (compiler->LHS_Word, ACC, true , 0) ;
+            _Word_CompileAndRecord_PushReg ( compiler->LHS_Word, ACC, true, 0 ) ;
         }
         SetState ( compiler, C_INFIX_EQUAL, true ) ;
         token = Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) ")",
@@ -109,15 +109,23 @@ Interpreter_DoInfixOrPrefixWord ( Interpreter * interp, Word * word )
     {
         Context * cntx = _Context_ ;
         Boolean prefixFlag = 0 ;
-        if ( word->W_TypeAttributes == WT_C_PREFIX_RTL_ARGS ) word = Interpreter_C_PREFIX_RTL_ARGS_Word ( word ) ;
+        if ( word->W_TypeAttributes == WT_C_PREFIX_RTL_ARGS )
+        {
+            //_Word_SaveRegisterVariables ( word ) ;
+            word = Interpreter_C_PREFIX_RTL_ARGS_Word ( word ) ;
+        }
         else if ( ( word->W_TypeAttributes == WT_INFIXABLE ) && ( GetState ( cntx, ( INFIX_MODE | C_SYNTAX ) ) ) )
+        {
             word = Interpreter_DoInfixPrefixableWord ( interp, word ) ;
             // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
+            //_Word_SaveRegisterVariables ( word ) ;
+        }
         else if ( ( word->W_TypeAttributes & ( WT_PREFIX ) ) || ( prefixFlag = Lexer_IsWordPrefixing ( interp->Lexer0, word ) ) )
         {
             // with Lexer_IsWordPrefixing any postfix word that is not a keyword or a c_rtl arg 
             // word can now be used as a prefix function with parentheses (in PREFIX_MODE) - some 'syntactic sugar'
             // nb! : for this to work you must turn prefix mode on - 'prefixOn'
+            //_Word_SaveRegisterVariables ( word ) ;
             word = _Interpreter_DoPrefixWord ( cntx, interp, word ) ;
         }
         else return 0 ;
@@ -142,6 +150,7 @@ Interpreter_DoWord ( Interpreter * interp, Word * word, int64 tsrli, int64 scwi 
         interp->w_Word = word ;
         if ( ! ( word1 = Interpreter_DoInfixOrPrefixWord ( interp, word ) ) ) word1 = Interpreter_DoWord_Default ( interp, word, tsrli, scwi ) ;
         if ( word1 && ( ! ( word1->W_MorphismAttributes & DEBUG_WORD ) ) ) word = word1, interp->LastWord = word1 ;
+        //_Word_RestoreRegisterVariables ( word ) ;
     }
     return word ;
 }

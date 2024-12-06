@@ -776,6 +776,8 @@
 #define ANY (NOT_USING|USING)
 #define DEBUG_INFO_SAVED ( (uint64) 1 << 26 )
 #define W_JCC8_ON ( (uint64) 1 << 27 ) // Runtime Debug
+#define CALL_REGS_SAVED ( (uint64) 1 << 28 ) 
+#define CALL_REGS_RESTORED ( (uint64) 1 << 29 ) 
 
 // Lisp State flags 
 #define LC_PRINT_VALUE          ( (uint64) 1 << 0 )
@@ -911,4 +913,8 @@
 #define POKE 18
 #define EQUAL POKE
 
-
+#define NEW_SAVE_RESTORE 0
+#if ! NEW_SAVE_RESTORE 
+#define _Word_SaveRegisterVariables( word )
+#define _Word_RestoreRegisterVariables( word ) 
+#endif

@@ -93,20 +93,86 @@ _Word_Interpret ( Word * word )
     Interpreter_DoWord ( _Interpreter_, word, word->W_RL_Index, word->W_SC_Index ) ;
 }
 
+#if NEW_SAVE_RESTORE
+void
+_Word_SaveRegisterVariables ( Word * word )
+{
+    // cf. Compile_Init_LocalRegisterParamenterVariables ( Compiler * compiler )
+    //word = _Context_->CurrentWordBeingCompiled ;
+
+    if ( word && ( word->W_NumberOfRegisterVariables ) && ( ! GetState ( word, CALL_REGS_SAVED ) ) )
+    //if ( word && ( word->W_NumberOfRegisterVariables ))
+    {
+        int64 i ;
+        dllist * list = _Compiler_->LocalsNamespace ? _Compiler_->LocalsNamespace->W_List : 0 ;
+        dlnode * node, *nextNode ;
+        for ( i = 0, node = dllist_First ( ( dllist* ) list ) ; 
+            //node && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
+            node && (i < word->W_NumberOfRegisterVariables) && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
+        {
+            //mov compiler->Lrpo ( i ) reg to local storage
+            nextNode = dlnode_Next ( node ) ;
+            _Compile_Move_Reg_To_StackN ( FP, LocalOrParameterVar_Offset ( ( Word * ) node ), _Compiler_->Lrpo ( i ), 0 ) ;
+        }
+        SetState ( word, CALL_REGS_SAVED, true ) ;
+        SetState ( word, CALL_REGS_RESTORED, false ) ;
+    }
+}
+
+void
+_Word_RestoreRegisterVariables ( Word * word )
+{
+    //word = _Context_->CurrentWordBeingCompiled ;
+    if ( word && ( word->W_NumberOfRegisterVariables ) && ( ! GetState ( word, CALL_REGS_RESTORED ) ) )
+    //if ( word && ( word->W_NumberOfRegisterVariables ))
+    {
+        int64 i ;
+        dllist * list = _Compiler_->LocalsNamespace ? _Compiler_->LocalsNamespace->W_List : 0 ;
+        dlnode * node, *nextNode ;
+        for ( i = 0, node = dllist_First ( ( dllist* ) list ) ; 
+            //node && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
+            node && (i < word->W_NumberOfRegisterVariables) && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
+        {
+            //mov compiler->Lrpo ( i ) reg to local storage
+            nextNode = dlnode_Next ( node ) ;
+            //_Compile_Move_Reg_To_StackN ( FP, LocalOrParameterVar_Offset (( Word * ) node), _Compiler_->Lrpo ( i ), 0 ) ;
+            _Compile_Move_StackN_To_Reg ( _Compiler_->Lrpo ( i ), FP, LocalOrParameterVar_Offset ( ( Word * ) node ), 0 ) ;
+        }
+        SetState ( word, CALL_REGS_RESTORED, true ) ;
+        SetState ( word, CALL_REGS_SAVED, false ) ;
+    }
+}
+#endif
+
 void
 _Word_Compile ( Word * word )
 {
     Compiler_Word_SCHCPUSCA ( word, 0 ) ;
     if ( ! word->Definition )
     {
+#if NEW_SAVE_RESTORE        
+        _Word_SaveRegisterVariables ( word ) ;
         CSL_SetupRecursiveCall ( ) ;
+        _Word_RestoreRegisterVariables ( word ) ;
+#else
+        CSL_SetupRecursiveCall ( ) ;
+#endif        
 #if 0        
         if ( ( word->W_TypeAttributes & WT_C_SYNTAX ) && ( ! ( word->W_MorphismAttributes & VOID_RETURN ) ) )
             CSL_CompileAndRecord_PushAccum ( ) ;
 #endif        
     }
     else if ( ( GetState ( _CSL_, INLINE_ON ) ) && ( word->W_MorphismAttributes & INLINE ) && ( word->S_CodeSize ) ) _Compile_WordInline ( word ) ;
-    else Compile_CallWord_Check_X84_ABI_RSP_ADJUST ( word ) ;
+    else
+    {
+#if NEW_SAVE_RESTORE        
+        _Word_SaveRegisterVariables ( word ) ;
+        Compile_CallWord_Check_X84_ABI_RSP_ADJUST ( word ) ;
+        _Word_RestoreRegisterVariables ( word ) ;
+#else
+        Compile_CallWord_Check_X84_ABI_RSP_ADJUST ( word ) ;
+#endif        
+    }
     word->W_MySourceCodeWord = _Context_->CurrentWordBeingCompiled ;
 }
 

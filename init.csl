@@ -606,8 +606,8 @@ C
 scOn
 cOn 
 int64
-fd ( REG int64 koc | REG int64 rtrn )
-//fd ( int64 koc | int64 rtrn )
+fd ( int64 koc | int64 rtrn )
+//fd ( REG int64 koc | REG int64 rtrn )
 {
    //int64 rtrn ;
    if ( koc == 1) rtrn = 1 ;
@@ -628,18 +628,22 @@ pwi fd sp0
                      kinds-of-coins)
 ))))
 */
+//cc1 ( REG amount, REG koc | REG rtrn ) //, REG one, REG int64 two ) 
+//cc1 ( REG amount, REG koc | REG rtrn ) // gives wrong result ??
+//cc1 ( REG amount, REG koc) // doesn't work ??
+#if 1
+int64
+cc1 ( int64 amount, int64 koc | rtrn, one, two )
+#else
 int64
 cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ??
-//cc1 ( REG amount, REG koc | REG rtrn ) // gives wrong result ??
-//cc1 ( int64 amount, int64 koc | rtrn, one, two )
-//cc1 ( REG amount, REG koc) // doesn't work ??
+#endif
 {
-    //int64 rtrn, one, two ;
     if (amount == 0) rtrn = 1  ;
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
     {
-#if 1 //
+#if 0
         rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
 #else // no REGs this works
         one = cc1 ( amount, koc - 1) ;
@@ -649,9 +653,9 @@ cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ?
     }
     //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
     //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
-//<dbg> 
     return rtrn ;
 }
+
 //vb(1) ;
 pwi cc1 //pause
 //pwi countChangec
@@ -667,7 +671,6 @@ CountChange ( int64 amount )
 {
     int64 value0 ;
     value0 = countChange ( amount ) ;
-    //<dbg>
     oPrintf ( "\n%ld", value0 ) ;
 }
 //logOn
@@ -675,7 +678,9 @@ CountChange ( int64 amount )
 CountChange (100) ; stack //pause
 countChangec (100 ) ; drop
 ti(4) ; countChangec (1000 ) ; drop time(4) ;
+ti(4) ; countChangec (10000 ) ; drop time(4) ;
 ti(4) ; CountChange (1000) ; time(4) ; stack
+//ti(4) ; CountChange (10000) ; time(4) ; stack
 //logOff
 cOff
 

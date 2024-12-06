@@ -20,7 +20,8 @@ Interpret_C_Until_NotIncluding_Token5 ( Interpreter * interp, byte * end1, byte 
         List_CheckInterpretLists_OnVariable ( _Compiler_->PostfixLists, token ) ;
         if ( charsFlag )
         {
-            if ( ( token[0] == end1[0] ) || ( token[0] == end2[0] ) || ( token[0] == end3[0] ) || ( token[0] == end4[0] ) || ( token[0] == end5[0] ) ) break ;
+            if ( ( token[0] == end1[0] ) || ( token[0] == end2[0] ) || ( token[0] == end3[0] ) || 
+                ( token[0] == end4[0] ) || ( token[0] == end5[0] ) ) break ;
         }
         else if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) || String_Equal ( token, end3 ) 
             || String_Equal ( token, end4 ) || String_Equal ( token, end5 ) ) break ;
