@@ -569,7 +569,7 @@ typedef struct
     byte *nc, *ncm, *ncp ;
     byte *Ncul, *Ncll ; //next char upper/lower limit
     Boolean andAfter2rparen, orAfter2rparen, andAfterOr, orAfterAnd ;
-    int64 i, j, rtrn, oparenlvl, mparenlvl, pparenlvl, la_code, andOrCount ;
+    int64 i, j, rtrn, oparenlvl, mparenlvl, pparenlvl, andOrCount ;
     //Stack * opStack ;
 } Rllafl ;
 typedef struct

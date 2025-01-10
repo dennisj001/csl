@@ -631,7 +631,7 @@ pwi fd sp0
 //cc1 ( REG amount, REG koc | REG rtrn ) //, REG one, REG int64 two ) 
 //cc1 ( REG amount, REG koc | REG rtrn ) // gives wrong result ??
 //cc1 ( REG amount, REG koc) // doesn't work ??
-#if 1
+#if 0
 int64
 cc1 ( int64 amount, int64 koc | rtrn, one, two )
 #else
@@ -643,7 +643,7 @@ cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ?
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
     {
-#if 0
+#if 1
         rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
 #else // no REGs this works
         one = cc1 ( amount, koc - 1) ;

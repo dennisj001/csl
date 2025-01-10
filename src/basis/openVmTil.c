@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.940.710" ) 
+#define VERSION ((byte*) "0.940.721" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -100,11 +100,11 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
 
     allocSize = 1 * M ; //430 * K ;
     ovt->InternalObjectsSize = 1 * M ;
-    ovt->ObjectSpaceSize = 1 * M ;
-    ovt->LispSpaceSize = 1 * M ;
+    ovt->ObjectSpaceSize = 4 * M ;
+    ovt->LispSpaceSize = 2 * M ;
     ovt->LispTempSize = 1 * M ;
     ovt->LispCopySize = 1 * M ;
-    ovt->CompilerTempObjectsSize = 4 * M ; //2 * allocSize ;
+    ovt->CompilerTempObjectsSize = 8 * M ; //2 * allocSize ;
     ovt->BufferSpaceSize = allocSize ; //35 * ( sizeof ( Buffer ) + BUFFER_SIZE ) ;
     ovt->MachineCodeSize = allocSize ;
     ovt->StringSpaceSize = allocSize ;
@@ -114,7 +114,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     ovt->DataStackSize = 8 * K ; //1 * MB ; //8 * MB ;
     ovt->TempObjectsSize = 4 * M ; //200 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
     ovt->WordRecylingSize = 1 * M ; //2 * K * ( sizeof (Word ) + sizeof (WordData ) ) ; //50 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
-    ovt->SessionObjectsSize = 1 * M ; //50 * K ;
+    ovt->SessionObjectsSize = 2 * M ; //50 * K ;
     ovt->ContextSize = 2 * M ; 
 
     OpenVmTil_Init ( ovt ) ;

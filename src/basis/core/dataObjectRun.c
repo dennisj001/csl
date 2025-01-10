@@ -77,7 +77,8 @@ _Do_LocalObject_AllocateInit ( Namespace * typeNamespace, byte ** value, int64 s
 void
 _CSL_Do_LocalObject ( Word * word, Boolean force )
 {
-    if ( force || ( ( word->W_ObjectAttributes & LOCAL_VARIABLE ) && ( ! ( word->W_ObjectAttributes & O_POINTER ) ) && ( ! GetState ( word, W_INITIALIZED ) ) ) ) // this is a local variable so it is initialed at creation 
+    if ( force || ( ( word->W_ObjectAttributes & LOCAL_VARIABLE ) && ( ! ( word->W_ObjectAttributes & O_POINTER ) ) 
+        && ( ! GetState ( word, W_INITIALIZED ) ) ) ) // this is a local variable so it is initialed at creation 
     {
         int64 size = word->ObjectByteSize ? word->ObjectByteSize : _Namespace_VariableValueGet ( word->TypeNamespace, ( byte* ) "size" ) ;
         Compile_MoveImm_To_Reg ( RDI, ( int64 ) word->TypeNamespace, CELL ) ;

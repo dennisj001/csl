@@ -351,9 +351,9 @@ done:
 }
 
 Rllafl *
-ReadLiner_LookAroundFor_Logic ( uint64 la_code )
+ReadLiner_LookForLogicMarkers ()
 {
-    Rllafl * r = Rllafl_New ( la_code, TEMPORARY ) ;
+    Rllafl * r = Rllafl_New (TEMPORARY) ;
     Switch_LookAroundFor_Logic ( r, 1 ) ; //p = ( pnc + i ), la_code, 1, &mparenLevel, &pparenLevel ) ;
     r->nc -- ;
     Switch_LookAroundFor_Logic ( r, - 1 ) ; //p = ( pnc + i ), la_code, 1, &mparenLevel, &pparenLevel ) ;
@@ -363,7 +363,7 @@ ReadLiner_LookAroundFor_Logic ( uint64 la_code )
 }
 
 Rllafl *
-Rllafl_New ( int64 la_code, uint64 allocType )
+Rllafl_New (uint64 allocType)
 {
     ReadLiner * rl = _ReadLiner_ ;
     Rllafl * r = ( Rllafl * ) Mem_Allocate ( sizeof (Rllafl ), allocType ) ;
@@ -372,7 +372,6 @@ Rllafl_New ( int64 la_code, uint64 allocType )
     r->oparenlvl = bi->ParenLevel ;
     r->pparenlvl = r->mparenlvl = _Compiler_->ParenLevel ;
     r->rtrn = 0 ;
-    r->la_code = la_code ;
     r->nc = & rl->InputLineString [ rl->ReadIndex - 1 ] ;
     r->Ncul = & rl->InputLineString [ BUFFER_SIZE ] ;
     r->Ncll = & rl->InputLineString [ 0 ] ;

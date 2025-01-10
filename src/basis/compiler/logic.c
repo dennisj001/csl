@@ -240,7 +240,7 @@ int64
 Compile_Logic_LookAround_CheckSetBI_Ttt_JccGotoInfo ( Compiler * compiler )
 {
     BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-    Rllafl * r = ReadLiner_LookAroundFor_Logic ( 0 ) ;
+    Rllafl * r = ReadLiner_LookForLogicMarkers () ;
     return BI_Check_SetTttnJccGotoInfo ( bi, r, 0 ) ;
 }
 
@@ -309,7 +309,7 @@ Finish_Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Word * zero, Boolean tt
     else
     {
         BI_SetTttN ( bi, ttt, n, 0, 0 ) ;
-        Rllafl * r = ReadLiner_LookAroundFor_Logic ( 0 ) ;
+        Rllafl * r = ReadLiner_LookForLogicMarkers () ;
         //if ( ( ( ! ( _AtCommandLine ( ) ) ) && ( ( r->rtrn & LT_END_OF_BLOCK ) && ( ! ( r->rtrn & LT_ID ) ) )
         if ( ( ( r->rtrn & LT_END_OF_BLOCK ) && ( ! ( r->rtrn & LT_ID ) ) )
             || ( C_SyntaxOn && ( compiler->CombinatorLevel || ( compiler->BlockLevel > 1 ) ) ) )
@@ -408,7 +408,7 @@ Compiler_Var_Compile_LogicTest ( Compiler * compiler )
     {
         if ( ( compiler->CombinatorLevel || ( compiler->BlockLevel > 1 ) ) )
         {
-            Rllafl * r = ReadLiner_LookAroundFor_Logic ( 0 ) ;
+            Rllafl * r = ReadLiner_LookForLogicMarkers () ;
             int64 rtrn = r ? r->rtrn : 0 ;
             if ( r && ( ! ( rtrn & LT_ID ) ) && ( rtrn & ( LT_OR_PREVIOUS | LT_OR_NEXT | LT_AND_PREVIOUS | LT_AND_NEXT | LT_END_OF_BLOCK ) ) )
             {
@@ -427,7 +427,7 @@ Check_Logic ( BlockInfo *bi, Boolean ttt, Boolean negFlag )
 {
     if ( _Compiler_->CombinatorLevel || ( _Compiler_->BlockLevel > 1 ) || ( ! bi->TttnCode ) )
     {
-        Rllafl * r = ReadLiner_LookAroundFor_Logic ( 0 ) ;
+        Rllafl * r = ReadLiner_LookForLogicMarkers () ;
         if ( ( ! C_SyntaxOn ) && ( ( r->rtrn & LT_END_OF_BLOCK ) && ( ! ( r->rtrn & LT_ID ) ) ) )
         {
             //int64 ttt, negFlag, jccType ;
@@ -508,7 +508,7 @@ void
 Compile_LogicalAnd ( Compiler * compiler )
 {
     BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-    Rllafl * r = ReadLiner_LookAroundFor_Logic ( 0 ) ;
+    Rllafl * r = ReadLiner_LookForLogicMarkers () ;
     Compile_Move_Reg_To_Reg ( RAX, R14, 0 ) ;
     _Compile_Stack_Drop ( R14 ) ;
     Compile_CMPI ( 0, RAX, 0, 0, 0 ) ;
@@ -862,7 +862,7 @@ Interpreter_Logic_CheckPrefix ( Word * word )
         //Compiler * compiler = _Compiler_ ;
         if ( word->Definition == CSL_LogicalAnd )
         {
-            Rllafl * r = ReadLiner_LookAroundFor_Logic ( 0 ) ;
+            Rllafl * r = ReadLiner_LookForLogicMarkers () ;
             if ( ( r->rtrn & LT_OR_PREVIOUS ) && ( ! ( r->rtrn & LT_2_LPAREN_PREVIOUS ) ) )
             {
                 //Print_Defined_LogicVariable ( r ) ;
@@ -871,7 +871,7 @@ Interpreter_Logic_CheckPrefix ( Word * word )
         }
         else if ( word->Definition == CSL_LogicalOr )
         {
-            Rllafl * r = ReadLiner_LookAroundFor_Logic ( 0 ) ;
+            Rllafl * r = ReadLiner_LookForLogicMarkers () ;
             if ( ( r->rtrn & LT_AND_PREVIOUS ) && ( ! ( r->rtrn & LT_2_LPAREN_PREVIOUS ) ) )
             {
                 CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
