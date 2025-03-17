@@ -175,6 +175,7 @@ void CSL_Goto_Prefix(void);
 void CSL_Label(void);
 void CSL_Label_Prefix(void);
 void CSL_Return(void);
+void CSL_Push(void);
 void CSL_Continue(void);
 void CSL_Break(void);
 void CSL_SetupRecursiveCall(void);

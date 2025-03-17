@@ -1,5 +1,12 @@
 
 5 
+forth
+'tx1 var 
+tx1 ( a b | c ) { c a @ b @ + = c @ p } = 
+: txtest 1 2 tx1 @ _run ; txtest 
+: txtest2 tx1 @ _run ; 1 2 txtest2
+"\nline above should show 3 3" ps //pause
+pwi txtest2 //pause
 User
 C
 Root
@@ -98,6 +105,14 @@ sprintf ( &chey.chars, "%s", "hoot" ) ;
 dump ( chey, CObj.size ) ; 
 sprintf ( &chey.chars, "%s", "ok! don't hoot" ) ;
 dump ( chey, CObj.size ) ; 
+Forth forth // eg. in the midst of C code
+'tx1 var 
+tx1 ( a b | c ) { c a @ b @ + = c @ p } = 
+: txtest 1 2 tx1 @ _run ; txtest 
+: txtest2 tx1 @ _run ; 1 2 txtest2
+"\nline above should show 3 3" ps //pause
+pwi txtest2 //pause
+cOn
 sprintf ( &chey.chars, "%s", "well, do or don't hoot" ) ;
 dump ( chey, CObj.size ) ; 
 

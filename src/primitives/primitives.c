@@ -568,10 +568,10 @@ CPrimitive CPrimitives [] = {
     { "ifndef", 0, 0, 0, CSL_Ifndef_Preprocessor, IMMEDIATE, 0, W_PREPROCESSOR, "PreProcessor", "Root" },
 
     { "sm:", 0, 0, 0, CSL_StringMacro, 0, 0, 0, "Macro", "Root" },
-    { "alias", 0, 0, 0, CSL_Alias, 0, 0, 0, "Macro", "Root" },
     { "findAlias", 0, 0, 0, CSL_FindAlias, 0, 0, 0, "Macro", "Root" },
     { "tm:", 0, 0, 0, CSL_TextMacro, 0, 0, 0, "Macro", "Root" },
 
+    { "alias", 0, 0, 0, CSL_Alias, 0, 0, 0, "Word", "Root" },
     { "name", 0, 0, 0, Word_Name, CATEGORY_OP_STACK, 0, 0, "Word", "Root" },
     { "wordNew", 0, 0, 0, CSL_Word_New, 0, 0, 0, "Word", "Root" },
     { "wNamespace", 0, 0, 0, Word_Namespace, CATEGORY_OP_STACK, 0, 0, "Word", "Root" },
@@ -607,6 +607,7 @@ CPrimitive CPrimitives [] = {
     { "goto", 0, 0, 0, CSL_Goto, IMMEDIATE, 0, 0, "Compiler", "Root" },
     { "continue", 0, 0, 0, CSL_Continue, IMMEDIATE, 0, 0, "Compiler", "Root" },
     { "return", 0, 0, 0, CSL_Return, IMMEDIATE | KEYWORD, 0, 0, "Compiler", "Root" },
+    { "push", 0, 0, 0, CSL_Push, IMMEDIATE | KEYWORD, 0, 0, "Compiler", "Root" },
     { "break", 0, 0, 0, CSL_Break, IMMEDIATE, 0, 0, "Compiler", "Root" },
     { "noop", 0, 0, 0, CSL_NoOp, IMMEDIATE, 0, 0, "Compiler", "Root" },
     { "macro", 0, 0, 0, CSL_Word, IMMEDIATE, 0, 0, "Compiler", "Root" },

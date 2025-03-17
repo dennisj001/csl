@@ -53,7 +53,7 @@ Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
     if ( indentFlag )
     {
         iPrintf ( "\n" ) ;
-        while ( indentLevel -- ) iPrintf ( "\t" ) ;
+        while ( indentLevel -- ) iPrintf ( "   " ) ; //"\t" ) ;
     }
     if ( ns->State & NOT_USING ) iPrintf ( " - %s", c_gd ( ns->Name ) ) ;
     else iPrintf ( " - %s", ns->Name ) ;

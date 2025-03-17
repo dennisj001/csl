@@ -1,7 +1,7 @@
 //logOn
 //_dbgOn ukseOn
 5 // stack checking marker
-#define DEBUG_ON 0
+#define DEBUG_ON 1
 scOn 
 Debug
 // higher debugLevel turns on more debugging
@@ -46,6 +46,10 @@ Root
 'cOn 'c_syntaxOn find alias
 'cOff 'c_syntaxOff find alias
 "log" variable 
+Forth
+'forth 'postfixOn find alias
+'fOn 'forth find alias
+Root
 "User" namespace 
 Io Int
 : _ps printString ; inline
@@ -531,6 +535,7 @@ dbgOff
 #endif 
 //l9
 //lisp
+//tc
 
 // ===================
 #if Is_DebugOn forStarters ||
