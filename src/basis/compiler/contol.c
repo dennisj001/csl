@@ -360,24 +360,6 @@ CSL_Return ( )
 }
 
 void
-CSL_Push ( )
-{
-    SetState ( _Compiler_, DOING_RETURN, true ) ;
-    {
-        //compiler->ReturnWord = word ;
-        SetState ( _Compiler_, RETURN_TOS, true ) ;
-        byte mov_r14_rax [] = { 0x49, 0x89, 0x06 } ; //mov [r14], rax
-        if ( memcmp ( mov_r14_rax, Here - 3, 3 ) )
-        {
-            ///compiler->ReturnWord = Compiler_CopyDuplicatesAndPush ( compiler->ReturnWord, - 1, - 1 ) ; // want to have a copy because 'return may be responsible for another code output in Compiler_RemoveLocalFrame
-            //Compiler_Word_SCHCPUSCA ( compiler->ReturnWord, 0 ) ;
-            Compile_Move_TOS_To_ACCUM ( DSP ) ; // save TOS to ACCUM so we can set return it as TOS below
-        }
-    }
-    SetState ( _Compiler_, DOING_RETURN, false ) ;
-}
-
-void
 CSL_Continue ( )
 {
     _CSL_CompileCallJmpGoto ( 0, GI_CONTINUE ) ;

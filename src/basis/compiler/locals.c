@@ -153,18 +153,14 @@ Compiler_LocalWord_New ( Compiler * compiler, byte * name, int64 morphismAttribu
 
 inline Boolean
 IsFrameNecessary ( int64 numberOfLocals, int64 numberOfArgs )
-//IsFrameNecessary ( int64 numberOfNonRegisterLocals, int64 numberOfNonRegisterArgs )
 {
     return ( ( numberOfLocals || numberOfArgs ) ? true : false ) ;
-    //return ( ( numberOfNonRegisterLocals || numberOfNonRegisterArgs ) ? true : false ) ;
 }
 
 inline Boolean
 Compiler_IsFrameNecessary ( Compiler * compiler )
 {
-    //return ( ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs ) ? true : false ) ;
     return IsFrameNecessary ( compiler->NumberOfLocals, compiler->NumberOfArgs ) ;
-    //return IsFrameNecessary ( compiler->NumberOfNonRegisterLocals, compiler->NumberOfNonRegisterArgs ) ;
 }
 
 void
@@ -202,30 +198,48 @@ Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 }
 
 void
+CSL_Push ( )
+{
+    SetState ( _Compiler_, DOING_RETURN, true ) ;
+#if 1   
+    {
+        SetState ( _Compiler_, RETURN_TOS, true ) ;
+        byte mov_r14_rax [] = { 0x49, 0x89, 0x06 } ; //mov [r14], rax
+        if ( memcmp ( mov_r14_rax, Here - 3, 3 ) )
+        {
+            Compile_Move_TOS_To_ACCUM ( DSP ) ; // save TOS to ACCUM so we can set return it as TOS below
+        }
+    }
+#else    
+    Word * word = Word_New ( "push_anonymous" ) ;
+    _Compiler_->ReturnVariableWord = word ;
+    SetHere ( word->Coding ) ;
+    //else Word_Check_ReSet_To_Here_StackPushRegisterCode ( word1 ) ;
+    if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ;
+#endif    
+
+    SetState ( _Compiler_, DOING_RETURN, false ) ;
+}
+
+void
 CSL_DoReturnWord ( Word * word )
 {
     Compiler * compiler = _Compiler_ ;
-    //if ( word && (word->Name[0] != ';' ))
+    Word * word1 = CSL_Parse_Interpret_KeywordOperand ( word, 1 ) ;
+    if ( word1 )
     {
-        Word * word1 = CSL_Parse_Interpret_KeywordOperand ( word, 1 ) ;
-        if ( word1 )
-        {
-            compiler->ReturnVariableWord = word1 ;
-            if ( word1->W_ObjectAttributes & REGISTER_VARIABLE ) SetHere ( word1->Coding ) ;
-            else Word_Check_ReSet_To_Here_StackPushRegisterCode ( word1 ) ;
-            if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ;
-            return ;
-        }
+        compiler->ReturnVariableWord = word1 ;
+        if ( word1->W_ObjectAttributes & REGISTER_VARIABLE ) SetHere ( word1->Coding ) ;
+        else Word_Check_ReSet_To_Here_StackPushRegisterCode ( word1 ) ;
+        if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ;
+        return ;
     }
     if ( word && ( word->W_MorphismAttributes & ( T_TOS ) ) )
     {
-        //compiler->ReturnWord = word ;
         SetState ( compiler, RETURN_TOS, true ) ;
         byte mov_r14_rax [] = { 0x49, 0x89, 0x06 } ; //mov [r14], rax
         if ( memcmp ( mov_r14_rax, Here - 3, 3 ) )
         {
-            ///compiler->ReturnWord = Compiler_CopyDuplicatesAndPush ( compiler->ReturnWord, - 1, - 1 ) ; // want to have a copy because 'return may be responsible for another code output in Compiler_RemoveLocalFrame
-            //Compiler_Word_SCHCPUSCA ( compiler->ReturnWord, 0 ) ;
             Compile_Move_TOS_To_ACCUM ( DSP ) ; // save TOS to ACCUM so we can set return it as TOS below
         }
     }
@@ -274,10 +288,6 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
             {
                 CSL_AdjustDbgSourceCodeAddress ( Here, Here - 7 ) ;
                 _ByteArray_UnAppendSpace ( _O_CodeByteArray, 7 ) ;
-                //byte * here = Here ;
-                //CSL_InstallGotoCallPoints_Keyed ( bi, GI_RETURN, 0, 0 ) ;
-                //BI_Block_AdjustJmps (bi, bi->bp_First, here - bi->bp_First ) ;
-                //BI_Block_AdjustJmps (BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize)
             }
         }
         // remove the incoming parameters -- like in C
@@ -303,8 +313,7 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
         //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) Here - 3, 3, 1 ) ;
         int64 test = memcmp ( mov_rax_r14, Here - 3, 3 ) ; //remember : memcmp returns a diff => returns 0 when there is no difference
         //if ( ( IsWordRecursive ) && ( ! test ) ) 
-        if ( ! test )
-            return ;
+        if ( ! test ) return ;
         Compile_Move_ACC_To_TOS ( DSP ) ;
     }
 }

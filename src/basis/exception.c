@@ -41,7 +41,7 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
         {
             if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) || ( signal == SIGHUP ) ) OVT_Exit ( ) ;
             else if ( (signal == SIGSEGV) || (signal == SIGBUS ) ) _O_->SigSegvs ++ ;
-            else if ( (signal == SIGBUS) || (signal == SIGCHLD) )
+            else if ( (signal == SIGCHLD) )
             {
                 jb = & _O_->JmpBuf0 ;
                 OVT_SetRestartCondition ( _O_, INITIAL_START ) ;

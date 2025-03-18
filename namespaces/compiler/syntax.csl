@@ -1,20 +1,30 @@
 5
 Forth fOn
-'tx10 var 'tx11 var 'tx12 var 'tx2 var
+'tx10 var 'tx11 var 'tx12 var 'tx13 var 'tx2 var 'tx3 var 'tx4 var
 tx10 ( a b | c ) { c a @ b @ + = c @ p } = 
-tx11 ( a b | c ) { c a @ b @ + = c @ dup p return tos } = 
+tx11 ( a b | c ) { c a @ b @ + = c @ dup p push } = 
 tx12 ( a b | c ) { c a @ b @ + = c @ dup p push } = 
+tx13 ( a b | c ) { c a @ b @ + = c @ dup p push } = // 'push' can't push an value intermediate in the block only last value
+//tx13 ( a b | c ) { c a @ b @ + = c @ dup d: push 4 + p } = 
 //tx2 { + dup p 4 + dup p return tos } =
 tx2 { + dup p 4 + dup p } =
+tx3 { + dup p 4 + dup p push } = 
+//tx4 { + dup d: push p 4 + p } = // 'push' can't push an value intermediate in the block only last value
 : txtest 1 2 tx10 @ _run ; txtest 
 : txtest2 tx11 @ _run ; 1 2 txtest2 4 + dup p 7 _assert
 "\nline above should show 3 3 7" ps //pause
 : txtest20 tx12 @ _run ; nl 1 2 txtest20 4 + dup p 7 _assert
 "\nline above should show 3 7" ps //pause
+: txtest21 tx13 @ _run ; nl 1 2 txtest21 4 + dup p 7 _assert
+"\nline above should show 3 7" ps //pause
 : txtest3 1 2 tx2 @ _run ; nl txtest3 7 _assert
 "\nline above should show 3 7" ps //pause
-: txtest4 tx2 @ _run ; nl 1 2 txtest4 7 _assert
+: txtest4 1 2 tx3 @ _run ; nl txtest4 7 _assert
 "\nline above should show 3 7" ps //pause
+: txtest5 tx2 @ _run ; nl 1 2 txtest5 7 _assert
+"\nline above should show 3 7" ps //pause
+//: txtest6 1 2 tx4 @ _run ; nl txtest6 3 _assert // 'push' can't push an value intermediate in the block only last value
+//"\nline above should show 3 3" ps pause
 C
 sp0
 User 
