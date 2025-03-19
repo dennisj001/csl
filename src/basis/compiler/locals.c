@@ -236,12 +236,16 @@ CSL_DoReturnWord ( Word * word )
     }
     if ( word && ( word->W_MorphismAttributes & ( T_TOS ) ) )
     {
+#if 0        
         SetState ( compiler, RETURN_TOS, true ) ;
         byte mov_r14_rax [] = { 0x49, 0x89, 0x06 } ; //mov [r14], rax
         if ( memcmp ( mov_r14_rax, Here - 3, 3 ) )
         {
             Compile_Move_TOS_To_ACCUM ( DSP ) ; // save TOS to ACCUM so we can set return it as TOS below
         }
+#else
+        CSL_Push ( ) ;
+#endif        
     }
     if ( word && ( word->W_ObjectAttributes & ( NAMESPACE_VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) )
     {

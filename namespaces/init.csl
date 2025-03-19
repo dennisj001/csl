@@ -46,9 +46,7 @@ Root
 'cOn 'c_syntaxOn find alias
 'cOff 'c_syntaxOff find alias
 "log" variable 
-Forth
-'forth 'postfixOn find alias
-'fOn 'forth find alias
+'fOn 'postfixOn find alias // the default state 
 Root
 "User" namespace 
 Io Int
