@@ -126,6 +126,8 @@ void
 OVT_Exit ( )
 {
     if ( Verbosity () > 0 ) iPrintf ( "bye\n" ) ;
+    LinuxInit ( ) ; // reset termios
+
     exit ( 0 ) ;
 }
 

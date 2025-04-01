@@ -27,6 +27,7 @@ furnished to do so, subject to the following conditions :
 #include "../include/csl.h"
 
     int pid_changed = - 1, pid_action = - 1 ;
+//void * shmem ;
 
 // Signal handlers
 
@@ -67,8 +68,6 @@ handle_sigchld ( int sig )
     }
 }
 
-extern char **environ ;
-
 //int main(int argc, char **argv, char **envp)
 
 void
@@ -76,10 +75,10 @@ shell ( )
 {
 
     pid_t pid ;
-    char cmd[1000], cmd0[200], cmd1[100], *args[100], wami[200],
-        cmd_aux[200], hpath[500] ;
+    byte * cmd ;
+    char cmd0[200], cmd1[100], *args[100], wami[200], cmd_aux[200], hpath[500] ;
     char aux[200], aux2[200], *sptr1 ;
-    void *shmem ;
+    char *shmem ;
     Boolean bg = false ;
     int t_process ;
     int len ;
@@ -88,7 +87,10 @@ shell ( )
     snode* jobs = NULL ;
 
     // Create shared memory
-    shmem = mmap ( NULL, 200, ( PROT_READ | PROT_WRITE ), ( MAP_SHARED | MAP_ANONYMOUS ), - 1, 0 ) ;
+#define shmemSize 200    
+    shmem = mmap ( NULL, shmemSize, ( PROT_READ | PROT_WRITE ), ( MAP_SHARED | MAP_ANONYMOUS ), - 1, 0 ) ;
+    //shmem = (char*) Mem_Allocate ( 200, TEMPORARY ) ;
+    //shmem = getenv ( "PWD" ) ;
 
     // Defining signal handles
     signal ( SIGINT, handle_sigint ) ;
@@ -118,8 +120,7 @@ shell ( )
 
     Context * cntx = _Context_ ;
     ReadLiner * rl = cntx->ReadLiner0 ;
-    //line = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-    //byte *token ;
+    cmd = Buffer_New_pbyte ( BUFFER_SIZE ) ;
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     ReadLine_SetPrompt ( rl, "$ " ) ;
     iPrintf ( "\n type \'.\' to exit" ) ;
@@ -148,14 +149,14 @@ shell ( )
         }
 
         // Start new shell input
-        whereami ( wami ) ;
+        //whereami ( wami ) ;
         //fprintf ( stdout, "\033[38;5;46m%s\033[m", getenv ( "MYPS1" ) ) ;
 
         Context_DoPrompt ( cntx ) ;
         _ReadLine_GetLine ( rl, 0 ) ;
         byte * str = & rl->InputLine [rl->ReadIndex] ; //String_New ( & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
         if ( String_Equal ( str, ".\n" ) ) goto done ; //return ; //break ;
-        cmd [0] = 0 ;
+        //cmd [0] = 0 ;
         if ( get_type_process ( str ) == 0 )
         {
             strcpy ( cmd, "bash -i -c " ) ;
@@ -441,6 +442,7 @@ shell ( )
 
                             sleep ( 1 ) ;
                         }
+                        LinuxInit ( ) ; // reset termios
 
                     }
                     else if ( WIFSTOPPED ( status ) )
@@ -460,6 +462,6 @@ shell ( )
 done:
     ReadLine_SetPrompt ( rl, svPrompt ) ;
     iPrintf ( " leaving shell ..." ) ;
-
-    //return 0 ;
+    munmap ( shmem, shmemSize ) ;
+    LinuxInit ( ) ;
 }

@@ -99,7 +99,6 @@
         </df>
         <df name="primitives">
           <in>bits.c</in>
-          <in>builtin.c</in>
           <in>cmaths.c</in>
           <in>compilers.c</in>
           <in>contexts.c</in>
@@ -691,13 +690,6 @@
       <item path="src/basis/x.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/primitives/bits.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/builtin.c" ex="false" tool="0" flavor2="0">
         <cTool flags="0">
           <incDir>
             <pElem>.</pElem>

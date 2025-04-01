@@ -31,6 +31,7 @@ extern int64 mmaped ;
 // simple shell : utils.c
 extern char **environ ;
 extern snode* jobs ;
+extern char * shmem ;
 
 #endif
 

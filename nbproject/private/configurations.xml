@@ -129,7 +129,6 @@
           <df name="simple-linux-shell">
           </df>
           <in>bits.c</in>
-          <in>builtin.c</in>
           <in>cmaths.c</in>
           <in>compilers.c</in>
           <in>contexts.c</in>
