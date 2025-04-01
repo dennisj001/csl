@@ -99,6 +99,7 @@
         </df>
         <df name="primitives">
           <in>bits.c</in>
+          <in>builtin.c</in>
           <in>cmaths.c</in>
           <in>compilers.c</in>
           <in>contexts.c</in>
@@ -117,10 +118,12 @@
           <in>openvmtils.c</in>
           <in>parsers.c</in>
           <in>primitives.c</in>
+          <in>shell.c</in>
           <in>stacks.c</in>
           <in>strings.c</in>
           <in>syntaxes.c</in>
           <in>systems.c</in>
+          <in>utils.c</in>
           <in>words.c</in>
         </df>
       </df>
@@ -694,6 +697,13 @@
           </incDir>
         </cTool>
       </item>
+      <item path="src/primitives/builtin.c" ex="false" tool="0" flavor2="0">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
       <item path="src/primitives/cmaths.c" ex="false" tool="0" flavor2="2">
         <cTool flags="1">
           <incDir>
@@ -815,6 +825,13 @@
           </incDir>
         </cTool>
       </item>
+      <item path="src/primitives/shell.c" ex="false" tool="0" flavor2="0">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
       <item path="src/primitives/stacks.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
@@ -837,6 +854,13 @@
         </cTool>
       </item>
       <item path="src/primitives/systems.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/utils.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
             <pElem>.</pElem>

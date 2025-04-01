@@ -37,7 +37,7 @@ void
 CSL_Prompt (CSL * csl, Boolean startupMessageFlag, Boolean promptFlag )
 {
     OVT_StartupMessage ( startupMessageFlag && ( csl->InitSessionCoreTimes++ <= 2 ) ) ;
-    _OVT_Ok ( promptFlag ) ;
+    _OVT_Ok ( startupMessageFlag || promptFlag ) ;
 }
 
 void

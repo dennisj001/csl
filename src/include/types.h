@@ -640,14 +640,15 @@ typedef struct TCI
 } TabCompletionInfo, TCI ;
 
 struct ReadLiner ;
-typedef byte ( *ReadLiner_KeyFunction ) (struct ReadLiner *) ;
+typedef
+byte( *ReadLiner_KeyFunction ) (struct ReadLiner *) ;
 typedef struct ReadLiner
 {
     uint64 State, svState ;
     int64 InputKeyedCharacter ;
     int64 FileCharacterNumber, LineNumber, OutputLineCharacterNumber ; // set by _CSL_Key
     int64 ReadIndex, svReadIndex, EndPosition ; // index where the next input character is put
-    int64 MaxEndPosition ; 
+    int64 MaxEndPosition ;
     int64 CursorPosition, EscapeModeFlag, InputStringIndex, InputStringLength, LineStartFileIndex ;
     byte *Filename, LastCheckedInputKeyedCharacter, * DebugPrompt, * DebugAltPrompt, * NormalPrompt, * AltPrompt, * Prompt ;
     byte InputLine [BUFFER_SIZE], * InputLineString, * InputStringOriginal, * InputStringCurrent, *svLine ;
@@ -724,7 +725,7 @@ typedef struct
         } ;
         Word * COIW [8] ; // CompileOptimizeInfo Word array
     } ;
-    
+
     int64 rtrn, NumberOfArgs ;
     uint16 ControlFlags ;
     Word *rparenPrevOp, *opWord, *wordn, *wordm, *wordArg1, *wordArg2, *xBetweenArg1AndArg2, *wordArg0_ForOpEqual, *lparen1, *lparen2 ;
@@ -738,7 +739,7 @@ typedef struct TypeDefInfo
 {
     int64 State, Tdi_Offset, Tdi_StructureUnion_Size, Tdi_Structure_Size, Tdi_Union_Size, Tdi_Field_Size, T_Type ;
     int64 LineNumber, Token_EndIndex, Token_StartIndex, *Tdi_ArrayDimensions, Tdi_ArrayNumberOfDimensions ;
-    int64 Tdi_BitFieldOffset, Tdi_BitFieldSize ;//, T_Type ;
+    int64 Tdi_BitFieldOffset, Tdi_BitFieldSize ; //, T_Type ;
     Namespace *Tdi_InNamespace, * Tdi_StructureUnion_Namespace, * Tdi_Field_Type_Namespace, *FunctionId ;
     Word * Tdi_Field_Object ;
     byte *NextChar, *DataPtr, * TdiToken, *FieldName, *StructureUnionName ;
@@ -767,7 +768,6 @@ typedef struct TypeDefInfo
 #define TD_FORWARD_REF              ( (uint8) 1 << 9 )
 #define TD_FIELD_ID                 ( (uint8) 1 << 10 )
 #define TD_BIT_FIELD                        ( (uint64) 1 << 11 )
-
 typedef struct
 {
     dlnode * JON_Node ;
@@ -1149,4 +1149,16 @@ typedef struct
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
 
+// simple linux shell
+typedef struct _snode
+{
+    int pid ;
+    int status ;
+    struct _snode *prox ;
+} snode ;
+typedef struct _cnode
+{
+    char cmd [BUFFER_SIZE] ;
+    struct _cnode *prox ;
+} cnode ;
 

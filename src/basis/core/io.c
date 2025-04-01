@@ -23,24 +23,57 @@ GetTerminalWidth ( )
 #endif /* TIOCGSIZE */
 }
 
-char
+#if 1
+int
 _kbhit ( int64 key )
 {
     int64 oldf ;
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
-    char ch = getc ( stdin ) ;
+    int ch = getc ( stdin ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf ) ;
     if ( key == CHAR_PRINT ) return ( ch >= ' ' ) ;
     else if ( key == CHAR_ANY ) return ( ch ) ;
     else return (ch == key ) ; //return ch ;
 }
-
-char
+int
 kbhit ( void )
 {
     return _kbhit ( ESC ) ;
 }
+
+#else
+void changemode(int dir)
+{
+  static struct termios oldt, newt;
+ 
+  if ( dir == 1 )
+  {
+    tcgetattr( STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~( ICANON | ECHO );
+    tcsetattr( STDIN_FILENO, TCSANOW, &newt);
+  }
+  else
+    tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+}
+ 
+int kbhit (void)
+{
+  struct timeval tv;
+  fd_set rdfs;
+ 
+  tv.tv_sec = 0;
+  tv.tv_usec = 0;
+ 
+  FD_ZERO(&rdfs);
+  FD_SET (STDIN_FILENO, &rdfs);
+ 
+  select(STDIN_FILENO+1, &rdfs, NULL, NULL, &tv);
+  return FD_ISSET(STDIN_FILENO, &rdfs);
+ 
+}
+#endif
 
 #define KEY() getc ( stdin )
 

@@ -68,101 +68,8 @@ void
 _ShellEscape ( char * str )
 {
     int status ;
-#if 1  
-    //signal ( SIGCHLD, SIG_IGN ) ;
     status = system ( str ) ;
-#elif 0
-    pid_t pid1 ;
-    pid_t pid2 ;
-
-    if ( pid1 = fork ( ) )
-    {
-        /* parent process A */
-        //waitpid ( pid1, &status, 0) ; //NULL ) ;
-        waitpid ( pid1, &status, WNOHANG ) ;
-    }
-    else if ( ! pid1 )
-    {
-        /* child process B */
-        if ( pid2 = fork ( ) )
-        {
-            exit ( 0 ) ;
-        }
-        else if ( ! pid2 )
-        {
-            /* child process C */
-            //execvp("something");
-            status = system ( str ) ;
-        }
-        else
-        {
-            /* error */
-        }
-    }
-    else
-    {
-        /* error */
-    }
-#elif 0
-    char *cmd[] = { str, ( char * ) 0 } ; //{ "ls", "-l", ( char * ) 0 } ;
-    char *env[] = { ( char * ) 0 } ; //{ "HOME=/usr/home", "LOGNAME=home", ( char * ) 0 } ;
-    status = execve ( "", cmd, env ) ;
-#elif 0
-    status = execlp ( "str", "str", "", ( char * ) 0 ) ;
-#elif 0
-    status = execl ( "", "sh", "-c", str, ( char * ) 0 ) ;
-#elif 0 // bad!!??
-    {
-        pid_t pid ;
-
-        pid = fork ( ) ;
-        if ( pid == 0 )
-        {
-            status = system ( str ) ;
-        }
-        else return ;
-    }
-#elif 0
-    {
-        extern char **environ ;
-        pid_t pid ;
-        char *argv[] = { "sh", "-c", str, NULL } ;
-        d0 ( Verbosity () = 2 ) ;
-        if ( Verbosity () > 1 ) printf ( "\nposix_spawn :: command = %s\n", str ) ;
-        //else printf ("\n") ;
-#if 0
-        posix_spawn ( pid_t * __restrict __pid,
-            const char *__restrict __path,
-            const posix_spawn_file_actions_t * __restrict
-            __file_actions,
-            const posix_spawnattr_t * __restrict __attrp,
-            char *const __argv[__restrict_arr],
-            char *const __envp[__restrict_arr] ) ;
-#endif        
-        status = posix_spawn ( &pid, "/bin/sh", NULL, NULL, argv, environ ) ;
-        //status = system ( str ) ;
-#if 1        
-        if ( status == 0 )
-        {
-            if ( Verbosity () > 1 ) printf ( "\nposix_spawn : child : pid = %d\n", pid ) ;
-            //if ( wait ( &status ) != -1 ) //( waitpid ( pid, &status, 0 ) != - 1 )
-            if ( waitpid ( pid, &status, WNOHANG ) != - 1 )
-            {
-                if ( Verbosity () > 1 ) printf ( "\nposix_spawn : child : pid = %d : %s :: exited with status %d\n", pid, ( char* ) String_ConvertToBackSlash ( ( byte* ) str ), status ) ;
-            }
-            else
-            {
-                if ( Verbosity () > 0 ) perror ( "\nwaitpid" ) ;
-            }
-        }
-        else
-        {
-            if ( Verbosity () > 1 ) printf ( "\nposix_spawn: %s\n", strerror ( status ) ) ;
-        }
-#endif        
-    }
-#endif    
-    if ( Verbosity () > 1 ) printf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
+    if ( Verbosity ( ) > 1 ) printf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
     fflush ( stdout ) ;
 }
 
@@ -187,33 +94,63 @@ _shell ( )
     byte * str = _String_Get_ReadlineString_ToEndOfLine ( ) ;
     ShellEscape ( str ) ;
 }
+#if 0 // experimenting here ...
+// the problem here is bash -i doesn't echo to input window
 
 void
 shell ( )
 {
     Context * cntx = _Context_ ;
     ReadLiner * rl = cntx->ReadLiner0 ;
+    byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ), *token ;
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     ReadLine_SetPrompt ( rl, "$ " ) ;
-    iPrintf ( "\n type \'exit\' to exit" ) ;
-    Context_DoPrompt (cntx) ;
+    iPrintf ( "\n type \'.\' to exit" ) ;
+    Context_DoPrompt ( cntx ) ;
+    system ( "bash -i" ) ;
+    //execl ("/bin/bash", "bash", "-i", "-c", str, (char *) NULL) ;
+
+    ReadLine_SetPrompt ( rl, svPrompt ) ;
+    iPrintf ( "\n leaving shell ..." ) ;
+    //free (str) ;
+}
+
+#elif 0 //current working simple mode
+
+void
+shell ( )
+{
+    Context * cntx = _Context_ ;
+    ReadLiner * rl = cntx->ReadLiner0 ;
+    byte * buffer = Buffer_New_pbyte ( BUFFER_SIZE ), *token ;
+    byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
+    ReadLine_SetPrompt ( rl, "$ " ) ;
+    iPrintf ( "\n type \'.\' to exit" ) ;
+    Context_DoPrompt ( cntx ) ;
     while ( 1 )
     {
-        _ReadLine_GetLine ( rl, 0 ) ; 
-        byte * str = String_New ( & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
-        if ( String_Equal ( str, "exit\n" ) ) break ;
-        ShellEscape ( str ) ; // prompt is included in ShellEscape
+        _ReadLine_GetLine ( rl, 0 ) ;
+        if ( String_Equal ( & rl->InputLine [rl->ReadIndex], ".\n" ) ) break ;
+        //byte * str = String_New ( & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
+        //buffer[0] = 0 ;
+        //strcat ( buffer, "ksh " ) ;
+        //strcat ( buffer, "set BASH=/usr/bin/bash -i" ) ;
+        strcpy ( buffer, & rl->InputLine [rl->ReadIndex] ) ;
+        ShellEscape ( buffer ) ; //buffer ) ; // prompt is included in ShellEscape
+        //exece ("/bin/bash", "bash", "-i", "-c", str, (char *) 0) ;
     }
     ReadLine_SetPrompt ( rl, svPrompt ) ;
     iPrintf ( "\n leaving shell ..." ) ;
 }
+
+#endif
 
 void
 CSL_Filename ( )
 {
     byte * filename = _Context_->ReadLiner0->Filename ;
     if ( ! filename ) filename = ( byte* ) "command line" ;
-    DataStack_Push (( int64 ) filename) ;
+    DataStack_Push ( ( int64 ) filename ) ;
 }
 
 void
@@ -225,13 +162,13 @@ CSL_Location ( )
 void
 CSL_LineNumber ( )
 {
-    DataStack_Push (( int64 ) _Context_->ReadLiner0->LineNumber) ;
+    DataStack_Push ( ( int64 ) _Context_->ReadLiner0->LineNumber ) ;
 }
 
 void
 CSL_LineCharacterNumber ( )
 {
-    DataStack_Push (( int64 ) _Context_->ReadLiner0->ReadIndex) ;
+    DataStack_Push ( ( int64 ) _Context_->ReadLiner0->ReadIndex ) ;
 }
 
 void
@@ -311,13 +248,13 @@ CSL_Hex ( )
 }
 
 void
-CSL_Binary ( ) 
+CSL_Binary ( )
 {
-    NUMBER_BASE_SET ( 2 );
+    NUMBER_BASE_SET ( 2 ) ;
 }
 
 void
-CSL_Decimal ( ) 
+CSL_Decimal ( )
 {
 
     NUMBER_BASE_SET ( 10 ) ;
@@ -333,6 +270,7 @@ CSL_Dump ( )
 }
 
 #if 1 
+
 void
 CSL_Source_AddToHistory ( )
 {

@@ -243,7 +243,7 @@ Compiler String
 scOn 
 : var: { token dup ";var" strcmp } { _var } while drop ;  // nb : no quotation marks around variable names with var: ... ; 
 //'var: find wdis //pause
-var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ;var sp0 // _TestDone_ ; 
+var: DebugFlag classTestRead doInit1 doDemo doTest doLisp testing testLisp x ;var sp0 // _TestDone_ ; 
 "mod" 'modulo find alias
 
 Namespace
@@ -688,6 +688,8 @@ ti(4) ; CountChange (1000) ; time(4) ; stack
 cOff
 
 #endif // ifdef _DEV_H_
+//$gcc --version
+
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff

@@ -121,14 +121,12 @@ MemChunk_AllocateListAdd ( int64 size, int64 allocType )
             dllist_AddNodeToHead ( _OSMS_->OVT_StaticMemList, ( dlnode* ) mchunk ) ;
             break ;
         }
-#if 1        
         case HISTORY:
         {
             dllist_AddNodeToHead ( _OSMS_->HistorySpace_MemChunkStringList, ( dlnode* ) mchunk ) ;
             break ;
         }
-#endif        
-        case PRE_STATIC_MEM: return mchunk ;
+        case PRE_STATIC_MEM: return mchunk ; // ?? where is this deleted
         default:
         {
             dllist_AddNodeToHead ( _OMS_->OvtMemChunkList, ( dlnode* ) mchunk ) ;
@@ -188,6 +186,7 @@ OpenVmTil_Delete ( OpenVmTil * ovt )
     {
         if ( ovt->Verbosity > 2 ) iPrintf ( "\nAll allocated, non-static memory is being freed.\nRestart : verbosity = %d.", ovt->Verbosity ) ;
         FreeChunkList ( _OMS_->OvtMemChunkList ) ;
+        printf ( "\nmmaped = %ld", mmaped ), fflush ( stdout ) ;
     }
     _O_ = 0 ;
 }

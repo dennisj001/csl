@@ -154,7 +154,7 @@ Compiler_LocalWord_New ( Compiler * compiler, byte * name, int64 morphismAttribu
 inline Boolean
 IsFrameNecessary ( int64 numberOfLocals, int64 numberOfArgs )
 {
-    return ( ( numberOfLocals || numberOfArgs ) ? true : false ) ;
+    return ( ( numberOfLocals || numberOfArgs ) ? true : false ) ; //|| GetState ( _Compiler_, RETURN_TOS ) ;
 }
 
 inline Boolean
@@ -201,23 +201,12 @@ void
 CSL_Push ( )
 {
     SetState ( _Compiler_, DOING_RETURN, true ) ;
-#if 1   
+    SetState ( _Compiler_, RETURN_TOS, true ) ;
+    byte mov_r14_rax [] = { 0x49, 0x89, 0x06 } ; //mov [r14], rax
+    if ( memcmp ( mov_r14_rax, Here - 3, 3 ) )
     {
-        SetState ( _Compiler_, RETURN_TOS, true ) ;
-        byte mov_r14_rax [] = { 0x49, 0x89, 0x06 } ; //mov [r14], rax
-        if ( memcmp ( mov_r14_rax, Here - 3, 3 ) )
-        {
-            Compile_Move_TOS_To_ACCUM ( DSP ) ; // save TOS to ACCUM so we can set return it as TOS below
-        }
+        Compile_Move_TOS_To_ACCUM ( DSP ) ; // save TOS to ACCUM so we can set return it as TOS below
     }
-#else    
-    Word * word = Word_New ( "push_anonymous" ) ;
-    _Compiler_->ReturnVariableWord = word ;
-    SetHere ( word->Coding ) ;
-    //else Word_Check_ReSet_To_Here_StackPushRegisterCode ( word1 ) ;
-    if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ;
-#endif    
-
     SetState ( _Compiler_, DOING_RETURN, false ) ;
 }
 
@@ -234,19 +223,7 @@ CSL_DoReturnWord ( Word * word )
         if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ;
         return ;
     }
-    if ( word && ( word->W_MorphismAttributes & ( T_TOS ) ) )
-    {
-#if 0        
-        SetState ( compiler, RETURN_TOS, true ) ;
-        byte mov_r14_rax [] = { 0x49, 0x89, 0x06 } ; //mov [r14], rax
-        if ( memcmp ( mov_r14_rax, Here - 3, 3 ) )
-        {
-            Compile_Move_TOS_To_ACCUM ( DSP ) ; // save TOS to ACCUM so we can set return it as TOS below
-        }
-#else
-        CSL_Push ( ) ;
-#endif        
-    }
+    if ( word && ( word->W_MorphismAttributes & ( T_TOS ) ) ) CSL_Push ( ) ;
     if ( word && ( word->W_ObjectAttributes & ( NAMESPACE_VARIABLE | LOCAL_VARIABLE | PARAMETER_VARIABLE ) ) )
     {
         if ( GetState ( _CSL_, TYPECHECK_ON ) )
