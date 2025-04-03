@@ -1,58 +1,16 @@
 #include "../include/csl.h"
 
-void
-handle_sigint ( int sig )
-{
-}
-
-void
-handle_sigtstp ( int sig )
-{
-}
-
-void
-handle_sigchld ( int sig )
-{
-    pid_t pid ;
-    int status ;
-    pid = waitpid ( - 1, &status, ( WNOHANG | WUNTRACED | WCONTINUED ) ) ;
-#if 0
-    if ( pid > 0 )
-    {
-        if ( WIFSTOPPED ( status ) )
-        {
-            pid_changed = pid ;
-            pid_action = 1 ;
-        }
-        else if ( WIFEXITED ( status ) || WIFSIGNALED ( status ) )
-        {
-            pid_changed = pid ;
-            pid_action = 0 ;
-        }
-        else if ( WIFCONTINUED ( status ) )
-        {
-            pid_changed = pid ;
-            pid_action = 2 ;
-        }
-    }
-#endif    
-}
-
 int
 get_type_process ( const char* cmd )
 {
-#if 0    
     if ( strncmp ( cmd, "export", 6 ) == 0 )
     {
         return 1 ;
     }
-    else 
-#endif        
-        if ( strncmp ( cmd, "cd", 2 ) == 0 )
+    else if ( strncmp ( cmd, "cd", 2 ) == 0 )
     {
         return 2 ;
     }
-#if 0    
     else if ( strncmp ( cmd, "history", 7 ) == 0 )
     {
         return 3 ;
@@ -81,11 +39,9 @@ get_type_process ( const char* cmd )
     {
         return 9 ;
     }
-#endif    
     return 0 ;
 }
 
-#if 0
 //Add commands to .history
 
 void
@@ -132,7 +88,6 @@ _add_history ( const char cmd[100], const char hpath[500] )
         perror ( "history" ) ;
     }
 }
-#endif
 
 void
 whereami ( char path[100] )
@@ -292,7 +247,7 @@ parse_args ( char cmd[200], char *args[100], int t_process )
     strcpy ( args[0], pg ) ;
     return - 1 ;
 }
-#if 0
+
 void
 _export ( char **args, void *shmem )
 {
@@ -355,7 +310,6 @@ _export ( char **args, void *shmem )
     memcpy ( shmem, out, sizeof (out ) ) ;
     exit ( 0 ) ;
 }
-#endif
 
 void
 _cd ( char** args, void* shmem )
@@ -390,7 +344,7 @@ _cd ( char** args, void* shmem )
     memcpy ( shmem, path, sizeof (path ) ) ;
     exit ( 0 ) ;
 }
-#if 0
+
 void
 _jobs ( snode* jobs )
 {
@@ -413,7 +367,7 @@ _jobs ( snode* jobs )
 }
 
 //Printa historico de comandos - Max 50
-
+#if 0
 void
 _history ( char *hpath )
 {
@@ -565,7 +519,7 @@ _fg ( char *args[100], void* shmem )
     sprintf ( shmem, "%d", pid ) ;
     exit ( 0 ) ;
 }
-
+#endif
 
 void
 insert ( snode** list, int pid, int status )
@@ -589,7 +543,6 @@ insert ( snode** list, int pid, int status )
         ptr->prox = new_node ;
     }
 }
-
 
 void
 update_status ( snode** list, int pid, int status )
@@ -644,7 +597,6 @@ kill_jobs_and_free_memory ( snode* lista )
     kill ( lista->pid, 9 ) ;
     free ( lista ) ;
 }
-#endif
 
 // Linked list of commands
 
@@ -678,3 +630,29 @@ clear_cmd ( cnode* list )
     clear_cmd ( list->prox ) ;
     free ( list ) ;
 }
+
+#if 0 //original github license
+MIT License
+
+Copyright ( c ) 2021 Luiz Santos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation
+files ( the "Software" ), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions :
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+#endif
+

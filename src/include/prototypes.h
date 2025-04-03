@@ -2710,27 +2710,14 @@ void _Compile_MOVZX_WORD_REG(Boolean reg, Boolean rm);
 void _Compile_Return(void);
 void _Compile_Nop(void);
 /* src/primitives/shell.c */
+void shell(void);
+/* src/primitives/utils.c */
 void handle_sigint(int sig);
 void handle_sigtstp(int sig);
 void handle_sigchld(int sig);
-void shell(void);
-/* src/primitives/utils.c */
 int get_type_process(const char *cmd);
-void _add_history(const char cmd[100], const char hpath[500]);
 void whereami(char path[100]);
 int parse_args(char cmd[200], char *args[100], int t_process);
-void _export(char **args, void *shmem);
 void _cd(char **args, void *shmem);
-void _jobs(snode *jobs);
-void _history(char *hpath);
-void _kill(char **args, void *shmem);
-void _echo(char **args);
-void _set(void);
-void _bg(char *args[100], void *shmem);
-void _fg(char *args[100], void *shmem);
-void insert(snode **list, int pid, int status);
-void update_status(snode **list, int pid, int status);
-void del(snode **list, int pid);
-void kill_jobs_and_free_memory(snode *lista);
 void add_cmd(cnode **list, char *val);
 void clear_cmd(cnode *list);

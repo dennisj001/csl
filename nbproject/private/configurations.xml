@@ -126,8 +126,6 @@
           <in>udis86.h</in>
         </df>
         <df name="primitives">
-          <df name="simple-linux-shell">
-          </df>
           <in>bits.c</in>
           <in>cmaths.c</in>
           <in>compilers.c</in>
@@ -147,12 +145,16 @@
           <in>openvmtils.c</in>
           <in>parsers.c</in>
           <in>primitives.c</in>
+          <in>shell-new.c</in>
           <in>shell.c</in>
+          <in>shell0940810.c</in>
           <in>stacks.c</in>
           <in>strings.c</in>
           <in>syntaxes.c</in>
           <in>systems.c</in>
+          <in>utils-new.c</in>
           <in>utils.c</in>
+          <in>utils0940810.c</in>
           <in>words.c</in>
         </df>
       </df>

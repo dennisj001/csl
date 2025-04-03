@@ -32,7 +32,7 @@ extern int64 mmaped ;
 extern char **environ ;
 extern snode* jobs ;
 extern char * shmem ;
-
+extern int pid_changed, pid_action ;
 #endif
 
 

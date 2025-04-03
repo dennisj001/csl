@@ -352,7 +352,7 @@ OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondi
     _O_->Thrown = restartCondition ;
     _O_->ExceptionSpecialMessage = specialMessage ;
 
-    LinuxInit ( ) ; // reset termios
+    //LinuxInit ( ) ; // reset termios
     if ( infoFlag )
     {
         if ( OpenVmTil_ShowExceptionInfo ( ) ) return ;
