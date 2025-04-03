@@ -2711,12 +2711,8 @@ void _Compile_Return(void);
 void _Compile_Nop(void);
 /* src/primitives/shell.c */
 void shell(void);
-/* src/primitives/utils.c */
-void handle_sigint(int sig);
-void handle_sigtstp(int sig);
 void handle_sigchld(int sig);
 int get_type_process(const char *cmd);
-void whereami(char path[100]);
 int parse_args(char cmd[200], char *args[100], int t_process);
 void _cd(char **args, void *shmem);
 void add_cmd(cnode **list, char *val);

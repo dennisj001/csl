@@ -1,24 +1,13 @@
 
 #include "../include/csl.h"
-
-//int pid_changed = - 1, pid_action = - 1 ;
-
-// Signal handlers
-
-//int main(int argc, char **argv, char **envp)
-
 void
 shell ( )
 {
     pid_t pid ;
     byte * cmd = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-    //char cmd0[200], cmd1[100], *args[100], wami[200], cmd_aux[200] ; //, hpath[500] ;
-    char *args[100], wami[200], cmd_aux[200] ; //, hpath[500] ;
-    //char aux[200], aux2[200], *sptr1 ;
-    char *sptr1, *shmem ;
-    //Boolean bg = false ;
-    int t_process ;
-    int len ;
+    char *args[100], cmd_aux[200], *sptr1, *shmem ; 
+    
+    int t_process, len ;
 
     Context * cntx = _Context_ ;
     ReadLiner * rl = cntx->ReadLiner0 ;
@@ -26,37 +15,21 @@ shell ( )
     ReadLine_SetPrompt ( rl, "$ " ) ;
     iPrintf ( "\n type \'.\' to exit" ) ;
 
-    // Initialize jobs list
-    //snode* jobs = NULL ;
 
     // Create shared memory
 #define shmemSize 200    
+    //nb! : must be shared mem
     shmem = mmap ( NULL, shmemSize, ( PROT_READ | PROT_WRITE ), ( MAP_SHARED | MAP_ANONYMOUS ), - 1, 0 ) ;
-    //shmem = (char*) Mem_Allocate ( 200, TEMPORARY ) ;
-    //shmem = getenv ( "PWD" ) ;
+    //shmem = Mem_Allocate ( shmemSize, TEMPORARY ) ;
 
     // Defining signal handles
-    signal ( SIGINT, handle_sigint ) ;
-    signal ( SIGTSTP, handle_sigtstp ) ;
+    //signal ( SIGINT, handle_sigint ) ;
+    //signal ( SIGTSTP, handle_sigtstp ) ;
+    signal ( SIGINT, SIG_IGN ) ;
+    signal ( SIGTSTP, SIG_IGN ) ;
 
     // MYPATH
     setenv ( "MYPATH", getenv ( "PATH" ), 1 ) ;
-
-    // MYPS1
-    //setenv ( "MYPS1", "tecii$ ", 1 ) ;
-
-    // History path
-#if 0
-    //FILE* fp ;
-    if ( access ( ".history", F_OK ) != 0 )
-    {
-        FILE*
-            fp = fopen ( ".history", "w" ) ;
-        fclose ( fp ) ;
-    }
-    strcpy ( hpath, getenv ( "PWD" ) ) ;
-    strcat ( hpath, "/.history" ) ;
-#endif
 
     // Defining pgid
     pid = getpid ( ) ;
@@ -68,34 +41,12 @@ shell ( )
         // Create empty linked list to parse commands
         cnode *cmds, *ptr ;
         cmds = NULL ;
-#if 0        
-        // Update jobs linked list
-        if ( pid_changed != - 1 )
-        {
-            if ( pid_action == 1 )
-            {
-                update_status ( &jobs, pid_changed, 0 ) ;
-            }
-            else if ( pid_action == 0 )
-            {
-                del ( &jobs, pid_changed ) ;
-            }
-            else if ( pid_action == 2 )
-            {
-                update_status ( &jobs, pid_changed, 1 ) ;
-            }
-            pid_changed = pid_action = - 1 ;
-        }
-#endif
         // Start new shell input
-        whereami ( wami ) ;
-        //fprintf ( stdout, "\033[38;5;46m%s\033[m", getenv ( "MYPS1" ) ) ;
 
         Context_DoPrompt ( cntx ) ;
         _ReadLine_GetLine ( rl, 0 ) ;
-        byte * str = & rl->InputLine [rl->ReadIndex] ; //String_New ( & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
+        byte * str = & rl->InputLine [0] ; //rl->ReadIndex] ; //String_New ( & rl->InputLine [rl->ReadIndex], TEMPORARY ) ;
         if ( String_Equal ( str, ".\n" ) ) goto done ; //return ; //break ;
-        //cmd [0] = 0 ;
         if ( get_type_process ( str ) == 0 )
         {
             strcpy ( cmd, "bash -i -c " ) ;
@@ -108,18 +59,7 @@ shell ( )
 
         // Ignore empty cmds
         if ( len == 0 ) continue ;
-
-        // Add cmd to .history file
-        //_add_history ( cmd, hpath ) ;
-#if 0
-        // Check background execution
-        if ( cmd[len - 1] == '&' )
-        {
-            cmd[-- len] = '\0' ;
-            bg = true ;
-        }
-        else bg = false ;
-#endif
+#if 1
         // Parse commands and insert it on a Linked List
         char * _cmd ;
         strcpy ( cmd_aux, cmd ) ;
@@ -129,6 +69,7 @@ shell ( )
             add_cmd ( &cmds, _cmd ) ;
             _cmd = strtok_r ( NULL, "|", &sptr1 ) ;
         }
+#endif        
         // Execute commands
         int fdd = 0 ;
         int fd[2] ;
@@ -167,48 +108,30 @@ shell ( )
                 // Close reading pipe 
                 close ( fd[0] ) ;
                 // Arguments parser
+#if 1                
                 if ( parse_args ( ptr->cmd, args, t_process ) < 0 )
                 {
                     perror ( args[0] ) ;
                     exit ( 0 ) ;
                 }
+#endif                
                 // Process command
                 switch ( t_process )
                 {
-                        //case 1:
-                        //    _export ( args, shmem ) ;
-                        //    break ;
                     case 2:
+                    {
                         _cd ( args, shmem ) ;
                         break ;
-                        //case 3:
-                        //    _history ( hpath ) ;
-                        //    break ;
-                        //case 4:
-                        //    _kill ( args, shmem ) ;
-                        //    break ;
-                        //case 5:
-                        //    _jobs ( jobs ) ;
-                        //    break ;
-                        //case 6:
-                        //    _fg ( args, shmem ) ;
-                        //    break ;
-                        //case 7:
-                        //    _bg ( args, shmem ) ;
-                        //    break ;
-                        //case 8:
-                        //    _echo ( args ) ;
-                        //    break ;
-                        //case 9:
-                        //    _set ( ) ;
-                        //    break ;
+                    }
                     case 0:
+                    {
                         if ( execv ( args[0], args ) < 0 )
                         {
                             perror ( args[0] ) ;
                             exit ( 0 ) ;
                         }
                         break ;
+                    }
                 }
             }
             else
@@ -219,14 +142,6 @@ shell ( )
 
                 int status ;
                 //{
-#if 0          
-                if ( bg ) // Background
-                {
-                    insert ( &jobs, pid, 1 ) ;
-                    fprintf ( stdout, "[%d]\n", pid ) ;
-                }
-                else
-#endif                    
                 {
                     // Foreground
                     // Send job to fg
@@ -242,30 +157,8 @@ shell ( )
                     close ( fd[1] ) ;
                     // Save the actual pipe for the next command parsed
                     fdd = fd[0] ;
-//#endif                    
                     if ( WIFEXITED ( status ) )
                     {
-#if 0                        
-                        if ( t_process == 1 )
-                        {
-                            // export
-                            char* s = ( char* ) shmem ;
-                            int sz = strlen ( s ) ;
-                            int i = 0, j = 0 ;
-                            for ( ; i < sz && s[i] != '=' ; i ++ )
-                            {
-                                aux[i] = s[i] ;
-                            }
-                            aux[i ++] = '\0' ;
-                            for ( ; i < sz ; i ++, j ++ )
-                            {
-                                aux2[j] = s[i] ;
-                            }
-                            aux2[j] = '\0' ;
-                            if ( setenv ( aux, aux2, 1 ) < 0 ) perror ( "export" ) ;
-                        }
-                        //else
-#endif                            
                         if ( t_process == 2 )
                         {
                             // cd
@@ -275,52 +168,6 @@ shell ( )
                             }
                             else perror ( "cd" ) ;
                         }
-#if 0                        
-                        else if ( t_process == 4 )
-                        {
-                            // kill
-                            int pid_sig, sig ;
-                            sscanf ( shmem, "%d %d", &pid_sig, &sig ) ;
-                            if ( kill ( pid_sig, sig ) < 0 ) perror ( "kill" ) ;
-                            sleep ( 1 ) ;
-                        }
-                        else if ( t_process == 6 )
-                        {
-                            // fg
-                            int pid_fg ;
-                            sscanf ( shmem, "%d", &pid_fg ) ;
-                            if ( kill ( pid_fg, SIGCONT ) == 0 )
-                            {
-                                del ( &jobs, pid_fg ) ;
-                                // Send job to fg
-                                tcsetpgrp ( 0, pid_fg ) ;
-                                // wait it finish
-                                waitpid ( pid_fg, &status, WUNTRACED ) ;
-                                if ( WIFSTOPPED ( status ) )
-                                {
-                                    fprintf ( stdout, "PID [%d] stopped\n", pid_fg ) ;
-                                    insert ( &jobs, pid_fg, 0 ) ;
-                                    if ( pid_changed == pid_fg ) pid_changed = pid_action = - 1 ;
-                                }
-                                // Return shell to fg
-                                signal ( SIGTTOU, SIG_IGN ) ;
-                                tcsetpgrp ( 0, getpid ( ) ) ;
-                                signal ( SIGTTOU, SIG_DFL ) ;
-                            }
-                            else perror ( "fg" ) ;
-
-                            sleep ( 1 ) ;
-                        }
-                        else if ( t_process == 7 )
-                        {
-                            // bg
-                            int pid_bg ;
-                            sscanf ( shmem, "%d", &pid_bg ) ;
-                            if ( kill ( pid_bg, SIGCONT ) == 0 ) update_status ( &jobs, pid_bg, 1 ) ;
-                            else perror ( "bg" ) ;
-                            sleep ( 1 ) ;
-                        }
-#endif                        
                     }
                     else if ( WIFSTOPPED ( status ) )
                     {
@@ -328,7 +175,6 @@ shell ( )
                         //insert ( &jobs, pid, 0 ) ;
                     }
                 }
-                //LinuxInit ( ) ; // reset termios
                 // Go to next command parsed
                 ptr = ptr->prox ;
             }
@@ -338,7 +184,238 @@ shell ( )
 done:
     ReadLine_SetPrompt ( rl, svPrompt ) ;
     iPrintf ( " leaving shell ..." ) ;
-    //LinuxInit ( ) ;
     munmap ( shmem, shmemSize ) ;
 }
 
+#if 0
+void
+handle_sigint ( int sig )
+{
+}
+
+void
+handle_sigtstp ( int sig )
+{
+}
+#endif
+
+void
+handle_sigchld ( int sig )
+{
+    pid_t pid ;
+    int status ;
+    pid = waitpid ( - 1, &status, ( WNOHANG | WUNTRACED | WCONTINUED ) ) ;
+}
+
+int
+get_type_process ( const char* cmd )
+{
+    if ( strncmp ( cmd, "cd", 2 ) == 0 )
+    {
+        return 2 ;
+    }
+    return 0 ;
+}
+
+int
+parse_args ( char cmd[200], char *args[100], int t_process )
+{
+    char parser[50][100] ;
+    memset ( parser, 0, sizeof (parser ) ) ;
+
+    char *pch, *path ;
+    char *sptr1, *sptr2 ;
+
+    char aux[200], path_aux[200], cmd_aux[200], pg[100] ;
+    FILE *file ;
+
+    //Parse cmd
+    strcpy ( cmd_aux, cmd ) ;
+    pch = strtok_r ( cmd_aux, " ", &sptr2 ) ;
+
+    int argc = 0, cod = 0 ;
+    while ( pch != NULL )
+    {
+        if ( strncmp ( pch, ">", 1 ) == 0 )
+        {
+            cod = 1 ;
+        }
+        else if ( strncmp ( pch, "<", 1 ) == 0 )
+        {
+            cod = 2 ;
+        }
+        else if ( strncmp ( pch, "2>", 2 ) == 0 )
+        {
+            cod = 3 ;
+        }
+        else
+        {
+            strcpy ( parser[argc + cod], pch ) ;
+            if ( cod == 0 )
+            {
+                argc ++ ;
+            }
+        }
+        pch = strtok_r ( NULL, " ", &sptr2 ) ;
+    }
+
+    if ( parser[argc + 1][0] != '\0' )
+    {
+        file = fopen ( parser[argc + 1], "w" ) ;
+        if ( file != NULL )
+        {
+            dup2 ( fileno ( file ), STDOUT_FILENO ) ;
+            fclose ( file ) ;
+        }
+        else
+        {
+            fprintf ( stderr, "Error opening file\n" ) ;
+            exit ( 1 ) ;
+        }
+    }
+
+    if ( parser[argc + 2][0] != '\0' )
+    {
+        file = fopen ( parser[argc + 2], "r" ) ;
+        if ( file != NULL )
+        {
+            dup2 ( fileno ( file ), STDIN_FILENO ) ;
+            fclose ( file ) ;
+        }
+        else
+        {
+            fprintf ( stderr, "Error opening file\n" ) ;
+            exit ( 1 ) ;
+        }
+    }
+
+    if ( parser[argc + 3][0] != '\0' )
+    {
+        file = fopen ( parser[argc + 3], "w" ) ;
+        if ( file != NULL )
+        {
+            dup2 ( fileno ( file ), STDERR_FILENO ) ;
+            fclose ( file ) ;
+        }
+        else
+        {
+            fprintf ( stderr, "Error opening file\n" ) ;
+            exit ( 1 ) ;
+        }
+    }
+
+    for ( int i = 0 ; i < argc ; i ++ )
+    {
+        args[i] = parser[i] ;
+    }
+    args[argc] = ( char * ) NULL ;
+
+    strcpy ( pg, args[0] ) ;
+
+    if ( t_process )
+    {
+        return 0 ;
+    }
+    else if ( cmd[0] == '.' || cmd[0] == '/' )
+    {
+
+        if ( access ( args[0], F_OK ) == 0 )
+        {
+            return 0 ;
+        }
+
+    }
+    else
+    {
+        strcpy ( path_aux, getenv ( "MYPATH" ) ) ;
+        path = strtok_r ( path_aux, ":", &sptr1 ) ;
+
+        while ( path != NULL )
+        {
+
+            strcpy ( aux, path ) ;
+            strcat ( aux, "/" ) ;
+            strcat ( aux, pg ) ;
+
+            strcpy ( args[0], aux ) ;
+
+            if ( access ( args[0], F_OK ) == 0 )
+            {
+                return 0 ;
+            }
+
+            path = strtok_r ( NULL, ":", &sptr1 ) ;
+        }
+    }
+
+    strcpy ( args[0], pg ) ;
+    return - 1 ;
+}
+
+void
+_cd ( char** args, void* shmem )
+{
+    int len ;
+    char path[500] ;
+
+    if ( strncmp ( args[1], "..", 2 ) == 0 )
+    {
+        strcpy ( path, getenv ( "PWD" ) ) ;
+        len = strlen ( path ) ;
+
+        while ( path[len - 1] != '/' )
+        {
+            path[-- len] = '\0' ;
+        }
+        if ( len > 1 )
+            path[-- len] = '\0' ;
+    }
+    else if ( args[1][0] == '/' )
+    {
+        strcpy ( path, args[1] ) ;
+    }
+    else
+    {
+        strcpy ( path, getenv ( "PWD" ) ) ;
+        if ( strcmp ( path, "/" ) != 0 )
+            strcat ( path, "/" ) ;
+        strcat ( path, args[1] ) ;
+    }
+
+    memcpy ( shmem, path, sizeof (path ) ) ;
+    exit ( 0 ) ;
+}
+
+// Linked list of commands
+
+void
+add_cmd ( cnode** list, char * val )
+{
+    //cnode* new_node = ( cnode* ) malloc ( sizeof (cnode ) ) ;
+    cnode* new_node = ( cnode* ) Mem_Allocate ( sizeof ( cnode ), TEMPORARY ) ;
+    strcpy ( new_node->cmd, val ) ;
+    new_node->prox = NULL ;
+
+    if ( *list == NULL )
+    {
+        *list = new_node ;
+    }
+    else
+    {
+        cnode* ptr = * list ;
+        while ( ptr->prox != NULL )
+        {
+            ptr = ptr->prox ;
+        }
+        ptr->prox = new_node ;
+    }
+}
+
+void
+clear_cmd ( cnode* list )
+{
+    if ( list == NULL )
+        return ;
+    clear_cmd ( list->prox ) ;
+    //free ( list ) ;
+}

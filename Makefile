@@ -22,7 +22,7 @@ SOURCES = src/basis/compiler/_compile.c src/basis/compiler/memory.c\
 	src/primitives/debuggers.c src/primitives/memorys.c src/primitives/primitives.c src/primitives/contexts.c\
 	src/primitives/disassembler.c src/primitives/syntaxes.c src/primitives/cmaths.c src/primitives/dataObjectNews.c src/basis/openVmTil.c\
 	src/primitives/ls9.c src/basis/debug/debuggerSteppingSetup.c src/basis/compiler/machineCode.c\
-	src/primitives/shell.c src/primitives/utils.c   
+	src/primitives/shell.c #src/primitives/utils.c   
 	
 S9_SOURCES = src/primitives/s9.c src/primitives/s9core.c
 
