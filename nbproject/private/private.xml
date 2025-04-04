@@ -10,13 +10,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/csl/src/basis/core/readline.c</file>
             <file>file:/home/dennisj/csl/src/primitives/utils.c</file>
-            <file>file:/home/dennisj/csl/src/basis/core/string.c</file>
-            <file>file:/home/dennisj/csl/src/basis/linux.c</file>
+            <file>file:/home/dennisj/csl/src/include/types.h</file>
             <file>file:/home/dennisj/csl/src/basis/openVmTil.c</file>
             <file>file:/home/dennisj/csl/src/primitives/shell.c</file>
-            <file>file:/home/dennisj/csl/src/basis/core/memSpace.c</file>
+            <file>file:/home/dennisj/csl/src/primitives/systems.c</file>
             <file>file:/home/dennisj/csl/src/include/csl.h</file>
         </group>
     </open-files>

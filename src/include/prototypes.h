@@ -493,7 +493,7 @@ void _MemChunk_WithSymbol_Show(MemChunk *mchunk, int64 flag);
 /* src/basis/init.c */
 void CSL_RuntimeInit(CSL *csl, int64 cntxDelFlag);
 void OVT_RuntimeInit(void);
-void CSL_Prompt(CSL *csl, Boolean startupMessageFlag, Boolean promptFlag);
+void CSL_Prompt(CSL *csl, int64 startupMessageFlag, Boolean promptFlag);
 void _CSL_Init_SessionCore(CSL *csl, Boolean cntxDelFlag, Boolean promptFlag);
 void CSL_SessionInit(void);
 void CSL_ResetAll_Init(CSL *csl);
@@ -2712,8 +2712,3 @@ void _Compile_Nop(void);
 /* src/primitives/shell.c */
 void shell(void);
 void handle_sigchld(int sig);
-int get_type_process(const char *cmd);
-int parse_args(char cmd[200], char *args[100], int t_process);
-void _cd(char **args, void *shmem);
-void add_cmd(cnode **list, char *val);
-void clear_cmd(cnode *list);

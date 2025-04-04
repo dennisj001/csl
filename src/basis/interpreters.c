@@ -185,12 +185,12 @@ Interpret_String ( byte *str )
 void
 _CSL_Interpret ( CSL * csl )
 {
-    int loopTimes = 0 ;
     do
     {
         if ( ! _AtCommandLine ( ) ) _CSL_Init_SessionCore ( csl, 1, 1 ) ;
-        else CSL_Prompt (csl, loopTimes++ < 2, 1 ) ;
+        CSL_Prompt (csl, (int64) 1, 1 ) ; //loopTimes++ < 2, 1 ) ;
         Context_Interpret ( csl->Context0 ) ;
+        //CSL_Prompt (csl, (int64) _Lexer_->OriginalToken, 1 ) ; //loopTimes++ < 2, 1 ) ;
     }
     while ( GetState ( csl, CSL_RUN ) ) ;
 }

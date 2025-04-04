@@ -1149,16 +1149,3 @@ typedef struct
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
 
-// simple linux shell
-typedef struct _snode
-{
-    int pid ;
-    int status ;
-    struct _snode *prox ;
-} snode ;
-typedef struct _cnode
-{
-    char cmd [BUFFER_SIZE] ;
-    struct _cnode *prox ;
-} cnode ;
-

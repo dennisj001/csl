@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.940.893" ) 
+#define VERSION ((byte*) "0.940.930" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -160,8 +160,10 @@ OpenVmTil_Run ( int64 argc, char * argv [ ] )
 void
 Ovt_RunInit ( OpenVmTil * ovt )
 {
+    //static int loopTimes ;
     ovt->StartedTimes ++ ;
     OVT_SetRestartCondition ( ovt, CSL_RUN_INIT ) ;
+    CSL_Prompt ( ovt->OVT_CSL, 1, 1 ) ; //++loopTimes < 2, 1 ) ;
 }
 
 void

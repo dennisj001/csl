@@ -24,6 +24,7 @@ GetTerminalWidth ( )
 }
 
 #if 1
+
 int
 _kbhit ( int64 key )
 {
@@ -36,6 +37,7 @@ _kbhit ( int64 key )
     else if ( key == CHAR_ANY ) return ( ch ) ;
     else return (ch == key ) ; //return ch ;
 }
+
 int
 kbhit ( void )
 {
@@ -43,35 +45,38 @@ kbhit ( void )
 }
 
 #else
-void changemode(int dir)
+
+void
+changemode ( int dir )
 {
-  static struct termios oldt, newt;
- 
-  if ( dir == 1 )
-  {
-    tcgetattr( STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~( ICANON | ECHO );
-    tcsetattr( STDIN_FILENO, TCSANOW, &newt);
-  }
-  else
-    tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+    static struct termios oldt, newt ;
+
+    if ( dir == 1 )
+    {
+        tcgetattr ( STDIN_FILENO, &oldt ) ;
+        newt = oldt ;
+        newt.c_lflag &= ~ ( ICANON | ECHO ) ;
+        tcsetattr ( STDIN_FILENO, TCSANOW, &newt ) ;
+    }
+    else
+        tcsetattr ( STDIN_FILENO, TCSANOW, &oldt ) ;
 }
- 
-int kbhit (void)
+
+int
+kbhit ( void )
 {
-  struct timeval tv;
-  fd_set rdfs;
- 
-  tv.tv_sec = 0;
-  tv.tv_usec = 0;
- 
-  FD_ZERO(&rdfs);
-  FD_SET (STDIN_FILENO, &rdfs);
- 
-  select(STDIN_FILENO+1, &rdfs, NULL, NULL, &tv);
-  return FD_ISSET(STDIN_FILENO, &rdfs);
- 
+    struct timeval tv ;
+    fd_set rdfs ;
+
+    tv.tv_sec = 0 ;
+    tv.tv_usec = 0 ;
+
+    FD_ZERO ( &rdfs ) ;
+    FD_SET ( STDIN_FILENO, &rdfs ) ;
+
+    select ( STDIN_FILENO + 1, &rdfs, NULL, NULL, &tv ) ;
+    return FD_ISSET ( STDIN_FILENO, &rdfs ) ;
+
 }
 #endif
 
@@ -134,7 +139,7 @@ void
 _CSL_PrintString ( byte * string ) //  '."'
 {
     oPrintf ( "%s", string ) ;
-    fflush (stdout) ;
+    fflush ( stdout ) ;
 }
 
 void
@@ -159,12 +164,15 @@ Emit ( byte c )
 void
 Context_DoPrompt ( Context * cntx )
 {
-    byte lc = _ReadLiner_->InputKeyedCharacter ;
-    Boolean se = String_Equal ( &_O_->Pbf8[0], cntx->ReadLiner0->NormalPrompt ), lcnl = ( lc == '\n' ), lcbnl = _O_->Pblc == '\n' ;
+    if ( ! String_Equal ( _O_->Pbf8, cntx->ReadLiner0->NormalPrompt ) ) //":> " ) )
+    {
+        byte lc = _ReadLiner_->InputKeyedCharacter ;
+        Boolean se = String_Equal ( &_O_->Pbf8[0], cntx->ReadLiner0->NormalPrompt ), lcnl = ( lc == '\n' ), lcbnl = _O_->Pblc == '\n' ;
 
-    if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) || ( ( ! se ) && ( ! lcbnl ) && ( _O_->Pbf8[0] != '\r' ) ) ) CSL_PrintChar ( '\n' ) ;
-    if ( ( ! se ) || ( ( ! lcbnl ) && ( ! csl_returnValue ) ) ) iPrintf ( "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ;
-    else csl_returnValue = 0 ;
+        if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) || ( ( ! se ) && ( ! lcbnl ) && ( _O_->Pbf8[0] != '\r' ) ) ) CSL_PrintChar ( '\n' ) ;
+        if ( ( ! se ) || ( ( ! lcbnl ) && ( ! csl_returnValue ) ) ) iPrintf ( "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ;
+        else csl_returnValue = 0 ;
+    }
 }
 
 // all output comes thru here

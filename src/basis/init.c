@@ -34,10 +34,10 @@ OVT_RuntimeInit ( )
 }
 
 void
-CSL_Prompt (CSL * csl, Boolean startupMessageFlag, Boolean promptFlag )
+CSL_Prompt (CSL * csl, int64 startupMessageFlag, Boolean promptFlag )
 {
-    OVT_StartupMessage ( startupMessageFlag && ( csl->InitSessionCoreTimes++ <= 2 ) ) ;
-    _OVT_Ok ( startupMessageFlag || promptFlag ) ;
+    OVT_StartupMessage ( startupMessageFlag && ( ++csl->InitSessionCoreTimes <= 2 ) ) ;
+    _OVT_Ok ( startupMessageFlag && promptFlag ) ;
 }
 
 void

@@ -122,7 +122,6 @@
           <in>strings.c</in>
           <in>syntaxes.c</in>
           <in>systems.c</in>
-          <in>utils.c</in>
           <in>words.c</in>
         </df>
       </df>
@@ -846,13 +845,6 @@
         </cTool>
       </item>
       <item path="src/primitives/systems.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="0">
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/utils.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
