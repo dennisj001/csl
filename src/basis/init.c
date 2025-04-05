@@ -34,13 +34,6 @@ OVT_RuntimeInit ( )
 }
 
 void
-CSL_Prompt (CSL * csl, int64 startupMessageFlag, Boolean promptFlag )
-{
-    OVT_StartupMessage ( startupMessageFlag && ( ++csl->InitSessionCoreTimes <= 2 ) ) ;
-    _OVT_Ok ( startupMessageFlag && promptFlag ) ;
-}
-
-void
 _CSL_Init_SessionCore ( CSL * csl, Boolean cntxDelFlag, Boolean promptFlag )
 {
     Context * cntx = csl->Context0 ;
@@ -54,7 +47,7 @@ _CSL_Init_SessionCore ( CSL * csl, Boolean cntxDelFlag, Boolean promptFlag )
     LC_Init_Runtime ( ) ;
     CSL_RuntimeInit ( csl, cntxDelFlag ) ;
     _bigNum_Init ( 16 ) ;
-    CSL_Prompt (csl, 0, promptFlag ) ;
+    //CSL_Prompt (csl ) ; //, 0, promptFlag , 0) ;
 }
 
 void

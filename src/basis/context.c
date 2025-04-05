@@ -15,10 +15,10 @@ Context_DataObject_Run ( )
 }
 
 void
-_Context_Prompt ( Context * cntx, int64 control )
+Context_Prompt ( Context * cntx ) //, int64 control )
 {
-    if ( ( control && Verbosity ( ) ) && ( ( ! IS_INCLUDING_FILES ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
-        Context_DoPrompt ( cntx ) ;
+    if ( Verbosity ( ) && ( ( ! IS_INCLUDING_FILES ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
+        DoPrompt () ;
 }
 
 byte *
@@ -101,7 +101,7 @@ _Context_Allocate ( )
     Context * cntx ;
     if ( ! _O_->MemorySpace0->ContextSpace )
     {
-        _O_->MemorySpace0->ContextSpace = NBA_MemSpace_New ( _O_->MemorySpace0, 
+        _O_->MemorySpace0->ContextSpace = NBA_MemSpace_New ( _O_->MemorySpace0,
             ( byte* ) String_New ( ( byte* ) "ContextSpace", STRING_MEM ), _O_->ContextSize, OPENVMTIL ) ;
         cntx = ( Context* ) Mem_Allocate ( sizeof ( Context ), OPENVMTIL ) ;
     }
@@ -248,6 +248,7 @@ _Context_InterpretFile ( Context * cntx )
 void
 _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int64 flispFlag )
 {
+    SetState ( _CSL_, PROMPT_DONE, false ) ;
     if ( filename )
     {
         FILE * file = fopen ( ( char* ) filename, "r" ) ;
@@ -303,6 +304,7 @@ _Context_StringEqual_PeekNextToken ( Context * cntx, byte * check, Boolean evalF
 void
 Context_Interpret ( Context * cntx )
 {
+    //SetState ( _CSL_, PROMPT_DONE, false ) ;
     Compiler_Init ( _Compiler_, 0 ) ;
     Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_LINE | END_OF_FILE | END_OF_STRING ) ;
 }

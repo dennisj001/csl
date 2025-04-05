@@ -22,8 +22,8 @@ shell ( )
 
     while ( 1 )
     {
-        _O_->Pbf8 [0] = 0 ; //reset for prompt
-        Context_DoPrompt ( cntx ) ;
+        SetState ( _CSL_, PROMPT_DONE, false ) ;
+        Ok () ;
         _ReadLine_GetLine ( rl, 0 ) ;
         byte * str = & rl->InputLine [0] ;
         if ( String_Equal ( str, ".\n" ) ) goto done ;
@@ -54,9 +54,9 @@ shell ( )
                 perror ( str ) ;
                 exit ( 0 ) ;
             }
-            break ;
+            //break ;
         }
-#if 1  //?? i don't fully understand this stuff yet but this works    
+        //?? i don't fully understand this stuff yet but this works    
         else
         {
             //Parent
@@ -75,26 +75,10 @@ shell ( )
             // Close writing pipe
             close ( fd[1] ) ;
         }
-        _O_->Pbf8 [0] = 0 ; //reset for prompt
-#elif 0    
-        else 
-        {
-            int status ;
-            signal ( SIGCHLD, handle_sigchld ) ;
-            setpgid ( pid, pid ) ;
-            tcsetpgrp ( 0, pid ) ;
-            waitpid ( pid, &status, WUNTRACED ) ;
-            signal ( SIGTTOU, SIG_IGN ) ;
-            tcsetpgrp ( 0, getpid ( ) ) ;
-            signal ( SIGTTOU, SIG_DFL ) ;
-            close ( fd[1] ) ;
-        }
-#endif      
     }
 done:
     ReadLine_SetPrompt ( rl, svPrompt ) ;
     iPrintf ( " leaving shell ..." ) ;
-    CSL_Prompt (_CSL_, 1, 1 ) ;
 }
 
 void

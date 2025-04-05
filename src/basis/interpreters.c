@@ -2,8 +2,9 @@
 #include "../include/csl.h"
 
 // some of these could probably be combined
+
 byte *
-Interpret_C_Until_NotIncluding_Token5 ( Interpreter * interp, byte * end1, byte * end2, byte* end3, byte* end4, byte* end5, byte * delimiters, 
+Interpret_C_Until_NotIncluding_Token5 ( Interpreter * interp, byte * end1, byte * end2, byte* end3, byte* end4, byte* end5, byte * delimiters,
     Boolean newlineBreakFlag, Boolean charsFlag )
 {
     byte * token ;
@@ -20,10 +21,10 @@ Interpret_C_Until_NotIncluding_Token5 ( Interpreter * interp, byte * end1, byte 
         List_CheckInterpretLists_OnVariable ( _Compiler_->PostfixLists, token ) ;
         if ( charsFlag )
         {
-            if ( ( token[0] == end1[0] ) || ( token[0] == end2[0] ) || ( token[0] == end3[0] ) || 
+            if ( ( token[0] == end1[0] ) || ( token[0] == end2[0] ) || ( token[0] == end3[0] ) ||
                 ( token[0] == end4[0] ) || ( token[0] == end5[0] ) ) break ;
         }
-        else if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) || String_Equal ( token, end3 ) 
+        else if ( String_Equal ( token, end1 ) || String_Equal ( token, end2 ) || String_Equal ( token, end3 )
             || String_Equal ( token, end4 ) || String_Equal ( token, end5 ) ) break ;
         if ( GetState ( _Compiler_, DOING_A_PREFIX_WORD ) && ( token[0] == ')' ) )
         {
@@ -187,10 +188,10 @@ _CSL_Interpret ( CSL * csl )
 {
     do
     {
+        SetState ( _CSL_, PROMPT_DONE, false ) ;
         if ( ! _AtCommandLine ( ) ) _CSL_Init_SessionCore ( csl, 1, 1 ) ;
-        CSL_Prompt (csl, (int64) 1, 1 ) ; //loopTimes++ < 2, 1 ) ;
         Context_Interpret ( csl->Context0 ) ;
-        //CSL_Prompt (csl, (int64) _Lexer_->OriginalToken, 1 ) ; //loopTimes++ < 2, 1 ) ;
+        Ok ( ) ; 
     }
     while ( GetState ( csl, CSL_RUN ) ) ;
 }
@@ -198,6 +199,7 @@ _CSL_Interpret ( CSL * csl )
 void
 CSL_InterpreterRun ( )
 {
+    //SetState ( _CSL_, PROMPT_DONE, false ) ;
     _CSL_Interpret ( _CSL_ ) ;
 }
 

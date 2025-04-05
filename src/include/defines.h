@@ -592,7 +592,6 @@
 #define DBG_EVAL_MODE ( (uint64) 1 << 46 )
 //#define _DBG_UDIS_ONE ( (uint64) 1 << 46 )
 
-#define SIZEOF_AddressAfterJmpCallStack 16
 // TODO : nb. flags need to be edited !!!!! for right category, overlap, use/non-use, etc.
 // CSL state flags added to System flags
 #define CSL_RUN ( (uint64) 1 << 0 )
@@ -610,6 +609,8 @@
 //#define TYPECHECK_OFF ( (uint64) 1 << 15 )
 #define DBG_UDIS ( (uint64) 1 << 15 )
 #define DBG_UDIS_ONE ( (uint64) 1 << 16 )
+#define JCC8_ON ( (uint64) 1 << 17 ) // Runtime Debug
+#define PROMPT_DONE ( (uint64) 1 << 18 )
 
 // State Flags --
 // ? sytem flags ?? -- not all -- todo here
@@ -620,8 +621,7 @@
 #define END_OF_FILE ( (uint64) 1 << 12 )
 #define GET_NEWLINE ( (uint64) 1 << 13 )
 #define PRINTED ( (uint64) 1 << 14 )
-#define JCC8_ON ( (uint64) 1 << 17 ) // Runtime Debug
-#define DO_PROMPT ( (uint64) 1 << 18 )
+//#define DO_PROMPT ( (uint64) 1 << 18 )
 #define AUTO_VAR ( (uint64) 1 << 19 )
 #define DO_OK ( (uint64) 1 << 20 )
 #define ALWAYS_ABORT_ON_EXCEPION ( (uint64) 1 << 21 )  // for debugging

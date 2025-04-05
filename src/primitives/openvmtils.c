@@ -156,23 +156,15 @@ OVT_StartupMessage ( Boolean promptFlag )
 }
 
 void
-_OVT_Ok ( Boolean control )
+Ok ( ) //Boolean control )
 {
     if ( Verbosity () > 3 )
     {
         _CSL_SystemState_Print ( 0 ) ;
         iPrintf ( "\n<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \'bye\'/\'exit\' - leave." ) ;
     }
-    _Context_Prompt (_O_->OVT_CSL->Context0, control) ;
+    Context_Prompt ( _Context_ ) ; //, control) ;
 }
-
-void
-OVT_Ok ( )
-{
-    _OVT_Ok ( 1 ) ;
-    //_CSL_Prompt ( Verbosity () && ( ( _O_->RestartCondition < RESET_ALL ) || _O_->StartTimes > 1 ) ) ;
-}
-
 
 
 #if 0

@@ -162,16 +162,15 @@ Emit ( byte c )
 }
 
 void
-Context_DoPrompt ( Context * cntx )
+DoPrompt () 
 {
-    if ( ! String_Equal ( _O_->Pbf8, cntx->ReadLiner0->NormalPrompt ) ) //":> " ) )
+    if ( ! GetState ( _CSL_, PROMPT_DONE ) )
     {
         byte lc = _ReadLiner_->InputKeyedCharacter ;
-        Boolean se = String_Equal ( &_O_->Pbf8[0], cntx->ReadLiner0->NormalPrompt ), lcnl = ( lc == '\n' ), lcbnl = _O_->Pblc == '\n' ;
-
-        if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) || ( ( ! se ) && ( ! lcbnl ) && ( _O_->Pbf8[0] != '\r' ) ) ) CSL_PrintChar ( '\n' ) ;
-        if ( ( ! se ) || ( ( ! lcbnl ) && ( ! csl_returnValue ) ) ) iPrintf ( "%s", ( char* ) cntx->ReadLiner0->NormalPrompt ) ;
-        else csl_returnValue = 0 ;
+        Boolean lcnl = ( lc == '\n' ), lcbnl = _O_->Pblc == '\n' ;
+        if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) || ( ( ! lcbnl ) && ( _O_->Pbf8[0] != '\r' ) ) ) CSL_PrintChar ( '\n' ) ;
+        iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
+        SetState ( _CSL_, PROMPT_DONE, true ) ;
     }
 }
 
@@ -298,7 +297,6 @@ oPrintf ( char *format, ... )
         fflush ( stdout ) ;
     }
     if ( _O_->DebugOutputFlag & 3 ) //CSL_DebugOutputOn // better logic here ??
-#if 1      
     {
         va_start ( args, ( char* ) format ) ;
         if ( _O_->DebugOutputFlag & 4 ) //CSL_DebugOutputConcatOn
@@ -310,24 +308,13 @@ oPrintf ( char *format, ... )
         else vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBufferCopy ), ( char* ) format, args ) ;
         va_end ( args ) ;
     }
-#else // doesn' work ??
-        {
-            dPrintf ( format ) ;
-        }
-#endif    
     if ( _O_->LogFlag )
-#if 1        
     {
         va_start ( args, ( char* ) format ) ;
         vfprintf ( _CSL_->LogFILE, ( char* ) format, args ) ;
         va_end ( args ) ;
         fflush ( _CSL_->LogFILE ) ;
     }
-#else
-        {
-            lPrintf ( format ) ;
-        }
-#endif
 }
 
 

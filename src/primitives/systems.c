@@ -70,6 +70,7 @@ _ShellEscape ( char * str )
     int status ;
     status = system ( str ) ;
     if ( Verbosity ( ) > 1 ) printf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
+    DoPrompt () ;
     fflush ( stdout ) ;
 }
 
@@ -78,7 +79,7 @@ ShellEscape ( byte * str )
 {
     _ShellEscape ( ( char* ) str ) ;
     SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
-    _OVT_Ok ( true ) ;
+    //_OVT_Ok ( true ) ;
 }
 
 void
@@ -106,7 +107,7 @@ shell ( )
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     ReadLine_SetPrompt ( rl, "$ " ) ;
     iPrintf ( "\n type \'.\' to exit" ) ;
-    Context_DoPrompt ( cntx ) ;
+    DoPrompt () ;
     system ( "bash -i" ) ;
     //execl ("/bin/bash", "bash", "-i", "-c", str, (char *) NULL) ;
 
@@ -126,7 +127,7 @@ shell ( )
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     ReadLine_SetPrompt ( rl, "$ " ) ;
     iPrintf ( "\n type \'.\' to exit" ) ;
-    Context_DoPrompt ( cntx ) ;
+    DoPrompt () ;
     while ( 1 )
     {
         _ReadLine_GetLine ( rl, 0 ) ;
@@ -179,6 +180,7 @@ _CSL_Version ( Boolean flag )
     {
         //_Printf ( "\ncsl %s", _O_->VersionString ) ;
         iPrintf ( "\nversion %s", _O_->VersionString ) ;
+        Ok () ;
     }
 }
 

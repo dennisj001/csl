@@ -356,7 +356,7 @@ void _CSL_PrintString(byte *string);
 void CSL_PrintChar(byte c);
 void CSL_LogChar(byte c);
 void Emit(byte c);
-void Context_DoPrompt(Context *cntx);
+void DoPrompt();
 void _Printf(char *format, ...);
 void Printf_Log(char *format, ...);
 void iPrintf(char *format, ...);
@@ -493,7 +493,6 @@ void _MemChunk_WithSymbol_Show(MemChunk *mchunk, int64 flag);
 /* src/basis/init.c */
 void CSL_RuntimeInit(CSL *csl, int64 cntxDelFlag);
 void OVT_RuntimeInit(void);
-void CSL_Prompt(CSL *csl, int64 startupMessageFlag, Boolean promptFlag);
 void _CSL_Init_SessionCore(CSL *csl, Boolean cntxDelFlag, Boolean promptFlag);
 void CSL_SessionInit(void);
 void CSL_ResetAll_Init(CSL *csl);
@@ -972,7 +971,7 @@ void CSL_DataStack_Size(void);
 /* src/basis/context.c */
 void _Context_DataObject_Run(Context *cntx);
 void Context_DataObject_Run(void);
-void _Context_Prompt(Context *cntx, int64 control);
+void Context_Prompt(Context *cntx);
 byte *_Context_Location(Context *cntx);
 byte *Context_Location(void);
 Word *_Context_CurrentWord(Context *cntx);
@@ -1997,8 +1996,7 @@ void OpenVmTil_DictionarySize(void);
 void OpenVmTil_Print_DataSizeofInfo(int64 flag);
 void OVT_Exit(void);
 void OVT_StartupMessage(Boolean promptFlag);
-void _OVT_Ok(Boolean control);
-void OVT_Ok(void);
+void Ok(void);
 /* src/primitives/ios.c */
 void Fflush(void);
 void CSL_Kbhit(void);

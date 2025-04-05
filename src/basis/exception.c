@@ -162,7 +162,7 @@ OVT_PauseInterpret ( Context * cntx, byte key )
     {
         svPrompt = ReadLine_GetPrompt ( rl ) ;
         ReadLine_SetPrompt ( rl, "=> " ) ;
-        Context_DoPrompt ( cntx ) ;
+        DoPrompt () ;
         _ReadLine_GetLine ( rl, key ) ;
         if ( ReadLine_PeekNextChar ( rl ) < ' ' ) break ; // '\n', <esc>, etc.
         Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
