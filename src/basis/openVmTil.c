@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.940.952" ) 
+#define VERSION ((byte*) "0.941.000" ) 
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -146,7 +146,7 @@ OpenVmTil_Run ( int64 argc, char * argv [ ] )
         ovt->Verbosity = 1 ;
         ovt->Restarts = restarts ;
         if ( ovt->Restarts ) OVT_ExceptionState_Print ( ) ;
-        //CSL_NewLine ( ) ;
+        //SetState ( ovt, OVT_PROMPT_DONE, false ) ;
         if ( ! sigsetjmp ( ovt->JmpBuf0, 0 ) ) // nb. siglongjmp always comes to beginning of the block 
         {
             ovt->OVT_CSL = CSL_New ( ovt->OVT_CSL ) ;
@@ -166,7 +166,7 @@ Ovt_RunInit ( OpenVmTil * ovt )
     //OVT_StartupMessage ( startupMessageFlag && ( ++csl->InitSessionCoreTimes <= 2 ) ) ;
     OVT_StartupMessage ( ( ++_CSL_->InitSessionCoreTimes <= 2 ) ) ;
     //CSL_Prompt (ovt->OVT_CSL, 1, 1 , 0) ; //++loopTimes < 2, 1 ) ;
-    //SetState ( _CSL_, PROMPT_DONE, false ) ;
+    //SetState ( _O_, OVT_PROMPT_DONE, false ) ;
 }
 
 void

@@ -14,13 +14,6 @@ Context_DataObject_Run ( )
     _Context_DataObject_Run ( _Context_ ) ;
 }
 
-void
-Context_Prompt ( Context * cntx ) //, int64 control )
-{
-    if ( Verbosity ( ) && ( ( ! IS_INCLUDING_FILES ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
-        DoPrompt () ;
-}
-
 byte *
 _Context_Location ( Context * cntx )
 {
@@ -248,9 +241,9 @@ _Context_InterpretFile ( Context * cntx )
 void
 _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int64 flispFlag )
 {
-    SetState ( _CSL_, PROMPT_DONE, false ) ;
     if ( filename )
     {
+        SetState ( _O_, OVT_PROMPT_DONE, false ) ;
         FILE * file = fopen ( ( char* ) filename, "r" ) ;
         if ( file )
         {
@@ -289,6 +282,7 @@ _Context_IncludeFile ( Context * cntx, byte *filename, int64 interpretFlag, int6
 void
 CSL_ContextNew_IncludeFile ( byte * filename, int flispFlag )
 {
+    //SetState ( _O_, OVT_PROMPT_DONE, false ) ;
     if ( Verbosity ( ) ) iPrintf ( "\nincluding %s at %s ...\n", filename, Context_Location ( ) ) ;
     _CSL_Contex_NewRun_3 ( _CSL_, _Context_IncludeFile, filename, 1, flispFlag ) ;
 }
@@ -304,7 +298,6 @@ _Context_StringEqual_PeekNextToken ( Context * cntx, byte * check, Boolean evalF
 void
 Context_Interpret ( Context * cntx )
 {
-    //SetState ( _CSL_, PROMPT_DONE, false ) ;
     Compiler_Init ( _Compiler_, 0 ) ;
     Interpret_UntilFlaggedWithInit ( cntx->Interpreter0, END_OF_LINE | END_OF_FILE | END_OF_STRING ) ;
 }

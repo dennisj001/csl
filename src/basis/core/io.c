@@ -162,15 +162,23 @@ Emit ( byte c )
 }
 
 void
-DoPrompt () 
+_DoPrompt ( )
 {
-    if ( ! GetState ( _CSL_, PROMPT_DONE ) )
+    byte lc = _ReadLiner_->InputKeyedCharacter ;
+    Boolean lcnl = ( lc == '\n' ), lcbnl = _O_->Pblc == '\n' ;
+    if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) || ( ( ! lcbnl ) && ( _O_->Pbf8[0] != '\r' ) ) ) CSL_PrintChar ( '\n' ) ;
+    iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
+    SetState ( _O_, OVT_PROMPT_DONE, true ) ;
+}
+
+void
+DoPrompt ( )
+{
+    //if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || (_O_->Pblc == '\n') || GetState ( _Lexer_, END_OF_LINE ) )   
+    if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) )   
+    //if ( GetState ( _Lexer_, END_OF_LINE ) )   
     {
-        byte lc = _ReadLiner_->InputKeyedCharacter ;
-        Boolean lcnl = ( lc == '\n' ), lcbnl = _O_->Pblc == '\n' ;
-        if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) || ( ( ! lcbnl ) && ( _O_->Pbf8[0] != '\r' ) ) ) CSL_PrintChar ( '\n' ) ;
-        iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
-        SetState ( _CSL_, PROMPT_DONE, true ) ;
+        _DoPrompt ( ) ;
     }
 }
 

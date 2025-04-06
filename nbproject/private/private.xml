@@ -10,12 +10,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/csl/src/primitives/utils.c</file>
-            <file>file:/home/dennisj/csl/src/include/types.h</file>
+            <file>file:/home/dennisj/csl/src/basis/core/readline.c</file>
+            <file>file:/home/dennisj/csl/src/basis/context.c</file>
+            <file>file:/home/dennisj/csl/src/primitives/primitives.c</file>
+            <file>file:/home/dennisj/csl/init.csl</file>
+            <file>file:/home/dennisj/csl/src/primitives/openvmtils.c</file>
             <file>file:/home/dennisj/csl/src/basis/openVmTil.c</file>
+            <file>file:/home/dennisj/csl/src/basis/interpreters.c</file>
+            <file>file:/home/dennisj/csl/src/basis/csl.c</file>
+            <file>file:/home/dennisj/csl/src/basis/core/preprocessor.c</file>
+            <file>file:/home/dennisj/csl/src/basis/core/io.c</file>
             <file>file:/home/dennisj/csl/src/primitives/shell.c</file>
-            <file>file:/home/dennisj/csl/src/primitives/systems.c</file>
-            <file>file:/home/dennisj/csl/src/include/csl.h</file>
         </group>
     </open-files>
 </project-private>

@@ -22,8 +22,7 @@ shell ( )
 
     while ( 1 )
     {
-        SetState ( _CSL_, PROMPT_DONE, false ) ;
-        Ok () ;
+        _DoPrompt ( ) ;
         _ReadLine_GetLine ( rl, 0 ) ;
         byte * str = & rl->InputLine [0] ;
         if ( String_Equal ( str, ".\n" ) ) goto done ;
@@ -56,7 +55,7 @@ shell ( )
             }
             //break ;
         }
-        //?? i don't fully understand this stuff yet but this works    
+            //?? i don't fully understand this stuff yet but this works    
         else
         {
             //Parent
@@ -78,6 +77,7 @@ shell ( )
     }
 done:
     ReadLine_SetPrompt ( rl, svPrompt ) ;
+    SetState ( _Lexer_, END_OF_LINE, false ) ; // adjust for prompt
     iPrintf ( " leaving shell ..." ) ;
 }
 

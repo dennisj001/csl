@@ -166,14 +166,14 @@ Interpret_ToEndOfLine ( Interpreter * interp )
 void
 Interpret_UntilFlaggedWithInit ( Interpreter * interp, int64 doneFlags )
 {
-    _Interpreter_Init ( interp ) ;
+    Interpreter_Init ( interp ) ;
     Interpret_UntilFlagged ( interp, doneFlags ) ;
 }
 
 void
 Interpret_UntilFlagged2WithInit ( Interpreter * interp, int64 doneFlags )
 {
-    _Interpreter_Init ( interp ) ;
+    Interpreter_Init ( interp ) ;
     Interpret_UntilFlagged2 ( interp, doneFlags ) ;
 }
 
@@ -188,10 +188,9 @@ _CSL_Interpret ( CSL * csl )
 {
     do
     {
-        SetState ( _CSL_, PROMPT_DONE, false ) ;
         if ( ! _AtCommandLine ( ) ) _CSL_Init_SessionCore ( csl, 1, 1 ) ;
         Context_Interpret ( csl->Context0 ) ;
-        Ok ( ) ; 
+        Prompt ( ) ; 
     }
     while ( GetState ( csl, CSL_RUN ) ) ;
 }
@@ -199,7 +198,6 @@ _CSL_Interpret ( CSL * csl )
 void
 CSL_InterpreterRun ( )
 {
-    //SetState ( _CSL_, PROMPT_DONE, false ) ;
     _CSL_Interpret ( _CSL_ ) ;
 }
 

@@ -2,16 +2,9 @@
 #include "../include/csl.h"
 
 void
-_Interpreter_Init ( Interpreter * interp )
+Interpreter_Init ( Interpreter * interp )
 {
     _O_->OVT_Interpreter = interp ;
-    //interp->State = 0 ;
-}
-
-void
-Interpreter_Init ( Interpreter * interp ) 
-{
-    _Interpreter_Init ( interp ) ;
 }
 
 Interpreter *
@@ -23,7 +16,7 @@ Interpreter_New ( uint64 allocType )
     interp->ReadLiner0 = interp->Lexer0->ReadLiner0 ;
     interp->Finder0 = Finder_New ( allocType ) ;
     interp->Compiler0 = Compiler_New ( allocType ) ;
-    _Interpreter_Init ( interp ) ;
+    Interpreter_Init ( interp ) ;
     return interp ;
 }
 
@@ -38,7 +31,7 @@ Interpreter_Copy ( Interpreter * interp0, uint64 type )
 {
     Interpreter * interp = ( Interpreter * ) Mem_Allocate ( sizeof (Interpreter ), type ) ;
     _Interpreter_Copy ( interp, interp0 ) ;
-    _Interpreter_Init ( interp ) ;
+    Interpreter_Init ( interp ) ;
     return interp ;
 }
 

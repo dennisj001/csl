@@ -156,14 +156,15 @@ OVT_StartupMessage ( Boolean promptFlag )
 }
 
 void
-Ok ( ) //Boolean control )
+Prompt ( ) //Boolean control )
 {
     if ( Verbosity () > 3 )
     {
         _CSL_SystemState_Print ( 0 ) ;
         iPrintf ( "\n<Esc> - break, <Ctrl-C> - quit, <Ctrl-D> - restart, \'bye\'/\'exit\' - leave." ) ;
     }
-    Context_Prompt ( _Context_ ) ; //, control) ;
+    if ( Verbosity ( ) && ( ( ! IS_INCLUDING_FILES ) || ( GetState ( _Debugger_, DBG_ACTIVE ) ) ) )
+        DoPrompt () ;
 }
 
 

@@ -610,7 +610,6 @@
 #define DBG_UDIS ( (uint64) 1 << 15 )
 #define DBG_UDIS_ONE ( (uint64) 1 << 16 )
 #define JCC8_ON ( (uint64) 1 << 17 ) // Runtime Debug
-#define PROMPT_DONE ( (uint64) 1 << 18 )
 
 // State Flags --
 // ? sytem flags ?? -- not all -- todo here
@@ -842,6 +841,7 @@
 #define OVT_LOG_PRINTF              ( (uint64) 1 << 4 ) //lPrintf
 #define OVT_DEBUG_PRINTF            ( (uint64) 1 << 5 ) //dPrintf
 #define OVT_UNKNOWN_STRING_IS_ERROR ( (uint64) 1 << 7 ) 
+#define OVT_PROMPT_DONE             ( (uint64) 1 << 10 )
 
 // tree node states
 // #define GONE_DEPTH 

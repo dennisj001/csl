@@ -11,6 +11,7 @@ CSL_Run ( CSL * csl, int64 restartCondition )
             if ( ! csl ) csl = CSL_New ( _O_->OVT_CSL ) ;
             _CSL_ReStart ( csl, restartCondition ) ;
             Ovt_RunInit ( _O_ ) ;
+            DoPrompt ( ) ;
             CSL_InterpreterRun ( ) ;
         }
     }
@@ -125,7 +126,7 @@ void
 CSL_DataStack_Init ( )
 {
     _CSL_DataStack_Init ( _CSL_ ) ;
-    if ( Verbosity () > 2 ) iPrintf ( "\nData Stack reset." ) ;
+    if ( Verbosity ( ) > 2 ) iPrintf ( "\nData Stack reset." ) ;
 }
 
 void
@@ -186,7 +187,7 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     csl->TokenBuffer = Buffer_DataCleared ( csl->TokenB ) ;
     SetState ( csl, CSL_RUN | CO_ON | INLINE_ON, true ) ;
 
-    if ( Verbosity () > 2 ) iPrintf ( "\nSystem Memory is being reallocated.  " ) ;
+    if ( Verbosity ( ) > 2 ) iPrintf ( "\nSystem Memory is being reallocated.  " ) ;
 
     csl->ContextStack = Stack_New ( 256, allocType ) ;
     csl->TypeWordStack = Stack_New ( _O_->DataStackSize, allocType ) ;
@@ -249,7 +250,7 @@ CSL_ResetMemory ( CSL * csl )
     OVT_MemListFree_Buffers ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
     _OVT_MemListFree_CSLInternal ( ) ;
-    if ( Verbosity () > 1 ) OVT_ShowMemoryAllocated ( ) ;
+    if ( Verbosity ( ) > 1 ) OVT_ShowMemoryAllocated ( ) ;
 }
 
 CSL *
@@ -271,6 +272,7 @@ CSL_New ( CSL * csl )
     csl = ( CSL* ) Mem_Allocate ( sizeof ( CSL ), OPENVMTIL ) ;
     _CSL_Init ( csl, nss ) ;
     Linux_SetupSignals ( &csl->JmpBuf0, 1 ) ;
+    //_DoPrompt ( ) ;
     return csl ;
 }
 
@@ -328,7 +330,7 @@ CSL_DebugLevel ( )
 }
 
 void
-CSL_SaveDebugInfo (Word * word)
+CSL_SaveDebugInfo ( Word * word )
 {
     word = word ? word : _Context_->CurrentWordBeingCompiled ? _Context_->CurrentWordBeingCompiled : 0 ;
     if ( word )
@@ -399,7 +401,7 @@ void
 _CSL_FinishWordDebugInfo ( Word * word )
 {
     if ( word && ( ! GetState ( _CSL_, ( RT_DEBUG_ON | GLOBAL_SOURCE_CODE_MODE ) ) ) ) CSL_DeleteDebugInfo ( ) ;
-    else CSL_SaveDebugInfo (word) ;
+    else CSL_SaveDebugInfo ( word ) ;
 }
 
 void
@@ -436,7 +438,7 @@ int64
 _CSL_TerminalLineWidth ( CSL * csl )
 {
     int64 tw = GetTerminalWidth ( ), i = 0 ;
-    if ( tw == 0 ) tw = 140 ; 
+    if ( tw == 0 ) tw = 140 ;
     //while ( tw == 0 ) iPrintf ( "\rGetTerminalWidth ...\r%c[J", ESC ), tw = GetTerminalWidth ( ), i ++ ;
     if ( tw != csl->TerminalLineWidth ) csl->TerminalLineWidth = tw ;
     return csl->TerminalLineWidth ;

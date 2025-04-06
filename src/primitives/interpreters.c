@@ -49,7 +49,7 @@ CSL_Interpreter_Done ( )
 void
 CSL_Interpreter_Init ( )
 {
-    _Interpreter_Init ( _Context_->Interpreter0 ) ;
+    Interpreter_Init ( _Context_->Interpreter0 ) ;
 }
 
 void
