@@ -72,7 +72,7 @@ OVT_Time ( char * string, int64 tflag )
     byte buffer [ 256 ] ;
     //_System_Time ( system, timer, ( char* ) "%ld.%09ld", buffer ) ;
     Time ( &_O_->Timer,  ( char* ) "%ld.%09ld", buffer ) ;
-    if ( tflag && ( Verbosity () ) ) iPrintf ( "%s : elapsed time = %s seconds", string, buffer ) ;
+    if ( tflag && ( Verbosity () ) ) iPrintf ( "%s : elapsed time = %s seconds\n", string, buffer ) ;
 }
 
 void

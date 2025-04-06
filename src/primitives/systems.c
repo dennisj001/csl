@@ -181,8 +181,7 @@ _CSL_Version ( Boolean flag )
     if ( flag || ( _O_->Restarts < 2 ) )
     {
         //_Printf ( "\ncsl %s", _O_->VersionString ) ;
-        iPrintf ( "\nversion %s", _O_->VersionString ) ;
-        _DoPrompt () ;
+        iPrintf ( "version %s", _O_->VersionString ) ;
     }
 }
 

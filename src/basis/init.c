@@ -47,7 +47,6 @@ _CSL_Init_SessionCore ( CSL * csl, Boolean cntxDelFlag, Boolean promptFlag )
     LC_Init_Runtime ( ) ;
     CSL_RuntimeInit ( csl, cntxDelFlag ) ;
     _bigNum_Init ( 16 ) ;
-    //CSL_Prompt (csl ) ; //, 0, promptFlag , 0) ;
 }
 
 void
