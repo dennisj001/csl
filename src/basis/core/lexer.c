@@ -61,7 +61,7 @@ Lexer_ParseToken_ToWord ( Lexer * lexer, byte * token, int64 tsrli, int64 scwi )
         if ( word ) _Lexer_->L_ObjectAttributes = ( KNOWN_OBJECT | CSL_WORD ) ; //SetState ( lexer, KNOWN_OBJECT, true ) ;
         else
         {
-            word = _Lexer_ParseToken_ToWord ( lexer, token, - 1, - 1 ) ;
+            word = _Lexer_ParseToken_ToWord ( lexer, token, tsrli, scwi ) ; //- 1, - 1 ) ;
         }
         lexer->TokenWord = word ;
     }

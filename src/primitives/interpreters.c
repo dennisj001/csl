@@ -68,8 +68,6 @@ void
 CSL_InterpretPromptedLine ( )
 {
     DoPrompt () ;
-    //Context_Interpret ( CSL->Context0 ) ;
-    //_Interpreter_->ReadLiner0->ReadIndex = 0 ;
     Interpret_ToEndOfLine ( _Interpreter_ ) ;
 }
 

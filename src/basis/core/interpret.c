@@ -187,6 +187,6 @@ Interpreter_InterpretNextToken ( Interpreter * interp )
 {
     byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
     //Debug_ShowCurrentLine_Vars ( 1, 0, "Interpreter_InterpretNextToken", "token", token, 0, 0 ) ;
-    Interpreter_InterpretAToken ( interp, token, _Lexer_->TokenStart_ReadLineIndex, _Lexer_->SC_Index ) ;
+    if ( token ) Interpreter_InterpretAToken ( interp, token, _Lexer_->TokenStart_ReadLineIndex, _Lexer_->SC_Index ) ;
 }
 

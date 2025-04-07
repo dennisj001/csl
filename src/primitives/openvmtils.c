@@ -156,7 +156,7 @@ OVT_StartupMessage ( Boolean promptFlag )
 }
 
 void
-Prompt ( ) //Boolean control )
+Prompt ( ) 
 {
     if ( Verbosity () > 3 )
     {

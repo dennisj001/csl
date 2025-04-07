@@ -318,6 +318,7 @@
 
 #define NUMBER_BASE_GET() _Context_->System0->NumberBase
 #define NUMBER_BASE_SET( value ) _Context_->System0->NumberBase = ( value )
+#define DUMP_MOD 16
 
 // OVT_RecyclingAccounting flags
 #define OVT_RA_ADDED 1

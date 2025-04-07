@@ -38,11 +38,7 @@ Interpreter_Copy ( Interpreter * interp0, uint64 type )
 int64
 Interpreter_IsDone ( Interpreter * interp, uint64 flags )
 {
-    //Interpreter_GetStateFromLexer ( interp ) ;
     int64 rtn = interp->Lexer0->State & flags ;
-    //return GetState ( interp, flags | INTERPRETER_DONE ) ;
-    //return GetState ( interp->Lexer0, END_OF_FILE ) ; //|END_OF_STRING) ;
-    //if ( rtn ) Pause () ;
     if ( _LC_ ) SetState ( _LC_, LC_INTERP_DONE, rtn ) ;
     return rtn ;
 }

@@ -77,7 +77,7 @@ shell ( )
     }
 done:
     ReadLine_SetPrompt ( rl, svPrompt ) ;
-    SetState ( _Lexer_, END_OF_LINE, false ) ; // adjust for prompt
+    Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
     iPrintf ( " leaving shell ..." ) ;
 }
 

@@ -180,7 +180,7 @@ _CSL_Version ( Boolean flag )
     //if ( flag || ( ( Verbosity () ) && ( _O_->StartedTimes == 1 ) ) && (CSL->InitSessionCoreTimes == 1) )
     if ( flag || ( _O_->Restarts < 2 ) )
     {
-        //_Printf ( "\ncsl %s", _O_->VersionString ) ;
+        //_iPrintf ( "\ncsl %s", _O_->VersionString ) ;
         iPrintf ( "version %s", _O_->VersionString ) ;
     }
 }
@@ -259,7 +259,6 @@ CSL_Binary ( )
 void
 CSL_Decimal ( )
 {
-
     NUMBER_BASE_SET ( 10 ) ;
 }
 
@@ -268,7 +267,7 @@ CSL_Dump ( )
 {
     byte * location = Context_IsInFile ( _Context_ ) ? Context_Location ( ) : ( byte* ) "" ;
     iPrintf ( "\nDump at : %s :", location ) ;
-    _CSL_Dump ( 16 ) ;
+    _CSL_Dump ( DUMP_MOD ) ;
     iPrintf ( "\n" ) ;
 }
 
