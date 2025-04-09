@@ -70,11 +70,15 @@ shell ( )
         signal ( SIGCHLD, SIG_IGN ) ;
         /* Put ourselves in our own process group. */
         pid = getpid ( ) ;
+        setpgid ( pid, shell_pgid ) ; // ignore error here
+#if 0        
         if ( setpgid ( pid, shell_pgid ) < 0 )
         {
             perror ( "\nCouldn't put the shell in its own process group" ) ;
-            exit ( 1 ) ;
+            //exit ( 1 ) ;
+            goto done ;
         }
+#endif        
         /* Grab control of the terminal. */
         tcsetpgrp ( STDIN_FILENO, shell_pgid ) ;
     }
