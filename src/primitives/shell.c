@@ -2,24 +2,83 @@
 #include "../include/csl.h"
 
 void
+init_shell ( )
+{
+    struct termios shell_tmodes ;
+    /* See if we are running interactively. */
+    int shell_terminal = STDIN_FILENO ;
+
+    int shell_is_interactive = isatty ( shell_terminal ) ;
+    pid_t shell_pgid ;
+    if ( shell_is_interactive )
+    {
+        /* Loop until we are in the foreground. */
+        while ( tcgetpgrp ( shell_terminal ) != ( shell_pgid = getpgrp ( ) ) )
+            kill ( - shell_pgid, SIGTTIN ) ;
+        /* Ignore interactive and job-control signals. */
+        signal ( SIGINT, SIG_IGN ) ;
+        signal ( SIGQUIT, SIG_IGN ) ;
+        signal ( SIGTSTP, SIG_IGN ) ;
+        signal ( SIGTTIN, SIG_IGN ) ;
+        signal ( SIGTTOU, SIG_IGN ) ;
+        signal ( SIGCHLD, SIG_IGN ) ;
+
+        // */
+
+        /* Put ourselves in our own process group. */
+        shell_pgid = getpid ( ) ;
+        if ( setpgid ( shell_pgid, shell_pgid ) < 0 )
+        {
+            perror ( "\nCouldn't put the shell in its own process group" ) ;
+            //exit ( 1 ) ;
+        }
+        /* Grab control of the terminal. */
+        tcsetpgrp ( shell_terminal, shell_pgid ) ;
+        /* Save default terminal attributes for shell. */
+        tcgetattr ( shell_terminal, &shell_tmodes ) ;
+    }
+}
+
+void
 shell ( )
 {
-    pid_t pid ;
+    //pid_t pid ;
     Context * cntx = _Context_ ;
     ReadLiner * rl = cntx->ReadLiner0 ;
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     ReadLine_SetPrompt ( rl, "$ " ) ;
     iPrintf ( " shell : type \'.\' to exit" ) ;
 
-    // Defining signal handles
-    signal ( SIGINT, SIG_IGN ) ;
-    signal ( SIGTSTP, SIG_IGN ) ;
-
-    // Defining pgid
-    pid = getpid ( ) ;
-    setpgid ( pid, pid ) ;
-    tcsetpgrp ( 0, pid ) ;
-
+    pid_t pid, shell_pgid, tcgid ;
+    int shell_is_interactive = isatty ( STDIN_FILENO ) ;
+    if ( shell_is_interactive )
+    {
+        /* Loop until we are in the foreground. */
+        while (1) 
+        { 
+            tcgid = tcgetpgrp ( STDIN_FILENO ) ;
+            shell_pgid = getpgrp ( ) ;
+            if ( tcgid == shell_pgid ) break ;
+            else kill ( - shell_pgid, SIGTTIN ) ;
+        }
+         /* Ignore interactive and job-control signals. */
+        signal ( SIGINT, SIG_IGN ) ;
+        signal ( SIGQUIT, SIG_IGN ) ;
+        signal ( SIGTSTP, SIG_IGN ) ;
+        signal ( SIGTTIN, SIG_IGN ) ;
+        signal ( SIGTTOU, SIG_IGN ) ;
+        signal ( SIGCHLD, SIG_IGN ) ;
+        /* Put ourselves in our own process group. */
+        pid = getpid ( ) ;
+        if ( setpgid ( pid, shell_pgid ) < 0 )
+        {
+            perror ( "\nCouldn't put the shell in its own process group" ) ;
+            exit ( 1 ) ;
+        }
+        /* Grab control of the terminal. */
+        tcsetpgrp ( STDIN_FILENO, shell_pgid ) ;
+    }
+    
     while ( 1 )
     {
         _DoPrompt ( ) ;
@@ -53,9 +112,8 @@ shell ( )
                 perror ( str ) ;
                 exit ( 0 ) ;
             }
-            //break ;
         }
-            //?? i don't fully understand this stuff yet but this works    
+        //?? i don't fully understand this stuff yet but this works    
         else
         {
             //Parent
@@ -69,7 +127,8 @@ shell ( )
             waitpid ( pid, &status, WUNTRACED ) ;
             // return shell to fg
             signal ( SIGTTOU, SIG_IGN ) ;
-            tcsetpgrp ( 0, getpid ( ) ) ;
+            //tcsetpgrp ( 0, getpid ( ) ) ; // original
+            tcsetpgrp ( 0, shell_pgid ) ; // libc init_shell
             signal ( SIGTTOU, SIG_DFL ) ;
             // Close writing pipe
             close ( fd[1] ) ;
