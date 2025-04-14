@@ -247,7 +247,7 @@ Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
 : usingLast: { token dup ";" strcmp } { usingLast } while drop ; 
-notUsing: PrefixCombinators C Lisp ; sp0
+notUsing: PrefixCombinators C Lisp ; sp0 // eg
 
 System
 "Black" 0 const

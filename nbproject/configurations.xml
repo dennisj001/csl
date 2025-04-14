@@ -133,6 +133,7 @@
       <itemPath>Makefile</itemPath>
       <itemPath>nbproject/private/launcher.properties</itemPath>
     </logicalFolder>
+    <itemPath>src/primitives/libc-shell.txt</itemPath>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <sourceRootList>
@@ -766,6 +767,8 @@
             <pElem>.</pElem>
           </incDir>
         </cTool>
+      </item>
+      <item path="src/primitives/libc-shell.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/primitives/ls9.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
