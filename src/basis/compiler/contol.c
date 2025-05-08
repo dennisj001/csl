@@ -111,6 +111,8 @@ done:
     return bi->Disp ;
 }
 
+#if 1 // ! DBG_JCC8
+
 int32
 SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, byte insnType, byte insn )
 {
@@ -118,7 +120,10 @@ SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, b
     byte * offsetAddress = bi->InsnAddress + bi->InsnSize ; //insnAddr + insnSize ;
     if ( IS_INSN_JCC8 ( bi->Insn ) || ( bi->Insn == JMP8 ) ) //|| ( insn == JCC8 ) )
     {
-        if ( ( disp > - 127 ) && ( disp < 128 ) ) * ( ( int8* ) offsetAddress ) = ( byte ) disp ;
+        if ( ( disp > - 127 ) && ( disp < 128 ) )
+        {
+            * ( ( int8* ) offsetAddress ) = ( byte ) disp ;
+        }
 #if 0 // this error hasn't caused any problems ??!        
         else
         {
@@ -133,6 +138,50 @@ SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, b
     else * ( ( int32* ) ( offsetAddress ) ) = disp ;
     return disp ;
 }
+#else
+
+int32
+SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, byte insnType, byte insn )
+{
+    int32 disp = bi->Disp = BI_CalculateOffsetForCallOrJumpOrJcc ( bi ) ; //( insnAddr, jmpToAddr, insn, insnType ) ;
+    byte * offsetAddress = bi->InsnAddress + bi->InsnSize ; //insnAddr + insnSize ;
+    //if ( IS_INSN_JCC8 ( bi->Insn ) || ( bi->Insn == JMP8 ) ) //|| ( insn == JCC8 ) )
+    {
+        if ( ( disp > - 127 ) && ( disp < 128 ) )
+        {
+            if ( IS_INSN_JCC8 ( bi->Insn ) || ( bi->Insn == JMP8 ) ) * ( ( int8* ) offsetAddress ) = ( byte ) disp ;
+            else //write jcc8 insn plus noops in place of jcc32 insn
+            {
+                //int32 offset = GetDispForCallOrJumpFromInsnAddr ( bi->InsnAddress ) ;
+                byte * svHere = Here ;
+                SetHere ( bi->InsnAddress ) ;
+                byte opCode = * ( bi->InsnAddress + 1 ), tttn = opCode & 0xf ; // jcc32
+                byte newOpCode = 0x7 << 4 | tttn ;
+                _Compile_Int8 ( newOpCode ) ; // JCC8
+                _Compile_Int8 ( disp + 4 ) ; // 4 : diff in insn sizes
+                byte noop4 [] = { 0x0f, 0x1f, 0x40, 0x00 } ; //nop [rax]
+                _CompileN ( noop4, 4 ) ;
+                //* ( ( int8* ) offsetAddress ) = ( byte ) disp ;
+                SetHere ( svHere ) ;
+
+            }
+            return disp ;
+        }
+#if 0 // this error hasn't caused any problems ??!        
+        else
+        {
+            iPrintf ( "\nPossible error for 8 bit jmp/jcc : _SetOffsetForCallOrJump : insnAddress = 0x%lx : jmpToAddress = 0x%lx : disp = 0x%lx : %ld",
+                bi->InsnAddress, bi->JmpToAddress, disp, disp ) ;
+            Udis_Disassemble ( bi->InsnAddress, disp + 32, 1 ) ;
+            Error ( "\nError : _CalculateDispForCallOrJump : disp to large for instruction!", CONTINUE ) ; //QUIT ) ;
+            //return -1 ;
+        }
+#endif         
+    }
+    * ( ( int32* ) ( offsetAddress ) ) = disp ;
+    return disp ;
+}
+#endif
 
 int32
 CalculateOffsetForCallOrJump ( byte * insnAddr, byte * jmpToAddr, byte insnType )
@@ -200,7 +249,7 @@ Compile_Jcc ( int64 ttt, int64 n, byte * jmpToAddr, byte insn )
             _Compile_Jcc ( JCC8, ttt, n, disp ) ;
             return compiledAtAddress ;
         }
-        else disp = CalculateOffsetForCallOrJump ( Here, jmpToAddr, T_JCC ) ;
+        //else disp = CalculateOffsetForCallOrJump ( Here, jmpToAddr, T_JCC ) ;
     }
     else disp = 0 ; // allow this function to be used to have a delayed compile of the actual address
     SetCompilerField ( CurrentTopBlockInfo, JccCode, Here ) ;

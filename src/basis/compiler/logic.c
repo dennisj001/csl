@@ -488,22 +488,6 @@ Compile_GreaterThanOrEqual ( Compiler * compiler )
     Compile_Cmp_Set_Tttn_Logic ( compiler, TTT_LESS, N_1 ) ;
 }
 
-#if 0
-
-void
-Compile_LogicalAnd ( Compiler * compiler )
-{
-    BlockInfo *bi = ( BlockInfo * ) Stack_Top ( _Compiler_->CombinatorBlockInfoStack ) ;
-    bi->IiFlags |= LOGIC_FLAG ;
-    //_Compile_X_Group1_Immediate ( XOR, REG, RAX, 0, 0xffffffff, 8 ) ;
-    Compile_Logical_X_Group1 ( _Compiler_, AND, TTT_ZERO, N_0 ) ;
-    DBI_OFF ;
-    Rllafl * r = bi->BI_Rllafl ;
-    if ( r && ( r->rtrn & LT_2_RPAREN_NEXT ) && ( ! ( r->rtrn & LT_END_OF_BLOCK ) ) )
-        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
-}
-#elif 1
-
 void
 Compile_LogicalAnd ( Compiler * compiler )
 {
@@ -521,55 +505,6 @@ Compile_LogicalAnd ( Compiler * compiler )
     if ( r && ( ! ( r->rtrn & LT_OR_NEXT ) ) || ( ( r->rtrn & LT_END_OF_BLOCK ) ) )
         _BI_SetTttnJccGotoInfo ( bi, N_0, GI_JCC_TO_FALSE ) ;
 }
-#elif 0
-
-void
-Compile_LogicalAnd ( Compiler * compiler )
-{
-    BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-    if ( bi ) bi->State |= ( ( uint64 ) 1 << AND ) ;
-    bi->IiFlags |= LOGIC_FLAG ;
-    Compile_Move_Reg_To_Reg ( RDX, R14, 0 ) ;
-    Compile_CMPI ( MEM, RDX, 0, 0, 0 ) ;
-    //_Compile_Jcc ( JCC8, TTT_ZERO, N_0, 16 ) ;
-    //SetccToReg ( TTT_ZERO, N_0, RAX )
-    _Compile_SETccRm ( TTT_ZERO, N_0, RDX ) ;
-    _Compile_Stack_Drop ( RDX ) ;
-    Compile_CMPI ( MEM, RDX, 0, 0, 0 ) ;
-    _Compile_SETccRm ( TTT_ZERO, N_0, RDX ) ;
-    //jeq b
-    //_Compile_Jcc ( JCC8, TTT_ZERO, N_0, 9 ) ;
-    SetccToReg ( TTT_ZERO, N_0, RCX ) ;
-    Compile_MoveImm_To_TOS ( R14, 1, 8 ) ;
-    //ret //jmp c
-    _Compile_JumpToDisp ( 7, 0 ) ;
-    //b: mov 0 [r14]
-    //Compile_MoveImm_To_Mem ( R14, 0, 1 ) ;
-    Compile_MoveImm_To_TOS ( R14, 0, 8 ) ;
-    //c: ret
-    //_Compile_Return ( ) ;
-    //DBI_OFF ;
-    //if ( ! Check_Logic ( bi, TTT_ZERO, N_0 ) ) BI_SetccAndStackPushAcc ( bi, TTT_ZERO, N_1 ) ; // looks ??
-    Rllafl * r = bi->BI_Rllafl ;
-    if ( r && ( r->rtrn & LT_2_RPAREN_NEXT ) && ( ! ( r->rtrn & LT_END_OF_BLOCK ) ) )
-        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
-    bi->JccCode = 0 ;
-}
-#elif 1
-
-void
-Compile_LogicalAnd ( Compiler * compiler )
-{
-    BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-    //if ( bi ) 
-    //bi->State |= ( ( uint64 ) 1 << AND ) ;
-    bi->IiFlags |= LOGIC_FLAG ;
-    LogicalAnd ( ) ;
-    Compile_CMPI ( MEM, R14, 0, 0, 0 ) ;
-    //DBI_OFF ;
-    _BI_SetTttnJccGotoInfo ( bi, N_0, GI_JCC_TO_FALSE ) ;
-}
-#endif
 
 void
 Compile_LogicalOr ( Compiler * compiler )

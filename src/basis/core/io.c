@@ -188,14 +188,14 @@ void
 _Printf ( char *format, ... )
 {
     va_list args ;
-    va_start ( args, ( char* ) format ) ;
+    va_start ( args, format ) ;
     vprintf ( ( char* ) format, args ) ;
     va_end ( args ) ;
     fflush ( stdout ) ;
     if ( _O_->LogFlag )
     {
-        va_start ( args, ( char* ) format ) ;
-        vfprintf ( _CSL_->LogFILE, ( char* ) format, args ) ;
+        va_start ( args, format ) ;
+        vfprintf ( _CSL_->LogFILE, format, args ) ;
         va_end ( args ) ;
         fflush ( _CSL_->LogFILE ) ;
     }
@@ -207,8 +207,8 @@ Printf_Log ( char *format, ... )
     if ( _O_->LogFlag )
     {
         va_list args ;
-        va_start ( args, ( char* ) format ) ;
-        vfprintf ( _CSL_->LogFILE, ( char* ) format, args ) ;
+        va_start ( args, format ) ;
+        vfprintf ( _CSL_->LogFILE, format, args ) ;
         va_end ( args ) ;
         fflush ( _CSL_->LogFILE ) ;
     }
@@ -224,7 +224,7 @@ iPrintf ( char *format, ... )
     //if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
-        va_start ( args, ( char* ) format ) ;
+        va_start ( args, format ) ;
         if ( IS_INCLUDING_FILES ) vprintf ( ( char* ) format, args ) ;
         else
         {
@@ -240,8 +240,8 @@ iPrintf ( char *format, ... )
 #if 1        
         if ( _O_->LogFlag )
         {
-            va_start ( args, ( char* ) format ) ;
-            vfprintf ( _CSL_->LogFILE, ( char* ) format, args ) ;
+            va_start ( args, format ) ;
+            vfprintf ( _CSL_->LogFILE, format, args ) ;
             va_end ( args ) ;
             fflush ( _CSL_->LogFILE ) ;
         }
@@ -290,7 +290,7 @@ oPrintf ( char *format, ... )
     if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
-        va_start ( args, ( char* ) format ) ;
+        va_start ( args, format ) ;
         if ( IS_INCLUDING_FILES ) vprintf ( ( char* ) format, args ) ;
         else
         {
@@ -306,7 +306,7 @@ oPrintf ( char *format, ... )
     }
     if ( _O_->DebugOutputFlag & 3 ) //CSL_DebugOutputOn // better logic here ??
     {
-        va_start ( args, ( char* ) format ) ;
+        va_start ( args, format ) ;
         if ( _O_->DebugOutputFlag & 4 ) //CSL_DebugOutputConcatOn
         {
             byte *data = Buffer_DataCleared ( _O_->PrintBufferConcatCopy ) ;
@@ -318,7 +318,7 @@ oPrintf ( char *format, ... )
     }
     if ( _O_->LogFlag )
     {
-        va_start ( args, ( char* ) format ) ;
+        va_start ( args, format ) ;
         vfprintf ( _CSL_->LogFILE, ( char* ) format, args ) ;
         va_end ( args ) ;
         fflush ( _CSL_->LogFILE ) ;

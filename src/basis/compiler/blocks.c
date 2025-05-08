@@ -113,19 +113,12 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
         {
             dllist_Map1 ( compiler->GotoList, ( MapFunction1 ) AdjustGotoInfo, ( int64 ) srcAddress ) ; //, ( int64 ) end ) ;
             bi->JccCode = Here ;
-#if 1 // this has sometimes *maybe* caused problems ??
-            if ( GetState ( _CSL_, JCC8_ON ) && (( insn == JCC32 ) || ( insn == JCC8 ) ))
+            if ( insn == JCC32 ) 
             {
                 int32 offset = GetDispForCallOrJumpFromInsnAddr ( srcAddress ) ;
                 if ( ( ! ( bi->IiFlags & LOGIC_FLAG ) ) && offset && ( CheckOffset ( offset, 1 ) ) )
                 {
-#if 0    
-                    if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, saveSrcAddress, bsize, 1 ) ;
-#endif    
                     svHere = Here ;
-#if 0    
-                    if ( Is_DebugOn ) iPrintf ( "\nsrcAddress = %lx : Here = %lx", srcAddress, Here ) ;
-#endif                    
                     byte opCode = * ( srcAddress + 1 ), tttn = opCode & 0xf ; // jcc32
                     byte newOpCode = 0x7 << 4 | tttn ;
 
@@ -133,14 +126,9 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
                     _Compile_Int8 ( offset + 4 ) ; // 4 : diff in insn sizes
                     byte noop4 [] = { 0x0f, 0x1f, 0x40, 0x00 } ; //nop [rax]
                     _CompileN ( noop4, 4 ) ;
-                    //DBI_OFF ;
-#if 0   
-                    if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, svHere, 6, 0 ) ;
-#endif    
                     continue ;
                 }
             }
-#endif            
         }
         if ( insn == NOOP ) continue ;
         _CompileN ( srcAddress, isize ) ;

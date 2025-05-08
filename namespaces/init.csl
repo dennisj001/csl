@@ -1,5 +1,6 @@
 //logOn
-//_dbgOn ukseOn
+//_dbgOn 
+//ukseOn
 5 // stack checking marker
 #define DEBUG_ON 0
 scOn 
@@ -603,7 +604,7 @@ int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2
 pwi _fib1c
 pwi _fib1cr
 _fib1c (20) ; dup p 6765 _assert
-//_fib1cr (20) ; dup p 6765 _assert
+//_fib1cr (20) ; dup p 6765 _assert // not working
 c_syntaxOff
 C
 scOn
@@ -692,4 +693,4 @@ cOff
 
 2 + 7 assertStkChk // stack checking
 //rdim 
-//logOff
+logOff
