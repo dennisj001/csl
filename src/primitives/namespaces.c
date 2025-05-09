@@ -35,13 +35,13 @@ _CSL_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two
 // list/print namespaces
 
 void
-_CSL_ForAllNamespaces ( MapSymbolFunction2 msf2 )
+_CSL_ForAllNamespaces ( MapSymbolFunction2 msf2, int64 indentFlag )
 {
     iPrintf ( "\nusing :" ) ;
-    _CSL_NamespacesMap ( msf2, USING, 1, 1 ) ;
+    _CSL_NamespacesMap ( msf2, USING, indentFlag, 1 ) ;
     iPrintf ( "\nnotUsing :" ) ;
     int64 usingWords = _CSL_->FindWordCount ;
-    _CSL_NamespacesMap ( msf2, NOT_USING, 1, 1 ) ;
+    _CSL_NamespacesMap ( msf2, NOT_USING, indentFlag, 1 ) ;
     int64 notUsingWords = _CSL_->FindWordCount ;
     _CSL_->FindWordCount = usingWords + notUsingWords ;
     CSL_WordAccounting ( ( byte* ) "_CSL_ForAllNamespaces" ) ;
@@ -54,9 +54,14 @@ Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
     {
         iPrintf ( "\n" ) ;
         while ( indentLevel -- ) iPrintf ( "   " ) ; //"\t" ) ;
+        if ( ns->State & NOT_USING ) iPrintf ( " - %s", c_gd ( ns->Name ) ) ;
+        else iPrintf ( " - %s", c_ud ( ns->Name ) ) ;
     }
-    if ( ns->State & NOT_USING ) iPrintf ( " - %s", c_gd ( ns->Name ) ) ;
-    else iPrintf ( " - %s", ns->Name ) ;
+    else
+    {
+        if ( ns->State & NOT_USING ) iPrintf ( " %s", c_gd ( ns->Name ) ) ;
+        else iPrintf ( " %s", c_ud ( ns->Name ) ) ;
+    }
     _Context_->NsCount ++ ;
 }
 
@@ -129,7 +134,7 @@ void
 CSL_Namespaces ( )
 {
     iPrintf ( "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
-    _CSL_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint ) ;
+    _CSL_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint, 0 ) ; // 0 : no indentLevel
     iPrintf ( "\n" ) ;
 }
 
@@ -255,7 +260,7 @@ _Namespace_Symbol_Print ( Symbol * symbol, int64 printFlag, int64 str )
     }
     else if ( printFlag == 2 )
     {
-        iPrintf ( "%s.%s = 0x%lx, ", (ns->S_ContainingNamespace ? ns->S_ContainingNamespace->Name : (byte*)""), ns->Name, (uint64) ns ) ;
+        iPrintf ( "%s.%s = 0x%lx, ", ( ns->S_ContainingNamespace ? ns->S_ContainingNamespace->Name : ( byte* ) "" ), ns->Name, ( uint64 ) ns ) ;
     }
     else strcat ( ( char* ) str, buffer ) ;
 }
@@ -279,7 +284,9 @@ CSL_Using ( )
 {
     iPrintf ( "\nUsing Namespaces :> " ) ;
     //Tree_Map_Namespaces_State_2Args ( _CSL_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
-    dllist_State_Map2 ( _CSL_->Namespaces->Lo_List, USING, ( VMapSymbol2 ) _Namespace_Symbol_Print, 1, 0 ) ;
+    //dllist_State_Map2 ( _CSL_->Namespaces->Lo_List, USING, ( VMapSymbol2 ) _Namespace_Symbol_Print, 1, 0 ) ;
+    dllist_State_Map2 ( _CSL_->Namespaces->Lo_List, USING, ( VMapSymbol2 ) Namespace_PrettyPrint, 0, 0 ) ;
+//Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
 
     iPrintf ( "\n" ) ;
 }
@@ -300,7 +307,7 @@ CSL_NonCompilingNs_Clear ( Compiler * compiler )
 {
     if ( compiler->NonCompilingNs )
     {
-        _Namespace_RemoveFromUsingList_ClearFlag (compiler->NonCompilingNs, true , 0) ;
+        _Namespace_RemoveFromUsingList_ClearFlag ( compiler->NonCompilingNs, true, 0 ) ;
         compiler->NonCompilingNs = 0 ;
     }
 }
@@ -322,6 +329,6 @@ _CSL_VariableValueGet ( byte* nameSpace, byte * name )
 void
 _CSL_RemoveNamespaceFromUsingListAndClear ( byte * name )
 {
-    _Namespace_RemoveFromUsingList_ClearFlag (Namespace_Find ( name ), 1 , 0) ;
+    _Namespace_RemoveFromUsingList_ClearFlag ( Namespace_Find ( name ), 1, 0 ) ;
 }
 

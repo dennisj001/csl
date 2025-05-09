@@ -2059,7 +2059,7 @@ void CSL_Interpret_List(void);
 void Do_Namespace_WithStatus_2(dlnode *node, MapFunction2 nsf, int64 nsStateFlag, int64 one, int64 two);
 void _CSL_TreeMap(MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two);
 void _CSL_NamespacesMap(MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two);
-void _CSL_ForAllNamespaces(MapSymbolFunction2 msf2);
+void _CSL_ForAllNamespaces(MapSymbolFunction2 msf2, int64 indentFlag);
 void Namespace_PrettyPrint(Namespace *ns, int64 indentFlag, int64 indentLevel);
 void CSL_Namespace_New(void);
 void _CSL_Namespace_NotUsing(byte *name);
