@@ -175,7 +175,7 @@ void
 DoPrompt ( )
 {
     //if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || (_O_->Pblc == '\n') || GetState ( _Lexer_, END_OF_LINE ) )   
-    if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) )   
+    if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) || GetState ( _Debugger_, DBG_COMMAND_LINE) )   
     //if ( GetState ( _Lexer_, END_OF_LINE ) )   
     {
         _DoPrompt ( ) ;

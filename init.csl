@@ -12,6 +12,7 @@ Debug
 : d: _dbgOn d0 dbgSourceCodeOn ; immediate debugWord // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
 : d1: _dbgOn d1 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 : d2: _dbgOn d2 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
+
 Root 
 "OptimizeOn" variable
 OptimizeOn 1 = 
@@ -48,6 +49,7 @@ Root
 'cOff 'c_syntaxOff find alias
 "log" variable 
 'fOn 'postfixOn find alias // the default state 
+'n- 'namespaces find alias
 Root
 "User" namespace 
 Io Int
@@ -127,7 +129,7 @@ User
 StartupMacros                                       // switch to that namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
 //"_startDirectory_" variable                       // already created and set in CSL_ResetAll_Init in basis/init.c
-: namespaces _startDirectory_ @ ;                   // this line also works in place of the next line
+: _namespaces_ _startDirectory_ @ ;                   // this line also works in place of the next line
                                                     // '_startDirectory_' is a variable created in the function 
                                                     // CSL_ResetAll_Init in the file basis/init.c
 //: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
@@ -312,7 +314,7 @@ System
 'pwu 'pwdissu find alias
 //pwi wdiss //pause
 : fload ftoken include ;
-: sys mem namespaces words stack using in ; 
+: sys mem stateAll words stack namespaces in ; 
 'aw 'allWords find alias
 : stk stack ; //debugWord 
 : ti timerInit ;
@@ -481,9 +483,12 @@ sp0
 Root
 // rtw : recycle some test/debug words 
 : rtw "test" purgeAll "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
+#if 1
 : atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable 
 //pwi atoi 
-"7" atoi 7 _assert //pause
+//"7" atoi 7 _assert 
+Root.atoi ( "7" ) 7 _assert //pause
+#endif
 #if startupMacros
 stringMacrosOn
 #endif
@@ -521,6 +526,11 @@ doLisp 0 =
 // ========controls===========
 
 Root
+: startupNamespaces Shell C void Class libc OpenVmTil Lexer Int Compiler Interpreter Debug User int64 byte 
+    Dlsym Io System Word Macro String Defines StartupMacros Combinators Compiling Reserved DObject PreProcessor 
+    List Stack Memory Colors File Asm Bits Logic Array MemorySpace Locals Forth Experimental L9 block Pointer 
+    Boolean quad long int char uint64 uint32 int32 uint16 int16 uint8 int8 PrefixCombinators Infix C_Syntax 
+    Lisp LispTemp LispDefines BigNum ;
 : lispInitNamespace "namespaces/compiler/lcinit.csl" ;
 : lisp lispInitNamespace _lisp ;  // demo of another way 
 //: lisp "namespaces/compiler/lcinit.csl" _lisp ;  

@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.941.240" ) 
+#define VERSION ((byte*) "0.941.340" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -72,6 +72,7 @@ OpenVmTil_Init ( OpenVmTil * ovt )
             "termios, verbosity and memory category allocation sizes preserved. verbosity = %d.", ovt->Verbosity ) ;
         OpenVmTil_Print_DataSizeofInfo ( 0 ) ;
     }
+    ovt->ExceptionBuffer = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     ovt->PrintBuffer = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     ovt->PrintBufferCopy = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
     ovt->PrintBufferConcatCopy = _Buffer_NewPermanent ( BUFFER_SIZE ) ;
@@ -199,7 +200,7 @@ void
 OVT_RecycleAllWordsDebugInfo ( )
 {
     SetState ( _CSL_, ( RT_DEBUG_ON | GLOBAL_SOURCE_CODE_MODE ), false ) ;
-    Tree_Map_Namespaces ( _CSL_->Namespaces->W_List, ( MapSymbolFunction ) CSL_DeleteWordDebugInfo ) ;
+    Tree_Map_NamespacesTree ( _CSL_->Namespaces->W_List, ( MapSymbolFunction ) CSL_DeleteWordDebugInfo ) ;
     _OVT_MemListFree_WordRecyclingSpace ( ) ;
     OVT_FreeTempMem ( ) ;
     _CSL_->CSL_N_M_Node_WordList = _dllist_New ( T_CSL ) ;
@@ -226,9 +227,15 @@ OVT_Set_UnknowStringIsErrorFlag ( )
 }
 
 void
-OVT_UnSet_UnknowStringIsErrorFlag ( )
+OVT_Set_UnknowStringPushedFlag ( )
 {
-    SetState ( _O_, OVT_UNKNOWN_STRING_IS_ERROR, false ) ;
+    SetState ( _O_, OVT_UNKNOWN_STRING_PUSHED, true ) ;
+}
+
+void
+OVT_UnSet_UnknowStringFlag ( )
+{
+    SetState ( _O_, (OVT_UNKNOWN_STRING_IS_ERROR|OVT_UNKNOWN_STRING_PUSHED), false ) ;
 }
 
 void

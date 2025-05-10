@@ -27,9 +27,15 @@ _CSL_TreeMap ( MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two )
 }
 
 void
-_CSL_NamespacesMap ( MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two )
+_CSL_NamespacesMap2 ( MapSymbolFunction2 msf2, uint64 state, int64 one, int64 two )
 {
     Tree_Map_Namespaces_State_2Args ( _CSL_->Namespaces->Lo_List, state, msf2, one, two ) ;
+}
+
+void
+_CSL_NamespacesMap ( MapSymbolFunction msf )
+{
+    Tree_Map_Namespaces ( _CSL_->Namespaces->Lo_List, msf ) ;
 }
 
 // list/print namespaces
@@ -38,13 +44,22 @@ void
 _CSL_ForAllNamespaces ( MapSymbolFunction2 msf2, int64 indentFlag )
 {
     iPrintf ( "\nusing :" ) ;
-    _CSL_NamespacesMap ( msf2, USING, indentFlag, 1 ) ;
+    _CSL_NamespacesMap2 ( msf2, USING, indentFlag, 1 ) ;
     iPrintf ( "\nnotUsing :" ) ;
     int64 usingWords = _CSL_->FindWordCount ;
-    _CSL_NamespacesMap ( msf2, NOT_USING, indentFlag, 1 ) ;
+    _CSL_NamespacesMap2 ( msf2, NOT_USING, indentFlag, 1 ) ;
     int64 notUsingWords = _CSL_->FindWordCount ;
     _CSL_->FindWordCount = usingWords + notUsingWords ;
     CSL_WordAccounting ( ( byte* ) "_CSL_ForAllNamespaces" ) ;
+}
+
+void
+CSL_SetAllNamespacesNotUsing ( ) 
+{
+    _CSL_NamespacesMap ( _Namespace_SetAsNotUsing ) ;
+    Namespace_SetAsUsing ( "Root" ) ;
+    Namespace_SetAsUsing ( "Debug" ) ;
+    Namespace_SetAsUsing ( "Namespace" ) ;
 }
 
 void
@@ -135,6 +150,14 @@ CSL_Namespaces ( )
 {
     iPrintf ( "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
     _CSL_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint, 0 ) ; // 0 : no indentLevel
+    iPrintf ( "\n" ) ;
+}
+
+void
+CSL_NamespacesIndented ( )
+{
+    iPrintf ( "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
+    _CSL_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint, 1 ) ; // 1 : indentLevel
     iPrintf ( "\n" ) ;
 }
 
@@ -285,9 +308,7 @@ CSL_Using ( )
     iPrintf ( "\nUsing Namespaces :> " ) ;
     //Tree_Map_Namespaces_State_2Args ( _CSL_->Namespaces->Lo_List, USING, ( MapSymbolFunction2 ) _Namespace_Symbol_Print, 1, 0 ) ;
     //dllist_State_Map2 ( _CSL_->Namespaces->Lo_List, USING, ( VMapSymbol2 ) _Namespace_Symbol_Print, 1, 0 ) ;
-    dllist_State_Map2 ( _CSL_->Namespaces->Lo_List, USING, ( VMapSymbol2 ) Namespace_PrettyPrint, 0, 0 ) ;
-//Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
-
+    dllist_State_Map2 ( _CSL_->Namespaces->Lo_List, USING, ( VMapSymbol2 ) Namespace_PrettyPrint, 0, 0 ) ; //Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
     iPrintf ( "\n" ) ;
 }
 

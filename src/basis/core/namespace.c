@@ -39,7 +39,7 @@ Namespace_DoAddWord ( Namespace * ns, Word * word )
 void
 _Namespace_AddToNamespacesHead ( Namespace * ns )
 {
-    _Namespace_DoAddSymbol ( _CSL_->Namespaces, ns ) ;
+    if ( _CSL_->Namespaces ) _Namespace_DoAddSymbol ( _CSL_->Namespaces, ns ) ;
 }
 
 void
@@ -269,7 +269,7 @@ _Namespace_AddToUsingList ( Namespace * ns )
         iPrintf ( ( byte * ) "_Namespace_AddToUsingList : entered : cobj at %s", Context_Location ( ) ), CSL_Using ( ), Pause ( ) ;
 #endif    
     int64 i ;
-    Namespace * svNs = ns ;
+    //Namespace * svNs = ns ;
     Stack * stack = _Compiler_->InternalNamespacesStack ;
     Stack_Init ( stack ) ;
     do
@@ -363,6 +363,13 @@ Namespace_SetAsNotUsing ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
     _Namespace_SetAsNotUsing ( ns ) ;
+}
+
+void
+Namespace_SetAsUsing ( byte * name )
+{
+    Namespace * ns = Namespace_Find ( name ) ;
+    _Namespace_SetState_AsUsing ( ns ) ;
 }
 
 void
@@ -537,8 +544,9 @@ Namespace_FindOrNew_SetUsing ( byte * name, Namespace * containingNs, int64 setU
 Namespace *
 _Namespace_New ( byte * name, Namespace * containingNs )
 {
+    //Namespace * ns = _DObject_New ( name, 0, 0, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, -2, 0, containingNs, DICTIONARY ) ;
+    Namespace * ns = _DObject_New ( name, 0, IMMEDIATE, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, -2, 0, containingNs, DICTIONARY ) ;
     //Namespace * ns = _DObject_New ( name, 0, 0, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
-    Namespace * ns = _DObject_New ( name, 0, IMMEDIATE, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
     //Namespace * ns = _DObject_New ( name, 0, 0, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
     ns->S_SymbolList = _dllist_New ( DICTIONARY ) ;
     return ns ;

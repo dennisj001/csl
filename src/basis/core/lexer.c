@@ -27,13 +27,15 @@ _Lexer_ParseToken_ToWord ( Lexer * lexer, byte * token, int64 tsrli, int64 scwi 
     Lexer_ParseObject ( lexer, token ) ;
 #if 1 // this is still problematic??
     //if ( ( _O_->Verbosity > 1 )&&( lexer->L_ObjectAttributes & ( T_RAW_STRING ) ) )
-    if ( ( lexer->L_ObjectAttributes & ( T_RAW_STRING ) ) && ( ! C_SyntaxOn ) )
+    if ( ( lexer->L_ObjectAttributes & ( T_RAW_STRING ) ) && ( ! C_SyntaxOn ) && (! GetState ( _Interpreter_, PREPROCESSOR_MODE ) ) )
     {
         if ( GetState ( _O_, OVT_UNKNOWN_STRING_IS_ERROR ) )
         {
-            iPrintf ( "\nNotice : \'%s\' at %s not a known word. Pushing it as string <literal> onto the stack. [ukseOn]", token, Context_Location ( ) ) ;
-            //Pause ( ) ;
-            //Error ( "\nUnknown String Error", QUIT ) ;
+            Error ( "\nUnknown String Error", QUIT ) ;
+        }
+        else if ( ( _O_->Verbosity > 1 ) && GetState ( _O_, OVT_UNKNOWN_STRING_PUSHED ) ) // default - not needing to be set
+        {
+            iPrintf ( "\nNotice : \'%s\' at %s not a known word. Pushing it as string <literal> onto the stack. [ukspOn]", token, Context_Location ( ) ) ;
         }
     }
 #endif    

@@ -52,7 +52,10 @@ Word_ObjectRun ( Word * word )
 void
 _DataObject_Run ( Word * word0 )
 {
-    Word * word = _Context_CurrentWord ( _Context_ ) ; // seems we don't need to compile definition code for object type words
+    Word * word ;
+    //if ( word0 ) word = word0 ;
+    //else 
+    word = _Context_CurrentWord ( _Context_ ) ; // seems we don't need to compile definition code for object type words
     Word_ObjectRun ( word ) ;
 }
 

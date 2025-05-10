@@ -29,10 +29,10 @@ hi
 'Test notUsing
 hi
 cOn
-pbAssert ( " 3 4 3 3 7 7" ) ; //pause 
+pbAssert ( " 3 4 4 3 7 7" ) ; //pause 
 dpbOff
 cOff
-"\nabove line should show : 3 4 3 3 7 7" ps
+"\nabove line should show :  3 4 4 3 7 7" ps
 //pause
 Test
 : hey2 test hi test2.hi hi ;
@@ -46,9 +46,9 @@ hi
 'Test notUsing
 hi
 cOn
-pbAssert ( " 3 4 3 3 7 7" ) ; 
+pbAssert ( " 3 4 4 3 7 7" ) ; 
 dpbOff
 cOff
-"\nabove line should show : 3 4 3 3 7 7" ps
+"\nabove line should show :  3 4 4 3 7 7" ps
 //pause
 2 + 7 assertStkChk // stack checking

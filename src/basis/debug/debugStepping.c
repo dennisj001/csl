@@ -143,8 +143,9 @@ Debugger_CheckSkipDebugOrCallThruWord ( Debugger * debugger, byte * jcAddress )
             }
             else
             {
-                if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru and over a C word : %s : at 0x%-16lx", 
+                if ( Is_DebugShowOn ) iPrintf ( "\ncalling thru and over a C word : %s : at 0x%-16lx",
                     ( word ? ( char* ) c_gd ( word->Name ) : ( char* ) "<dbg>" ), jcAddress ) ;
+                _Context_->CurrentlyRunningWord = word ;
                 _Block_Eval ( word->Definition ) ;
                 AdjustR14WithDsp ( ) ;
                 //CSL_PrintDataStack () ; 
@@ -208,7 +209,7 @@ Debugger_StepInstructionType ( Debugger * debugger )
             else if ( ( *( dadr + 2 ) == 0xd3 ) ) jcAddress = ( byte* ) debugger->cs_Cpu->R11d ;
             else jcAddress = JumpCallInstructionAddress_X64ABI ( dadr ) ;
             Debugger_CheckSkipDebugOrCallThruWord ( debugger, jcAddress ) ;
-            return ; 
+            return ;
         }
         else if ( ( * ( dadr ) >> 4 ) == 0x7 ) // JCC8
         {

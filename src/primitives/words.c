@@ -518,7 +518,7 @@ int64
 _CSL_PrintWords ( int64 state )
 {
     int64 n = 0 ;
-    _CSL_NamespacesMap ( ( MapSymbolFunction2 ) _DoWords, state, ( int64 ) & n, 0 ) ;
+    _CSL_NamespacesMap2 ( ( MapSymbolFunction2 ) _DoWords, state, ( int64 ) & n, 0 ) ;
     if ( Verbosity ( ) > 3 ) iPrintf ( "\nCSL : WordsAdded = %d : WordMaxCount = %d", _CSL_->WordsAdded, _CSL_->FindWordMaxCount ) ;
     return n ;
 }
@@ -585,7 +585,7 @@ int64
 _CSL_PrintVariables ( int64 nsStatus )
 {
     int64 n = 0 ;
-    _CSL_NamespacesMap ( ( MapSymbolFunction2 ) _PrintVariables, nsStatus, ( int64 ) & n, 0 ) ;
+    _CSL_NamespacesMap2 ( ( MapSymbolFunction2 ) _PrintVariables, nsStatus, ( int64 ) & n, 0 ) ;
     return n ;
 }
 

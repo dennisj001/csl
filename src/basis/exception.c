@@ -24,7 +24,7 @@ OVT_CheckThrowState ( int64 signal, int64 restartCondition )
 // this is still somewhat of a mess : just haven't take time to fix
 
 void
-OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
+OVT_Throw ( int signal, int64 restartCondition ) //, Boolean pausedFlag )
 {
     sigjmp_buf * jb ;
     Word * eword ;
@@ -36,12 +36,12 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
     }
     else
     {
-        if ( ! pausedFlag ) _OpenVmTil_ShowExceptionInfo ( ) ;
+        if ( ! GetState ( _O_, OVT_PAUSE ) ) _OpenVmTil_ShowExceptionInfo ( ) ;
         if ( signal )
         {
             if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) || ( signal == SIGHUP ) ) OVT_Exit ( ) ;
-            else if ( (signal == SIGSEGV) || (signal == SIGBUS ) ) _O_->SigSegvs ++ ;
-            else if ( (signal == SIGCHLD) )
+            else if ( ( signal == SIGSEGV ) || ( signal == SIGBUS ) ) _O_->SigSegvs ++ ;
+            else if ( ( signal == SIGCHLD ) )
             {
                 jb = & _O_->JmpBuf0 ;
                 OVT_SetRestartCondition ( _O_, INITIAL_START ) ;
@@ -54,7 +54,8 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
                 {
                     jb = & _CSL_->JmpBuf0 ;
                     OpenVmTil_ShowExceptionInfo ( ) ;
-                    pausedFlag ++ ;
+                    SetState ( _O_, OVT_PAUSE, true ) ;
+                    //pausedFlag ++ ;
                     OVT_SetRestartCondition ( _O_, ABORT ) ;
                 }
                 else OVT_SetRestartCondition ( _O_, INITIAL_START ) ;
@@ -70,11 +71,13 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
         }
         //OVT_SetExceptionMessage ( _O_ ) ;
         eword = _Context_->CurrentTokenWord ; //_Context_->CurrentEvalWord ;
-        snprintf ( Buffer_DataCleared ( _O_->PrintBuffer ), BUFFER_IX_SIZE, "\n%s\n%s %s from %s : the current evalWord is %s.%s -> ...", _O_->ExceptionMessage,
-            ( jb == & _CSL_->JmpBuf0 ) ? "reseting csl" : "restarting OpenVmTil",
+        byte * buffer = Buffer_DataCleared ( _O_->ExceptionBuffer ) ;
+        snprintf ( buffer, BUFFER_IX_SIZE, "\n%s\n%s %s from %s : the current evalWord is %s.%s -> ...", 
+            _O_->ExceptionMessage ? (char*) _O_->ExceptionMessage : "", ( jb == & _CSL_->JmpBuf0 ) ? "reseting csl" : "restarting OpenVmTil",
             ( _O_->Signal == SIGSEGV ) ? ": SIGSEGV" : "", Context_Location ( ),
             ( eword ? ( eword->S_ContainingNamespace ? eword->S_ContainingNamespace->Name : ( byte* ) "" ) : ( byte* ) "" ), ( eword ? eword->Name : ( byte* ) "" ) ) ;
-        if ( ! pausedFlag )
+        oPrintf ( "%s", buffer ) ; 
+        if ( ! GetState ( _O_, OVT_PAUSE ) )
         {
             if ( ( _O_->SignalExceptionsHandled < 2 ) && ( _O_->SigSegvs < 2 ) )
             {
@@ -84,6 +87,7 @@ OVT_Throw ( int signal, int64 restartCondition, Boolean pausedFlag )
         }
     }
 jump:
+    _O_->Pbf8[0] = 0 ; // newline prompt control
     _OVT_SigLongJump ( jb ) ;
 }
 
@@ -162,7 +166,7 @@ OVT_PauseInterpret ( Context * cntx, byte key )
     {
         svPrompt = ReadLine_GetPrompt ( rl ) ;
         ReadLine_SetPrompt ( rl, "=> " ) ;
-        DoPrompt () ;
+        DoPrompt ( ) ;
         _ReadLine_GetLine ( rl, key ) ;
         if ( ReadLine_PeekNextChar ( rl ) < ' ' ) break ; // '\n', <esc>, etc.
         Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
@@ -294,6 +298,7 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
     }
 done:
     DefaultColors ;
+    SetState ( _O_, OVT_PAUSE, false ) ;
 
     return rtrn ;
 }
@@ -357,7 +362,7 @@ OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondi
     {
         if ( OpenVmTil_ShowExceptionInfo ( ) ) return ;
     }
-    OVT_Throw ( _O_->Signal, restartCondition, pauseFlag ) ;
+    OVT_Throw ( _O_->Signal, restartCondition ) ;
 }
 
 void
@@ -369,7 +374,7 @@ _OpenVmTil_LongJmp_WithMsg ( int64 restartCondition, byte * msg, int64 pauseFlag
 void
 OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr (uc) necessary 
 {
-    if ( ( signal == SIGTTIN) || ( signal == SIGCHLD ) ) return ;
+    if ( ( signal == SIGTTIN ) || ( signal == SIGCHLD ) ) return ;
     if ( ( signal != SIGWINCH ) && ( signal != SIGCHLD ) ) iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ; // 28 = SIGWINCH window resizing
     if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) ) OVT_Exit ( ) ;
     if ( _O_ )
@@ -396,10 +401,10 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
                 OVT_SeriousErrorPause ( "OpenVmTil_SignalAction : SigSegv" ) ;
                 _OVT_SigLongJump ( & _O_->JmpBuf0 ) ;
             }
-            else OVT_Throw ( _O_->Signal, _O_->RestartCondition, 1 ) ;
+            else OVT_Throw ( _O_->Signal, _O_->RestartCondition ) ;
         }
     }
-    else  _OVT_SigLongJump ( & _OSMS_->JmpBuf0 ) ; // ?! doesn't work
+    else _OVT_SigLongJump ( & _OSMS_->JmpBuf0 ) ; // ?! doesn't work
 }
 
 void

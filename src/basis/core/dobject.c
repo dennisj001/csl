@@ -60,15 +60,37 @@ _dobject_Print ( dobject * dobj )
     }
     //_Printf ( "\n" ) ;
 }
+void
+DoNamespace ( Word * word )
+{
+    if ( Compiling ) 
+    {
+        if ( ! C_SyntaxOn ) 
+        {
+            if ( ReadLiner_IsTokenForwardDotted ( _ReadLiner_, word->W_RL_Index ) )
+                Namespace_Do_Namespace ( word ) ;
+            else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) Namespace_Do_Namespace, word ) ; //( ( byte* ) Namespace_Do_Namespace, word ) ;
+            //else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) _DataObject_Run, word ) ; //( ( byte* ) Namespace_Do_Namespace, word ) ;
+        }
+        else _DataObject_Run ( word ) ;
+    }
+    else _DataObject_Run ( word ) ; //( ( void ( * ) ( Word * ) )( function ) ) ( word ) ;
+}
 // remember : Word = DynamicObject = DObject = Namespace
 
 void
-_DObject_C_StartupCompiledWords_DefInit ( byte * function, int64 arg )
+_DObject_C_StartupCompiledWords_DefInit ( byte * function, int64 arg, Word * word )
 {
     if ( arg == - 1 )
     {
         ( ( void ( * )( ) )( function ) ) ( ) ;
     }
+#if 1    
+    else if ( arg == - 2 ) // namespace
+    {
+        Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) DoNamespace, word ) ;
+    }
+#endif    
     else
     {
         ( ( void ( * ) ( int64 ) )( function ) ) ( arg ) ;
@@ -137,7 +159,7 @@ _DObject_ValueDefinition_Init ( Word * word, uint64 value, uint64 ftype, byte * 
         Word_SetCoding ( word, Here ) ;
         word->CodeStart = Here ;
         word->Definition = ( block ) Here ;
-        if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg ) ;
+        if ( arg ) _DObject_C_StartupCompiledWords_DefInit ( function, arg, word ) ;
         else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) _DataObject_Run, word ) ;
         _Compile_Return ( ) ;
         //if ( Is_DebugOn ) Word_Disassemble ( word ) ; //_Debugger_Disassemble ( _Debugger_, ( byte* ) word->Definition, 64, 1 ) ;

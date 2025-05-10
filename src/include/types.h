@@ -1065,7 +1065,7 @@ typedef struct
     int64 DictionarySize, LispCopySize, LispTempSize, MachineCodeSize, ObjectSpaceSize, InternalObjectsSize, LispSpaceSize, ContextSize ;
     int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize ;
     int64 CSLSize, BufferSpaceSize, StringSpaceSize, Thrown ;
-    Buffer *PrintBuffer, *PrintBufferCopy, *PrintBufferConcatCopy ;
+    Buffer *ExceptionBuffer, *PrintBuffer, *PrintBufferCopy, *PrintBufferConcatCopy ;
     sigjmp_buf JmpBuf0 ;
     struct timespec Timer ;
     byte Pblc, Pbf8 [8] ; // Print Buffer last char/first 8 char 

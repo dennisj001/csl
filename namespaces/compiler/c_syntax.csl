@@ -567,9 +567,9 @@ infixOn
 infixOff
 sp0
 
+cOn
 typedef struct { byte buf [ 2048 ] ; } Buffer2048 ;
 Buffer2048 'buffer new 
-cOn
 void ash ( str ) { ps ( str ) ; nl (); _sh ( str ) ; }
 // four slightly different ways ...
 void node-p ( txt, poftxt ) 

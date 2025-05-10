@@ -605,7 +605,7 @@ Debugger_InterpretLine_WithStartString ( byte * str )
 void
 Debugger_InterpretLine ( )
 {
-    Debugger_InterpretLine_WithStartString ( ( byte* ) "" ) ;
+    Debugger_InterpretLine_WithStartString ( ( byte* ) "\n" ) ;
 }
 
 void

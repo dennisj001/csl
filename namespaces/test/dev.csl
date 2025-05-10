@@ -761,7 +761,7 @@ cOff
 #endif // ifdef _DEV_H_
 
 rdim 
-using
+namespaces
 2 + 7 assertStkChk // stack checking
 //pause
 

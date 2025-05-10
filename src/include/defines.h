@@ -841,6 +841,7 @@
 #define OVT_LOG_PRINTF              ( (uint64) 1 << 4 ) //lPrintf
 #define OVT_DEBUG_PRINTF            ( (uint64) 1 << 5 ) //dPrintf
 #define OVT_UNKNOWN_STRING_IS_ERROR ( (uint64) 1 << 7 ) 
+#define OVT_UNKNOWN_STRING_PUSHED   ( (uint64) 1 << 8 ) 
 #define OVT_PROMPT_DONE             ( (uint64) 1 << 10 )
 
 // tree node states

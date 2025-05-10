@@ -195,7 +195,8 @@ Class_New ( byte * name, uint64 morphismFunctionType, int64 cloneFlag )
     {
         if ( cloneFlag ) size = _Namespace_VariableValueGet ( sns, ( byte* ) "size" ) ;
         else size = 0 ;
-        ns = _DObject_New ( name, 0, IMMEDIATE, CLASS | morphismFunctionType, 0, morphismFunctionType, ( byte* ) _DataObject_Run, 0, 0, sns, DICTIONARY ) ;
+        ns = _DObject_New ( name, 0, IMMEDIATE, CLASS | morphismFunctionType, 0, morphismFunctionType, ( byte* ) _DataObject_Run, -2, 0, sns, DICTIONARY ) ;
+        //ns = _DObject_New ( name, 0, 0, CLASS | morphismFunctionType, 0, morphismFunctionType, ( byte* ) _DataObject_Run, -2, 0, sns, DICTIONARY ) ;
         Namespace_Do_Namespace ( ns ) ; // before "size", "this"
         Word *ws = _CSL_Variable_New ( ( byte* ) "size", size, 0 ) ; // start with size of the prototype for clone
         _Context_->Interpreter0->ThisNamespace = ns ;

@@ -680,6 +680,20 @@ Tree_Map_Namespaces_State_2Args ( dllist * list, uint64 state, MapSymbolFunction
 }
 
 void
+Tree_Map_NamespacesTree ( dllist * list, MapSymbolFunction mf )
+{
+    dlnode * node, *nextNode ;
+    Word * word ;
+    for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
+    {
+        nextNode = dlnode_Next ( node ) ;
+        word = ( Word * ) node ;
+        if ( Is_NamespaceType ( word ) ) Tree_Map_NamespacesTree ( word->W_List, mf ) ;
+        else mf ( ( Symbol* ) word ) ;
+    }
+}
+
+void
 Tree_Map_Namespaces ( dllist * list, MapSymbolFunction mf )
 {
     dlnode * node, *nextNode ;
@@ -688,8 +702,11 @@ Tree_Map_Namespaces ( dllist * list, MapSymbolFunction mf )
     {
         nextNode = dlnode_Next ( node ) ;
         word = ( Word * ) node ;
-        if ( Is_NamespaceType ( word ) ) Tree_Map_Namespaces ( word->W_List, mf ) ;
-        else mf ( ( Symbol* ) word ) ;
+        if ( Is_NamespaceType ( word ) ) 
+        {
+            mf ( ( Symbol* ) word ) ;
+            Tree_Map_Namespaces ( word->W_List, mf ) ;
+        }
     }
 }
 

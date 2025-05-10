@@ -118,7 +118,7 @@ int64
 GetElxxStatus ( int64 cond, int64 type )
 {
     Ppibs *top = GetTopLogicNode ( ) ;
-    Boolean status ; 
+    Boolean status ;
     if ( top )
     {
         if ( type == PP_ELIF )
@@ -168,9 +168,9 @@ _GetEndifStatus ( )
 Boolean
 GetEndifStatus ( )
 {
-    Ppibs *node = (Ppibs*) List_Pop ( _Context_->PreprocessorStackList ) ;
+    Ppibs *node = ( Ppibs* ) List_Pop ( _Context_->PreprocessorStackList ) ;
     if ( Is_DebugOn && node ) oPrintf ( "\t%s.%d", node->Filename, node->LineNumber ) ;
-    else if ( ! node ) Error ( "\nError : extra 'endif'",  PAUSE) ;
+    else if ( ! node ) Error ( "\nError : extra 'endif'", PAUSE ) ;
     Boolean status = _GetEndifStatus ( ) ;
     return status ;
 }
@@ -178,7 +178,7 @@ GetEndifStatus ( )
 // dragons here ... ??
 
 void
-SkipPreprocessorCode ()
+SkipPreprocessorCode ( )
 {
     Context * cntx = _Context_ ;
     Lexer * lexer = cntx->Lexer0 ;
@@ -243,17 +243,17 @@ SkipPreprocessorCode ()
 #endif                    
                     else if ( String_Equal ( token1, "else" ) )
                     {
-                        if ( ifLevel ) continue ; 
+                        if ( ifLevel ) continue ;
                         if ( GetElseStatus ( ) ) goto done ;
                     }
                     else if ( String_Equal ( token1, "elif" ) )
                     {
-                        if ( ifLevel ) continue ; 
+                        if ( ifLevel ) continue ;
                         if ( GetElifStatus ( ) ) goto done ;
-                     }
+                    }
                     else if ( String_Equal ( token1, "endif" ) )
                     {
-                        if ( GetEndifStatus ( ) ) goto done ; 
+                        if ( GetEndifStatus ( ) ) goto done ;
                         ifLevel -- ;
                     }
                     else if ( String_Equal ( token1, "define" ) ) continue ;
@@ -271,7 +271,7 @@ SkipPreprocessorCode ()
     while ( token ) ;
 done:
     if ( Compiling ) SetState ( lexer, ( ADD_TOKEN_TO_SOURCE | ADD_CHAR_TO_SOURCE ), svState ) ;
-    SetState ( _CSL_, SOURCE_CODE_ON|DEFINES_MACROS_ON, true ) ;
+    SetState ( _CSL_, SOURCE_CODE_ON | DEFINES_MACROS_ON, true ) ;
     //SetState ( _CSL_, SOURCE_CODE_ON, true ) ;
     //DebugOff ;
     _CSL_->DebugLevel = svDebugLevel ;
@@ -280,28 +280,28 @@ done:
 void
 CSL_If_ConditionalInterpret ( )
 {
-    if ( ! PP_IfStatus ( 1, 0 ) ) SkipPreprocessorCode () ; 
+    if ( ! PP_IfStatus ( 1, 0 ) ) SkipPreprocessorCode ( ) ;
     //if ( ! PP_IfStatus ( 1, 0 ) ) { SetState ( _CSL_, SOURCE_CODE_ON, false ) ; SkipPreprocessorCode () ; }
 }
 
 void
 CSL_Elif_ConditionalInterpret ( )
 {
-    if ( ! GetElifStatus ( ) ) SkipPreprocessorCode () ;
+    if ( ! GetElifStatus ( ) ) SkipPreprocessorCode ( ) ;
     //if ( ! GetElifStatus ( ) ) { SetState ( _CSL_, SOURCE_CODE_ON, false ) ; SkipPreprocessorCode () ; }
 }
 
 void
 CSL_Else_ConditionalInterpret ( )
 {
-    if ( ! GetElseStatus ( ) ) SkipPreprocessorCode () ;
+    if ( ! GetElseStatus ( ) ) SkipPreprocessorCode ( ) ;
     //if ( ! GetElseStatus ( ) ) { SetState ( _CSL_, SOURCE_CODE_ON, false ) ; SkipPreprocessorCode () ; }
 }
 
 void
 CSL_Endif_ConditionalInterpret ( )
 {
-    if ( ! GetEndifStatus ( ) ) SkipPreprocessorCode () ;
+    if ( ! GetEndifStatus ( ) ) SkipPreprocessorCode ( ) ;
 }
 
 byte *
@@ -333,7 +333,7 @@ CSL_PP_Define ( )
     CSL_Word_New ( ) ;
     CSL_BeginBlock ( ) ;
 
-    byte c = _ReadLine_PeekOffsetChar ( rl, 0 ), c1  = _ReadLine_PeekOffsetChar ( rl, 1 ) ;
+    byte c = _ReadLine_PeekOffsetChar ( rl, 0 ), c1 = _ReadLine_PeekOffsetChar ( rl, 1 ) ;
     if ( ( c == '(' ) )
     {
         Lexer_ReadToken ( _Lexer_ ) ;
@@ -341,7 +341,7 @@ CSL_PP_Define ( )
         locals = true ;
     }
     else locals = false ;
-    if ( ( c != '\n' ) &&( !  (( c == '/' ) && ( c1 == '/' ) ) ) ) //Lexer_NextPrintChar ( _Lexer_ ) == '/' ) ) ) ) // newline or comment
+    if ( ( c != '\n' ) &&( ! ( ( c == '/' ) && ( c1 == '/' ) ) ) ) //Lexer_NextPrintChar ( _Lexer_ ) == '/' ) ) ) ) // newline or comment
     {
         SetState ( interp, PREPROCESSOR_DEFINE, true ) ;
         if ( ! locals )
@@ -371,7 +371,7 @@ CSL_PP_Define ( )
         }
     }
     CSL_Inline ( ) ;
-    CSL_SaveDebugInfo (_CSL_->LastFinished_Word) ; // how would this kind of thing work with an inline word??
+    CSL_SaveDebugInfo ( _CSL_->LastFinished_Word ) ; // how would this kind of thing work with an inline word??
     CSL_SourceCode_Init ( ) ; //don't leave the define in sc
     _CSL_Namespace_InNamespaceSet ( svns ) ;
     Context_SetSpecialTokenDelimiters ( cntx, 0, CONTEXT ) ;
@@ -405,7 +405,7 @@ void
 CSL_IfDef_Preprocessor ( )
 {
     int64 defined = _CSL_Defined ( ) ;
-    if ( ! ( PP_IfStatus ( 0, defined ) ) ) SkipPreprocessorCode () ;
+    if ( ! ( PP_IfStatus ( 0, defined ) ) ) SkipPreprocessorCode ( ) ;
 }
 
 // ? untested 
@@ -414,7 +414,7 @@ void
 CSL_Ifndef_Preprocessor ( )
 {
     int64 defined = _CSL_Defined ( ) ;
-    if ( ! ( PP_IfStatus ( 0, ! defined ) ) ) SkipPreprocessorCode () ; //PP_IFDEF ) ;
+    if ( ! ( PP_IfStatus ( 0, ! defined ) ) ) SkipPreprocessorCode ( ) ; //PP_IFDEF ) ;
 }
 
 #if 1 // include preprocessor
