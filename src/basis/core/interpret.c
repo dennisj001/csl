@@ -63,7 +63,7 @@ _Interpreter_Before_DoInfixPrefixableWord ( Interpreter * interp, Word * word )
         }
         SetState ( compiler, C_INFIX_EQUAL, true ) ;
         token = Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) ")",
-            ( byte* ) "]", ( byte* ) "=", ( byte* ) " \n\r\t", 0, 1 ) ; // nb : delimiters parameter is necessary
+            ( byte* ) "]", ( byte* ) "}", ( byte* ) " \n\r\t", 0, 1 ) ; // nb : delimiters parameter is necessary
     }
     else Interpreter_InterpretNextToken ( interp ) ;
     // then continue and interpret this 'word' - just one out of lexical order

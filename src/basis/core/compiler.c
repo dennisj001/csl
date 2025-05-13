@@ -148,7 +148,7 @@ Compiler_SetCompilingSpace_MakeSureOfRoom ( byte * name )
 {
     _Compiler_SetCompilingSpace_MakeSureOfRoom ( name, 4 * K ) ;
 }
-#if 1
+
 Word *
 Compiler_PreviousNonDebugWord ( int64 startIndex )
 {
@@ -161,22 +161,6 @@ Compiler_PreviousNonDebugWord ( int64 startIndex )
     }
     return word ;
 }
-#else
-Word *
-Compiler_PreviousNonDebugWord ( int64 startIndex )
-{
-    Word * word ;
-    int64 i = startIndex ;
-    //if ( Verbosity () > 2 ) 
-    if ( Is_DebugOn ) CSL_SC_WordList_Show ( ) ;
-    for ( ; ( word = ( Word* ) CSL_WordList ( i ) ) ; i ++ )
-    {
-        if ( ( Symbol* ) word )
-            if ( ( ! ( word->W_MorphismAttributes & DEBUG_WORD ) ) &&  ( word->W_ObjectAttributes & CLASS_TYPE ) ) break ;
-    }
-    return word ;
-}
-#endif
 
 void
 GotoInfo_Print ( dlnode * node )

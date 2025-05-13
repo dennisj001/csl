@@ -112,6 +112,18 @@
           <in>x.c</in>
         </df>
         <df name="include">
+          <in>_proto.h</in>
+          <in>csl.h</in>
+          <in>defines.h</in>
+          <in>ext.h</in>
+          <in>lc.h</in>
+          <in>machineCode.h</in>
+          <in>machineCodeMacros.h</in>
+          <in>macros.h</in>
+          <in>os.h</in>
+          <in>prototypes.h</in>
+          <in>types.h</in>
+          <in>udis86.h</in>
         </df>
         <df name="primitives">
           <in>bits.c</in>

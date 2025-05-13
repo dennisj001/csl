@@ -701,7 +701,7 @@ cOff
 
 #endif // ifdef _DEV_H_
 //$gcc --version
-#if 1 // don't use this coding style - doesn't compile yet
+#if 0 // don't use this coding style - doesn't compile yet
 cOn scOn
 int64 te0 ( c | a, b ) { a = b = c ; p ( b ) ; p ( a ) ; } 
 pwi te0 
