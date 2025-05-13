@@ -161,7 +161,7 @@ CSL_Interpret_C_Blocks ( int64 blocks, Boolean takesAnElseFlag, Boolean semicolo
 doDefault:
             default:
             {
-                if ( token && ( token[0] == ',' ) ) _Compiler_->LHS_Word = 0 ;
+                if ( token && ( token[0] == ',' ) ) Stack_Init ( _Compiler_->LHS_Word ) ;
                 else
                 {
                     word = _Interpreter_TokenToWord ( interp, token, - 1, - 1 ) ;
@@ -205,6 +205,8 @@ CSL_C_LeftParen ( )
 {
     Context * cntx = _Context_ ;
     ReadLiner * rl = cntx->ReadLiner0 ;
+    //if ( ! ( C_SyntaxOn && Compiling ) )
+    //{
     if ( ( GetState_TrueFalse ( cntx->Interpreter0, ( PREPROCESSOR_MODE ), ( PREPROCESSOR_DEFINE ) ) ) )
     {
         Interpret_DoParenthesizedValue ( ) ;
@@ -217,6 +219,7 @@ CSL_C_LeftParen ( )
     {
         CSL_LocalsAndStackVariablesBegin ( ) ;
     }
+        //}
     else Interpret_DoParenthesizedValue ( ) ;
 }
 
@@ -227,7 +230,7 @@ _CSL_C_Infix_EqualOp ( block op )
     Compiler *compiler = cntx->Compiler0 ;
     Interpreter * interp = cntx->Interpreter0 ;
     Word * wordr, *word0 = CSL_WordList ( 0 ) ;
-    Word *lhsWord = compiler->LHS_Word, *rword ;
+    Word *lhsWord = ( Word * ) Stack_Top ( compiler->LHS_Word ), *rword ;
     int64 tsrli = word0 ? word0->W_RL_Index : 0 ;
     int64 svscwi = word0 ? word0->W_SC_Index : 0 ;
     byte * svName ;
@@ -241,6 +244,7 @@ _CSL_C_Infix_EqualOp ( block op )
             int64 svState = cntx->State ;
             SetState ( cntx, C_SYNTAX | INFIX_MODE, false ) ; // we don't want to just set compiler->LHS_Word
             if ( GetState ( _Context_, ADDRESS_OF_MODE ) ) lhsWord->CompiledDataFieldByteSize = sizeof (byte* ) ;
+            Stack_Pop ( compiler->LHS_Word ) ; //Interpreter_DoWord_Default ( interp, lhsWord ... just push it again
             Interpreter_DoWord_Default ( interp, lhsWord, lhsWord->W_RL_Index, lhsWord->W_SC_Index ) ;
             SetState ( cntx, C_SYNTAX | INFIX_MODE, svState ) ;
             wordr = _CSL_->StoreWord ;
@@ -263,6 +267,7 @@ _CSL_C_Infix_EqualOp ( block op )
         SetState ( _Debugger_, DBG_OUTPUT_SUBSTITUTION, false ) ;
         _Debugger_->SubstitutedWord = 0 ;
         rword->Name = svName ;
+        _CSL_WordList_PopWords ( 1 ) ; // because we are going to call the opWord in compilable order below 
     }
     if ( GetState ( compiler, C_COMBINATOR_LPAREN ) )
     {
@@ -270,7 +275,7 @@ _CSL_C_Infix_EqualOp ( block op )
         Compiler_Set_BI_TttnAndCompileJccGotInfo ( compiler, N_0 ) ; // must set logic flag for Compile_ReConfigureLogicInBlock in Block_Compile_WithLogicFlag
     }
     List_InterpretLists ( compiler->PostfixLists ) ;
-    compiler->LHS_Word = 0 ;
+    //Stack_Init ( _Compiler_->LHS_Word ) ;
     if ( ! Compiling ) CSL_InitSourceCode ( _CSL_ ) ;
     SetState ( compiler, C_INFIX_EQUAL, false ) ;
 }
@@ -373,7 +378,7 @@ CSL_C_ConditionalExpression ( )
             BI_ResetLogicCode ( bi ) ;
         }
 #if 0        
-        else
+else
         {
             Compiler_Word_SCHCPUSCA ( word1, 0 ) ;
             if ( ! bi->CmpCode )
@@ -645,7 +650,7 @@ Compile_C_FunctionDeclaration ( byte * token1 )
                 break ;
             }
             else if ( token [ 0 ] == '{' ) break ; // take nothing else (would be Syntax Error ) -- we have already done CSL_BeginBlock
-            else if ( token [ 0 ] == '#' ) Interpreter_InterpretAToken ( _Interpreter_, token, - 1, - 1 ) ; 
+            else if ( token [ 0 ] == '#' ) Interpreter_InterpretAToken ( _Interpreter_, token, - 1, - 1 ) ;
             else _Lexer_ConsiderDebugAndCommentTokens ( token, 1 ) ;
         }
     }
@@ -661,7 +666,7 @@ _Compile_C_TypeDeclaration ( )
     Context * cntx = _Context_ ;
     Compiler * compiler = cntx->Compiler0 ;
     byte * token ;
-    while ( token = Interpret_C_Until_NotIncluding_Token5 ( cntx->Interpreter0, ( byte* ) ",", ( byte* ) ";", ( byte* ) "{", ( byte* ) "}", ( byte* ) "#", 0, 0, 1 ) )
+    while ( token = Interpret_C_Until_NotIncluding_Token5 ( cntx->Interpreter0, ( byte* ) ",", ( byte* ) ";", ( byte* ) "{", ( byte* ) "{", ( byte* ) "#", 0, 0, 1 ) )
     {
         if ( _String_EqualSingleCharString ( token, ';' ) )
         {
@@ -680,7 +685,7 @@ _Compile_C_TypeDeclaration ( )
             if ( GetState ( cntx, C_SYNTAX ) ) Compiler_Save_C_BackgroundNamespace ( compiler ) ;
             break ;
         }
-        compiler->LHS_Word = 0 ;
+        Stack_Init ( _Compiler_->LHS_Word ) ;
     }
     return token ;
 }
@@ -749,7 +754,7 @@ Compile_C_TypeDeclaration ( Namespace * ns, byte * token, int64 arraySize )
                 }
                 if ( strchr ( ( char* ) pntoken, '=' ) )
                 {
-                    Compiler_Set_LHS ( word ) ;
+                    Compiler_Push_LHS ( word ) ;
                     token = _Compile_C_TypeDeclaration ( ) ;
                 }
                 else token = Lexer_ReadToken ( _Lexer_ ) ;
@@ -778,6 +783,10 @@ _CSL_Do_C_Type ( Namespace * ns )
             // nb : this doesn't do anything to cast the type now just correctly parses it so we can more easily insert C code directly
             //C_TypeCast () ; //set sizeof for next object/variable for typechecking possibly convert to that size ?? to be implemented
             return ;
+        }
+        else if ( token1[0] == '*' )
+        {
+            token1 = _Lexer_Next_Token ( lexer, 0, 1, 0, 1 ) ;
         }
         Word * word = _Interpreter_TokenToWord ( _Interpreter_, token1, - 1, - 1 ) ;
         if ( word->W_ObjectAttributes & ( C_TYPE | C_CLASS ) ) ns = word ;

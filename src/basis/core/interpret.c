@@ -43,7 +43,7 @@ Interpreter_DoWord_Default ( Interpreter * interp, Word * word0, int64 tsrli, in
     return word ; //let callee know about actual word evaled here after Compiler_CopyDuplicatesAndPush
 }
 
-Word *
+void
 _Interpreter_Before_DoInfixPrefixableWord ( Interpreter * interp, Word * word )
 {
     byte * token = 0 ;
@@ -54,19 +54,20 @@ _Interpreter_Before_DoInfixPrefixableWord ( Interpreter * interp, Word * word )
     if ( GetState ( _Context_, C_SYNTAX ) &&
         ( word->W_MorphismAttributes & ( CATEGORY_BIG_NUM_OP_OPEQUAL | CATEGORY_OP_EQUAL | CATEGORY_OP_OPEQUAL ) ) )
     {
+        Word * lhsWord = (Word *) Stack_Top (compiler->LHS_Word) ;
         if ( ( word->W_MorphismAttributes & ( CATEGORY_BIG_NUM_OP_OPEQUAL ) ) &&
-            ( ( compiler->LHS_Word ) && ( Namespace_IsUsing ( ( byte* ) "BigNum" ) ) ) )
+            lhsWord && ( Namespace_IsUsing ( ( byte* ) "BigNum" ) ) )
         {
-            _Compile_GetVarLitObj_LValue_To_Reg ( compiler->LHS_Word, ACC, 0 ) ;
-            _Word_CompileAndRecord_PushReg ( compiler->LHS_Word, ACC, true, 0 ) ;
+            _Compile_GetVarLitObj_LValue_To_Reg ( lhsWord, ACC, 0 ) ;
+            _Word_CompileAndRecord_PushReg ( lhsWord, ACC, true, 0 ) ;
         }
         SetState ( compiler, C_INFIX_EQUAL, true ) ;
         token = Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) ")",
-            ( byte* ) "]", ( byte* ) "}", ( byte* ) " \n\r\t", 0, 1 ) ; // nb : delimiters parameter is necessary
+            ( byte* ) "]", ( byte* ) "=", ( byte* ) " \n\r\t", 0, 1 ) ; // nb : delimiters parameter is necessary
     }
     else Interpreter_InterpretNextToken ( interp ) ;
     // then continue and interpret this 'word' - just one out of lexical order
-    return word ;
+    //return word ;
 }
 
 Word *
@@ -116,6 +117,7 @@ Interpreter_DoInfixOrPrefixWord ( Interpreter * interp, Word * word )
         }
         else if ( ( word->W_TypeAttributes == WT_INFIXABLE ) && ( GetState ( cntx, ( INFIX_MODE | C_SYNTAX ) ) ) )
         {
+            //if ( String_Equal ( word->Name, "=" ) ) SetState ( _Compiler_, C_INFIX_EQUAL, true ) ;
             word = Interpreter_DoInfixPrefixableWord ( interp, word ) ;
             // nb. Interpreter must be in INFIX_MODE because it is effective for more than one word
             //_Word_SaveRegisterVariables ( word ) ;

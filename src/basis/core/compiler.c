@@ -121,10 +121,12 @@ _Compiler_GetCodeSpaceHere ( )
 }
 
 void
-Compiler_Set_LHS ( Word * word )
+Compiler_Push_LHS ( Word * word )
 {
-    _Compiler_->LHS_Word = word ;
-    CSL_TypeStackReset ( ) ;
+    Stack_Push ( _Compiler_->LHS_Word, (int64) word ) ;
+    int64 depth = Stack_Depth ( _Compiler_->LHS_Word ) ;
+    if ( depth == 1 ) CSL_TypeStackReset ( ) ;
+    //else oPrintf ( " stack depth = %d", depth ) ;
 }
 
 void
@@ -307,23 +309,17 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->Current_Word_Create = 0 ;
     Stack_Init ( compiler->PointerToJmpInsnStack ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
-    //if ( compiler->LocalsCompilingNamespacesStack ) 
     Stack_Init ( compiler->LocalsCompilingNamespacesStack ) ;
-    //compiler->LocalsCompilingNamespacesStack = Stack_New ( 64, WORD_RECYCLING ) ; // allow recycling across contexts
-    
+    Stack_Init ( compiler->LHS_Word ) ;
     Stack_Init ( compiler->BlockStack ) ;
     Stack_Init ( compiler->CombinatorStack ) ;
     Stack_Init ( compiler->CombinatorBlockInfoStack ) ;
     _dllist_Init ( compiler->GotoList ) ;
-    
     _dllist_Init ( compiler->CurrentMatchList ) ;
     _dllist_Init ( compiler->RegisterParameterList ) ;
     _dllist_Init ( compiler->OptimizeInfoList ) ;
     COI_PushNew ( compiler ) ;
-    //SetBuffersUnused ( 0 ) ;
     SetState ( compiler, VARIABLE_FRAME, false ) ;
-    //OVT_MemListFree_CompilerTempObjects ( ) ;
-    //CSL_AfterWordReset ( ) ;
 }
 
 Compiler *
@@ -338,6 +334,7 @@ Compiler_New ( uint64 allocType )
     compiler->CombinatorBlockInfoStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->LocalsCompilingNamespacesStack = _Stack_Allocate ( 64, allocType ) ; // allow recycling across contexts
     compiler->InternalNamespacesStack = Stack_New ( 64, allocType ) ; //initialized when using
+    compiler->LHS_Word = Stack_New ( 64, allocType ) ;
     compiler->PostfixLists = _dllist_New ( allocType ) ;
     compiler->GotoList = _dllist_New ( allocType ) ;
     compiler->SetccMovedList = _dllist_New ( allocType ) ;

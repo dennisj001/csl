@@ -759,9 +759,21 @@ cOff
 #endif //DEBUG_ON
 
 #endif // ifdef _DEV_H_
-
+cOn
+#if 0 // don't use this coding style - doesn't compile yet
+//int64 te0 ( c | a, b ) { d: a = b = c ; p ( b ) ; p ( a ) ; } 
+//pwi te0 te0 ( 3 ) ; pause
+int64 te2 ( c | a, b ) { d: a = ( b = c ) ; p ( b ) ; p ( a ) ; } 
+pwi te2 te2 ( 3 ) ; pause
+#else 
+int64 te1 ( c | a, b ) { b = c ; a = b ; p ( b ) ; p ( a ) ; } 
+pwi te1 te1 ( 3 ) ; //pause
+#endif
+cOff
 rdim 
 namespaces
+//"\n gcc version info \n" ps
+//$gcc --version
 2 + 7 assertStkChk // stack checking
 //pause
 

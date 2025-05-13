@@ -91,7 +91,7 @@ CSL_C_Semi ( )
         CSL_InitSourceCode ( _CSL_ ) ;
     }
     Context_ClearQidInNamespace ( ) ;
-    _Compiler_->LHS_Word = 0 ; // nb. : after NEW_INTERPRET
+    Stack_Init ( _Compiler_->LHS_Word ) ; // nb. : after NEW_INTERPRET
     SetState ( _Context_, ADDRESS_OF_MODE, false ) ;
     CSL_TypeStackReset ( ) ;
 }
@@ -148,7 +148,9 @@ CSL_C_Infix_Equal ( )
 {
     if ( Compiling )
     {
+        //SetState ( _Compiler_, C_INFIX_EQUAL, true ) ;
         _CSL_C_Infix_EqualOp ( 0 ) ;
+        //SetState ( _Compiler_, C_INFIX_EQUAL, false ) ;
     }
     else if ( C_SyntaxOn ) CSL_Poke ( ) ;
     else CSL_Store ( ) ;

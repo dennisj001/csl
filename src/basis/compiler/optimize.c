@@ -58,6 +58,27 @@ CO_CheckOptimize ( Compiler * compiler, int64 _specialReturn )
     return _specialReturn ? _specialReturn : compiler->OptimizeForcedReturn ;
 }
 
+// CO Compiler_Optimize
+
+int64
+Compiler_Optimize ( Compiler * compiler, Word * word )
+{
+    if ( word )
+    {
+        if ( Is_DebugOn && ( Verbosity ( ) > 1 ) ) _CSL_SC_WordList_Show ( 0, 0, 0 ) ;
+        CO_GetWordStackState ( compiler, word ) ;
+        if ( compiler->OptInfo->rtrn != CO_DONE )
+        {
+            CO_SetStandardPreHere_ForDebugDisassembly ( compiler ) ;
+            CO_SetupArgsToStandardLocations ( compiler ) ;
+            if ( compiler->OptInfo->rtrn != CO_DONE ) CO_Setup_MachineCodeInsnParameters ( compiler, REG, REG, ACC, OREG, 0, 0 ) ;
+            SetState ( _CSL_, IN_OPTIMIZER, false ) ;
+        }
+        return compiler->OptInfo->rtrn ;
+    }
+    else return 0 ;
+}
+
 // conventions :
 // the 'stack' - list starts with the top being the last word processed in an rpn ordering, next on the list is the previous to last word, ...
 // nb! : remember this is a rpn optimizer ; get second arg first when going right to left : arg1 arg2 op :: so op is first then arg2 then arg1
@@ -241,27 +262,6 @@ CO_Logic_CheckForOpBetweenParentheses ( CompileOptimizeInfo * optInfo )
         else optInfo->wordArg1 = optInfo->rparenPrevOp ;
     }
     return wordn ;
-}
-
-// CO Compiler_Optimize
-
-int64
-Compiler_Optimize ( Compiler * compiler, Word * word )
-{
-    if ( word )
-    {
-        if ( Is_DebugOn && ( Verbosity ( ) > 1 ) ) _CSL_SC_WordList_Show ( 0, 0, 0 ) ;
-        CO_GetWordStackState ( compiler, word ) ;
-        if ( compiler->OptInfo->rtrn != CO_DONE )
-        {
-            CO_SetStandardPreHere_ForDebugDisassembly ( compiler ) ;
-            CO_SetupArgsToStandardLocations ( compiler ) ;
-            if ( compiler->OptInfo->rtrn != CO_DONE ) CO_Setup_MachineCodeInsnParameters ( compiler, REG, REG, ACC, OREG, 0, 0 ) ;
-            SetState ( _CSL_, IN_OPTIMIZER, false ) ;
-        }
-        return compiler->OptInfo->rtrn ;
-    }
-    else return 0 ;
 }
 
 void
@@ -728,7 +728,7 @@ CO_X_OpEqual ( Compiler * compiler, block op )
 
     CO_GetWordStackState ( compiler, zero ) ;
     CompileOptimizeInfo * optInfo = compiler->OptInfo ; // nb. after _Compiler_GetOptimizeState
-    Word * dstWord = optInfo->wordArg1, * srcWord = optInfo->wordArg2 ;
+    Word * dstWord = optInfo->wordArg1, * srcWord = optInfo->wordArg2, * lhsWord = (Word *) Stack_Top (compiler->LHS_Word) ;
     Boolean dstReg = dstWord ? ( dstWord->RegToUse ? dstWord->RegToUse : ACC ) : 0 ; ///*arg1*/, srcReg = OREG ; // arg2
     Boolean srcReg = srcWord ? ( srcWord->RegToUse ? srcWord->RegToUse : OREG ) : 0 ; ///*arg1*/, srcReg = OREG ; // arg2
     CO_SetStandardPreHere_ForDebugDisassembly ( compiler ) ;
@@ -769,7 +769,7 @@ CO_X_OpEqual ( Compiler * compiler, block op )
             _Compile_GetVarLitObj_RValue_To_Reg ( srcWord, ACC, srcWord->CompiledDataFieldByteSize ) ;
         }
     }
-    else if ( compiler->LHS_Word )
+    else if ( lhsWord )
     {
         if ( optInfo->lparen2 )
         {
@@ -780,8 +780,8 @@ CO_X_OpEqual ( Compiler * compiler, block op )
             }
         }
         else CO_StandardArg ( srcWord, OREG, 0, 1, 0, true ) ; //nb! rvalue
-        CO_StandardArg ( compiler->LHS_Word, OREG2, 0, 0, 0, true ) ; //nb! lvalue
-        CO_StandardArg ( compiler->LHS_Word, ACC, 0, 1, 0, false ) ; //nb! rvalue
+        CO_StandardArg ( lhsWord, OREG2, 0, 0, 0, true ) ; //nb! lvalue
+        CO_StandardArg ( lhsWord, ACC, 0, 1, 0, false ) ; //nb! rvalue
         if ( ! optInfo->lparen2 ) CO_StandardArg ( srcWord, OREG, 0, 1, 0, true ) ; //nb! rvalue
         valueReg = ACC ;
     }

@@ -173,9 +173,9 @@ Do_Variable ( Word * word )
     if ( CompileMode )
     {
         if ( GetState ( cntx, ( C_SYNTAX | INFIX_MODE ) )
-            && ( ! GetState ( cntx, ( IS_FORWARD_DOTTED | IS_RVALUE ) ) ) && ( ! compiler->LHS_Word ) )
+            && ( ! GetState ( cntx, ( IS_FORWARD_DOTTED | IS_RVALUE ) ) ) ) 
         {
-            Compiler_Set_LHS ( word ) ;
+            Compiler_Push_LHS ( word ) ;
         }
         _Do_Compile_Variable ( word ) ;
     }
@@ -189,7 +189,8 @@ Do_Variable ( Word * word )
                 value = ( int64 ) word->W_PtrToValue ;
             }
             else value = ( int64 ) word->W_Value ;
-            if ( ! compiler->LHS_Word ) Compiler_Set_LHS ( word ) ;
+            //if ( ( ! Stack_Top (compiler->LHS_Word ) ) ) 
+            Compiler_Push_LHS ( word ) ;
         }
         else
         {
@@ -198,7 +199,8 @@ Do_Variable ( Word * word )
                 if ( GetState ( cntx, IS_RVALUE ) ) value = ( int64 ) * word->W_PtrToValue ;
                 else
                 {
-                    if ( ! compiler->LHS_Word ) Compiler_Set_LHS ( word ) ;
+                    //if ( ! Stack_Top (compiler->LHS_Word ) ) 
+                    Compiler_Push_LHS ( word ) ;
                     value = ( int64 ) word->W_PtrToValue ;
                 }
             }
@@ -323,8 +325,8 @@ CSL_Do_ObjectField ( Word * word )
     cntx->Interpreter0->CurrentObjectNamespace = word ; // update this namespace 
     compiler->ArrayEnds = 0 ;
 
-    if ( GetState ( cntx, ( C_SYNTAX | INFIX_MODE ) ) && ( ! compiler->LHS_Word )
-        && ( ! GetState ( cntx, IS_FORWARD_DOTTED ) ) && ( ! GetState ( cntx, IS_RVALUE ) ) ) Compiler_Set_LHS ( word ) ;
+    if ( GetState ( cntx, ( C_SYNTAX | INFIX_MODE ) ) && ( ( ! Stack_Top (compiler->LHS_Word ) ) )
+        && ( ! GetState ( cntx, IS_FORWARD_DOTTED ) ) && ( ! GetState ( cntx, IS_RVALUE ) ) ) Compiler_Push_LHS ( word ) ;
     if ( word->WD_Offset ) offsetPtr = Compiler_IncrementCurrentAccumulatedOffset ( compiler, word->WD_Offset ) ;
     if ( ! ( CompileMode || GetState ( compiler, LC_ARG_PARSING ) ) )
         CSL_Do_AccumulatedAddress ( word, ( byte* ) TOS, word->WD_Offset ) ;

@@ -409,6 +409,7 @@ void pbAssert ( argin )
     }  
     pbclr () ;
 } 
+//pwi pbAssert
 cOff
 sp
 sp0
@@ -700,6 +701,26 @@ cOff
 
 #endif // ifdef _DEV_H_
 //$gcc --version
+#if 1 // don't use this coding style - doesn't compile yet
+cOn scOn
+int64 te0 ( c | a, b ) { a = b = c ; p ( b ) ; p ( a ) ; } 
+pwi te0 
+te0 ( 3 ) ; 
+//pause
+int64 te2 ( c | a, b ) { a = ( b = c ) ; p ( b ) ; p ( a ) ; } 
+pwi te2 te2 ( 3 ) ; //pause
+//#else 
+int64 te3 ( b, c | a ) { a = ( b + c ) ; p ( a ) ; } 
+//pwi te3 
+te3 ( 1, 2 ) ; //pause
+int64 te4 ( b, c | a ) { a = b + c ; p ( a ) ; } 
+//pwi te4 
+te4 ( 1, 2 ) ; //pause
+int64 te1 ( c | a, b ) { b = c ; a = b ; p ( b ) ; p ( a ) ; } 
+//pwi te1 
+te1 ( 3 ) ; //pause
+cOff
+#endif
 
 2 + 7 assertStkChk // stack checking
 //rdim 

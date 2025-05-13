@@ -795,13 +795,14 @@ typedef struct
     int64 * FrameSizeCellOffset, BlocksBegun ;
     byte * RspSaveOffset ;
     byte * RspRestoreOffset ;
-    Word *ReturnWord, * ReturnVariableWord, * ReturnLParenOperandWord, * Current_Word_New, *Current_Word_Create, * LHS_Word, *PrefixWord ;
+    Word *ReturnWord, * ReturnVariableWord, * ReturnLParenOperandWord, * Current_Word_New, *Current_Word_Create, *PrefixWord ;
     Namespace *C_BackgroundNamespace, *C_FunctionBackgroundNamespace, *Qid_BackgroundNamespace, *LocalsNamespace, *NonCompilingNs ; //, ** FunctionTypesArray ;
     dllist * GotoList, *SetccMovedList ;
     dllist * CurrentMatchList ;
     dllist * RegisterParameterList, *JccAdressOffsetList ;
     CompileOptimizeInfo * OptInfo ;
     dllist *PostfixLists ;
+    Stack * LHS_Word ;
     Stack * PointerToJmpInsnStack ;
     Stack * LocalsCompilingNamespacesStack ;
     Stack * CombinatorBlockInfoStack ;

@@ -31,7 +31,7 @@ CSL_TurnOffBlockCompiler ( )
     SetState ( compiler, COMPILE_MODE | VARIABLE_FRAME, false ) ;
     cntx->LastCompiledWord = cntx->CurrentWordBeingCompiled ;
     cntx->CurrentWordBeingCompiled = 0 ;
-    compiler->LHS_Word = 0 ;
+    Stack_Init ( compiler->LHS_Word ) ;
 }
 
 void
@@ -60,7 +60,7 @@ _CSL_BeginBlock0 ( )
         CSL_RecycleInit_CSL_N_M_Node_WordList ( ) ;
         CSL_TurnOnBlockCompiler ( ) ;
     }
-    compiler->LHS_Word = 0 ;
+    Stack_Init ( compiler->LHS_Word ) ;
     bi->ParenLevel = compiler->ParenLevel ;
     bi->OriginalActualCodeStart = Here ;
     bi->PtrToJmpInsn = Here ;

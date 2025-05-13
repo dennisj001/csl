@@ -60,6 +60,7 @@ _dobject_Print ( dobject * dobj )
     }
     //_Printf ( "\n" ) ;
 }
+#if 0
 void
 DoNamespace ( Word * word )
 {
@@ -68,14 +69,32 @@ DoNamespace ( Word * word )
         if ( ! C_SyntaxOn ) 
         {
             if ( ReadLiner_IsTokenForwardDotted ( _ReadLiner_, word->W_RL_Index ) )
-                Namespace_Do_Namespace ( word ) ;
-            else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) Namespace_Do_Namespace, word ) ; //( ( byte* ) Namespace_Do_Namespace, word ) ;
-            //else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) _DataObject_Run, word ) ; //( ( byte* ) Namespace_Do_Namespace, word ) ;
+                _DataObject_Run ( word ) ; // at compile time
+            else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) _DataObject_Run, word ) ; 
+            //else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) _DataObject_Run, word ) ; 
+        }
+        else _DataObject_Run ( word ) ; //_DataObject_Run ( word ) ;
+    }
+    else _DataObject_Run ( word ) ; //_DataObject_Run ( word ) ; //( ( void ( * ) ( Word * ) )( function ) ) ( word ) ;
+}
+#else
+void
+DoNamespace ( Word * word )
+{
+    if ( Compiling ) 
+    {
+        if ( ! C_SyntaxOn ) 
+        {
+            if ( ReadLiner_IsTokenForwardDotted ( _ReadLiner_, word->W_RL_Index ) )
+                Namespace_Do_Namespace ( word ) ; // at compile time
+            else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) Namespace_Do_Namespace, word ) ; 
+            //else Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) _DataObject_Run, word ) ; 
         }
         else _DataObject_Run ( word ) ;
     }
     else _DataObject_Run ( word ) ; //( ( void ( * ) ( Word * ) )( function ) ) ( word ) ;
 }
+#endif
 // remember : Word = DynamicObject = DObject = Namespace
 
 void
