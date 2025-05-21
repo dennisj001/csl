@@ -29,6 +29,9 @@ Word_Morphism_Run ( Word * word )
         Context_PreWordRun_Init ( _Context_, word ) ;
         _O_->DebugOutputFlag &= ~ 1 ;
         if ( GetState ( _LC_, LC_DEBUG_ON ) || Is_DebugModeOn ) DEBUG_SETUP ( word, 0 ) ;
+#if DEBUG
+        _dbg () ; // DEBUG
+#endif        
         Block_Eval ( word->Definition ) ;
         Context_PostWordRun_Init ( _Context_, word ) ;
     }
@@ -263,7 +266,7 @@ _Word_Add ( Word * word, int64 addToInNs, Namespace * addToNs )
     if ( ( Is_DbiOn || Is_DebugOn ) && ( ( addToInNs || addToNs ) ) ) //&& word->S_ContainingNamespace ) )//&& String_Equal ("bt", word->Name) )
     {
         //_Printf ( c_ad ( "\n_Word_Add : %s.%s = %lx : at %s\n" ),
-        _Printf ( "\n_Word_Add : %s.%s = %lx : at %s",
+        _Printf ( "\n_Word_Add : %s.%s = %lx : at %s\n",
             ( word->S_ContainingNamespace ? word->S_ContainingNamespace->Name : ( byte* ) "" ), word->Name, word, Context_Location ( ) ) ;
     }
 }

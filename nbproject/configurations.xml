@@ -110,6 +110,7 @@
           <in>fltlread.c</in>
           <in>interpreters.c</in>
           <in>ios.c</in>
+          <in>lbForth.c</in>
           <in>ls9.c</in>
           <in>maths.c</in>
           <in>memorys.c</in>
@@ -768,7 +769,12 @@
           </incDir>
         </cTool>
       </item>
-      <item path="src/primitives/libc-shell.txt" ex="false" tool="3" flavor2="0">
+      <item path="src/primitives/lbForth.c" ex="false" tool="0" flavor2="0">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
       </item>
       <item path="src/primitives/ls9.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
@@ -819,7 +825,7 @@
           </incDir>
         </cTool>
       </item>
-      <item path="src/primitives/shell.c" ex="false" tool="0" flavor2="0">
+      <item path="src/primitives/shell.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
             <pElem>.</pElem>

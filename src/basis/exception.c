@@ -111,6 +111,7 @@ _OpenVmTil_ShowExceptionInfo ( )
             }
         }
     }
+    if (word ) Word_Disassemble ( word ) ;
     AlertColors ;
     SetState ( debugger, DBG_INFO, true ) ;
     Debugger_Locals_Show ( debugger ) ;

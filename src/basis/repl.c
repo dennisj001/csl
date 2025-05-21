@@ -8,9 +8,14 @@ _Repl ( Context * cntx, block repl )
     byte * token ;
 
     byte * snp = rl->NormalPrompt, *sap = rl->AltPrompt ;
-    SetState ( _LC_, LC_REPL, true ) ;
-    if ( _LC_ )
+    if ( GetState ( cntx, JFORTH_MODE )) 
     {
+        rl->AltPrompt = ( byte* ) "jf< " ;
+        rl->NormalPrompt = ( byte* ) "jf> " ;
+    }
+    else if ( _LC_ )
+    {
+        SetState ( _LC_, LC_REPL, true ) ;
         rl->AltPrompt = ( byte* ) "lc< " ;
         rl->NormalPrompt = ( byte* ) "lc> " ;
     }

@@ -63,7 +63,7 @@ _Interpreter_Before_DoInfixPrefixableWord ( Interpreter * interp, Word * word )
         }
         SetState ( compiler, C_INFIX_EQUAL, true ) ;
         token = Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) ")",
-            ( byte* ) "]", ( byte* ) "}", ( byte* ) " \n\r\t", 0, 1 ) ; // nb : delimiters parameter is necessary
+            ( byte* ) "]", ( byte* ) "\n", ( byte* ) " \n\r\t", 0, 1 ) ; // nb : delimiters parameter is necessary
     }
     else Interpreter_InterpretNextToken ( interp ) ;
     // then continue and interpret this 'word' - just one out of lexical order
@@ -115,7 +115,7 @@ Interpreter_DoInfixOrPrefixWord ( Interpreter * interp, Word * word )
             //_Word_SaveRegisterVariables ( word ) ;
             word = Interpreter_C_PREFIX_RTL_ARGS_Word ( word ) ;
         }
-        else if ( ( word->W_TypeAttributes == WT_INFIXABLE ) && ( GetState ( cntx, ( INFIX_MODE | C_SYNTAX ) ) ) )
+        else if ( ( word->W_TypeAttributes & WT_INFIXABLE ) && ( GetState ( cntx, ( INFIX_MODE | C_SYNTAX ) ) ) )
         {
             //if ( String_Equal ( word->Name, "=" ) ) SetState ( _Compiler_, C_INFIX_EQUAL, true ) ;
             word = Interpreter_DoInfixPrefixableWord ( interp, word ) ;
@@ -130,6 +130,12 @@ Interpreter_DoInfixOrPrefixWord ( Interpreter * interp, Word * word )
             //_Word_SaveRegisterVariables ( word ) ;
             word = _Interpreter_DoPrefixWord ( cntx, interp, word ) ;
         }
+#if 1 // only with certain word ?? eg. 'cd'        
+        else if ( ( word->W_TypeAttributes & ( WT_PREFIXABLE ) ) && ( word->W_OpNumOfParams||word->W_NumberOfPrefixedArgs) ) 
+        {
+            word = _Interpreter_DoPrefixWord ( cntx, interp, word ) ;
+        }
+#endif        
         else return 0 ;
     }
     return word ;

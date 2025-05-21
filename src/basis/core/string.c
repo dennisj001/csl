@@ -1119,7 +1119,6 @@ void
 Buffer_Add ( Buffer * b, int64 flag )
 {
     if ( flag & N_PERMANENT ) dllist_AddNodeToTail ( _O_->BufferList, ( dlnode* ) b ) ;
-
     else dllist_AddNodeToHead ( _O_->BufferList, ( dlnode* ) b ) ;
 }
 

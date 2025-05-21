@@ -185,7 +185,8 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     csl->OriginalInputLine = Buffer_DataCleared ( csl->OriginalInputLineB ) ;
     csl->SC_Buffer = Buffer_DataCleared ( csl->SourceCodeBuffer ) ;
     csl->TokenBuffer = Buffer_DataCleared ( csl->TokenB ) ;
-    SetState ( csl, CSL_RUN | CO_ON | INLINE_ON, true ) ;
+    //SetState ( csl, CSL_RUN | CO_ON | INLINE_ON, true ) ;
+    SetState ( csl, CSL_RUN, true ) ;
 
     if ( Verbosity ( ) > 2 ) iPrintf ( "\nSystem Memory is being reallocated.  " ) ;
 

@@ -762,7 +762,7 @@ cOff
 //$gcc --version
 #if 1 // don't use this coding style - doesn't compile yet
 cOn scOn
-int64 te0 ( c | a, b ) { a = b = c ; p ( b ) ; p ( a ) ; } 
+int64 te0 ( c | a, b, d, e ) { a = b = d = e = c ; p ( a ) ; p ( b ) ; p ( c ) ; p ( d ) ; p ( e ) ; } 
 pwi te0 
 te0 ( 3 ) ; 
 //pause

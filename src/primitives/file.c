@@ -133,3 +133,18 @@ File_Exists ( )
     byte * name = ( byte* ) DataStack_Pop ( ) ;
     DataStack_Push (_File_Exists ( name )) ;
 }
+
+void
+File_ChangeDirectory ()
+{
+    byte * name = ( byte* ) DataStack_Pop ( ) ;
+    chdir ( name ) ;
+}
+
+void
+File_GetCurrentDirectory ()
+{
+    byte * b = Buffer_DataCleared ( _CSL_->StringInsertB7 ) ;
+    getcwd ( b, BUFFER_SIZE) ;
+    iPrintf ( " %s", b ) ;
+}

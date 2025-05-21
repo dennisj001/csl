@@ -204,11 +204,11 @@ CSL_ForCombinator ( )
         byte * start = Here ;
 
         BlockInfo *bico = BlockInfo_GetCbsStackPick ( 1 ) ;
-#if 1    
+#if 0    
         if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, start, Here - start, 0 ) ;
 #endif    
         BlockInfo * bic = Block_CopyCompile ( ( byte* ) controlBlock, 2, 1 ) ; // 1 : jccFlag for this block
-#if 1    
+#if 0    
         if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, start, Here - start, 0 ) ;
 #endif    
 
@@ -225,11 +225,11 @@ CSL_ForCombinator ( )
         {
             svHere = Here ;
             BlockInfo *bic1 = BlockInfo_Copy ( bic ) ;
-#if 1    
+#if 0    
             if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, start, Here - start, 1 ) ;
 #endif    
             BlockInfo *bic2 = BI_CopyCompile ( bic, 0, 1 ) ; // controlBlock
-#if 1    
+#if 0    
             if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, start, Here - start, 0 ) ;
 #endif    
             if ( bic2->JccCode ) SetHere ( bic2->JccCode ) ; // overwrite 'ret' insn
@@ -360,8 +360,6 @@ _CSL_DoWhileCombinator ( block controlBlock, block doBlock )
 int64
 CSL_DoWhileCombinator ( )
 {
-    //Compiler * compiler = _Context_->Compiler0 ;
-    //compiler->Combinator = _Context_->CurrentlyRunningWord ;
     block controlBlock = ( block ) TOS, doBlock = ( block ) _DspReg_ [ - 1 ] ;
     DataStack_DropN ( 2 ) ;
     return _CSL_DoWhileCombinator ( controlBlock, doBlock ) ;

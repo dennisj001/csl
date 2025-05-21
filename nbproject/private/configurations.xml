@@ -138,6 +138,7 @@
           <in>fltlread.c</in>
           <in>interpreters.c</in>
           <in>ios.c</in>
+          <in>lbForth.c</in>
           <in>ls9.c</in>
           <in>maths.c</in>
           <in>memorys.c</in>

@@ -234,6 +234,7 @@ Mem_Allocate ( int64 size, uint64 allocType )
         case SESSION: return _Allocate ( size, ms->SessionObjectsSpace ) ;
         case COMPILER_TEMP: return _Allocate ( size, ms->CompilerTempObjectSpace ) ;
         case WORD_RECYCLING: return _Allocate ( size, ms->WordRecylingSpace ) ;
+        case FORTH_SPACE: return _Allocate ( size, ms->ForthSpace ) ;
 
         case T_CSL: case DATA_STACK: return _Allocate ( size, ovt->CSL_InternalSpace ) ;
         case INTERNAL_OBJECT_MEM: return _Allocate ( size, ovt->InternalObjectSpace ) ;
@@ -276,6 +277,7 @@ MemorySpace_Init ( MemorySpace * ms )
     ms->CompilerTempObjectSpace = NBA_MemSpace_New ( ms, ( byte* ) "CompilerTempObjectSpace", ovt->CompilerTempObjectsSize, COMPILER_TEMP ) ;
     ms->WordRecylingSpace = NBA_MemSpace_New ( ms, ( byte* ) "WordRecylingSpace", ovt->WordRecylingSize, WORD_RECYCLING ) ;
     ms->SessionObjectsSpace = NBA_MemSpace_New ( ms, ( byte* ) "SessionObjectsSpace", ovt->SessionObjectsSize, SESSION ) ;
+    ms->ForthSpace = NBA_MemSpace_New ( ms, ( byte* ) "ForthSpace", ovt->ForthSize, FORTH_SPACE ) ;
 
     if ( ovt->OVT_CSL && ovt->OVT_CSL->Context0 )
     {

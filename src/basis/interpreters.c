@@ -79,6 +79,7 @@ Word *
 Interpret_DoPrefixFunction_OrUntil_RParen ( Interpreter * interp, Word * prefixFunction )
 {
     Word * word = 0 ;
+    int64 args = 0 ;
     if ( prefixFunction )
     {
         byte * token ;
@@ -99,11 +100,12 @@ Interpret_DoPrefixFunction_OrUntil_RParen ( Interpreter * interp, Word * prefixF
             else break ;
         }
         d0 ( if ( Is_DebugModeOn ) _CSL_SC_WordList_Show ( "\n_Interpret_PrefixFunction_Until_RParen", 0, 0 ) ) ;
-        if ( prefixFunction->W_NumberOfPrefixedArgs )
+        if ( (args = prefixFunction->W_NumberOfPrefixedArgs) || (args = prefixFunction->W_OpNumOfParams) )
         {
             SetState ( compiler, PREFIX_ARG_PARSING, true ) ;
             Interpreter_InterpretAToken ( interp, token, - 1, - 1 ) ;
-            for ( i = 0 ; i < ( prefixFunction->W_NumberOfPrefixedArgs - 1 ) ; i ++ ) // -1 : we already did one above
+            //for ( i = 0 ; i < ( prefixFunction->W_NumberOfPrefixedArgs - 1 ) ; i ++ ) // -1 : we already did one above
+            for ( i = 0 ; i < ( args - 1 ) ; i ++ ) // -1 : we already did one above
             {
                 byte * token = Lexer_ReadToken ( interp->Lexer0 ) ;
                 if ( _String_EqualSingleCharString ( token, ',' ) && GetState ( _Context_, ASM_SYNTAX ) ) i -- ; // don't count it 

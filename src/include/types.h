@@ -11,6 +11,13 @@ typedef unsigned int uint32 ;
 typedef long int int64 ;
 typedef unsigned long int uint64 ;
 typedef uint8 Boolean ;
+#if 1 // jforth
+typedef CELL_BASE_TYPE scell;
+typedef DOUBLE_CELL_BASE_TYPE dscell;
+typedef unsigned CELL_BASE_TYPE cell;
+typedef unsigned DOUBLE_CELL_BASE_TYPE dcell;
+typedef void(*builtin)();
+#endif
 typedef byte * Pointer ;
 typedef Pointer Struct ;
 
@@ -424,7 +431,11 @@ typedef struct _WordData
             uint8 RegFlags ; // future uses available here !!
             uint8 NumberOfRegisterVariables ; // future uses available here !!
         } ;
-        uint8 OpInsnGroup ;
+        union
+        {
+            uint8 OpInsnGroup ;
+            uint8 OpNumOfParams ;
+        } ;
         uint8 OpInsnCode ;
     } ;
     byte TypeSignature [16] ;
@@ -505,6 +516,7 @@ typedef struct _WordData
 #define W_SC_MemSpaceRandMarker W_WordData->SourceCodeMemSpaceRandMarker
 #define W_OpInsnCode W_WordData->OpInsnCode 
 #define W_OpInsnGroup W_WordData->OpInsnGroup
+#define W_OpNumOfParams W_WordData->OpNumOfParams
 #define W_TypeSignatureString W_WordData->TypeSignature
 #define W_TypeObjectsNamespaces W_WordData->TypeObjectsNamespaces
 #define NamespaceStack W_WordData->WD_NamespaceStack
@@ -994,7 +1006,7 @@ typedef struct
     MemChunk MS_MemChunk ;
     NamedByteArray * SessionObjectsSpace, * TempObjectSpace, * CompilerTempObjectSpace,
     * ContextSpace, * WordRecylingSpace, * LispTempSpace, * LispCopySpace,
-    * BufferSpace, * CodeSpace, * ObjectSpace, * LispSpace, * DictionarySpace, * StringSpace ;
+    * BufferSpace, * CodeSpace, * ObjectSpace, * LispSpace, * DictionarySpace, * StringSpace, *ForthSpace ;
 
     dllist *NBAs ;
     int64 RecycledWordCount, WordsInRecycling, WordsAllocated ;
@@ -1064,7 +1076,7 @@ typedef struct
     // variables accessible from csl
     int64 Verbosity, StartIncludeTries, StartedTimes, Restarts, SigSegvs, ReAllocations, Dbi ;
     int64 DictionarySize, LispCopySize, LispTempSize, MachineCodeSize, ObjectSpaceSize, InternalObjectsSize, LispSpaceSize, ContextSize ;
-    int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize ;
+    int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize, ForthSize ;
     int64 CSLSize, BufferSpaceSize, StringSpaceSize, Thrown ;
     Buffer *ExceptionBuffer, *PrintBuffer, *PrintBufferCopy, *PrintBufferConcatCopy ;
     sigjmp_buf JmpBuf0 ;
@@ -1082,7 +1094,11 @@ typedef struct
         char TypeSignature [8] ;
         uint64 uint64_TypeSignature ;
     } ;
-    uint64 OpInsnCodeGroup ;
+    union
+    {
+        uint64 OpInsnCodeGroup ;
+        uint64 OpNumOfParams ;
+    } ;
     uint8 OpInsnCode ;
     block blk_Definition ;
     uint64 ui64_MorphismAttributes ;

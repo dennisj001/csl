@@ -1,6 +1,7 @@
 //logOn
 //_dbgOn 
 //ukseOn
+//optimizeOff
 5 // stack checking marker
 #define DEBUG_ON 0
 scOn 
@@ -383,13 +384,17 @@ dscOn
 #endif
 Root Io
 : Error "\nerror :" ps location pause ;
+: tCSL "namespaces/ninit.csl" include ; // namespaces init
+: tc 2 ti 1 ti lispOff tCSL rtw ;
 cOn Root
+#if OptimizeOn
 int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } //remember : strcmp returns a diff => returns 0 when there is no difference
 StringEqual ( "hi" "hi" ) != 0 ? noop : abort // remember : so StringEqual returns true (1) when strings are equal
 StringEqual ( "hi" "hi" ) == 0 ? abort : noop
 StringEqual ( "hi" "hi" ) ? noop : abort
 StringEqual ("hi" "hey") != 0 ? abort : noop
 StringEqual ("hi" "hey") == 0 ? noop : abort
+#endif
 Dlsym libc 
 void pbAssert ( argin ) 
 {
@@ -484,7 +489,7 @@ sp0
 Root
 // rtw : recycle some test/debug words 
 : rtw "test" purgeAll "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
-#if 1
+#if OptimizeOn @
 : atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable 
 //pwi atoi 
 //"7" atoi 7 _assert 
@@ -510,6 +515,7 @@ lispOff
 : ppT preprocessorTest ;
 : bigNumTest "namespaces/test/bigNum.csl" include ;
 : bT bigNumTest ;
+//: jforth "src/primitives/lbForth.c" include ; //jforth 
 // === startup extra controls ===
 Root 
 'todo 0 const  
@@ -703,7 +709,7 @@ cOff
 //$gcc --version
 #if 0 // don't use this coding style - doesn't compile yet
 cOn scOn
-int64 te0 ( c | a, b ) { a = b = c ; p ( b ) ; p ( a ) ; } 
+int64 te0 ( c | a, b, d, e ) { a = b = d = e = c ; p ( a ) ; p ( b ) ; p ( c ) ; p ( d ) ; p ( e ) ; } 
 pwi te0 
 te0 ( 3 ) ; 
 //pause
@@ -721,7 +727,7 @@ int64 te1 ( c | a, b ) { b = c ; a = b ; p ( b ) ; p ( a ) ; }
 te1 ( 3 ) ; //pause
 cOff
 #endif
-
+//: tx ( a b ) a @ 2 = b @ 3 = a @ b @ * dup 0 !  p ;  4 5 tx pause
 2 + 7 assertStkChk // stack checking
 //rdim 
 logOff

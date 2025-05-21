@@ -2,41 +2,12 @@
 #include "../../include/csl.h"
 
 #if DEBUG
-int64 dsDepth = 0 ;
 
 void
 _dbg ( ) //int64 index, int64 one, int64 two )
 {
-    //Debugger * debugger = _Debugger_ ;
-    AdjustR14WithDsp ( ) ;
-    int64 diff = 0, dsd = DataStack_Depth ( ) ;
-    if ( ! dsDepth ) 
-    {
-        dsDepth = dsd ;
-        oPrintf ( "\n dbg: ... %s : %ld.%ld : %s ...", "+++", diff, dsd, "+++" ) ;
-    }
-    else if ( dsd > dsDepth )
-    {
-        diff = dsd - dsDepth ;
-        dsDepth = dsd ;
-        oPrintf ( "\n dbg: ... %s : %ld.%ld : %s ...", "+++", diff, dsd, "+++" ) ;
-        //CSL_PrintDataStack () ;
-        //if ( ! GetState ( debugger, DBG_STEPPING ) ) 
-        //_Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
-        //CSL_PrintDataStack () ; 
-        //Pause () ;
-    }
-    else if ( dsd < dsDepth )
-    {
-        diff = dsDepth - dsd ;
-        dsDepth = dsd ;
-        oPrintf ( "\n dbg: ... %s : %ld.%ld : %s ...", "---", diff, dsd, "---" ) ;
-        //CSL_PrintDataStack () ;
-        //if ( ! GetState ( debugger, DBG_STEPPING ) ) 
-        //_Debugger_ShowInfo ( debugger, "dbg", 0, 1 ) ;
-        //CSL_PrintDataStack () ;
-        //Pause () ;
-    }
+    if ( ! GetState ( _CSL_, CO_ON ) ) iPrintf ( "\nOptimize is now off\n" ), Pause () ;
+    //SetState (_CSL_, CO_ON, false ) ;
 }
 
 #endif

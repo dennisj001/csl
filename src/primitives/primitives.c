@@ -1,10 +1,11 @@
 #include "../include/csl.h"
 
-void CSL_S9fes ( ) ;
+//void CSL_S9fes ( ) ;
 
 CPrimitive CPrimitives [] = {
     //{ "flisp", 0, 0, 0, CSL_Flisp, 0, 0, 0, "Flisp", "Root" },
     { "l9", 0, 0, 0, CSL_Lisp9, 0, 0, 0, "L9", "Root" },
+    { "jforth", 0, 0, 0, jforth, 0, 0, 0, "jForth", "Root" },
     //{ "s9fes", 0, 0, 0, CSL_S9fes, 0, 0, 0, "L9", "Root" },
 
     { "locationPush", 0, 0, 0, Location_PushNew, 0, 0, 0, "Experimental", "Root" },
@@ -431,14 +432,16 @@ CPrimitive CPrimitives [] = {
     { "$", 0, 0, 0, _shell, 0, 0, 0, "Shell", "Root" },
     { "sh", 0, 0, 0, shell, 0, 0, 0, "Shell", "Root" },
 
-    { "fopen", 0, 0, 0, File_Open, CATEGORY_OP_STACK | PREFIXABLE, 0, 0, "File", "System" },
+    { "fopen", 0, 0, 0, File_Open, PREFIXABLE, 0, 0, "File", "System" },
     { "fclose", 0, 0, 0, File_Close, PREFIXABLE, 0, 0, "File", "System" },
     { "fwrite", 0, 0, 0, File_Write, PREFIXABLE, 0, 0, "File", "System" },
-    { "fread", 0, 0, 0, File_Read, CATEGORY_OP_STACK | PREFIXABLE, 0, 0, "File", "System" },
+    { "fread", 0, 0, 0, File_Read, PREFIXABLE, 0, 0, "File", "System" },
     { "fseek", 0, 0, 0, File_Seek, PREFIXABLE, 0, 0, "File", "System" },
-    { "ftell", 0, 0, 0, File_Tell, CATEGORY_OP_STACK | PREFIXABLE, 0, 0, "File", "System" },
-    { "fsize", 0, 0, 0, File_Size, CATEGORY_OP_STACK | PREFIXABLE, 0, 0, "File", "System" },
-    { "fexists", 0, 0, 0, File_Exists, CATEGORY_OP_STACK | PREFIXABLE, 0, 0, "File", "System" },
+    { "ftell", 0, 0, 0, File_Tell, PREFIXABLE, 0, 0, "File", "System" },
+    { "fsize", 0, 0, 0, File_Size, PREFIXABLE, 0, 0, "File", "System" },
+    { "fexists", 0, 0, 0, File_Exists, PREFIXABLE, 0, 0, "File", "System" },
+    { "cd", 0, 1, 0, File_ChangeDirectory, PREFIXABLE, 0, 0, "File", "System" },
+    { "pwd", 0, 0, 0, File_GetCurrentDirectory, PREFIXABLE, 0, 0, "File", "System" },
     { "freadToString", 0, 0, 0, File_ReadToString, PREFIXABLE, 0, 0, "File", "System" },
 
     { "setDefaultRGB", 0, 0, 0, CSL_SetDefaultRGB, 0, 0, 0, "Colors", "System" },

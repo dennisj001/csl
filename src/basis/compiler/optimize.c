@@ -50,6 +50,7 @@
 int64
 CO_CheckOptimize ( Compiler * compiler, int64 _specialReturn )
 {
+    //SetState ( _CSL_, CO_ON, false ) ;
     int64 specialReturn = _specialReturn ? _specialReturn : compiler->OptimizeForcedReturn ;
     if ( ( ! specialReturn ) && GetState ( _CSL_, CO_ON ) )
     {
@@ -575,7 +576,7 @@ CO_OptimizeOp2Literals ( Compiler * compiler )
     CompileOptimizeInfo * optInfo = compiler->OptInfo ;
 
     if ( optInfo->wordArg1->Coding ) SetHere ( optInfo->wordArg1->Coding ) ;
-    int64 value ;
+    int64 value, svOpState = GetState ( _CSL_, CO_ON );
     // a little tricky here ...
     // maybe we should setup a special compiler stack and use it here ? ... but no we are setting up for Block_Eval !!
     DataStack_Push ( ( int64 ) * optInfo_0_two->W_PtrToValue ) ;
@@ -584,7 +585,7 @@ CO_OptimizeOp2Literals ( Compiler * compiler )
     SetState ( _CSL_, CO_ON, false ) ; //prevent recursion here
     //Word_Run ( optInfo_0_zero ) ;
     Block_Eval ( optInfo_0_zero->Definition ) ; // no type checking
-    SetState ( _CSL_, CO_ON, true ) ; // restore state ; CO_ON had to be true/on else we wouldn't have entered _Compiler_CheckOptimize
+    SetState ( _CSL_, CO_ON, svOpState ) ; // restore state ; CO_ON had to be true/on else we wouldn't have entered _Compiler_CheckOptimize
     SetState ( compiler, COMPILE_MODE, true ) ;
     value = DataStack_Pop ( ) ;
     SetHere ( optInfo_0_two->Coding ) ;

@@ -519,6 +519,7 @@
 #define HISTORY_STRING ( (uint64) 1 << 27 )
 #define STATIC_MEM ( (uint64) 1 << 28 )
 #define PRE_STATIC_MEM ( (uint64) 1 << 29 )
+#define FORTH_SPACE ( (uint64) 1 << 30 )
 
 //#define ALL      ( INTERNAL | EXTERNAL | csl | TEMPORARY | DATA_STACK | SESSION )
 
@@ -743,6 +744,7 @@
 #define TDI_PARSING ( (uint64) 1 << 38 )
 #define LISP_MODE ( (uint64) 1 << 39 )
 #define RUN_MODE ( (uint64) 1 << 40 )
+#define JFORTH_MODE ( (uint64) 1 << 41 )
 
 #define NON_INLINABLE ( (uint64) 1 << 0 )
 #define DONE true
@@ -918,4 +920,9 @@
 #if ! NEW_SAVE_RESTORE 
 #define _Word_SaveRegisterVariables( word )
 #define _Word_RestoreRegisterVariables( word ) 
+#endif
+
+#if 1 // jforth
+#define CELL_BASE_TYPE int
+#define DOUBLE_CELL_BASE_TYPE long
 #endif

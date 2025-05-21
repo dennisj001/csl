@@ -307,7 +307,7 @@ void
 CSL_ArrayModeOff_OptimizeOn ( void )
 {
     SetState ( _Compiler_, ARRAY_MODE, false ) ;
-    CSL_OptimizeOn ( ) ;
+    if ( _Compiler_->SaveOptimizeState ) CSL_OptimizeOn ( ) ;
 }
 
 void
