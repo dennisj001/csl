@@ -126,6 +126,10 @@
           <in>udis86.h</in>
         </df>
         <df name="primitives">
+          <df name="c">
+            <in>forth.h</in>
+            <in>params.c</in>
+          </df>
           <df name="nga-c">
             <in>config.h</in>
             <in>dev-blocks.c</in>
@@ -157,8 +161,11 @@
           <in>debuggers.c</in>
           <in>disassembler.c</in>
           <in>file.c</in>
+          <in>forth.h</in>
           <in>interpreters.c</in>
           <in>ios.c</in>
+          <in>kernel.c</in>
+          <in>kernel.original.c</in>
           <in>lbForth.c</in>
           <in>ls9.c</in>
           <in>maths.c</in>

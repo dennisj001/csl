@@ -21,8 +21,9 @@ SOURCES = src/basis/compiler/_compile.c src/basis/compiler/memory.c\
 	src/primitives/compilers.c src/primitives/words.c  src/primitives/file.c src/primitives/stacks.c \
 	src/primitives/debuggers.c src/primitives/memorys.c src/primitives/primitives.c src/primitives/contexts.c\
 	src/primitives/disassembler.c src/primitives/syntaxes.c src/primitives/cmaths.c src/primitives/dataObjectNews.c src/basis/openVmTil.c\
-	src/basis/debug/debuggerSteppingSetup.c src/basis/compiler/machineCode.c src/primitives/shell.c	src/primitives/lbForth.c\
-	src/primitives/ls9.c src/primitives/nga-c/retro.c
+	src/basis/debug/debuggerSteppingSetup.c src/basis/compiler/machineCode.c src/primitives/shell.c\
+	src/primitives/ls9.c src/primitives/nga-c/retro.c src/primitives/kernel.c
+#	src/primitives/lbForth.c\
 	
 S9_SOURCES = src/primitives/s9.c src/primitives/s9core.c
 
@@ -115,6 +116,10 @@ _csl_O3 : cslo
 
 _cslo :  src/include/prototypes.h $(ALL_OBJECTS)
 	$(CC) $(CFLAGS) $(ALL_OBJECTS) -o $(OUT) $(LIBS)
+	
+src/primitives/kernel.o  : src/primitives/kernel.c
+	gcc -ggdb -O2 -fomit-frame-pointer -fno-unit-at-a-time -Itargets/c  -c -o src/primitives/kernel.o src/primitives/kernel.c
+#	gcc  -O2  -o src/primitives/kernel.o src/primitives/kernel.c
 
 src/primitives/cmaths.o : src/primitives/cmaths.c
 	$(CC) $(CFLAGS) -O3 -c src/primitives/cmaths.c -o src/primitives/cmaths.o

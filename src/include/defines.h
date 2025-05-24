@@ -748,6 +748,7 @@
 #define RUN_MODE ( (uint64) 1 << 40 )
 #define JFORTH_MODE ( (uint64) 1 << 41 )
 #define RETRO_MODE ( (uint64) 1 << 42 )
+#define FORTH_MODE ( (uint64) 1 << 43 )
 
 #define NON_INLINABLE ( (uint64) 1 << 0 )
 #define DONE true

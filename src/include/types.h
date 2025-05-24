@@ -1159,7 +1159,7 @@ typedef struct
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
 
-#if 1 // jforth
+#if 0// jforth
 typedef CELL_BASE_TYPE scell;
 typedef DOUBLE_CELL_BASE_TYPE dscell;
 typedef unsigned CELL_BASE_TYPE cell;
@@ -1233,4 +1233,36 @@ struct NgaState {
 
   FILE *OpenFileHandles[MAX_OPEN_FILES];
 };
+#endif
+#if 1 // lbForth - kernel.c
+#define REGPARM
+
+typedef long int cell;
+typedef char char_t;
+typedef unsigned char uchar_t;
+typedef struct word *nt_t;
+typedef struct word *xt_t;
+typedef xt_t * REGPARM code_t (xt_t *, nt_t);
+
+#define NAME_LENGTH 16
+
+struct word
+{
+  uchar_t nlen;
+  char_t name[NAME_LENGTH - 1];
+  nt_t next;
+  cell *does;
+  code_t *code;
+  cell param[];
+};
+
+#define NEXT_XT  (*IP++)
+#define EXECUTE(XT)  IP = (XT)->code (IP, XT)
+
+extern struct word SP_word, RP_word;
+
+#define POP_lbf(TYPE)	((TYPE)(*(*((cell **)SP_word.param))++))
+#define PUSH_lbf(X)		(*--(*((cell **)SP_word.param)) = (cell)(X))
+#define RPOP(TYPE)	((TYPE)(*(*((cell **)RP_word.param))++))
+#define RPUSH(X)	(*--(*((cell **)RP_word.param)) = (cell)(X))
 #endif
