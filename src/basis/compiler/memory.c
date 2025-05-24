@@ -16,7 +16,7 @@ Compile_TosRmToTOS ( )
 void
 _Compile_Set_C_LValue_WithImm_ThruReg ( byte * address, int64 value, Boolean rm, byte operandSize )
 {
-    Compile_MoveImm_To_Reg ( rm, ( int64 ) address, CELL ) ;
+    Compile_MoveImm_To_Reg ( rm, ( int64 ) address, CELL_SIZE ) ;
     Compile_MoveImm_To_Mem ( rm, value, operandSize ) ;
 }
 

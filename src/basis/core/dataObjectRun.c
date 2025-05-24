@@ -84,10 +84,10 @@ _CSL_Do_LocalObject ( Word * word, Boolean force )
         && ( ! GetState ( word, W_INITIALIZED ) ) ) ) // this is a local variable so it is initialed at creation 
     {
         int64 size = word->ObjectByteSize ? word->ObjectByteSize : _Namespace_VariableValueGet ( word->TypeNamespace, ( byte* ) "size" ) ;
-        Compile_MoveImm_To_Reg ( RDI, ( int64 ) word->TypeNamespace, CELL ) ;
+        Compile_MoveImm_To_Reg ( RDI, ( int64 ) word->TypeNamespace, CELL_SIZE ) ;
         _Compile_LEA ( RSI, FP, 0, LocalVar_Disp ( word ) ) ;
         //_Compile_Move_Rm_To_Reg ( RSI, RSI, 0 ) ;
-        Compile_MoveImm_To_Reg ( RDX, ( int64 ) size, CELL ) ;
+        Compile_MoveImm_To_Reg ( RDX, ( int64 ) size, CELL_SIZE ) ;
         Compile_Call_TestRSP ( ( byte* ) _Do_LocalObject_AllocateInit ) ; // we want to only allocate this object once and only at run time; and not at compile time
         SetState ( word, W_INITIALIZED, true ) ;
     }
@@ -268,7 +268,7 @@ _Do_LiteralValue ( int64 value )
 {
     if ( CompileMode )
     {
-        Compile_MoveImm_To_Reg ( ACC, value, CELL ) ;
+        Compile_MoveImm_To_Reg ( ACC, value, CELL_SIZE ) ;
         CSL_CompileAndRecord_PushAccum ( ) ; // does word == top of word stack always
     }
     else DataStack_Push ( value ) ;
@@ -413,7 +413,7 @@ CSL_Do_AccumulatedAddress ( Word * word, byte * accumulatedAddress, int64 offset
     {
         Namespace * ns = TypeNamespace_Get ( word ) ;
         byte size = 0 ;
-        size = ( ns ? ( int64 ) _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) : CELL ) ;
+        size = ( ns ? ( int64 ) _Namespace_VariableValueGet ( ns, ( byte* ) "size" ) : CELL_SIZE ) ;
         if ( ( word->W_ObjectAttributes & O_POINTER ) || ( ns->W_ObjectAttributes & OBJECT ) ) size = 8 ;
         //else size = 8 ;
 

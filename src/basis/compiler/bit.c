@@ -113,7 +113,7 @@ Compile_X_Shift ( Compiler * compiler, int64 op, Boolean stackFlag, Boolean opEq
         else
         {
             _Compile_Move_StackN_To_Reg (OREG, DSP, 0 , 0) ;
-            Compile_SUBI ( REG, DSP, 0, CELL, BYTE ) ;
+            Compile_SUBI ( REG, DSP, 0, CELL_SIZE, BYTE ) ;
         }
         //_Compile_Group2_CL ( int64 mod, int64 regOpCode, int64 rm, int64 sib, cell disp )
         _Compile_Group2_CL ( MEM, op, DSP, 0, 0 ) ;

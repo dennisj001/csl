@@ -55,13 +55,13 @@ LocalVar_FpOffset ( Word * word )
 inline int64
 LocalVar_Disp ( Word * word )
 {
-    return ( word->Index * CELL ) ;
+    return ( word->Index * CELL_SIZE ) ;
 }
 
 inline int64
 ParameterVar_Disp ( Word * word )
 {
-    return ( Compiler_ParameterVar_Offset ( _Compiler_, word ) * CELL ) ;
+    return ( Compiler_ParameterVar_Offset ( _Compiler_, word ) * CELL_SIZE ) ;
 }
 
 inline int64
@@ -182,8 +182,8 @@ _Compiler_AddLocalFrame ( Compiler * compiler )
 {
     Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
     _Compile_Move_Reg_To_StackN ( DSP, 1, FP, 0 ) ; // save pre fp
-    _Compile_LEA ( FP, DSP, 0, CELL ) ; // set new fp
-    Compile_ADDI ( REG, DSP, 0, 1 * CELL, INT32_SIZE ) ; // 1 : fp - add stack frame -- this value is going to be reset 
+    _Compile_LEA ( FP, DSP, 0, CELL_SIZE ) ; // set new fp
+    Compile_ADDI ( REG, DSP, 0, 1 * CELL_SIZE, INT32_SIZE ) ; // 1 : fp - add stack frame -- this value is going to be reset 
     compiler->FrameSizeCellOffset = ( int64* ) ( Here - INT32_SIZE ) ; // in case we have to add to the framesize with nested locals
     d0 ( if ( Is_DebugOn ) Compile_Call_TestRSP ( ( byte* ) _CSL_Debugger_Locals_Show ) ) ;
 }
@@ -193,7 +193,7 @@ Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 {
     int64 size = compiler->NumberOfLocals ; // new save/restore regs setup
     //int64 size = compiler->NumberOfNonRegisterLocals ; 
-    int64 fsize = compiler->LocalsFrameSize = ( ( ( size <= 0 ? 0 : size ) + 1 ) * CELL ) ; //1 : the frame pointer 
+    int64 fsize = compiler->LocalsFrameSize = ( ( ( size <= 0 ? 0 : size ) + 1 ) * CELL_SIZE ) ; //1 : the frame pointer 
     if ( fsize ) *( ( int32* ) ( compiler->FrameSizeCellOffset ) ) = fsize ; //compiler->LocalsFrameSize ; //+ ( IsSourceCodeOn ? 8 : 0 ) ;
 }
 
@@ -256,7 +256,7 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
     int64 parameterVarsSubAmount = 0 ;
     Word * returnVariable = compiler->ReturnVariableWord ; //? compiler->ReturnVariableWord : compiler->ReturnWord ; //?  compiler->ReturnLParenVariableWord :  compiler->ReturnWord ;
     Boolean returnValueFlag = GetState ( compiler, RETURN_TOS ) || returnVariable ;
-    if ( compiler->NumberOfArgs ) parameterVarsSubAmount = ( compiler->NumberOfArgs - returnValueFlag ) * CELL ;
+    if ( compiler->NumberOfArgs ) parameterVarsSubAmount = ( compiler->NumberOfArgs - returnValueFlag ) * CELL_SIZE ;
     //if ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs )
     if ( compiler->NumberOfLocals || compiler->NumberOfArgs )
     {
@@ -272,14 +272,14 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
             }
         }
         // remove the incoming parameters -- like in C
-        _Compile_LEA ( DSP, FP, 0, - CELL ) ; // restore sp - release locals stack frame
+        _Compile_LEA ( DSP, FP, 0, - CELL_SIZE ) ; // restore sp - release locals stack frame
         _Compile_Move_StackN_To_Reg ( FP, DSP, 1, 0 ) ; // restore the saved pre fp - cf AddLocalsFrame
     }
     if ( ( parameterVarsSubAmount > 0 ) && ( ! IsWordRecursive ) ) Compile_SUBI ( REG, DSP, 0, parameterVarsSubAmount, 0 ) ; // remove stack variables ; recursive handled below
         // add a place on the stack for return value
     else if ( parameterVarsSubAmount < 0 ) Compile_ADDI ( REG, DSP, 0, abs ( parameterVarsSubAmount ), 0 ) ;
     else if ( ( parameterVarsSubAmount == 0 ) && returnValueFlag && ( ! compiler->NumberOfNonRegisterArgs ) && ( ! compiler->NumberOfArgs ) )
-        Compile_ADDI ( REG, DSP, 0, CELL, 0 ) ;
+        Compile_ADDI ( REG, DSP, 0, CELL_SIZE, 0 ) ;
     // nb : stack was already adjusted accordingly for this above by reducing the SUBI subAmount or adding if there weren't any parameter variables
     if ( returnValueFlag || IsWordRecursive )
     {

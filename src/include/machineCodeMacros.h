@@ -90,6 +90,6 @@
 #define _Compile_TestImm_0_Rm( rm, sib, disp ) _Compile_Test ( MEM, 0, rm, disp, 0 )
 #endif
 #define  PUSH_IMM    0x68      
-#define _Compile_PushRspImm( data ) _Compile_Write_Instruction_X64 (0, 0, PUSH_IMM, 0, 0, 0, 0, 0, 0, CELL )
+#define _Compile_PushRspImm( data ) _Compile_Write_Instruction_X64 (0, 0, PUSH_IMM, 0, 0, 0, 0, 0, 0, CELL_SIZE )
 
 

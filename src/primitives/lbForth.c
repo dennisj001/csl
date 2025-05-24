@@ -197,51 +197,6 @@ putkey ( char chr )
     putc ( chr, _ReadLiner_->OutputFile ) ;
 }
 
-/* The primary data input function. This is where you place the code to e.g.
- * read from a serial line. */
-int
-llkey ( )
-{
-    if ( *forth->initscript_pos ) return *( forth->initscript_pos ++ ) ;
-    //return getchar();
-    int chr = _CSL_Key ( _ReadLiner_ ) ; //  fgetc ( _ReadLiner_->InputFile ) ; //getchar();
-    putkey ( chr ) ;
-    return chr ;
-}
-
-/* Anything waiting in the keyboard buffer? */
-int
-keyWaiting ( )
-{
-    return forth->positionInLineBuffer < forth->charsInLineBuffer ? - 1 : 0 ;
-}
-
-/* Line buffered character input. We're duplicating the functionality of the
- * stdio library forth->here to make the code easier to port to other input sources */
-int
-getkey ( )
-{
-    int c ;
-
-    if ( keyWaiting ( ) )
-        return forth->lineBuffer[ forth->positionInLineBuffer ++] ;
-
-    forth->charsInLineBuffer = 0 ;
-    while ( ( c = llkey ( ) ) != EOF )
-    {
-        if ( forth->charsInLineBuffer == sizeof (forth->lineBuffer ) ) break ;
-        forth->lineBuffer[ forth->charsInLineBuffer ++] = c ;
-        //if (c == '\n') break;
-        if ( ( c == '\r' ) || ( c == '\n' ) ) break ;
-    }
-
-    //if ( ( c == '\r' ) || ( c == '\n' ) ) oPrintf ( "\n " ) ;
-    if ( ( c == '\r' ) ) putkey ( '\n' ) ;
-
-    forth->positionInLineBuffer = 1 ;
-    return forth->lineBuffer[0] ;
-}
-
 /* C string output */
 void
 tell ( const char *str )
@@ -356,76 +311,6 @@ writeMem ( cell address, cell value )
         return ;
     }
     *( ( cell* ) ( forth->memory + address ) ) = value ;
-}
-
-/* Reading a word into the input line buffer */
-byte
-readWord ( )
-{
-    char *line = ( char* ) forth->memory ;
-    byte len = 0 ;
-    int c ;
-
-    while ( ( c = getkey ( ) ) != EOF )
-    {
-        if ( c == ' ' ) continue ;
-        if ( c == '\n' ) continue ;
-        if ( c != '\\' ) break ;
-
-        while ( ( c = getkey ( ) ) != EOF )
-            if ( c == '\n' )
-                break ;
-    }
-
-    while ( c != ' ' && c != '\n' && c != '\r' && c != EOF )
-    {
-        if ( len >= ( INPUT_LINE_SIZE - 1 ) )
-            break ;
-        line[++ len] = c ;
-        c = getkey ( ) ;
-    }
-    line[0] = len ;
-    return len ;
-}
-
-/* Reading a word into the input line buffer */
-byte
-_readWord ( )
-{
-    char *line = ( char* ) forth->memory ;
-    byte len = 0 ;
-#if 0     
-    int c ;
-
-    while ( ( c = getkey ( ) ) != EOF )
-    {
-        if ( c == ' ' ) continue ;
-        if ( c == '\n' ) continue ;
-        if ( c != '\\' ) break ;
-
-        while ( ( getkey ( ) ) != EOF )
-            if ( c == '\n' )
-                break ;
-    }
-
-    while ( c != ' ' && c != '\n' && c != '\r' && c != EOF )
-    {
-        if ( len >= ( INPUT_LINE_SIZE - 1 ) )
-            break ;
-        line[++ len] = c ;
-        getkey ( ) ;
-    }
-#endif
-    byte * token = _Lexer_ReadToken ( _Lexer_, " ,\n\r\t" ) ;
-    if ( token )
-    {
-        strcpy ( ( char* ) &line[1], ( char* ) token ) ;
-        len = _Lexer_->Token_Length ;
-        forth->charsInLineBuffer = len ;
-        if ( ( _Lexer_->CurrentChar == '\n' ) || ( _Lexer_->CurrentChar == '\r' ) ) oPrintf ( "\n " ) ;
-    }
-    line[0] = len ;
-    return len ;
 }
 
 /* toupper() clone so we don't have to pull in ctype.h */
@@ -758,105 +643,7 @@ BUILTIN ( 37, "LIT", lit, 0 )
 /* Outer and inner interpreter, TODO split up */
 BUILTIN ( 38, "QUIT", quit, 0 )
 {
-    cell address ;
-    dcell number ;
-    cell notRead ;
-    cell command ;
-    int i ;
-    byte isDouble ;
-    cell tmp[2] ;
-
-    int immediate ;
-
-    for ( forth->exitReq = 0 ; forth->exitReq == 0 ; )
-    {
-        forth->lastIp = forth->next = forth->quit_address ;
-        forth->errorFlag = 0 ;
-
-        word ( ) ;
-        find ( ) ;
-
-        address = jf_pop ( ) ;
-        if ( address )
-        {
-            immediate = ( forth->memory[address + JF_CELL_SIZE] & FLAG_IMMEDIATE ) ;
-            forth->commandAddress = getCfa ( address ) ;
-            command = readMem ( forth->commandAddress ) ;
-            if ( *forth->state && ! immediate )
-            {
-                if ( command < MAX_BUILTIN_ID && command != docol_id )
-                    jf_push ( command ) ;
-                else
-                    jf_push ( forth->commandAddress ) ;
-                comma ( ) ;
-            }
-            else
-            {
-                while ( ! forth->errorFlag && ! forth->exitReq )
-                {
-                    if ( command == quit_id ) break ;
-                    else if ( command < MAX_BUILTIN_ID ) forth->builtins[command]( ) ;
-                    else
-                    {
-                        forth->lastIp = forth->next ;
-                        forth->next = command ;
-                    }
-
-                    forth->commandAddress = forth->next ;
-                    command = readMem ( forth->commandAddress ) ;
-                    forth->next += JF_CELL_SIZE ;
-                }
-            }
-        }
-        else
-        {
-            parseNumber ( &forth->memory[1], forth->memory[0], &number, &notRead, &isDouble ) ;
-            if ( notRead )
-            {
-                tell ( "Unknown word: " ) ;
-                for ( i = 0 ; i < forth->memory[0] ; i ++ )
-                    putkey ( forth->memory[i + 1] ) ;
-                putkey ( '\n' ) ;
-
-                *forth->sp = * forth->rsp = 1 ;
-                continue ;
-            }
-            else
-            {
-                if ( *forth->state )
-                {
-                    *( ( dcell* ) tmp ) = number ;
-                    jf_push ( lit_id ) ;
-                    comma ( ) ;
-
-                    if ( isDouble )
-                    {
-                        jf_push ( tmp[0] ) ;
-                        comma ( ) ;
-                        jf_push ( lit_id ) ;
-                        comma ( ) ;
-                        jf_push ( tmp[1] ) ;
-                        comma ( ) ;
-                    }
-                    else
-                    {
-                        jf_push ( ( cell ) number ) ;
-                        comma ( ) ;
-                    }
-                }
-                else
-                {
-                    if ( isDouble ) dpush ( number ) ;
-                    else jf_push ( ( cell ) number ) ;
-                }
-            }
-        }
-
-        if ( forth->errorFlag )
-            *forth->sp = * forth->rsp = 1 ;
-        else if ( ! keyWaiting ( ) && ! ( * forth->initscript_pos ) )
-            tell ( " OK\n" ) ;
-    }
+    _quit ( ) ;
 }
 
 BUILTIN ( 39, "+", plus, 0 )
@@ -1312,30 +1099,252 @@ _jforth ( )
     //return 1;
 
     forth->initscript_pos = ( char* ) initScript ;
+    //_readWord () ;
     quit ( ) ;
     //return 0;
 }
 
+/* Outer and inner interpreter, TODO split up */
+void
+_quit ( )
+{
+    cell address ;
+    dcell number ;
+    cell notRead ;
+    cell command ;
+    int i ;
+    byte isDouble ;
+    cell tmp[2] ;
+
+    int immediate ;
+
+    for ( forth->exitReq = 0 ; forth->exitReq == 0 ; )
+    {
+        forth->lastIp = forth->next = forth->quit_address ;
+        forth->errorFlag = 0 ;
+
+        word ( ) ;
+        find ( ) ;
+
+        address = jf_pop ( ) ;
+        if ( address )
+        {
+            immediate = ( forth->memory[address + JF_CELL_SIZE] & FLAG_IMMEDIATE ) ;
+            forth->commandAddress = getCfa ( address ) ;
+            command = readMem ( forth->commandAddress ) ;
+            if ( *forth->state && ! immediate )
+            {
+                if ( command < MAX_BUILTIN_ID && command != docol_id )
+                    jf_push ( command ) ;
+                else
+                    jf_push ( forth->commandAddress ) ;
+                comma ( ) ;
+            }
+            else
+            {
+                while ( ! forth->errorFlag && ! forth->exitReq )
+                {
+                    if ( command == quit_id ) break ;
+                    else if ( command < MAX_BUILTIN_ID ) forth->builtins[command]( ) ;
+                    else
+                    {
+                        forth->lastIp = forth->next ;
+                        forth->next = command ;
+                    }
+
+                    forth->commandAddress = forth->next ;
+                    command = readMem ( forth->commandAddress ) ;
+                    forth->next += JF_CELL_SIZE ;
+                }
+            }
+        }
+        else
+        {
+            parseNumber ( &forth->memory[1], forth->memory[0], &number, &notRead, &isDouble ) ;
+            if ( notRead )
+            {
+                tell ( "Unknown word: " ) ;
+                for ( i = 0 ; i < forth->memory[0] ; i ++ )
+                    putkey ( forth->memory[i + 1] ) ;
+                putkey ( '\n' ) ;
+
+                *forth->sp = * forth->rsp = 1 ;
+                continue ;
+            }
+            else
+            {
+                if ( *forth->state )
+                {
+                    *( ( dcell* ) tmp ) = number ;
+                    jf_push ( lit_id ) ;
+                    comma ( ) ;
+
+                    if ( isDouble )
+                    {
+                        jf_push ( tmp[0] ) ;
+                        comma ( ) ;
+                        jf_push ( lit_id ) ;
+                        comma ( ) ;
+                        jf_push ( tmp[1] ) ;
+                        comma ( ) ;
+                    }
+                    else
+                    {
+                        jf_push ( ( cell ) number ) ;
+                        comma ( ) ;
+                    }
+                }
+                else
+                {
+                    if ( isDouble ) dpush ( number ) ;
+                    else jf_push ( ( cell ) number ) ;
+                }
+            }
+        }
+
+        if ( forth->errorFlag )
+            *forth->sp = * forth->rsp = 1 ;
+        else if ( ! keyWaiting ( ) && ! ( * forth->initscript_pos ) )
+            tell ( " OK\n" ) ;
+    }
+}
+
+/* The primary data input function. This is where you place the code to e.g.
+ * read from a serial line. */
+int
+llkey ( )
+{
+    if ( *forth->initscript_pos ) return *( forth->initscript_pos ++ ) ;
+    int chr = ReadLine_NextChar ( _ReadLiner_ ) ; //getchar();
+    //int chr = _CSL_Key ( _ReadLiner_ ) ; //  fgetc ( _ReadLiner_->InputFile ) ; //getchar();
+    //putkey ( chr ) ;
+    return chr ;
+}
+
+/* Anything waiting in the keyboard buffer? */
+int
+keyWaiting ( )
+{
+    return forth->positionInLineBuffer < forth->charsInLineBuffer ? - 1 : 0 ;
+}
+
+/* Line buffered character input. We're duplicating the functionality of the
+ * stdio library forth->here to make the code easier to port to other input sources */
+int
+getkey ( )
+{
+    int c ;
+
+    if ( keyWaiting ( ) )
+        return forth->lineBuffer[ forth->positionInLineBuffer ++] ;
+
+    forth->charsInLineBuffer = 0 ;
+    while ( ( c = llkey ( ) ) != EOF )
+    {
+        if ( forth->charsInLineBuffer == sizeof (forth->lineBuffer ) ) break ;
+        forth->lineBuffer[ forth->charsInLineBuffer ++] = c ;
+        if ( ( c == '\r' ) || ( c == '\n' ) ) break ;
+    }
+    if ( ( c == '\r' ) ) putkey ( '\n' ) ;
+
+    forth->positionInLineBuffer = 1 ;
+    return forth->lineBuffer[0] ;
+}
+
+/* Reading a word into the input line buffer */
+byte
+readWord ( )
+{
+    char *line = ( char* ) forth->memory ;
+    byte len = 0 ;
+    int c ;
+
+    while ( ( c = getkey ( ) ) != EOF )
+    {
+        if ( c == ' ' ) continue ;
+        if ( c == '\n' ) continue ;
+        if ( c != '\\' ) break ;
+
+        while ( ( c = getkey ( ) ) != EOF )
+            if ( c == '\n' )
+                break ;
+    }
+
+    while ( c != ' ' && c != '\n' && c != '\r' && c != EOF )
+    {
+        if ( len >= ( INPUT_LINE_SIZE - 1 ) )
+            break ;
+        line[++ len] = c ;
+        c = getkey ( ) ;
+    }
+    line[0] = len ;
+    return len ;
+}
+#if 0
+/* Reading a word into the input line buffer */
+byte
+_readWord ( )
+{
+    char *line = ( char* ) forth->memory ;
+    byte len = 0 ;
+#if 0     
+    int c ;
+
+    while ( ( c = getkey ( ) ) != EOF )
+    {
+        if ( c == ' ' ) continue ;
+        if ( c == '\n' ) continue ;
+        if ( c != '\\' ) break ;
+
+        while ( ( getkey ( ) ) != EOF )
+            if ( c == '\n' )
+                break ;
+    }
+
+    while ( c != ' ' && c != '\n' && c != '\r' && c != EOF )
+    {
+        if ( len >= ( INPUT_LINE_SIZE - 1 ) )
+            break ;
+        line[++ len] = c ;
+        getkey ( ) ;
+    }
+#endif
+    ReadLine_GetLine ( ) ;
+    byte * token = _Lexer_ReadToken ( _Lexer_, " ,\n\r\t" ) ;
+    if ( token )
+    {
+        strcpy ( ( char* ) &line[1], ( char* ) token ) ;
+        len = _Lexer_->Token_Length ;
+        forth->charsInLineBuffer = len ;
+        if ( ( _Lexer_->CurrentChar == '\n' ) || ( _Lexer_->CurrentChar == '\r' ) ) oPrintf ( "\n " ) ;
+    }
+    line[0] = len ;
+    //ReadLine_GetLine ( ) ;
+    return len ;
+}
+#endif
+
+#if 0
 void
 jforth ( ) //Context * cntx , byte * initFilename )
 {
     forth = ( Forth * ) Mem_Allocate ( sizeof (Forth ), FORTH_SPACE ) ;
-    //memset ( forth, 0, sizeof (Forth)) ;
+    //ReadLine_GetLine ( ) ;
     _jforth ( ) ;
-    //gettoken ( ) ;
-    //jForth_Repl ( ) ;
     OVT_MemList_FreeNBAMemory ( ( byte* ) "ForthSpace", 1 * M, 1 ) ;
 }
 
-#if 0
+#else
 void
-jForth_Repl ( ) //Context * cntx , byte * initFilename )
+jForth ( ) //Context * cntx , byte * initFilename )
 {
     SetState ( _Context_, JFORTH_MODE, true ) ;
     iPrintf ( "\ncsl jforth : type '..', 'exit', 'quit to exit jforth interpreter" ) ;
     //if ( ! initFilename ) initFilename = ( byte* ) "namespaces/compiler/lcinit.csl" ; //
     SetState ( _Context_, AT_COMMAND_LINE, true ) ;
+    forth = ( Forth * ) Mem_Allocate ( sizeof (Forth ), FORTH_SPACE ) ;
     _Repl ( _Context_, ( block ) quit ) ;
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "ForthSpace", 1 * M, 1 ) ;
     iPrintf ( "\nleaving csl jforth : returning to csl interpreter\n" ) ;
 }
 

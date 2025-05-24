@@ -486,7 +486,7 @@ CO_WordArg2Op_Or_xBetweenArg1AndArg2 ( Compiler * compiler )
             Compile_Move_Rm_To_Reg ( OREG, DSP, 0, 0 ) ;
             Compile_Move_Rm_To_Reg ( OREG, OREG, 0, 0 ) ;
             _Compile_Move_StackN_To_Reg ( ACC, DSP, - 1, 0 ), optInfo->CO_Reg = ACC | REG_LOCK_BIT ;
-            Compile_SUBI ( REG, DSP, 0, 2 * CELL, 0 ) ;
+            Compile_SUBI ( REG, DSP, 0, 2 * CELL_SIZE, 0 ) ;
         }
         else CO_StackArgsToStandardRegs ( compiler ) ;
     }
@@ -509,7 +509,7 @@ CO_0Args ( Compiler * compiler )
             else
             {
                 _Compile_Move_StackN_To_Reg ( ACC, DSP, 0, 0 ), optInfo->CO_Reg = ACC | REG_LOCK_BIT ;
-                Compile_SUBI ( REG, DSP, 0, CELL, 0 ) ;
+                Compile_SUBI ( REG, DSP, 0, CELL_SIZE, 0 ) ;
             }
         }
         else Word_Check_ReSet_To_Here_StackPushRegisterCode ( optInfo->opWord ) ;
@@ -590,7 +590,7 @@ CO_OptimizeOp2Literals ( Compiler * compiler )
     value = DataStack_Pop ( ) ;
     SetHere ( optInfo_0_two->Coding ) ;
     Compiler_Word_SCHCPUSCA ( optInfo_0_two, 1 ) ;
-    Compile_MoveImm_To_Reg ( ACC, value, CELL ) ;
+    Compile_MoveImm_To_Reg ( ACC, value, CELL_SIZE ) ;
     _Word_CompileAndRecord_PushReg ( optInfo->opWord, ACC, true, 0 ) ; // this is helpful in future optimizations looking for StackPushRegisterCode
     optInfo->rtrn = CO_DONE ;
 }
@@ -676,7 +676,7 @@ CO_Dup ( Compiler * compiler )
     if ( optInfo->wordArg2 && optInfo->wordArg2->StackPushRegisterCode )
     {
         _Set_To_Here_Word_StackPushRegisterCode ( optInfo->wordArg2 ) ;
-        Compile_ADDI ( REG, DSP, 0, 2 * CELL, 0 ) ;
+        Compile_ADDI ( REG, DSP, 0, 2 * CELL_SIZE, 0 ) ;
         _Compile_Move_Reg_To_StackN ( DSP, 0, ACC, 0 ) ;
         _Compile_Move_Reg_To_StackN ( DSP, - 1, ACC, 0 ) ;
     }
@@ -822,7 +822,7 @@ doOp:
     SetHere ( CSL_WordList ( 0 )->StackPushRegisterCode ) ;
     if ( mdFlag == 1 )
     {
-        Compile_Move_Reg_To_Rm ( FP, ACC, LocalOrParameterVar_Disp ( dstWord ), CELL ) ;
+        Compile_Move_Reg_To_Rm ( FP, ACC, LocalOrParameterVar_Disp ( dstWord ), CELL_SIZE ) ;
     }
 
     SetState ( _CSL_, IN_OPTIMIZER, false ) ;
@@ -942,7 +942,7 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
             if ( srcWord && ( srcWord->W_ObjectAttributes & OBJECT ) && ( GetState ( _Context_, IS_FORWARD_DOTTED ) ) ) //GetState ( _Context_, (C_SYNTAX | INFIX_MODE) ) ) //if ( GetState ( srcWord, IS_RVALUE ) || GetState ( _Interpreter_->LastWord, IS_RVALUE ) ) 
                 Compile_Move_Rm_To_Reg ( srcReg, srcReg, 0, lvalueSize ) ;
             else SetHere ( dstWord->Coding ) ;
-            Compile_Move_Reg_To_Rm ( FP, srcReg, LocalOrParameterVar_Disp ( dstWord ), CELL ) ;
+            Compile_Move_Reg_To_Rm ( FP, srcReg, LocalOrParameterVar_Disp ( dstWord ), CELL_SIZE ) ;
             goto done ; //return ;
         }
         //DBI_ON ;
@@ -989,7 +989,7 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
             else SetHere ( dstWord->StackPushRegisterCode ) ;
             if ( ! ( srcWord->W_ObjectAttributes & REGISTER_VARIABLE ) )
             {
-                Compile_Move_Rm_To_Reg ( srcReg, FP, LocalOrParameterVar_Disp ( srcWord ), CELL ) ;
+                Compile_Move_Rm_To_Reg ( srcReg, FP, LocalOrParameterVar_Disp ( srcWord ), CELL_SIZE ) ;
                 if ( srcWord && ( srcWord->W_ObjectAttributes & O_POINTER ) )
                     Compile_Move_Rm_To_Reg ( srcReg, srcReg, 0, lvalueSize ) ;
             }
@@ -1050,7 +1050,7 @@ CO_StackArgsToStandardRegs ( Compiler * compiler )
     CompileOptimizeInfo * optInfo = compiler->OptInfo ;
     _Compile_Move_StackN_To_Reg ( OREG, DSP, 0, 0 ), optInfo->CO_Rm = OREG ;
     _Compile_Move_StackN_To_Reg ( ACC, DSP, - 1, 0 ), optInfo->CO_Reg = ACC | REG_LOCK_BIT ;
-    Compile_SUBI ( REG, DSP, 0, 2 * CELL, 0 ) ;
+    Compile_SUBI ( REG, DSP, 0, 2 * CELL_SIZE, 0 ) ;
     SetState ( optInfo, STACK_ARGS_TO_STANDARD_REGS, true ) ;
 }
 

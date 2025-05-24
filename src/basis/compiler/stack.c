@@ -30,7 +30,7 @@ void
 _Compile_SetStackN_WithObject ( Boolean stackReg, int64 n, int64 obj )
 {
     //_Compile_MoveImm ( int64 direction, int64 rm, int64 sib, int64 disp, int64 imm, int64 operandSize )
-    Compile_MoveImm ( MEM, stackReg, n * CELL, obj, CELL ) ;
+    Compile_MoveImm ( MEM, stackReg, n * CELL_SIZE, obj, CELL_SIZE ) ;
 }
 #if 1
 
@@ -40,7 +40,7 @@ _Compile_Stack_Push ( uint8 stackReg, uint8 thruReg, int64 obj )
     //Compile_ADDI ( REG, stackReg, 0, sizeof (int64 ), 0 ) ;
     //_Compile_SetStackN_WithObject ( stackReg, 0, obj ) ;
     //Compile_MoveImm ( REG, reg, 0, n * CELL, obj, CELL ) ;
-    Compile_MoveImm_To_Reg ( thruReg, obj, CELL ) ;
+    Compile_MoveImm_To_Reg ( thruReg, obj, CELL_SIZE ) ;
     _Compile_Stack_PushReg ( stackReg, thruReg, 0 ) ;
 }
 #endif
@@ -73,13 +73,13 @@ _Compile_StackPtrLValue_PopToReg ( uint64 stkPtrLvalue, Boolean tempStkReg, Bool
 void
 _Compile_Move_StackN_To_Reg ( Boolean reg, Boolean stackReg, int64 index, int64 size )
 {
-    Compile_Move_Rm_To_Reg ( reg, stackReg, index * CELL, size ) ;
+    Compile_Move_Rm_To_Reg ( reg, stackReg, index * CELL_SIZE, size ) ;
 }
 
 void
 _Compile_Move_Reg_To_StackN ( Boolean stackReg, int64 index, Boolean reg, int64 size )
 {
-    Compile_Move_Reg_To_Rm ( stackReg, reg, index * CELL, size ) ;
+    Compile_Move_Reg_To_Rm ( stackReg, reg, index * CELL_SIZE, size ) ;
 }
 
 void
@@ -164,7 +164,7 @@ _Compile_Stack_Dup ( Boolean stackReg )
         if ( one && ( ! ( one->W_ObjectAttributes & OBJECT ) ) && one->StackPushRegisterCode ) // for now an object may have an array offset that needs to be considered
         {
             SetHere ( one->StackPushRegisterCode ) ;
-            Compile_ADDI ( REG, DSP, 0, 2 * CELL, 0 ) ;
+            Compile_ADDI ( REG, DSP, 0, 2 * CELL_SIZE, 0 ) ;
             _Compile_Move_Reg_To_StackN ( DSP, 0, ACC, 0 ) ;
             _Compile_Move_Reg_To_StackN ( DSP, - 1, ACC, 0 ) ;
         }
@@ -203,8 +203,8 @@ void
 _Compile_Stack_Swap ( Boolean stackReg )
 {
     Compile_Move_Rm_To_Reg ( OREG, stackReg, 0, 0 ) ;
-    Compile_Move_Rm_To_Reg ( RAX, stackReg, - CELL, 0 ) ;
-    Compile_Move_Reg_To_Rm ( stackReg, OREG, - CELL, 0 ) ;
+    Compile_Move_Rm_To_Reg ( RAX, stackReg, - CELL_SIZE, 0 ) ;
+    Compile_Move_Reg_To_Rm ( stackReg, OREG, - CELL_SIZE, 0 ) ;
     Compile_Move_Reg_To_Rm ( stackReg, RAX, 0, 0 ) ;
 }
 
@@ -217,7 +217,7 @@ Compile_DataStack_PushR8 ( )
 void
 _Compile_RspReg_Push ( int64 value )
 {
-    Compile_MoveImm_To_Reg ( ACC, value, CELL ) ;
+    Compile_MoveImm_To_Reg ( ACC, value, CELL_SIZE ) ;
     _Compile_PushReg ( ACC ) ;
 }
 

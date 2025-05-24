@@ -336,7 +336,7 @@ _LC_Apply_C_LtoR_ArgList ( LambdaCalculus * lc, ListObject * l0, Word * word )
         Set_CompileMode ( true ) ;
         _Debugger_->SpecialPreHere = Here ;
         //System V ABI : "%rax is used to indicate the number of vector arguments passed to a function requiring a variable number of arguments"
-        if ( ( String_Equal ( word->Name, "printf" ) || ( String_Equal ( word->Name, "sprintf" ) ) ) ) Compile_MoveImm_To_Reg ( RAX, i, CELL ) ;
+        if ( ( String_Equal ( word->Name, "printf" ) || ( String_Equal ( word->Name, "sprintf" ) ) ) ) Compile_MoveImm_To_Reg ( RAX, i, CELL_SIZE ) ;
         word = Compiler_CopyDuplicatesAndPush ( word, word->W_RL_Index, word->W_SC_Index ) ;
         Word_Eval ( word ) ;
         if ( word->W_MorphismAttributes & RAX_RETURN ) _Word_CompileAndRecord_PushReg ( word, ACC, true, 0 ) ;

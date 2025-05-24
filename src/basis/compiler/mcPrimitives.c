@@ -54,38 +54,3 @@ CSL_MachineCodePrimitive_AddWords ( CSL * csl )
 #endif    
 }
 
-#if 0
-
-void
-MCP_MoveArrayN_To_Reg ( int64 reg, byte * array, int64 n )
-{
-    // pop reg, array, n
-    // move array to reg
-}
-// useful but not yet in use
-
-void
-Compile_CallCFunction_TestAlignRSP_MoveResultRegRaxToTOS ( byte * cFunction )
-{
-    Compile_Call_ToAddressThruReg_TestAlignRSP ( cFunction, CALL_THRU_REG ) ;
-    _Compile_Stack_PushReg (DSP, RAX , 0) ;
-}
-
-void
-Compile_PushWord_Call_CSL_Function ( Word * word, byte * cFunction )
-{
-    //DBI_ON ;
-    _Compile_Stack_Push ( DSP, RAX, ( int64 ) word ) ;
-    Compile_Call ( ( byte* ) cFunction ) ;
-    //DBI_OFF ;
-}
-
-void
-Compile_CallCFunctionWithParameter_TestAlignRSP ( byte * cFunction, Word * word )
-{
-    Compile_MoveImm_To_Reg ( RDI, ( int64 ) word, CELL ) ; // RDI is x64 abi first parameter 
-    Compile_Call_ToAddressThruReg_TestAlignRSP ( cFunction, CALL_THRU_REG ) ; // compile call cFunction with RDI value as arg
-}
-#endif
-
-

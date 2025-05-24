@@ -25,8 +25,8 @@ void
 Compile_CallCFunctionWithParameter_TestAlignRSP2 ( byte * cFunction, Word * word )
 {
     //DBI_ON ;
-    Compile_MoveImm_To_Reg ( RDI, ( int64 ) word, CELL ) ; // RDI is x64 abi first parameter 
-    Compile_MoveImm_To_Reg ( SREG, ( int64 ) cFunction, CELL ) ;
+    Compile_MoveImm_To_Reg ( RDI, ( int64 ) word, CELL_SIZE ) ; // RDI is x64 abi first parameter 
+    Compile_MoveImm_To_Reg ( SREG, ( int64 ) cFunction, CELL_SIZE ) ;
     Compile_Call ( ( byte* ) _CSL_->Call_ToAddressThruSREG_TestAlignRSP ) ;
     //DBI_OFF ;
 }
@@ -186,7 +186,7 @@ Do_C_Pointer_StackAccess ( byte * ptr )
 {
     if ( Compiling )
     {
-        Compile_MoveImm_To_Reg ( RAX, ( int64 ) ptr, CELL ) ;
+        Compile_MoveImm_To_Reg ( RAX, ( int64 ) ptr, CELL_SIZE ) ;
         Word_Set_StackPushRegisterCode_To_Here ( _Context_->CurrentEvalWord ) ;
         _Compile_Stack_PushReg ( DSP, RAX, 0 ) ;
     }

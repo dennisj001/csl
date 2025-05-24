@@ -11,13 +11,6 @@ typedef unsigned int uint32 ;
 typedef long int int64 ;
 typedef unsigned long int uint64 ;
 typedef uint8 Boolean ;
-#if 1 // jforth
-typedef CELL_BASE_TYPE scell;
-typedef DOUBLE_CELL_BASE_TYPE dscell;
-typedef unsigned CELL_BASE_TYPE cell;
-typedef unsigned DOUBLE_CELL_BASE_TYPE dcell;
-typedef void(*builtin)();
-#endif
 typedef byte * Pointer ;
 typedef Pointer Struct ;
 
@@ -1166,3 +1159,78 @@ typedef struct
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
 
+#if 1 // jforth
+typedef CELL_BASE_TYPE scell;
+typedef DOUBLE_CELL_BASE_TYPE dscell;
+typedef unsigned CELL_BASE_TYPE cell;
+typedef unsigned DOUBLE_CELL_BASE_TYPE dcell;
+typedef void(*builtin)();
+#endif
+#if 1
+// retro.c
+typedef struct NgaState NgaState;
+
+typedef void (*Handler)(NgaState *);
+
+struct NgaCore {
+  CELL sp, rp, ip;            /* Stack & instruction pointers */
+  CELL active;                /* Is core active?              */
+  CELL u;                     /* Should next operation be     */
+                              /* unsigned?                    */
+  CELL data[STACK_DEPTH];     /* The data stack               */
+  CELL address[ADDRESSES];    /* The address stack            */
+
+#ifdef ENABLE_MULTICORE
+  CELL registers[24];         /* Internal Registers           */
+#endif
+};
+
+struct NgaState {
+  /* System Memory */
+  CELL memory[IMAGE_SIZE + 1];
+
+  /* CPU Cores */
+  struct NgaCore cpu[CORES];
+  int active;
+
+  /* I/O Devices */
+  int devices;
+  Handler IO_deviceHandlers[MAX_DEVICES];
+  Handler IO_queryHandlers[MAX_DEVICES];
+
+  CELL Dictionary, interpret;    /* Interfacing     */
+  char string_data[8192];
+
+#ifdef ENABLE_FLOATS
+  double Floats[256], AFloats[256];        /* Floating Point */
+  CELL fsp, afsp;
+#endif
+
+#ifdef ENABLE_BLOCKS
+  char BlockFile[1025];
+#endif
+
+#ifdef ENABLE_ERROR
+  CELL ErrorHandlers[64];
+#endif
+
+  /* Scripting */
+  char **sys_argv;
+  int sys_argc;
+  char scripting_sources[64][8192];
+  char line[4096];
+  int current_source;
+  int perform_abort;
+  int interactive;
+
+  CELL currentLine;
+  CELL ignoreToEOL, ignoreToEOF;
+
+  /* Configuration of code & test fences for Unu */
+  char code_start[256], code_end[256];
+  char test_start[256], test_end[256];
+  int codeBlocks;
+
+  FILE *OpenFileHandles[MAX_OPEN_FILES];
+};
+#endif

@@ -392,7 +392,7 @@ Compile_Cmp_Set_Tttn_Logic ( Compiler * compiler, Boolean ttt, Boolean n )
 #endif            
             WordList_SetCoding ( 0, Here ) ;
             bi->CmpCode = Here ;
-            Compile_CMP ( REG, REG, ACC, OREG, 0, 0, CELL ) ;
+            Compile_CMP ( REG, REG, ACC, OREG, 0, 0, CELL_SIZE ) ;
         }
         bi->AfterCmpCode = Here ;
     }

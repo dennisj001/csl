@@ -61,7 +61,7 @@ CSL_PokeRegWithValue ( ) // @
     ByteArray * svcs = _O_CodeByteArray, *ba = _CSL_->PeekPokeByteArray ;
     _ByteArray_DataClear ( ba ) ;
     Set_CompilerSpace ( ba ) ; // now compile to this space
-    Compile_MoveImm ( REG, reg, 0, ( uint64 ) value, CELL ) ;
+    Compile_MoveImm ( REG, reg, 0, ( uint64 ) value, CELL_SIZE ) ;
     _Compile_Return ( ) ;
     Set_CompilerSpace ( svcs ) ; // now compile to this space
     ( ( VoidFunction ) ba->BA_Data ) ( ) ;
@@ -79,7 +79,7 @@ CSL_PokeRegAtAddress ( ) // @
     _ByteArray_Init ( ba ) ;
     Set_CompilerSpace ( ba ) ; // now compile to this space
     _Compile_PushReg ( ACC ) ;
-    Compile_MoveImm ( REG, ACC, 0, ( uint64 ) address, CELL ) ;
+    Compile_MoveImm ( REG, ACC, 0, ( uint64 ) address, CELL_SIZE ) ;
     Compile_Move_Reg_To_Rm ( ACC, reg, 0, 0 ) ;
     _Compile_PopToReg ( ACC ) ;
     _Compile_Return ( ) ;

@@ -150,11 +150,11 @@ Calculate_Address_FromOffset_ForCallOrJump ( byte * address )
             else iaddress = ( byte* ) ( * ( ( uint64* ) ( address - 8 ) ) ) ; //mov r11, 0xxx in Compile_Call_TestRSP  
         }
         else if ( ( ( * ( uint16* ) ( address - 20 ) ) == 0xba49 ) ) iaddress = ( byte* ) ( * ( ( uint64* ) ( address - 18 ) ) ) ; //mov r11, 0xxx in Compile_Call_TestRSP  
-        else iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
+        else iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL_SIZE ) ) ) ;
     }
     else if ( ( ( * ( uint16* ) address ) == 0xff48 ) && ( *( address + 2 ) == 0xd3 ) ) // call rax
     {
-        iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL ) ) ) ;
+        iaddress = ( byte* ) ( * ( ( uint64* ) ( address - CELL_SIZE ) ) ) ;
     }
     return iaddress ;
 }

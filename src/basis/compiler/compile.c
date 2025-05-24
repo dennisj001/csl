@@ -6,7 +6,7 @@ _Compile_C_Call_1_Arg ( byte* function, int64 arg )
 {
     //_Compile_RspReg_Push ( arg ) ;
     _Compile_PushReg ( RDI ) ;
-    Compile_MoveImm_To_Reg ( RDI, arg, CELL ) ;
+    Compile_MoveImm_To_Reg ( RDI, arg, CELL_SIZE ) ;
     Compile_Call ( function ) ;
     _Compile_PopToReg ( RDI ) ;
     //_Compile_RspReg_Drop ( ) ;

@@ -324,7 +324,7 @@ report ( char *s, cell x )
 
 jmp_buf Restart ;
 jmp_buf Errtag ;
-cell Handler = NIL ;
+cell Handler_ls9 = NIL ;
 
 cell Glob ;
 cell S_errtag, S_errval ;
@@ -339,11 +339,11 @@ error ( char *s, cell x )
     cell n ;
 
     n = assq ( S_errtag, Glob ) ;
-    Handler = ( NIL == n ) ? NIL : cadr ( n ) ;
-    if ( Handler != NIL )
+    Handler_ls9 = ( NIL == n ) ? NIL : cadr ( n ) ;
+    if ( Handler_ls9 != NIL )
     {
         n = assq ( S_errval, Glob ) ;
-        if ( n != NIL && cadr ( n ) == Handler )
+        if ( n != NIL && cadr ( n ) == Handler_ls9 )
             bindset ( S_errval, mkstr ( s, strlen ( s ) ) ) ;
         longjmp ( Errtag, 1 ) ;
     }
@@ -5338,7 +5338,7 @@ run ( cell x )
     Prog = x ;
     Ip = 0 ;
     if ( setjmp ( Errtag ) != 0 )
-        Ip = throwerr ( Handler ) ;
+        Ip = throwerr ( Handler_ls9 ) ;
     for ( Run = 1 ; Run ; )
     {
         switch ( ins ( ) )
@@ -6570,7 +6570,7 @@ CSL_L9_Init ( )
     Plimit = 0 ;
     Line = 1 ;
     Files = NIL ;
-    Handler = NIL ;
+    Handler_ls9 = NIL ;
     Inport = 0, Outport = 1, Errport = 2 ;
     Outmax = 0 ;
     Outptr = 0 ;

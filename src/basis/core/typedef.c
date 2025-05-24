@@ -199,7 +199,7 @@ TD_CheckForPointer ( )
     if ( Check_ForAndRemove_Stars ( ) ) //( token [0] == '*' ) || ( token1 = TDI_PeekToken ( ), ( token1 [0] == '*' ) ) )
     {
         //token = TDI_ReadToken ( ) ; // the '*' 
-        tdi->Tdi_Field_Size = CELL ;
+        tdi->Tdi_Field_Size = CELL_SIZE ;
         SetState ( tdi, TDI_POINTER, true ) ;
         token = TDI_ReadToken ( ) ; // the '*' 
         rtrn = true ;
@@ -682,7 +682,7 @@ TDI_Print_Field ( int64 t_type, int64 size )
                     break ;
                 }
                 default:
-                case CELL:
+                case CELL_SIZE:
                 {
                     format = ( byte* ) FRMT " = 0x%016lx" ;
                     value = * ( ( int64* ) ( dataPtr ) ) ; //( &tdi->DataPtr [ tdi->Tdi_Offset ] ) ) ;

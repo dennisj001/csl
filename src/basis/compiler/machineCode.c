@@ -157,7 +157,7 @@ _Compile_ImmDispData ( int64 immDisp, Boolean size, Boolean forceFlag )
             _Compile_Int16 ( immDisp ) ;
         else if ( size == 4 )
             _Compile_Int32 ( immDisp ) ;
-        else if ( size == CELL )
+        else if ( size == CELL_SIZE )
             _Compile_Cell ( immDisp ) ;
     }
     else // with operandSize == 0 let the compiler use the minimal size ; nb. can't be imm == 0
@@ -515,7 +515,7 @@ _Compile_X_Group1 ( Boolean code, Boolean toRegOrMem, Boolean mod, Boolean reg, 
 void
 _Compile_X_Group1_Reg_To_Reg ( Boolean code, Boolean dstReg, int64 srcReg )
 {
-    _Compile_X_Group1 ( code, TO_REG, REG, srcReg, dstReg, 0, 0, CELL ) ;
+    _Compile_X_Group1 ( code, TO_REG, REG, srcReg, dstReg, 0, 0, CELL_SIZE ) ;
 }
 
 // opCode group 1 - 0x80-0x83 : CMP ADD OR ADC SBB AND_OPCODE SUB XOR
@@ -547,7 +547,7 @@ _Compile_X_Group1_Immediate ( Boolean code, Boolean mod, Boolean rm, int64 disp,
         //DBI_ON ;
         //iPrintf ( "\n%s", Context_Location () ) ;
         Compile_MoveImm_To_Reg ( THRU_REG, imm, iSize ) ;
-        _Compile_X_Group1 ( code, REG, MEM, THRU_REG, rm, 0, disp, CELL ) ;
+        _Compile_X_Group1 ( code, REG, MEM, THRU_REG, rm, 0, disp, CELL_SIZE ) ;
     }
     else
     {
@@ -682,7 +682,7 @@ Compile_X_Group5 ( Compiler * compiler, int64 op )
     {
         if ( optInfo->OptimizeFlag & CO_IMM )
         {
-            Compile_MoveImm_To_Reg ( ACC, optInfo->CO_Imm, CELL ) ;
+            Compile_MoveImm_To_Reg ( ACC, optInfo->CO_Imm, CELL_SIZE ) ;
             optInfo->CO_Mod = REG ;
             optInfo->CO_Rm = ACC ;
         }
@@ -739,7 +739,7 @@ Compile_TEST_Reg_To_Reg ( Boolean dstReg, int64 srcReg )
 {
     //Compile_CalcWrite_Instruction_X64 ( 0, 0x85, TO_REG, srcReg, dstReg, REX_B | MODRM_B, 0, 0, 0, 0, 0 ) ;
 
-    _Compile_TEST_Reg_To_Reg ( dstReg, srcReg, CELL ) ;
+    _Compile_TEST_Reg_To_Reg ( dstReg, srcReg, CELL_SIZE ) ;
 }
 
 void
@@ -795,13 +795,13 @@ Compile_Logical_X_Group1 ( Compiler * compiler, int64 op, Boolean ttt, Boolean n
     if ( bi ) bi->State |= ( ( uint64 ) 1 << op ) ;
     int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
     if ( optSetupFlag == CO_DONE ) return ;
-    else if ( optSetupFlag ) _Compile_X_Group1 ( op, REG, REG, ACC, OREG, 0, 0, CELL ) ;
+    else if ( optSetupFlag ) _Compile_X_Group1 ( op, REG, REG, ACC, OREG, 0, 0, CELL_SIZE ) ;
     else
     {
         // operands are still on the stack
         _Compile_Move_StackN_To_Reg ( ACC, DSP, 0, 0 ) ;
         //_Compile_Group1 ( int64 code, int64 toRegOrMem, int64 mod, int64 reg, int64 rm, int64 sib, int64 disp, int64 osize )
-        _Compile_X_Group1 ( op, REG, MEM, ACC, DSP, 0, CELL, CELL ) ;
+        _Compile_X_Group1 ( op, REG, MEM, ACC, DSP, 0, CELL_SIZE, CELL_SIZE ) ;
 #if OLD_Setcc            
         _Compile_Stack_DropN ( DSP, 2 ) ;
 #else            
@@ -938,7 +938,7 @@ Compile_CallThru_AdjustRSP ( Boolean reg, Boolean regOrMem )
 void
 Compile_Call ( byte * address )
 {
-    Compile_MoveImm_To_Reg ( CALL_THRU_REG, ( int64 ) address, CELL ) ;
+    Compile_MoveImm_To_Reg ( CALL_THRU_REG, ( int64 ) address, CELL_SIZE ) ;
     _Compile_CallReg ( CALL_THRU_REG, REG ) ;
 }
 
@@ -960,7 +960,7 @@ _Compile_Call_ThruReg_TestAlignRSP ( Boolean thruReg )
 void
 Compile_Call_ToAddressThruReg_TestAlignRSP ( byte * address, Boolean thruReg )
 {
-    Compile_MoveImm_To_Reg ( thruReg, ( int64 ) address, CELL ) ;
+    Compile_MoveImm_To_Reg ( thruReg, ( int64 ) address, CELL_SIZE ) ;
     _Compile_Call_ThruReg_TestAlignRSP ( thruReg ) ;
 }
 
@@ -974,7 +974,7 @@ void
 Compile_Call_TestRSP ( byte * address )
 {
 
-    Compile_MoveImm_To_Reg ( SREG, ( int64 ) address, CELL ) ;
+    Compile_MoveImm_To_Reg ( SREG, ( int64 ) address, CELL_SIZE ) ;
     Compile_Call ( ( byte* ) _CSL_->Call_ToAddressThruSREG_TestAlignRSP ) ;
 }
 

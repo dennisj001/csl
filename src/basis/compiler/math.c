@@ -58,7 +58,7 @@ _Compile_Divide ( Compiler * compiler, uint64 type )
     else if ( optSetupFlag )
     {
         CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
-        Compile_MoveImm ( REG, RDX, 0, 0, CELL ) ;
+        Compile_MoveImm ( REG, RDX, 0, 0, CELL_SIZE ) ;
         // Compile_IDIV( mod, rm, controlFlag, sib, disp, imm, size )
         Compile_IDIV ( optInfo->CO_Mod, optInfo->CO_Rm, ( ( optInfo->CO_Disp != 0 ) ? DISP_B : 0 ), 0, optInfo->CO_Disp, 0, 0 ) ;
         if ( type == MODULO ) reg = RDX ;
@@ -71,7 +71,7 @@ _Compile_Divide ( Compiler * compiler, uint64 type )
         // 64 bit dividend EDX:R8 / srcReg
         // EDX holds high order bits
         _Compile_Move_StackN_To_Reg (ACC, DSP, - 1 , 0) ;
-        Compile_MoveImm ( REG, RDX, 0, 0, CELL ) ;
+        Compile_MoveImm ( REG, RDX, 0, 0, CELL_SIZE ) ;
         Compile_IDIV ( MEM, DSP, 0, 0, 0, 0, 0 ) ;
         _Compile_Stack_DropN ( DSP, 1 ) ;
         if ( type == MODULO ) reg = RDX ;

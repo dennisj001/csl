@@ -113,13 +113,15 @@
 #define INT_SIZE ( sizeof (int32))
 
 #if X64
-#define CELL_SIZE ( sizeof ( int64 ) )
+#define CELL int64
+#define CELL_SIZE ( sizeof ( int64 ))
+#define CELL_MIN LLONG_MIN + 1
+#define CELL_MAX LLONG_MAX - 1
 #else
 #define CELL_SIZE ( sizeof ( int32 ) )
 #endif
 
 #define SLOT_SIZE CELL_SIZE
-#define CELL CELL_SIZE
 
 #define true 1
 #define false 0
@@ -745,6 +747,7 @@
 #define LISP_MODE ( (uint64) 1 << 39 )
 #define RUN_MODE ( (uint64) 1 << 40 )
 #define JFORTH_MODE ( (uint64) 1 << 41 )
+#define RETRO_MODE ( (uint64) 1 << 42 )
 
 #define NON_INLINABLE ( (uint64) 1 << 0 )
 #define DONE true
@@ -925,4 +928,34 @@
 #if 1 // jforth
 #define CELL_BASE_TYPE int
 #define DOUBLE_CELL_BASE_TYPE long
+#endif
+
+#define ACTIVE vm->cpu[vm->active]
+#define TIB vm->memory[7]
+#define TIB_END vm->memory[8]
+
+#define MAX_DEVICES      32
+#define MAX_OPEN_FILES   32
+#if 1 //retro.c
+#ifdef ENABLE_MULTICORE
+#define CORES 8
+#else
+#define CORES 1
+#endif
+#ifndef IMAGE_SIZE
+#define IMAGE_SIZE   524288       /* Amount of RAM, in cells */
+#endif
+
+#ifndef ADDRESSES
+#define ADDRESSES    256          /* Depth of address stack */
+#endif
+
+#ifndef STACK_DEPTH
+#define STACK_DEPTH  256          /* Depth of data stack */
+#endif
+
+#ifdef BRANCH_PREDICTION
+/* The Compiler Magic Trick */
+#define unlikely(x) __builtin_expect((x),0)
+#endif
 #endif

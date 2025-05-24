@@ -50,7 +50,7 @@
 #define TWS( n ) ( (Word*) (_CSL_->TypeWordStack->StackPointer [(n)]) )
 //#define ResetOutputPrintBuffer() { strncpy ( _O_->PrintBufferCopy, _O_->PrintBuffer, BUFFER_SIZE ) ; Buffer_Data (_O_->PrintBuffer)[0]  = 0 ; } 
 
-#define Calculate_FrameSize( numberOfLocals )  ( ( numberOfLocals + 1 ) * CELL ) // 1 : space for fp
+#define Calculate_FrameSize( numberOfLocals )  ( ( numberOfLocals + 1 ) * CELL_SIZE ) // 1 : space for fp
 
 #define ClearState( obj ) ( (obj)->State = 0 ) 
 #define _GetState( aState, state ) ( (aState) & (state) ) 

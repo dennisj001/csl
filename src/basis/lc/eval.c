@@ -17,10 +17,10 @@ Compile_CallFunctionVariable ( ListObject * lfunction )
     DBI_ON ;
     _Compile_Stack_Push ( DSP, RAX, ( int64 ) lfunction->Name ) ;
     Compile_Call ( ( byte* ) CSL_LC_FindWord ) ;
-    _Compile_Move_StackN_To_Reg ( RAX, DSP, 0, CELL ) ;
-    Compile_Move_Rm_To_Reg ( RAX, RAX, 0x88, CELL ) ; // 0x88 : Definition offset in Word
+    _Compile_Move_StackN_To_Reg ( RAX, DSP, 0, CELL_SIZE ) ;
+    Compile_Move_Rm_To_Reg ( RAX, RAX, 0x88, CELL_SIZE ) ; // 0x88 : Definition offset in Word
     _Compile_CallReg ( RAX, REG ) ;
-    _Compile_Stack_PushReg ( DSP, RAX, CELL ) ;
+    _Compile_Stack_PushReg ( DSP, RAX, CELL_SIZE ) ;
     DBI_OFF ;
 }
 #endif

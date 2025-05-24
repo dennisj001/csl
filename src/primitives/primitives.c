@@ -5,7 +5,8 @@
 CPrimitive CPrimitives [] = {
     //{ "flisp", 0, 0, 0, CSL_Flisp, 0, 0, 0, "Flisp", "Root" },
     { "l9", 0, 0, 0, CSL_Lisp9, 0, 0, 0, "L9", "Root" },
-    { "jforth", 0, 0, 0, jforth, 0, 0, 0, "jForth", "Root" },
+    { "jforth", 0, 0, 0, jForth, 0, 0, 0, "jForth", "Root" },
+    { "retro", 0, 0, 0, (block) retro, 0, 0, 0, "RetroForth", "Root" },
     //{ "s9fes", 0, 0, 0, CSL_S9fes, 0, 0, 0, "L9", "Root" },
 
     { "locationPush", 0, 0, 0, Location_PushNew, 0, 0, 0, "Experimental", "Root" },
