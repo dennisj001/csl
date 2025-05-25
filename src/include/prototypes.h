@@ -1999,6 +1999,7 @@ void OpenVmTil_Print_DataSizeofInfo(int64 flag);
 void OVT_Exit(void);
 void OVT_StartupMessage(Boolean promptFlag);
 void Prompt(void);
+void lbforth(void);
 /* src/primitives/ios.c */
 void Fflush(void);
 void CSL_Kbhit(void);
@@ -2717,7 +2718,7 @@ void l9_ungetChar(int c, FILE *f);
 void CSL_L9_Init(void);
 void l9_main(int argc, char **argv);
 void CSL_Lisp9(void);
-/* src/primitives/nga-c/retro.c */
+/* src/primitives/retro.c */
 size_t utf32_strlen(const int32_t *utf32_str);
 void utf32_strcpy(int32_t *dest, const int32_t *src);
 int utf32_strcmp(const int32_t *str1, const int32_t *str2);
@@ -2731,6 +2732,17 @@ void ioctl_save_current_state(NgaState *vm);
 void ioctl_restore_saved_state(NgaState *vm);
 void query_ioctl(NgaState *vm);
 void io_ioctl(NgaState *vm);
+void double_add(NgaState *vm);
+void double_sub(NgaState *vm);
+void double_mul(NgaState *vm);
+void double_divmod(NgaState *vm);
+void malloc_allocate(NgaState *vm);
+void malloc_free(NgaState *vm);
+void malloc_store(NgaState *vm);
+void malloc_fetch(NgaState *vm);
+void malloc_realloc(NgaState *vm);
+void query_malloc(NgaState *vm);
+void io_malloc(NgaState *vm);
 void handle_error(NgaState *vm, int64 error);
 void register_error_handler(NgaState *vm);
 void io_error(NgaState *vm);
@@ -2943,7 +2955,7 @@ void verbose_details(NgaState *vm, int64 opcode);
 void process_opcode_bundle(NgaState *vm, int64 opcode);
 void retro(void);
 /* src/primitives/kernel.c */
-int lbforth(void);
+void _lbforth(void);
 xt_t *exit_code(xt_t *IP, xt_t word);
 xt_t *dodoes_code(xt_t *IP, xt_t word);
 xt_t *zerobranch_code(xt_t *IP, xt_t word);
@@ -2961,4 +2973,3 @@ xt_t *bye_code(xt_t *IP, xt_t word);
 xt_t *close_file_code(xt_t *IP, xt_t word);
 xt_t *open_file_code(xt_t *IP, xt_t word);
 xt_t *read_file_code(xt_t *IP, xt_t word);
-void forth(void);

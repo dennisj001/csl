@@ -748,7 +748,7 @@
 #define RUN_MODE ( (uint64) 1 << 40 )
 #define JFORTH_MODE ( (uint64) 1 << 41 )
 #define RETRO_MODE ( (uint64) 1 << 42 )
-#define FORTH_MODE ( (uint64) 1 << 43 )
+#define LBFORTH_MODE ( (uint64) 1 << 43 )
 
 #define NON_INLINABLE ( (uint64) 1 << 0 )
 #define DONE true
@@ -937,12 +937,51 @@
 
 #define MAX_DEVICES      32
 #define MAX_OPEN_FILES   32
+
 #if 1 //retro.c
+//#ifndef MAKEFILE_CONFIG
+#define ENABLE_FLOATS
+#define ENABLE_FILES
+#define ENABLE_UNIX
+#define ENABLE_RNG
+#define ENABLE_CLOCK
+#define ENABLE_SCRIPTING
+#define ENABLE_SOCKETS 
+#define ENABLE_SIGNALS
+#define ENABLE_MULTICORE
+#define ENABLE_FFI 
+#define ENABLE_ERROR
+#define ENABLE_UNSIGNED
+#define ENABLE_MALLOC
+#define ENABLE_BLOCKS
+#define ENABLE_IOCTL
+//#endif
+
 #ifdef ENABLE_MULTICORE
 #define CORES 8
 #else
 #define CORES 1
 #endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#define NEEDS_STRL
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__) && defined(NEEDS_STRL)
+#undef NEEDS_STRL
+#endif
+
+/* Configuration ----------------------------------------------------- */
+#if 0 //ndef BIT64
+#define CELL int32_t
+#define CELL_MIN INT_MIN + 1
+#define CELL_MAX INT_MAX - 1
+#else
+#define CELL int64
+#define CELL_MIN LLONG_MIN + 1
+#define CELL_MAX LLONG_MAX - 1
+#endif
+
 #ifndef IMAGE_SIZE
 #define IMAGE_SIZE   524288       /* Amount of RAM, in cells */
 #endif
@@ -959,4 +998,26 @@
 /* The Compiler Magic Trick */
 #define unlikely(x) __builtin_expect((x),0)
 #endif
+#define DEVICE_OUTPUT      0
+#define DEVICE_KEYBOARD    1
+#define DEVICE_FLOATS      2
+#define DEVICE_FILES       4
+#define DEVICE_BLOCKS      3
+#define DEVICE_CLOCK       5
+#define DEVICE_RESERVED6   6
+#define DEVICE_SOCKETS     7
+#define DEVICE_UNIX        8
+#define DEVICE_SCRIPTING   9
+#define DEVICE_RNG         10
+#define DEVICE_RESERVED11  11
+#define DEVICE_RESERVED12  12
+#define DEVICE_RESERVED13  13
+#define DEVICE_IOCTL       14
+#define DEVICE_MALLOC      15
+
+#define DEVICE_IMAGE       1000
+#define DEVICE_ERROR       1234
+#define DEVICE_MULTICORE   8000
+#define DEVICE_FFI         8100
+#define DEVICE_UNSIGNED    8101
 #endif

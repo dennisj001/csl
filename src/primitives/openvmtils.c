@@ -168,21 +168,18 @@ Prompt ( )
 }
 
 void
-forth ( ) //Context * cntx , byte * initFilename )
+lbforth ( ) //Context * cntx , byte * initFilename )
 {
-    SetState ( _Context_, FORTH_MODE, true ) ;
-    iPrintf ( "\ncsl forth : type '..', 'exit', 'quit to exit jforth interpreter" ) ;
-    //if ( ! initFilename ) initFilename = ( byte* ) "namespaces/compiler/lcinit.csl" ; //
+    SetState ( _Context_, LBFORTH_MODE, true ) ;
+    iPrintf ( "\ncsl lbforth : type 'bye' to exit lbforth : Lars Brinkhoff\n" ) ;
     SetState ( _Context_, AT_COMMAND_LINE, true ) ;
-    //forth = ( Forth * ) Mem_Allocate ( sizeof ( Forth ), FORTH_SPACE ) ;
-    _Repl ( _Context_, ( block ) lbforth ) ;
-    //OVT_MemList_FreeNBAMemory ( ( byte* ) "ForthSpace", 1 * M, 1 ) ;
-    iPrintf ( "\nleaving csl forth : returning to csl interpreter\n" ) ;
-    SetState ( _Context_, FORTH_MODE, false ) ;
+    _Repl ( _Context_, ( block ) _lbforth ) ;
+    iPrintf ( "\nleaving csl lbforth : Lars Brinkhoff : returning to csl interpreter\n" ) ;
+    SetState ( _Context_, LBFORTH_MODE, false ) ;
 }
 
-
 #if 0
+
 int s9_main ( int argc, char **argv ) ;
 void
 doPrompt ( )

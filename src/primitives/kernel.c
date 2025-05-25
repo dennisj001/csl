@@ -1,8 +1,8 @@
 #include "../include/csl.h"
 extern struct word docolcomma_word ;
 
-int
-lbforth ( void ) 
+void
+_lbforth ( void )
 {
     extern struct word dp0_word, sp0_word, rp0_word, SP_word, RP_word,
         limit_word, latest0_word, turnkey_word ;
@@ -24,10 +24,8 @@ lbforth ( void )
     {
         EXECUTE ( xt ) ;
         xt = NEXT_XT ;
+        if ( String_Equal ( _ReadLiner_->InputLineString, "bye\n" ) ) return ;
     }
-
-    return 0 ;
-
 }
 
 xt_t * REGPARM
@@ -147,7 +145,7 @@ bye_code ( xt_t *IP, xt_t word )
 {
     //exit ( 0 ) ;
     return IP ;
-}   
+}
 
 xt_t * REGPARM
 close_file_code ( xt_t *IP, xt_t word )
@@ -176,6 +174,7 @@ open_file_code ( xt_t *IP, xt_t word )
     return IP ;
 }
 
+#if 1
 xt_t * REGPARM
 read_file_code ( xt_t *IP, xt_t word )
 {
@@ -206,6 +205,53 @@ read_file_code ( xt_t *IP, xt_t word )
     PUSH_lbf ( ferror ( fileid ) ? errno : 0 ) ;
     return IP ;
 }
+#else
+xt_t * REGPARM
+read_file_code ( xt_t *IP, xt_t word )
+{
+    static char buffer[1024] ;
+    FILE *fileid = POP_lbf ( FILE * ) ;
+    cell u1 = POP_lbf ( cell ) ;
+    char_t *addr = POP_lbf ( char_t * ) ;
+    size_t u2 ;
+    int i ;
+    if ( fileid == 0 ) fileid = stdin ;
+#if 0    
+#if 0
+    if ( u1 > sizeof buffer )
+        u1 = sizeof buffer ;
+    u2 = fread ( buffer, 1, u1, fileid ) ;
+    if ( ( u2 > 1 ) || ( u1 > 1 ) )
+        oPrintf ( "here" ) ;
+    for ( i = 0 ; i < u2 ; i ++ )
+        addr[i] = buffer[i] ;
+
+#else   
+        _ReadLiner_->InputFile = fileid ;
+        char c = ReadLine_NextChar ( _ReadLiner_ ) ;
+        addr [0] = c ; //buffer [0] ;
+        addr [1] = 0 ;
+        u2 = 1 ;
+#endif    
+#else //if 0
+    if ( u1 > 1 )
+        printf ( "here" ) ;
+    if ( fileid == 0 ) fileid = stdin ;
+    if ( fileid != stdin )
+    {
+        _ReadLiner_->InputFile = fileid ;
+    }
+    char c = ReadLine_NextChar ( _ReadLiner_ ) ;
+    addr [0] = c ; //buffer [0] ;
+    addr [1] = 0 ;
+    u2 = 1 ;
+
+#endif    
+    PUSH_lbf ( u2 ) ;
+    PUSH_lbf ( ferror ( fileid ) ? errno : 0 ) ;
+    return IP ;
+}
+#endif
 extern struct word less_word ;
 struct word cold_word = { 4, "cold", 0, 0, ( code_t * ) main,
     {

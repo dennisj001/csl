@@ -130,28 +130,9 @@
             <in>forth.h</in>
             <in>params.c</in>
           </df>
-          <df name="nga-c">
-            <in>config.h</in>
-            <in>dev-blocks.c</in>
-            <in>dev-clock.c</in>
-            <in>dev-error.c</in>
-            <in>dev-ffi.c</in>
-            <in>dev-files.c</in>
-            <in>dev-float.c</in>
-            <in>dev-ioctl.c</in>
-            <in>dev-malloc.c</in>
-            <in>dev-multicore.c</in>
-            <in>dev-rng.c</in>
-            <in>dev-sockets.c</in>
-            <in>dev-unix.c</in>
-            <in>devices.h</in>
-            <in>image.c</in>
-            <in>nga-x11.c</in>
-            <in>repl.c</in>
-            <in>retro-compiler.c</in>
-            <in>retro-runtime.c</in>
-            <in>retro.c</in>
-            <in>utf32.c</in>
+          <df name="lbForth">
+            <df name="lib">
+            </df>
           </df>
           <in>bits.c</in>
           <in>cmaths.c</in>
@@ -174,6 +155,8 @@
           <in>openvmtils.c</in>
           <in>parsers.c</in>
           <in>primitives.c</in>
+          <in>retro.c</in>
+          <in>retro.orig.c.c</in>
           <in>shell.c</in>
           <in>stacks.c</in>
           <in>strings.c</in>

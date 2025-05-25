@@ -251,7 +251,7 @@ Lexer_ParseTerminatingMacro (Lexer * lexer, byte termChar, Boolean stringFlag )
 {
     ReadLiner * rl = _ReadLiner_ ;
     byte * token ;
-    Word * word = 0 ;
+    //Word * word = 0 ;
     if ( ( ! ( GetState ( _Compiler_, ( COMPILE_MODE | ASM_MODE | LC_ARG_PARSING | LC_CSL ) ) ) ) && ( ! GetState ( _CSL_, SOURCE_CODE_STARTED ) ) )
         CSL_InitSourceCode_WithCurrentInputChar ( _CSL_, 0 ) ;
     _CSL_->SC_QuoteMode = true ;

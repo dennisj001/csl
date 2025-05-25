@@ -13,6 +13,11 @@ _Repl ( Context * cntx, block repl )
         rl->AltPrompt = ( byte* ) "jf< " ;
         rl->NormalPrompt = ( byte* ) "jf> " ;
     }
+    else if ( GetState ( cntx, LBFORTH_MODE ) )
+    {
+        rl->AltPrompt = ( byte* ) "lbf< " ;
+        rl->NormalPrompt = ( byte* ) "lbf> " ;
+    }
     else if ( GetState ( cntx, RETRO_MODE ) )
     {
         rl->AltPrompt = ( byte* ) "rf< " ;
@@ -36,7 +41,7 @@ start:
         while ( ! GetState ( lexer, END_OF_FILE | END_OF_STRING ) )
         {
             uint64 * svDsp = _DspReg_ ;
-            if ( ! GetState ( cntx, RETRO_MODE ) )
+            if ( ! GetState ( cntx, RETRO_MODE|LBFORTH_MODE ) ) 
             {
                 DoPrompt ( ) ;
                 ReadLine_GetLine ( ) ;
@@ -48,7 +53,7 @@ start:
             }
             repl ( ) ;
             _DspReg_ = svDsp ;
-            if ( GetState ( cntx, RETRO_MODE ) ) goto done ;
+            if ( GetState ( cntx, RETRO_MODE|LBFORTH_MODE ) ) goto done ;
         }
     }
     AlertColors ;
