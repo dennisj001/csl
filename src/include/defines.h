@@ -938,7 +938,7 @@
 #define MAX_DEVICES      32
 #define MAX_OPEN_FILES   32
 
-#if 1 //retro.c
+#if 0  //retro.c
 //#ifndef MAKEFILE_CONFIG
 #define ENABLE_FLOATS
 #define ENABLE_FILES
@@ -955,8 +955,9 @@
 #define ENABLE_MALLOC
 #define ENABLE_BLOCKS
 #define ENABLE_IOCTL
-//#endif
+#endif
 
+#if 1
 #ifdef ENABLE_MULTICORE
 #define CORES 8
 #else

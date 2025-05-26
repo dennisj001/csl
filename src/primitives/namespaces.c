@@ -68,9 +68,13 @@ Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
     if ( indentFlag )
     {
         iPrintf ( "\n" ) ;
-        while ( indentLevel -- ) iPrintf ( "   " ) ; //"\t" ) ;
+        int64 _indentLevel = indentLevel ;
+        while ( _indentLevel -- ) iPrintf ( "   " ) ; //"\t" ) ;
         if ( ns->State & NOT_USING ) iPrintf ( " - %s", c_gd ( ns->Name ) ) ;
-        else iPrintf ( " - %s", c_ud ( ns->Name ) ) ;
+        //if ( ns->State & NOT_USING ) iPrintf ( " " "-%*d" " %s", indentLevel, c_gd ( ns->Name ) ) ;
+        //char buffer [128] ;
+        //if ( ns->State & NOT_USING ) sprintf ( buffer, " " "%-*d" " %s", indentLevel, c_gd ( ns->Name ) ), iPrintf ( "%s", buffer ) ;
+        else iPrintf ( " - %s", c_d ( ns->Name ) ) ;
     }
     else
     {

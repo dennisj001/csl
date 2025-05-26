@@ -122,22 +122,20 @@ Combinators
 "qEval" ' call find alias immediate
 "ifte" ' tf3 find alias
 "ifElse" ' tf3 find alias
+Root
 'startupMacros 1 constant
 User
 #if startupMacros
 : _SMN_ "StartupMacros" ;                           // _SMN_ : string startup macros namespace 
 "StartupMacros" namespace                           // create a namespace for string macros to be used 
 StartupMacros                                       // switch to that namespace
+// create string words in StartupMacros namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
-//"_startDirectory_" variable                       // already created and set in CSL_ResetAll_Init in basis/init.c
-: _namespaces_ _startDirectory_ @ ;                   // this line also works in place of the next line
-                                                    // '_startDirectory_' is a variable created in the function 
-                                                    // CSL_ResetAll_Init in the file basis/init.c
-//: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
+: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
                                                     // us to parameterize the startup; can be properly started 
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/csl"
-// stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
+stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
                                                     // nb. we don't turn it on here until about line 304
 // stringMacrosOff                                  // turn off the macros
 #endif
@@ -498,7 +496,7 @@ Root.atoi ( "7" ) 7 _assert //pause
 #if startupMacros
 stringMacrosOn
 #endif
-: tCSL "namespaces/ninit.csl" include ; // namespaces init
+: tCSL stringMacrosOn "namespaces/ninit.csl" include ; // namespaces init
 : tc 2 ti 1 ti lispOff tCSL rtw ;
 : x64 "namespaces/compiler/x64.csl" include ; 
 : bx "namespaces/test/bigNum.test.csl" include ;
@@ -581,7 +579,7 @@ doLispTest 0 =
 #endif //dT0
 //rtw
 
-stringMacrosOff
+//stringMacrosOff
 
 #else // !Is_DebugOn : of course you can trim this file to your needs and put your extra init code maybe here if you like
 : mct "namespaces/compiler/machineCode.csl" include ;

@@ -60,10 +60,10 @@
 #define ENABLE_RNG
 #define ENABLE_CLOCK
 #define ENABLE_SCRIPTING
-/* #define ENABLE_SOCKETS */
+#define ENABLE_SOCKETS 
 #define ENABLE_SIGNALS
 #define ENABLE_MULTICORE
-/* #define ENABLE_FFI */
+#define ENABLE_FFI 
 #define ENABLE_ERROR
 #define ENABLE_UNSIGNED
 #define ENABLE_MALLOC
@@ -6212,7 +6212,7 @@ V register_signal_handlers() {
 
 #define ARG(n) (strcmp(argv[i], n) == 0)
 
-int main(int argc, char **argv) {
+int retro(int argc, char **argv) {
   int i;
   int modes[16];
   NgaState *vm = calloc(sizeof(NgaState), sizeof(char));

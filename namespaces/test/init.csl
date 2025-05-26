@@ -1,5 +1,10 @@
-//_dbgOn ukseOn
+//logOn
+//_dbgOn 
+//ukseOn
+//optimizeOff
 5 // stack checking marker
+#define DEBUG_ON 0
+scOn 
 Debug
 // higher debugLevel turns on more debugging
 : d0 debugLevel 0 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
@@ -8,6 +13,7 @@ Debug
 : d: _dbgOn d0 dbgSourceCodeOn ; immediate debugWord // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
 : d1: _dbgOn d1 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 : d2: _dbgOn d2 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
+
 Root 
 "OptimizeOn" variable
 OptimizeOn 1 = 
@@ -27,7 +33,6 @@ typecheckOn dbgTypecheckOn
 : sp ; //stack pause ; 
 : include _include ; //dup "\tincluding ..." printString printString stack pause _include ;
 #endif
-// logOn
 verbosity 1 = 
 sp
 Root 
@@ -44,6 +49,9 @@ Root
 'cOn 'c_syntaxOn find alias
 'cOff 'c_syntaxOff find alias
 "log" variable 
+'fOn 'postfixOn find alias // the default state 
+'n- 'namespaces find alias
+Root
 "User" namespace 
 Io Int
 : _ps printString ; inline
@@ -96,6 +104,7 @@ User
 'ts 'showTypeWordStack find alias
 's 'stack find alias
 : p space intPrint ;
+'streol 'getStringToEndOfLine find alias
 Root 
 'dbgOnVar var 
 'dbOn 'dbgOnVar find alias
@@ -105,15 +114,8 @@ Root
 
 // === controls ===
 Root 
-dbgOff
-dbgOn 
 
 User
-#if Is_DebugOn
-: mp mem pause ;
-#else
-: mp ; //mem pause ;
-#endif
 sp
 Combinators
 "ix" ' call find alias immediate
@@ -126,16 +128,13 @@ User
 : _SMN_ "StartupMacros" ;                           // _SMN_ : string startup macros namespace 
 "StartupMacros" namespace                           // create a namespace for string macros to be used 
 StartupMacros                                       // switch to that namespace
+// create string word in this StartupMacros namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
-//"_startDirectory_" variable                       // already created and set in CSL_ResetAll_Init in basis/init.c
-: namespaces _startDirectory_ @ ;                   // this line also works in place of the next line
-                                                    // '_startDirectory_' is a variable created in the function 
-                                                    // CSL_ResetAll_Init in the file basis/init.c
-//: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
+: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
                                                     // us to parameterize the startup; can be properly started 
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/csl"
-// stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
+stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
                                                     // nb. we don't turn it on here until about line 304
 // stringMacrosOff                                  // turn off the macros
 #endif
@@ -199,27 +198,32 @@ type quad ; quad.size = 16 ;
 type Boolean ; Boolean.size = 1 ;
 type Pointer ; Pointer.size = 8 ;
 type block ; block.size = 8 ;
+//cOff
+//: clib "/lib/libc.so.6" ;
+//cOn
 C
 "Dlsym" namespace 
 Dlsym 
+#define LIBC "/lib/libc.so.6"
 "libc" namespace 
 libc
-dlsym: printf /lib/libc.so.6 ; void_return
-dlsym: strcmp /lib/libc.so.6 ; rax_return
-dlsym: sprintf /lib/libc.so.6 ; void_return
-dlsym: strcat /lib/libc.so.6 ; void_return
-//dlsym: _strlen /lib/libc.so.6 ; rax_return
-dlsym: memset /lib/libc.so.6 ; void_return
-dlsym: sscanf /lib/libc.so.6 ; void_return
-dlsym: atoi /lib/libc.so.6 ; rax_return
+dlsym: printf LIBC ; void_return
+dlsym: strcmp LIBC ; rax_return
+dlsym: sprintf LIBC ; void_return
+dlsym: strcat LIBC ; void_return
+//dlsym: _strlen LIBC ; rax_return
+dlsym: memset LIBC ; void_return
+dlsym: sscanf LIBC ; void_return
+dlsym: atoi LIBC ; rax_return
 //int strlen ( s ) { return _strlen ( s ); }
 c_syntaxOff
 Root  
 sp0
 System
 //: bnInit1 ( width ) width @ bnInit ; 
-: bigNumOff "BigNum" notUsing ;
-: bigNumOn BigNum 32 bnInit ;
+//: bigNumOff "BigNum" notUsing ;
+//: bigNumOn BigNum 32 bnInit ;
+//d: : bigNumOn do> 32 BigNum.bnInit does> BigNum <does ;
 
 'bnOn 'bigNumOn find alias
 'bnOff 'bigNumOff find alias
@@ -240,14 +244,14 @@ Compiler String
 scOn 
 : var: { token dup ";var" strcmp } { _var } while drop ;  // nb : no quotation marks around variable names with var: ... ; 
 //'var: find wdis //pause
-var: DebugFlag classTestRead streamLine doInit1 doDemo doTest doLisp COMBINATOR_TOOKIT doLisp testing testLisp x Zenfone2 ;var sp0 // _TestDone_ ; 
+var: DebugFlag classTestRead doInit1 doDemo doTest doLisp testing testLisp x ;var sp0 // _TestDone_ ; 
 "mod" 'modulo find alias
 
 Namespace
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
 : usingLast: { token dup ";" strcmp } { usingLast } while drop ; 
-notUsing: PrefixCombinators C Lisp ; sp0 // eg
+notUsing: PrefixCombinators C Lisp ; sp0
 
 System
 "Black" 0 const
@@ -302,11 +306,13 @@ System
 : wdiss ( pword ) 0 pword @ _wdiss ; //debugWord      // don't add wdiss words to history list
 : wdissl ( pword ) logOn 0 pword @ _wdiss logOff ; //debugWord      // don't add wdiss words to history list
 'wi ' wdiss find alias
-: pwdiss tokenQID _findUsing wdiss ; // nb. a prefix function
+: pwdiss tokenQID _findAny wdiss ; // nb. a prefix function
+: pwdissu tokenQID _findUsing wdiss ; // nb. a prefix function
 'pwi 'pwdiss find alias
+'pwu 'pwdissu find alias
 //pwi wdiss //pause
 : fload ftoken include ;
-: sys mem namespaces words stack using in ; 
+: sys mem stateAll words stack namespaces in ; 
 'aw 'allWords find alias
 : stk stack ; //debugWord 
 : ti timerInit ;
@@ -375,29 +381,37 @@ dscOn
 #endif
 Root Io
 : Error "\nerror :" ps location pause ;
+: tCSL "namespaces/ninit.csl" include ; // namespaces init
+: tc 2 ti 1 ti lispOff tCSL rtw ;
 cOn Root
-int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } 
-"hi" "hi" StringEqual != 0 ? noop : abort
+#if OptimizeOn
+int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } //remember : strcmp returns a diff => returns 0 when there is no difference
+StringEqual ( "hi" "hi" ) != 0 ? noop : abort // remember : so StringEqual returns true (1) when strings are equal
+StringEqual ( "hi" "hi" ) == 0 ? abort : noop
+StringEqual ( "hi" "hi" ) ? noop : abort
+StringEqual ("hi" "hey") != 0 ? abort : noop
 StringEqual ("hi" "hey") == 0 ? noop : abort
+#endif
 Dlsym libc 
 void pbAssert ( argin ) 
 {
-    byte * pb = pbc ; 
+    byte * pb = pbc () ; 
     if ( StringEqual ( pb, argin ) ) ps ( "\npbAssert : ok\n") ; 
     else 
     {   
-        int64 la = Strlen ( argin ), lp = Strlen ( pb ) ; //, pb = pbc ;
+        int64 la = Strlen ( argin ), lp = Strlen ( pb ) ; 
         printf ( "\nargIn != pbc" ) ; 
         ps ("\npbc :" ) ;
-        dump ( pbc, lp  ) ;
+        dump ( pb, lp  ) ;
         ps ("\nargIn :" ) ;
         dump ( argin, la  ) ;
-        printf ( "\nStrlen ( argin ) = %d :: Strlen ( pbc ) = %d", la, lp ) ;
+        printf ( "\nStrlen ( argin ) = %d :: Strlen ( pb ) = %d", la, lp ) ;
         printf ( "\nargIn  = \'%s\' \n!= pbc = \'%s\'", argin, pb ) ; 
         Error () ; 
     }  
     pbclr () ;
 } 
+//pwi pbAssert
 cOff
 sp
 sp0
@@ -453,18 +467,35 @@ Lisp OpenVmTil
 postfixOn 
 Root
  
-: ash _sh ; prefix
+#if 1 // this works
+bnOn cOn 
+void ctof ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
+void ctof ( c ) { c *= 1.8 ; c += 32 ; nl ; p (c) ; } //ctof1 ( 11.41) ;
+cOff 
+: ctof ( c ) c 1.8 *=  c 32 += nl c @ p ; //11.41 ctof 
+: ftoc ( f ) f 32 -= f 1.8 /= f @ p ; //60 ftoc 
+bnOff
+: ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
+: ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
+sp0
+#endif
+//: ash _sh ; prefix
 
 //================================================================================
 
 Root
 // rtw : recycle some test/debug words 
 : rtw "test" purgeAll "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
-: atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable "7" atoi 7 _assert sp0
+#if OptimizeOn @
+: atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable 
+//pwi atoi 
+//"7" atoi 7 _assert 
+Root.atoi ( "7" ) 7 _assert //pause
+#endif
 #if startupMacros
 stringMacrosOn
 #endif
-: tCSL "namespaces/ninit.csl" include ; // namespaces init
+: tCSL stringMacrosOn "namespaces/ninit.csl" include ; // namespaces init
 : tc 2 ti 1 ti lispOff tCSL rtw ;
 : x64 "namespaces/compiler/x64.csl" include ; 
 : bx "namespaces/test/bigNum.test.csl" include ;
@@ -481,6 +512,7 @@ lispOff
 : ppT preprocessorTest ;
 : bigNumTest "namespaces/test/bigNum.csl" include ;
 : bT bigNumTest ;
+//: jforth "src/primitives/lbForth.c" include ; //jforth 
 // === startup extra controls ===
 Root 
 'todo 0 const  
@@ -497,15 +529,26 @@ doLisp 0 =
     
 // ========controls===========
 
-Lisp
-: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
 Root
-dbgOff
+: startupNamespaces Shell C void Class libc OpenVmTil Lexer Int Compiler Interpreter Debug User int64 byte 
+    Dlsym Io System Word Macro String Defines StartupMacros Combinators Compiling Reserved DObject PreProcessor 
+    List Stack Memory Colors File Asm Bits Logic Array MemorySpace Locals Forth Experimental L9 block Pointer 
+    Boolean quad long int char uint64 uint32 int32 uint16 int16 uint8 int8 PrefixCombinators Infix C_Syntax 
+    Lisp LispTemp LispDefines BigNum ;
+: lispInitNamespace "namespaces/compiler/lcinit.csl" ;
+: lisp lispInitNamespace _lisp ;  // demo of another way 
+//: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
+
 //lisp
 //scOn
-//dbgOn 
+#if DEBUG_ON 
+dbgOn
+#else
+dbgOff
+#endif 
 //l9
 //lisp
+//tc
 
 // ===================
 #if Is_DebugOn forStarters ||
@@ -535,7 +578,7 @@ doLispTest 0 =
 #endif //dT0
 //rtw
 
-stringMacrosOff
+//stringMacrosOff
 
 #else // !Is_DebugOn : of course you can trim this file to your needs and put your extra init code maybe here if you like
 : mct "namespaces/compiler/machineCode.csl" include ;
@@ -561,92 +604,127 @@ cOff
 #endif 
 #endif    
 
-#if 0
-lcOn
-(define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
-tick fibc find wdiss
-(fibc 20)
-lcOff sp0
-#endif
-#if 1 // fix me ??
-bnOn cOn 
-void ctof0 ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
-void ctof1 ( c ) { c *= 1.8 ; c += 32 ; nl ; p (c) ; } //ctof1 ( 11.41) ;
-cOff 
-: ctof ( c ) c 1.8 *=  c 32 += nl c @ p ; //11.41 ctof 
-: ftoc ( f ) f 32 -= f 1.8 /= f @ p ; //60 ftoc 
-#if 0
-bnOff
-: ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
-: ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
-#endif
-sp0
-#endif
-
-
 //tc demo lisp
-
-#if 0
-addToHistoryOn
-d: : hi 1 2 + p ; hi
-//"d: : hi 1 2 + p ; hi" addToHistory
-#endif
 
 //stringMacrosOff
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
-#if 0
-: fac ( int8 n  | int16 rec1 ) 
-    rec1 1 = 
-    { n @ 1 > } { n @ rec1 @ * rec1 store n -- } while 
-    return rec1 @
-;
-pwi fac
-7 fac dup p 5040 _assert0 
-#endif
-#if 0
-: iinc "./init.csl" include ;
-: interpT "namespaces/compiler/interpreter.csl" include ;
-: itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
-: classTest "namespaces/test/classTest.csl" include ;
-: arrayTest "namespaces/test/arrayTest.csl" include ;
-: localsTest "namespaces/test/localsTest.csl" include ;
-//: bigNumTest "namespaces/test/bigNum.csl" include ;
-: stackTest "namespaces/test/stack.csl" include ;
-: controlTest "namespaces/test/control.csl" include ;
-: objectTest "namespaces/test/dobject.csl" include ;
-: c_SyntaxTest "namespaces/compiler/c_syntax.csl" include ;
-: syntaxTest "namespaces/compiler/syntax.csl" include ;
-//: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
-: test "namespaces/test/test.csl" include ;
-: dT0 "namespaces/test/dev0.csl" include ;
-: dT2 "namespaces/test/dev2.csl" include ;
-: dT3 "namespaces/test/dev3.csl" include ;
-//: loT "namespaces/test/logic.csl" include ;
-: dT "namespaces/test/dev.csl" include ; inline
-: dT2 "namespaces/test/dev2.csl" include ;
-: mT "namespaces/test/math.csl" include ;
-: fT "namespaces/test/file.csl" include ;
-: sT "namespaces/compiler/syntax.csl" include ;
-: sysT "namespaces/test/system.csl" include ;
-: lispTest "namespaces/test/lisp.csl" include ;
-: oldL "namespaces/test/oldLisp.csl" include ;
-: stT stackTest ;
-//: bT bigNumTest ;
-: locT localsTest ;
-: aT arrayTest ;
-: cT classTest ;
-: cntT controlTest ;
-: oT objectTest ;
-: cST c_SyntaxTest ;
-//: ppT preprocessorTest ;
-: lT lispTest ;
-: basicT ppT loT bT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 ; //x64 ;
-basicT
-: itypes "namespaces/types.csl" include ;
-//itypes
-//cST
-#endif
 ;d
+#if 0 //DEBUG_ON 
+jcc8_On // must be on here !
+c_syntaxOn
+int _fib1cr ( REG n ) { if ( n < 2 ) { n ; } else { _fib1cr ( n - 1 ) + _fib1cr ( n - 2 ) ; }  }
+int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
+pwi _fib1c
+pwi _fib1cr
+_fib1c (20) ; dup p 6765 _assert
+//_fib1cr (20) ; dup p 6765 _assert // not working
+c_syntaxOff
+C
+scOn
+cOn 
+int64
+fd ( int64 koc | int64 rtrn )
+//fd ( REG int64 koc | REG int64 rtrn )
+{
+   //int64 rtrn ;
+   if ( koc == 1) rtrn = 1 ;
+   else if ( koc == 2) rtrn = 5 ;
+   else if ( koc == 3) rtrn = 10 ;
+   else if ( koc == 4) rtrn = 25 ;
+   else if ( koc == 5) rtrn = 50 ;
+   return rtrn ;
+}
+pwi fd sp0
+/*
+(define (cc amount kinds-of-coins)                                                                                                                        
+  (cond ((= amount 0) 1)                                                                                                                                  
+        ((or (< amount 0) (= kinds-of-coins 0)) 0)                                                                                                        
+        (else (+ (cc amount                                                                                                                               
+                     (- kinds-of-coins 1))                                                                                                                
+                 (cc (- amount (first-denomination kinds-of-coins))
+                     kinds-of-coins)
+))))
+*/
+//cc1 ( REG amount, REG koc | REG rtrn ) //, REG one, REG int64 two ) 
+//cc1 ( REG amount, REG koc | REG rtrn ) // gives wrong result ??
+//cc1 ( REG amount, REG koc) // doesn't work ??
+#if 0
+int64
+cc1 ( int64 amount, int64 koc | rtrn, one, two )
+#else
+int64
+cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ??
+#endif
+{
+    if (amount == 0) rtrn = 1  ;
+    else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
+    else 
+    {
+#if 1
+        rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
+#else // no REGs this works
+        one = cc1 ( amount, koc - 1) ;
+        two = cc1 (amount - fd (koc), koc) ;
+        rtrn = one + two ;
+#endif
+    }
+    //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
+    //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
+    return rtrn ;
+}
+
+//vb(1) ;
+pwi cc1 //pause
+//pwi countChangec
+int64 
+countChange ( int amount)
+{
+  int64 rtrn = cc1 ( amount, 5)  ;
+  return rtrn ;
+}
+//pwi countchange
+void
+CountChange ( int64 amount )
+{
+    int64 value0 ;
+    value0 = countChange ( amount ) ;
+    oPrintf ( "\n%ld", value0 ) ;
+}
+//logOn
+//stack pause
+CountChange (100) ; stack //pause
+countChangec (100 ) ; drop
+ti(4) ; countChangec (1000 ) ; drop time(4) ;
+ti(4) ; countChangec (10000 ) ; drop time(4) ;
+ti(4) ; CountChange (1000) ; time(4) ; stack
+//ti(4) ; CountChange (10000) ; time(4) ; stack
+//logOff
+cOff
+
+#endif // ifdef _DEV_H_
+//$gcc --version
+#if 0 // don't use this coding style - doesn't compile yet
+cOn scOn
+int64 te0 ( c | a, b, d, e ) { a = b = d = e = c ; p ( a ) ; p ( b ) ; p ( c ) ; p ( d ) ; p ( e ) ; } 
+pwi te0 
+te0 ( 3 ) ; 
+//pause
+int64 te2 ( c | a, b ) { a = ( b = c ) ; p ( b ) ; p ( a ) ; } 
+pwi te2 te2 ( 3 ) ; //pause
+//#else 
+int64 te3 ( b, c | a ) { a = ( b + c ) ; p ( a ) ; } 
+//pwi te3 
+te3 ( 1, 2 ) ; //pause
+int64 te4 ( b, c | a ) { a = b + c ; p ( a ) ; } 
+//pwi te4 
+te4 ( 1, 2 ) ; //pause
+int64 te1 ( c | a, b ) { b = c ; a = b ; p ( b ) ; p ( a ) ; } 
+//pwi te1 
+te1 ( 3 ) ; //pause
+cOff
+#endif
+//: tx ( a b ) a @ 2 = b @ 3 = a @ b @ * dup 0 !  p ;  4 5 tx pause
 2 + 7 assertStkChk // stack checking
-//lisp
+//rdim 
+logOff

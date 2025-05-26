@@ -58,9 +58,6 @@ CSL_SessionInit ( )
 void
 CSL_ResetAll_Init ( CSL * csl )
 {
-    byte * startDirectory = ( byte* ) "_namespaces_" ;
-    if ( ! GetState ( _O_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/csl/namespaces" ;
-    DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) "_startDirectory_", 0, NAMESPACE_VARIABLE, 0, 0, ( int64 ) startDirectory, 0, 0, 0, 0 ) ;
     _CSL_Init_SessionCore ( csl, 1, 0 ) ;
     //CSL_DebugOn () ; //Pause () ;
     if ( ( _O_->RestartCondition >= RESET_ALL ) )

@@ -8,6 +8,8 @@
       </df>
       <df name="bin">
       </df>
+      <df name="build">
+      </df>
       <df name="etc">
       </df>
       <df name="namespaces">
@@ -18,6 +20,10 @@
       </df>
       <df name="src">
         <df name="basis">
+          <df name="build">
+            <df name="Debug">
+            </df>
+          </df>
           <df name="compiler">
             <in>_compile.c</in>
             <in>arrays.c</in>
