@@ -597,7 +597,10 @@ void dllist_Map_OnePlusStatus(dllist *list, MapFunction2 mf, int64 one, int64 *s
 void Tree_Map_Namespaces_State_2Args(dllist *list, uint64 state, MapSymbolFunction2 mf, int64 one, int64 two);
 void Tree_Map_NamespacesTree(dllist *list, MapSymbolFunction mf);
 void Tree_Map_Namespaces(dllist *list, MapSymbolFunction mf);
-Word *Tree_Map_OneNamespace(Word *word, MapFunction_1 mf, int64 one);
+Word *Tree_Map_OneNamespace_OneArg(Word *word, MapFunction_1 mf1, int64 one);
+void Tree_Map_OneNamespace(Namespace *ns, MapFunction mf);
+void Tree_Map_OneList(dllist *list, MapFunction mf);
+void Tree_Map_NamespacesTree1(dllist *list, MapSymbolFunction1 mf2, int64 one);
 Word *Tree_Map_OneNamespace_TwoArgs(Namespace *ns, MapFunction_2 mf2, int64 one, int64 two);
 Word *Tree_Map_State_OneArg(uint64 state, MapFunction_1 mf, int64 one);
 void List_N_M_Node_PrintWords(dllist *alist);
@@ -2096,6 +2099,10 @@ void CSL_NonCompilingNs_Clear(Compiler *compiler);
 Word *_CSL_VariableGet(Namespace *ns, byte *name);
 int64 _CSL_VariableValueGet(byte *nameSpace, byte *name);
 void _CSL_RemoveNamespaceFromUsingListAndClear(byte *name);
+ThisWordNode *Word_ThisWordNode_New(Word *thisWord);
+void SortWordByCountOntoList(Symbol *s, dllist *list);
+void Word_PrintWithUseage(Symbol *s);
+void Namespaces_WordUseage(void);
 /* src/primitives/systems.c */
 void CSL_Jcc8_On(void);
 void CSL_Jcc8_Off(void);

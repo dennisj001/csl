@@ -4,10 +4,10 @@
 
 CPrimitive CPrimitives [] = {
     //{ "flisp", 0, 0, 0, CSL_Flisp, 0, 0, 0, "Flisp", "Root" },
-    { "l9", 0, 0, 0, CSL_Lisp9, 0, 0, 0, "L9", "Root" },
+    //{ "l9", 0, 0, 0, CSL_Lisp9, 0, 0, 0, "L9", "Root" },
     //{ "jforth", 0, 0, 0, jForth, 0, 0, 0, "jForth", "Root" },
-    { "retro", 0, 0, 0, (block) retro, 0, 0, 0, "RetroForth", "Root" },
-    { "lbforth", 0, 0, 0, (block) lbforth, 0, 0, 0, "lbforth", "Root" },
+    //{ "retro", 0, 0, 0, (block) retro, 0, 0, 0, "RetroForth", "Root" },
+    //{ "lbforth", 0, 0, 0, (block) lbforth, 0, 0, 0, "lbforth", "Root" },
     //{ "s9fes", 0, 0, 0, CSL_S9fes, 0, 0, 0, "L9", "Root" },
 
     { "locationPush", 0, 0, 0, Location_PushNew, 0, 0, 0, "Experimental", "Root" },
@@ -603,6 +603,7 @@ CPrimitive CPrimitives [] = {
     { "purgeWordIfContainsName", 0, 0, 0, CSL_Namespaces_PurgeWordIfContainsName, 0, 0, 0, "Word", "Root" },
     { "wordNsListPrint", 0, 0, 0, CSL_Namespace_PrintWordList, 0, 0, 0, "Word", "Root" },
     { "word_SC_WordList_Show", 0, 0, 0, CSL_SC_WordList_Show, 0, 0, 0, "Word", "Root" },
+    { "wordUseage", 0, 0, 0, Namespaces_WordUseage, 0, 0, 0, "Word", "Root" },
 
     // Dynamic Object - DObject
     { "dobject", 0, 0, 0, CSL_SetPropertiesAsDObject, 0, 0, 0, "DObject", "Root" },

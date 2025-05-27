@@ -37,6 +37,7 @@ Interpreter_InterpretSelectedTokens ( Interpreter * interp, byte * target )
 Word *
 Interpreter_DoWord_Default ( Interpreter * interp, Word * word0, int64 tsrli, int64 scwi )
 {
+    word0->W_UseCount ++ ;
     Word * word = Compiler_CopyDuplicatesAndPush ( word0, tsrli, scwi ) ;
     interp->w_Word = word ;
     Word_Eval ( word ) ;
@@ -54,7 +55,7 @@ _Interpreter_Before_DoInfixPrefixableWord ( Interpreter * interp, Word * word )
     if ( GetState ( _Context_, C_SYNTAX ) &&
         ( word->W_MorphismAttributes & ( CATEGORY_BIG_NUM_OP_OPEQUAL | CATEGORY_OP_EQUAL | CATEGORY_OP_OPEQUAL ) ) )
     {
-        Word * lhsWord = (Word *) Stack_Top (compiler->LHS_Word) ;
+        Word * lhsWord = ( Word * ) Stack_Top ( compiler->LHS_Word ) ;
         if ( ( word->W_MorphismAttributes & ( CATEGORY_BIG_NUM_OP_OPEQUAL ) ) &&
             lhsWord && ( Namespace_IsUsing ( ( byte* ) "BigNum" ) ) )
         {
@@ -131,7 +132,7 @@ Interpreter_DoInfixOrPrefixWord ( Interpreter * interp, Word * word )
             word = _Interpreter_DoPrefixWord ( cntx, interp, word ) ;
         }
 #if 1 // only with certain word ?? eg. 'cd'        
-        else if ( ( word->W_TypeAttributes & ( WT_PREFIXABLE ) ) && ( word->W_OpNumOfParams||word->W_NumberOfPrefixedArgs) ) 
+        else if ( ( word->W_TypeAttributes & ( WT_PREFIXABLE ) ) && ( word->W_OpNumOfParams || word->W_NumberOfPrefixedArgs ) )
         {
             word = _Interpreter_DoPrefixWord ( cntx, interp, word ) ;
         }

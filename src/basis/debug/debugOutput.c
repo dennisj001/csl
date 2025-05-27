@@ -518,7 +518,8 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
     if ( ! scWord )
     {
         if ( ( _LC_ && _LC_->Sc_Word ) && word && ( word->W_MySourceCodeWord == _LC_->Sc_Word ) ) scWord = _LC_->Sc_Word ;
-        //if ( ! scWord ) scWord = _CSL_->SC_Word ;
+        //if ( ! scWord ) 
+        else scWord = Get_SourceCodeWord ( word ) ; //_CSL_->SC_Word ;
     }
     scs = scWord ? scWord->W_OriginalCodeText : 0 ;
     if ( ( ! scs ) && useScFlag )
@@ -587,7 +588,7 @@ CSL_PrepareDbgShowInfoString ( Word * word, byte* token, int64 twAlreayUsed )
 void
 CSL_Show_SourceCode_TokenLine ( Word * word, byte * prompt, int64 signal, byte * token0, byte * signalAscii )
 {
-    ReadLiner * rl = _ReadLiner_ ;
+    //ReadLiner * rl = _ReadLiner_ ;
     char * mode ;
     if ( GetState ( _Context_, TDI_PARSING ) ) mode = "[td]" ;
     else mode = ( char* ) ( ( signal || ( int64 ) signalAscii[0] ) ?
@@ -640,9 +641,9 @@ LO_Debug_ExtraShow ( int64 showStackFlag, int64 verbosity, int64 wordList, byte 
         if ( Verbosity ( ) > verbosity )
         {
             va_list args ;
-            va_start ( args, ( char* ) format ) ;
+            va_start ( args, format ) ;
             char * out = ( char* ) Buffer_DataCleared ( _CSL_->DebugB ) ;
-            vsprintf ( ( char* ) out, ( char* ) format, args ) ;
+            vsprintf ( ( char* ) out, format, args ) ;
             va_end ( args ) ;
             DebugColors ;
             if ( wordList ) _CSL_SC_WordList_Show ( ( byte* ) out, 0, 0 ) ;

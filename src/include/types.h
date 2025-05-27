@@ -53,7 +53,11 @@ typedef struct
                     uint64 T_WAllocationType ;
                     uint32 T_WordAttributes ;
                     uint16 T_NumberOfPrefixedArgs ;
-                    uint16 T_Unused ;
+                    union
+                    {
+                        uint16 T_Unused ;
+                        uint16 T_UseCount ;
+                    } ;
                 } ;
                 //AttributeBitField abf ;
                 //class bitset abt[320] ;
@@ -296,6 +300,7 @@ typedef struct _Identifier // _Symbol
 #define S_MacroLength CodeSize 
 
 #define Name S_Name
+#define W_Attributes S_Node.n_Attributes
 #define W_MorphismAttributes S_MorphismAttributes
 #define W_ObjectAttributes S_ObjectAttributes
 #define W_LispAttributes S_LispAttributes
@@ -304,6 +309,7 @@ typedef struct _Identifier // _Symbol
 #define W_AllocType S_WAllocType
 #define W_Filename W_WordData->Filename
 #define W_LineNumber W_WordData->LineNumber
+#define W_UseCount W_Attributes.T_UseCount
 #define CProp S_MorphismAttributes
 #define CProp2 S_ObjectAttributes
 #define LProp S_LispAttributes
@@ -369,6 +375,7 @@ typedef
 int64( *MapFunction_2 ) ( Symbol *, int64, int64 ) ;
 typedef void ( *MapSymbolFunction ) ( Symbol * ) ;
 typedef void ( *VMapNodeFunction ) ( dlnode * ) ;
+typedef void ( *MapSymbolFunction1 ) ( Symbol *, int64 ) ;
 typedef void ( *MapSymbolFunction2 ) ( Symbol *, int64, int64 ) ;
 typedef Word* ( *MapNodeFunction ) ( dlnode * node ) ;
 typedef void ( *VMapSymbol2 ) ( Symbol * symbol, int64, int64 ) ;
@@ -389,6 +396,13 @@ typedef union
     byte TypeSignatureCodes [8] ;
     Word * TypeNamespace ;
 } TypeSignatureInfo ;
+
+typedef struct _ThisWordNode
+{
+    dlnode WordUseNode ; // used for sorting word use
+    Word * ThisWord ;
+} ThisWordNode ;
+
 typedef struct _WordData
 {
     uint64 WD_RunType ;
@@ -459,6 +473,7 @@ typedef struct _WordData
     dllist * SourceCodeWordList ;
     int64 SourceCodeMemSpaceRandMarker ;
     dllist * DebugWordList ;
+    ThisWordNode * ThisWordUseNode ; // used for sorting word use
     int64 StartCharRlIndex ;
     int64 SC_WordIndex ;
     Identifier * CSLWord, * BaseObject ;
@@ -482,6 +497,7 @@ typedef struct _WordData
 #define NestedObjects W_WordData->NestedObjects // used by Variable and LocalWord
 #define ObjectCode W_WordData->Coding // used by objects/class words
 #define W_OurLocation W_WordData->OurLocation
+#define W_ThisWordUseNode W_WordData->ThisWordUseNode
 #define StackPushRegisterCode W_WordData->StackPushRegisterCode // used by CO
 #define W_OriginalCodeText W_WordData->WD_OriginalCodeText 
 //#define W_TokenEnd_ReadLineIndex W_WordData->CursorEndPosition 
@@ -1160,109 +1176,109 @@ typedef struct
 } OVT_MemSystem, OMS ;
 
 #if 0// jforth
-typedef CELL_BASE_TYPE scell;
-typedef DOUBLE_CELL_BASE_TYPE dscell;
-typedef unsigned CELL_BASE_TYPE cell;
-typedef unsigned DOUBLE_CELL_BASE_TYPE dcell;
-typedef void(*builtin)();
+typedef CELL_BASE_TYPE scell ;
+typedef DOUBLE_CELL_BASE_TYPE dscell ;
+typedef unsigned CELL_BASE_TYPE cell ;
+typedef unsigned DOUBLE_CELL_BASE_TYPE dcell ;
+typedef void(*builtin )( ) ;
 #endif
 #if 1
 // retro.c
-typedef struct NgaState NgaState;
+typedef struct NgaState NgaState ;
 
-typedef void (*Handler)(NgaState *);
-
-struct NgaCore {
-  CELL sp, rp, ip;            /* Stack & instruction pointers */
-  CELL active;                /* Is core active?              */
-  CELL u;                     /* Should next operation be     */
-                              /* unsigned?                    */
-  CELL data[STACK_DEPTH];     /* The data stack               */
-  CELL address[ADDRESSES];    /* The address stack            */
+typedef void (*Handler )( NgaState * ) ;
+struct NgaCore
+{
+    CELL sp, rp, ip ; /* Stack & instruction pointers */
+    CELL active ; /* Is core active?              */
+    CELL u ; /* Should next operation be     */
+    /* unsigned?                    */
+    CELL data[STACK_DEPTH] ; /* The data stack               */
+    CELL address[ADDRESSES] ; /* The address stack            */
 
 #ifdef ENABLE_MULTICORE
-  CELL registers[24];         /* Internal Registers           */
+    CELL registers[24] ; /* Internal Registers           */
 #endif
-};
+} ;
+struct NgaState
+{
+    /* System Memory */
+    CELL memory[IMAGE_SIZE + 1] ;
 
-struct NgaState {
-  /* System Memory */
-  CELL memory[IMAGE_SIZE + 1];
+    /* CPU Cores */
+    struct NgaCore cpu[CORES] ;
+    int active ;
 
-  /* CPU Cores */
-  struct NgaCore cpu[CORES];
-  int active;
+    /* I/O Devices */
+    int devices ;
+    Handler IO_deviceHandlers[MAX_DEVICES] ;
+    Handler IO_queryHandlers[MAX_DEVICES] ;
 
-  /* I/O Devices */
-  int devices;
-  Handler IO_deviceHandlers[MAX_DEVICES];
-  Handler IO_queryHandlers[MAX_DEVICES];
-
-  CELL Dictionary, interpret;    /* Interfacing     */
-  char string_data[8192];
+    CELL Dictionary, interpret ; /* Interfacing     */
+    char string_data[8192] ;
 
 #ifdef ENABLE_FLOATS
-  double Floats[256], AFloats[256];        /* Floating Point */
-  CELL fsp, afsp;
+    double Floats[256], AFloats[256] ; /* Floating Point */
+    CELL fsp, afsp ;
 #endif
 
 #ifdef ENABLE_BLOCKS
-  char BlockFile[1025];
+    char BlockFile[1025] ;
 #endif
 
 #ifdef ENABLE_ERROR
-  CELL ErrorHandlers[64];
+    CELL ErrorHandlers[64] ;
 #endif
 
-  /* Scripting */
-  char **sys_argv;
-  int sys_argc;
-  char scripting_sources[64][8192];
-  char line[4096];
-  int current_source;
-  int perform_abort;
-  int interactive;
+    /* Scripting */
+    char **sys_argv ;
+    int sys_argc ;
+    char scripting_sources[64][8192] ;
+    char line[4096] ;
+    int current_source ;
+    int perform_abort ;
+    int interactive ;
 
-  CELL currentLine;
-  CELL ignoreToEOL, ignoreToEOF;
+    CELL currentLine ;
+    CELL ignoreToEOL, ignoreToEOF ;
 
-  /* Configuration of code & test fences for Unu */
-  char code_start[256], code_end[256];
-  char test_start[256], test_end[256];
-  int codeBlocks;
+    /* Configuration of code & test fences for Unu */
+    char code_start[256], code_end[256] ;
+    char test_start[256], test_end[256] ;
+    int codeBlocks ;
 
-  FILE *OpenFileHandles[MAX_OPEN_FILES];
-};
+    FILE *OpenFileHandles[MAX_OPEN_FILES] ;
+} ;
 #endif
 #if 1 // lbForth - kernel.c
 #define REGPARM
 
-typedef long int cell;
-typedef char char_t;
-typedef unsigned char uchar_t;
-typedef struct word *nt_t;
-typedef struct word *xt_t;
-typedef xt_t * REGPARM code_t (xt_t *, nt_t);
+typedef long int cell ;
+typedef char char_t ;
+typedef unsigned char uchar_t ;
+typedef struct word *nt_t ;
+typedef struct word *xt_t ;
+typedef xt_t * REGPARM
+code_t( xt_t *, nt_t ) ;
 
 #define NAME_LENGTH 16
-
 struct word
 {
-  uchar_t nlen;
-  char_t name[NAME_LENGTH - 1];
-  nt_t next;
-  cell *does;
-  code_t *code;
-  cell param[];
-};
+    uchar_t nlen ;
+    char_t name[NAME_LENGTH - 1] ;
+    nt_t next ;
+    cell *does ;
+    code_t *code ;
+    cell param[] ;
+} ;
 
 #define NEXT_XT  (*IP++)
 #define EXECUTE(XT)  IP = (XT)->code (IP, XT)
 
-extern struct word SP_word, RP_word;
+extern struct word SP_word, RP_word ;
 
-#define POP_lbf(TYPE)	((TYPE)(*(*((cell **)SP_word.param))++))
-#define PUSH_lbf(X)		(*--(*((cell **)SP_word.param)) = (cell)(X))
-#define RPOP(TYPE)	((TYPE)(*(*((cell **)RP_word.param))++))
-#define RPUSH(X)	(*--(*((cell **)RP_word.param)) = (cell)(X))
+#define POP_lbf(TYPE) ((TYPE)(*(*((cell **)SP_word.param))++))
+#define PUSH_lbf(X)  (*--(*((cell **)SP_word.param)) = (cell)(X))
+#define RPOP(TYPE) ((TYPE)(*(*((cell **)RP_word.param))++))
+#define RPUSH(X) (*--(*((cell **)RP_word.param)) = (cell)(X))
 #endif

@@ -98,6 +98,9 @@
           <in>x.c</in>
         </df>
         <df name="primitives">
+          <df name="c">
+            <in>params.c</in>
+          </df>
           <in>bits.c</in>
           <in>cmaths.c</in>
           <in>compilers.c</in>
@@ -109,6 +112,7 @@
           <in>interpreters.c</in>
           <in>ios.c</in>
           <in>kernel.c</in>
+          <in>kernel.original.c</in>
           <in>lbForth.c</in>
           <in>ls9.c</in>
           <in>maths.c</in>
@@ -135,7 +139,6 @@
       <itemPath>Makefile</itemPath>
       <itemPath>nbproject/private/launcher.properties</itemPath>
     </logicalFolder>
-    <itemPath>src/primitives/libc-shell.txt</itemPath>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <sourceRootList>
@@ -151,7 +154,7 @@
       </toolsSet>
       <flagsDictionary>
         <element flagsID="0" commonFlags="-ggdb"/>
-        <element flagsID="1" commonFlags="-ggdb -O2"/>
+        <element flagsID="1" commonFlags="-ggdb -O3"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -159,7 +162,7 @@
         <makeTool>
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -j20 -f Makefile</buildCommand>
-          <cleanCommand>${MAKE} -j20 -f Makefile clean</cleanCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath>bin/csl-gdb</executablePath>
         </makeTool>
         <preBuild>
@@ -167,13 +170,6 @@
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
-      <folder path="0/src/basis/debug">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </folder>
       <folder path="0/src/basis/lc">
         <cTool>
           <incDir>
@@ -184,7 +180,7 @@
       <item path="src/basis/atom.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/basis/bigNum.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
@@ -193,112 +189,112 @@
       <item path="src/basis/bigNum.gmp.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/basis/colors.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/_compile.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/arrays.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/bit.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/blocks.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/combinators.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/compile.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/contol.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/cpu.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/locals.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/logic.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/machineCode.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/math.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/mcPrimitives.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/memory.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/optimize.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
@@ -307,182 +303,182 @@
       <item path="src/basis/compiler/runtime.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/basis/compiler/stack.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/compiler/udis.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/context.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/_readline.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/array.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/block.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/charSet.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/classes.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/compiler.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/conditionals.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/cstack.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/dataObjectNew.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/dataObjectRun.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/dataStack.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/dllist.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/dobject.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/finder.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/interpret.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/io.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/lexer.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/memSpace.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/namespace.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/parse.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/preprocessor.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/readTable.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/readline.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
@@ -493,49 +489,49 @@
       <item path="src/basis/core/sockets.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/basis/core/string.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/symbol.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/syntax.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/system.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/typedef.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/core/word.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/csl.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
@@ -546,6 +542,11 @@
       <item path="src/basis/debug/debugDisassembly.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/basis/debug/debugOutput.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
       </item>
       <item path="src/basis/debug/debugStepping.c" ex="false" tool="0" flavor2="2">
       </item>
@@ -557,119 +558,133 @@
             flavor2="2">
       </item>
       <item path="src/basis/exception.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/history.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/init.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/interpreter.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/interpreters.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/lc/apply.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="src/basis/lc/eval.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="src/basis/lc/lambdaCalculus.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="src/basis/lc/lcDebug.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="src/basis/lc/print.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="src/basis/lc/read.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="src/basis/lc/special.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+        </cTool>
       </item>
       <item path="src/basis/linux.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/lists.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/mem.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/openVmTil.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/recycle.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/repl.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/sourceCode.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/system.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/tabCompletion.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/basis/typeCheck.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
@@ -678,140 +693,139 @@
       <item path="src/basis/x.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/primitives/bits.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/cmaths.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/compilers.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/contexts.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/dataObjectNews.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/debuggers.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/disassembler.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/file.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/interpreters.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/ios.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/kernel.c" ex="false" tool="0" flavor2="2">
-        <cTool flags="1">
-          <incDir>
-            <pElem>targets/c</pElem>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
-      <item path="src/primitives/lbForth.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
+      <item path="src/primitives/c/params.c" ex="false" tool="0" flavor2="2">
+      </item>
+      <item path="src/primitives/cmaths.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="1">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/compilers.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/contexts.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/dataObjectNews.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/debuggers.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/disassembler.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/file.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/interpreters.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/ios.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/kernel.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>targets/c</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/primitives/kernel.original.c" ex="false" tool="0" flavor2="2">
+      </item>
+      <item path="src/primitives/lbForth.c" ex="false" tool="0" flavor2="2">
+      </item>
       <item path="src/primitives/ls9.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/maths.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/memorys.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/namespaces.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/openvmtils.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/parsers.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/primitives.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="src/primitives/retro.c" ex="false" tool="0" flavor2="0">
+      <item path="src/primitives/retro.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
@@ -819,49 +833,44 @@
         </cTool>
       </item>
       <item path="src/primitives/retro.orig.c.c" ex="false" tool="0" flavor2="2">
+      </item>
+      <item path="src/primitives/shell.c" ex="false" tool="0" flavor2="2">
         <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
-      <item path="src/primitives/shell.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>.</pElem>
-          </incDir>
-        </cTool>
-      </item>
       <item path="src/primitives/stacks.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/strings.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/syntaxes.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/systems.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>
         </cTool>
       </item>
       <item path="src/primitives/words.c" ex="false" tool="0" flavor2="2">
-        <cTool>
+        <cTool flags="0">
           <incDir>
             <pElem>.</pElem>
           </incDir>

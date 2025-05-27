@@ -167,16 +167,6 @@ Prompt ( )
         DoPrompt () ;
 }
 
-void
-lbforth ( ) //Context * cntx , byte * initFilename )
-{
-    SetState ( _Context_, LBFORTH_MODE, true ) ;
-    iPrintf ( "\ncsl lbforth : type 'bye' to exit lbforth : Lars Brinkhoff\n" ) ;
-    SetState ( _Context_, AT_COMMAND_LINE, true ) ;
-    _Repl ( _Context_, ( block ) _lbforth ) ;
-    iPrintf ( "\nleaving csl lbforth : Lars Brinkhoff : returning to csl interpreter\n" ) ;
-    SetState ( _Context_, LBFORTH_MODE, false ) ;
-}
 
 #if 0
 

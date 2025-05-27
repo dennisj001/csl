@@ -1,5 +1,5 @@
 called: /usr/bin/gcc
-	/home/dennisj/csl
+	/media/sda5/dennisj-a1/csl.0.941.610
 	gcc
 	-ggdb
 	src/basis/compiler/_compile.o
@@ -99,9 +99,12 @@ called: /usr/bin/gcc
 	src/primitives/cmaths.o
 	src/primitives/dataObjectNews.o
 	src/basis/openVmTil.o
-	src/primitives/ls9.o
 	src/basis/debug/debuggerSteppingSetup.o
 	src/basis/compiler/machineCode.o
+	src/primitives/shell.o
+	src/primitives/ls9.o
+	src/primitives/retro.o
+	src/primitives/kernel.o
 	-o
 	bin/csl-gdb
 	-L/usr/local/lib
@@ -114,7 +117,7 @@ called: /usr/bin/gcc
 	-lgmp
 
 called: /usr/bin/gcc
-	/home/dennisj/csl
+	/media/sda5/dennisj-a1/csl.0.941.610
 	gcc
 	--version
 

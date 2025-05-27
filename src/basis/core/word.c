@@ -27,10 +27,11 @@ Word_Morphism_Run ( Word * word )
     if ( word )
     {
         Context_PreWordRun_Init ( _Context_, word ) ;
+        //word->W_UseCount ++ ;
         _O_->DebugOutputFlag &= ~ 1 ;
         if ( GetState ( _LC_, LC_DEBUG_ON ) || Is_DebugModeOn ) DEBUG_SETUP ( word, 0 ) ;
 #if DEBUG
-        _dbg () ; // DEBUG
+        _dbg ( ) ; // DEBUG
 #endif        
         Block_Eval ( word->Definition ) ;
         Context_PostWordRun_Init ( _Context_, word ) ;
@@ -52,7 +53,7 @@ _Word_Eval ( Word * word )
             Word_Morphism_Run ( word ) ;
             SetState ( _Context_, RUN_MODE, false ) ;
         }
-        else _Word_Compile ( word ) ;
+        else _Word_Compile ( word ) ; //, word->W_UseCount ++ ;
         DEBUG_SHOW ( word, 0, 0 ) ;
         _Context_->CurrentEvalWord = 0 ;
         _Context_->LastEvalWord = word ;
@@ -79,6 +80,7 @@ Word_DbgBlock_Eval ( Word * word, block blck )
     if ( blck )
     {
         Context_PreWordRun_Init ( _Context_, word ) ;
+        //if ( word ) word->W_UseCount ++ ;
         _Debug_Setup ( word, 0, ( byte* ) blck, 0, 1 ) ;
         if ( ! GetState ( _Debugger_->w_Word, W_STEPPED ) )
         {
@@ -97,6 +99,7 @@ _Word_Interpret ( Word * word )
 }
 
 #if NEW_SAVE_RESTORE
+
 void
 _Word_SaveRegisterVariables ( Word * word )
 {
@@ -104,14 +107,14 @@ _Word_SaveRegisterVariables ( Word * word )
     //word = _Context_->CurrentWordBeingCompiled ;
 
     if ( word && ( word->W_NumberOfRegisterVariables ) && ( ! GetState ( word, CALL_REGS_SAVED ) ) )
-    //if ( word && ( word->W_NumberOfRegisterVariables ))
+        //if ( word && ( word->W_NumberOfRegisterVariables ))
     {
         int64 i ;
         dllist * list = _Compiler_->LocalsNamespace ? _Compiler_->LocalsNamespace->W_List : 0 ;
         dlnode * node, *nextNode ;
-        for ( i = 0, node = dllist_First ( ( dllist* ) list ) ; 
+        for ( i = 0, node = dllist_First ( ( dllist* ) list ) ;
             //node && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
-            node && (i < word->W_NumberOfRegisterVariables) && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
+            node && ( i < word->W_NumberOfRegisterVariables ) && ( i < NUM_CSL_REGS ) ; node = nextNode, i ++ )
         {
             //mov compiler->Lrpo ( i ) reg to local storage
             nextNode = dlnode_Next ( node ) ;
@@ -127,14 +130,14 @@ _Word_RestoreRegisterVariables ( Word * word )
 {
     //word = _Context_->CurrentWordBeingCompiled ;
     if ( word && ( word->W_NumberOfRegisterVariables ) && ( ! GetState ( word, CALL_REGS_RESTORED ) ) )
-    //if ( word && ( word->W_NumberOfRegisterVariables ))
+        //if ( word && ( word->W_NumberOfRegisterVariables ))
     {
         int64 i ;
         dllist * list = _Compiler_->LocalsNamespace ? _Compiler_->LocalsNamespace->W_List : 0 ;
         dlnode * node, *nextNode ;
-        for ( i = 0, node = dllist_First ( ( dllist* ) list ) ; 
+        for ( i = 0, node = dllist_First ( ( dllist* ) list ) ;
             //node && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
-            node && (i < word->W_NumberOfRegisterVariables) && (i < NUM_CSL_REGS) ; node = nextNode, i ++ )
+            node && ( i < word->W_NumberOfRegisterVariables ) && ( i < NUM_CSL_REGS ) ; node = nextNode, i ++ )
         {
             //mov compiler->Lrpo ( i ) reg to local storage
             nextNode = dlnode_Next ( node ) ;
@@ -424,10 +427,10 @@ _Word_Print ( Word * word )
     _Context_->WordCount ++ ;
     if ( _O_->Dbi )
     {
-        iPrintf ( c_ud ( " %s" ), ( word->Name && word->Name[0] ) ? c_ud ( word->Name ) : ( byte* ) "<unnamed>" ) ;
+        iPrintf ( c_ud ( " %s:%d" ), ( word->Name && word->Name[0] ) ? c_ud ( word->Name ) : ( byte* ) "<unnamed>", word->W_UseCount ) ;
         iPrintf ( c_gd ( " = %lx," ), word ) ;
     }
-    else iPrintf ( c_ud ( " %s" ), word->Name ) ;
+    else iPrintf ( c_ud ( " \'%s\':%d," ), word->Name, word->W_UseCount ) ;
 }
 
 void

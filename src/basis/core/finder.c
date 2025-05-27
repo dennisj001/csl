@@ -4,7 +4,7 @@
 Symbol *
 DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
 {
-    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) list ),
+    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace_OneArg ( ( Word* ) dllist_First ( ( dllist* ) list ),
         ( MapFunction_1 ) Symbol_CompareName, ( int64 ) name ) ;
     return s ;
 }
@@ -12,7 +12,7 @@ DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
 Symbol *
 _DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
 {
-    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace ( ( Word* ) dllist_First ( list ), ( MapFunction_1 ) Symbol_CompareName, ( int64 ) name ) ;
+    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace_OneArg ( ( Word* ) dllist_First ( list ), ( MapFunction_1 ) Symbol_CompareName, ( int64 ) name ) ;
     return s ;
 }
 
@@ -59,7 +59,7 @@ _Finder_CompareDefinitionAddress_NoAlias ( Symbol * symbol, byte * address )
 Word *
 Finder_FindWordFromAddress_InOneNamespace ( Finder * finder, Namespace * ns, byte * address )
 {
-    if ( ns ) return finder->FoundWord = Tree_Map_OneNamespace ( ( Word* ) dllist_First ( ( dllist* ) ns->S_SymbolList ),
+    if ( ns ) return finder->FoundWord = Tree_Map_OneNamespace_OneArg ( ( Word* ) dllist_First ( ( dllist* ) ns->S_SymbolList ),
         ( MapFunction_1 ) _Finder_CompareDefinitionAddress, ( int64 ) address ) ;
     else return 0 ;
 }

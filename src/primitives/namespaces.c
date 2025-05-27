@@ -54,7 +54,7 @@ _CSL_ForAllNamespaces ( MapSymbolFunction2 msf2, int64 indentFlag )
 }
 
 void
-CSL_SetAllNamespacesNotUsing ( ) 
+CSL_SetAllNamespacesNotUsing ( )
 {
     _CSL_NamespacesMap ( _Namespace_SetAsNotUsing ) ;
     Namespace_SetAsUsing ( "Root" ) ;
@@ -69,17 +69,15 @@ Namespace_PrettyPrint ( Namespace* ns, int64 indentFlag, int64 indentLevel )
     {
         iPrintf ( "\n" ) ;
         int64 _indentLevel = indentLevel ;
-        while ( _indentLevel -- ) iPrintf ( "   " ) ; //"\t" ) ;
-        if ( ns->State & NOT_USING ) iPrintf ( " - %s", c_gd ( ns->Name ) ) ;
-        //if ( ns->State & NOT_USING ) iPrintf ( " " "-%*d" " %s", indentLevel, c_gd ( ns->Name ) ) ;
-        //char buffer [128] ;
-        //if ( ns->State & NOT_USING ) sprintf ( buffer, " " "%-*d" " %s", indentLevel, c_gd ( ns->Name ) ), iPrintf ( "%s", buffer ) ;
-        else iPrintf ( " - %s", c_d ( ns->Name ) ) ;
+        while ( _indentLevel -- ) iPrintf ( "   " ) ;
+        while ( indentLevel -- ) iPrintf ( "-" ) ;
+        if ( ns->State & NOT_USING ) iPrintf ( " %s", c_gd ( ns->Name ) ) ;
+        else iPrintf ( " %s", c_d ( ns->Name ) ) ;
     }
     else
     {
         if ( ns->State & NOT_USING ) iPrintf ( " %s", c_gd ( ns->Name ) ) ;
-        else iPrintf ( " %s", c_ud ( ns->Name ) ) ;
+        else iPrintf ( " %s", c_d ( ns->Name ) ) ;
     }
     _Context_->NsCount ++ ;
 }
@@ -355,5 +353,70 @@ void
 _CSL_RemoveNamespaceFromUsingListAndClear ( byte * name )
 {
     _Namespace_RemoveFromUsingList_ClearFlag ( Namespace_Find ( name ), 1, 0 ) ;
+}
+
+ThisWordNode *
+Word_ThisWordNode_New ( Word * thisWord )
+{
+    ThisWordNode * twn = ( ThisWordNode* ) Mem_Allocate ( sizeof ( ThisWordNode ), DICTIONARY ) ;
+    twn->ThisWord = thisWord ;
+}
+
+// the list is an empty list to which we are qsorting ThisWordNode s added from a copy of the Namespaces list
+
+void
+SortWordByCountOntoList ( Symbol * s, dllist * list )
+{
+    Word * sword = ( Word* ) s ;
+    if ( ! sword->W_ThisWordUseNode ) sword->W_ThisWordUseNode = Word_ThisWordNode_New ( sword ) ;
+#if 0    
+    if ( String_Equal ( sword->Name, ";" ) ) 
+        oPrintf ( "dbg : %s.\'%s\':%d\n, ", sword->ContainingNamespace->Name, sword->Name, sword->W_UseCount ) ;
+    if ( ! sword->W_UseCount )
+        oPrintf ( "dbg : %s.\'%s\':%d\n, ", sword->ContainingNamespace->Name, sword->Name, sword->W_UseCount ) ;
+#endif    
+    {
+        dlnode * node, *nextNode ;
+        node = dllist_First ( ( dllist* ) list ) ;
+        if ( ! node ) _dllist_AddNodeToHead ( list, ( dlnode* ) sword->W_ThisWordUseNode ) ;
+        //else if ( sword->W_UseCount == 1 ) _dllist_AddNodeToTail ( list, ( dlnode* ) sword->W_ThisWordUseNode ) ;
+        else
+        {
+            for ( ; node ; node = nextNode )
+            {
+                nextNode = dlnode_Next ( node ) ;
+                ThisWordNode * ltwn = ( ThisWordNode * ) node ;
+                Word * lword = ltwn->ThisWord ;
+                if ( sword->W_UseCount > lword->W_UseCount )
+                {
+                    dlnode_InsertThisBeforeANode ( ( dlnode* ) sword->W_ThisWordUseNode, ( dlnode* ) node ) ;
+                    return ;
+                }
+                else if ( sword->W_UseCount == 0 )
+                {
+                    //dlnode_InsertThisBANode ( ( dlnode* ) sword->W_ThisWordUseNode, ( dlnode* ) node ) ;
+                    _dllist_AddNodeToTail ( list, ( dlnode* ) sword->W_ThisWordUseNode ) ;
+                    return ;
+                }
+            }
+        }
+    }
+}
+
+void
+Word_PrintWithUseage ( Symbol * s )
+{
+    ThisWordNode * twn = ( ThisWordNode * ) s ;
+    Word * word = twn->ThisWord ;
+    //if ( word && word->W_UseCount ) oPrintf ( "%s.%s : %d, ", word->ContainingNamespace->Name, word->Name, word->W_UseCount ) ;
+    if ( word && word->W_UseCount ) oPrintf ( "%s.\'%s\':%d, ", word->ContainingNamespace->Name, word->Name, word->W_UseCount ) ;
+}
+
+void
+Namespaces_WordUseage ( )
+{
+    dllist * list = _dllist_New ( TEMPORARY ) ;
+    Tree_Map_NamespacesTree1 ( _CSL_->Namespaces->W_List, ( MapSymbolFunction1 ) SortWordByCountOntoList, ( int64 ) list ) ;
+    Tree_Map_OneList ( list, ( MapFunction ) Word_PrintWithUseage ) ;
 }
 
