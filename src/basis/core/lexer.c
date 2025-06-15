@@ -13,7 +13,8 @@
 void
 Lexer_Exception ( byte * token, uint64 exceptionNumber, byte * message )
 {
-    _O_->ExceptionToken = token ;
+    Exception *e = _O_->OVT_Exception ;
+    e->ExceptionToken = token ;
     byte *buffer = Buffer_DataCleared ( _CSL_->ScratchB1 ) ;
     sprintf ( ( char* ) buffer, "%s :: %s ?\n", ( char* ) message, ( char* ) token ) ;
     CSL_Exception ( exceptionNumber, buffer, QUIT ) ;

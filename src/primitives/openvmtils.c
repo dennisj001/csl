@@ -134,11 +134,12 @@ OVT_Exit ( )
 void
 OVT_StartupMessage ( Boolean promptFlag )
 {
+    Exception *e = _O_->OVT_Exception ;
     if ( Verbosity () > 0 )
     {
         DefaultColors ;
         //if ( CSL->InitSessionCoreTimes > 1 ) CSL_NewLine () ;
-        if ( promptFlag && ( _O_->Restarts < 2 ) )
+        if ( promptFlag && ( e->Restarts < 2 ) )
         {
             System_Time ( _CSL_->Context0->System0, 0, ( char* ) "\nSystem Startup", 1 ) ;
             OVT_Time ( ( char* ) "OVT Startup", 1 ) ;
@@ -152,7 +153,7 @@ OVT_StartupMessage ( Boolean promptFlag )
             iPrintf ( "\nType 'bye' to exit" ) ;
         }
     }
-    else if ( promptFlag && ( _O_->Restarts < 2 ) ) _O_->Verbosity = 1 ;
+    else if ( promptFlag && ( e->Restarts < 2 ) ) _O_->Verbosity = 1 ;
 }
 
 void

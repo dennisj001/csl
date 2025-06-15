@@ -280,8 +280,8 @@ _Word_Allocate ( uint64 allocType )
     Word * word = 0 ;
     int64 size = ( sizeof ( Word ) + sizeof ( WordData ) ) ;
     word = ( Word* ) DLList_CheckRecycledForAllocation ( _O_->RecycledWordList, size ) ;
-    if ( word ) OVT_RecyclingAccounting ( OVT_RA_RECYCLED ) ; //{ _O_->MemorySpace0->RecycledWordCount ++ ; _O_->MemorySpace0->WordsInRecycling -- ; }
-    else
+    //if ( word ) OVT_RecyclingAccounting ( OVT_RA_RECYCLED ) ; //{ _O_->MemorySpace0->RecycledWordCount ++ ; _O_->MemorySpace0->WordsInRecycling -- ; }
+    if ( ! word )
     {
         word = ( Word* ) Mem_Allocate ( size, allocType ) ;
         word->S_WAllocType = allocType ;

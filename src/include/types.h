@@ -396,13 +396,11 @@ typedef union
     byte TypeSignatureCodes [8] ;
     Word * TypeNamespace ;
 } TypeSignatureInfo ;
-
 typedef struct _ThisWordNode
 {
     dlnode WordUseNode ; // used for sorting word use
     Word * ThisWord ;
 } ThisWordNode ;
-
 typedef struct _WordData
 {
     uint64 WD_RunType ;
@@ -1015,7 +1013,7 @@ typedef struct
     MemChunk MS_MemChunk ;
     NamedByteArray * SessionObjectsSpace, * TempObjectSpace, * CompilerTempObjectSpace,
     * ContextSpace, * WordRecylingSpace, * LispTempSpace, * LispCopySpace,
-    * BufferSpace, * CodeSpace, * ObjectSpace, * LispSpace, * DictionarySpace, * StringSpace, *ForthSpace ;
+    * BufferSpace, * CodeSpace, * ObjectSpace, * LispSpace, * DictionarySpace, * StringSpace, *ForthSpace, * ExceptionSpace ;
 
     dllist *NBAs ;
     int64 RecycledWordCount, WordsInRecycling, WordsAllocated ;
@@ -1043,6 +1041,22 @@ typedef struct
         IntColors ics_IntColors ;
     } ;
 } Colors ;
+
+typedef struct
+{
+    int64 State ; 
+    int64 PauseFlag, InfoFlag, Signal, ExceptionCode, RestartCondition, SignalExceptionsHandled ;
+    int64 LastRestartCondition, Console, Thrown, SigSegvs, Restarts, StartedTimes, StartIncludeTries ;
+    byte * Message ;
+    siginfo_t * SignalInfo ;
+    Context * Context ;
+    byte * Prompt, *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken, *Location ;
+    Word * ExceptionWord ;
+    void * SigAddress ;
+    byte * SigLocation, *ErrorCommandLine ;
+    //byte Key ;
+} Exception ;
+
 typedef struct
 {
     MemChunk OVT_MemChunk ;
@@ -1054,15 +1068,17 @@ typedef struct
     ByteArray * CodeByteArray ; // a variable
     Boolean LogFlag, DebugOutputFlag ;
 
-    int64 SignalExceptionsHandled, LastRestartCondition, RestartCondition, Signal, ExceptionCode, Console ;
+    //int64 SignalExceptionsHandled, LastRestartCondition, RestartCondition, Signal, ExceptionCode, Console ;
+    int64 Console ;
 
-    byte *InitString, *StartupString, *StartupFilename, *ErrorFilename, *VersionString, *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken ;
-    Word * ExceptionWord ;
+    byte *InitString, *StartupString, *StartupFilename, *ErrorFilename, *VersionString ; 
+    //        *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken ;
+    //Word * ExceptionWord ;
 
     int64 Argc ;
     char ** Argv ;
-    void * SigAddress ;
-    byte * SigLocation ;
+    //void * SigAddress ;
+    //byte * SigLocation ;
     Colors *Current, Default, Alert, Debug, Notice, User ;
 
     //dlnode PML_HeadNode, PML_TailNode ;
@@ -1083,15 +1099,17 @@ typedef struct
     NamedByteArray * CSL_InternalSpace ;
 
     // variables accessible from csl
-    int64 Verbosity, StartIncludeTries, StartedTimes, Restarts, SigSegvs, ReAllocations, Dbi ;
+    //int64 Verbosity, StartIncludeTries, StartedTimes, Restarts, SigSegvs, ReAllocations, Dbi ;
+    int64 Verbosity, StartIncludeTries, ReAllocations, Dbi ;
     int64 DictionarySize, LispCopySize, LispTempSize, MachineCodeSize, ObjectSpaceSize, InternalObjectsSize, LispSpaceSize, ContextSize ;
-    int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize, ForthSize ;
-    int64 CSLSize, BufferSpaceSize, StringSpaceSize, Thrown ;
+    int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize, ForthSize ; 
+    int64 CSLSize, BufferSpaceSize, ExceptionSpaceSize, StringSpaceSize, Thrown ;
     Buffer *ExceptionBuffer, *PrintBuffer, *PrintBufferCopy, *PrintBufferConcatCopy ;
     sigjmp_buf JmpBuf0 ;
     struct timespec Timer ;
     byte Pblc, Pbf8 [8] ; // Print Buffer last char/first 8 char 
-} OpenVmTil ;
+    Exception * OVT_Exception ;
+} OpenVmTil, OVT ;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first
 typedef struct
@@ -1174,7 +1192,6 @@ typedef struct
     dllist * OvtMemChunkList ;
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
-
 #if 0// jforth
 typedef CELL_BASE_TYPE scell ;
 typedef DOUBLE_CELL_BASE_TYPE dscell ;

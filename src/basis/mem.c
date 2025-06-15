@@ -256,6 +256,12 @@ OVT_MemListFree_ContextMemory ( )
 }
 
 void
+OVT_MemListFree_ExcetptionSpace ( )
+{
+    OVT_MemList_FreeNBAMemory ( ( byte* ) "ExceptionSpace", 1 * M, 1 ) ;
+}
+
+void
 OVT_MemListFree_TempObjects ( )
 {
     OVT_MemList_FreeNBAMemory ( ( byte* ) "TempObjectSpace", 1 * M, 1 ) ;

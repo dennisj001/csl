@@ -301,7 +301,7 @@ _CSL_ParseQid_Token ( byte * token0 )
             if ( token0 ) cntx->BaseObject = 0 ;
             if ( ns ) word = _Finder_FindWord_InOneNamespace ( _Finder_, ns, token ) ;
             else word = Finder_Word_FindUsing ( _Finder_, token, 1 ) ; // maybe need to respect a possible qualifying namespace ??
-            nst = word->W_ObjectAttributes ;
+            if ( word ) nst = word->W_ObjectAttributes ;
             if ( word && ( nst & THIS ) )
             {
                 ns = word ;

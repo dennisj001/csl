@@ -2,6 +2,8 @@
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name=".vscode">
+      </df>
       <df name="bin">
       </df>
       <df name="etc">
@@ -143,6 +145,7 @@
           <in>kernel.c</in>
           <in>kernel.original.c</in>
           <in>lbForth.c</in>
+          <in>lbForth.original.c</in>
           <in>ls9.c</in>
           <in>maths.c</in>
           <in>memorys.c</in>
@@ -151,7 +154,7 @@
           <in>parsers.c</in>
           <in>primitives.c</in>
           <in>retro.c</in>
-          <in>retro.orig.c.c</in>
+          <in>retro.orig.c</in>
           <in>shell.c</in>
           <in>stacks.c</in>
           <in>strings.c</in>

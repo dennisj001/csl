@@ -117,8 +117,9 @@ Kbhit_Pause ( )
 int64
 Key_Kbhit ( FILE * f )
 {
+    //Exception *e = _O_->OVT_Exception ;
     int64 key = _Key ( f ) ;
-    if ( _O_ && ( ! _O_->SigSegvs ) && ( ! GetState ( _Debugger_, DBG_STEPPING ) ) ) Kbhit_Pause ( ) ;
+    if ( _O_ && ( ! _O_->OVT_Exception->SigSegvs ) && ( ! GetState ( _Debugger_, DBG_STEPPING ) ) ) Kbhit_Pause ( ) ;
     return key ;
 }
 
@@ -175,7 +176,7 @@ void
 DoPrompt ( )
 {
     //if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || (_O_->Pblc == '\n') || GetState ( _Lexer_, END_OF_LINE ) )   
-    if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) || GetState ( _Debugger_, DBG_COMMAND_LINE) )   
+    if ( ( ! _O_->Pbf8[0] ) || ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) || GetState ( _Debugger_, DBG_COMMAND_LINE) )   
     //if ( GetState ( _Lexer_, END_OF_LINE ) )   
     {
         _DoPrompt ( ) ;

@@ -177,8 +177,9 @@ CSL_LineCharacterNumber ( )
 void
 _CSL_Version ( Boolean flag )
 {
+    Exception *e = _O_->OVT_Exception ;
     //if ( flag || ( ( Verbosity () ) && ( _O_->StartedTimes == 1 ) ) && (CSL->InitSessionCoreTimes == 1) )
-    if ( flag || ( _O_->Restarts < 2 ) )
+    if ( flag || ( e->Restarts < 2 ) )
     {
         //_iPrintf ( "\ncsl %s", _O_->VersionString ) ;
         iPrintf ( "version %s", _O_->VersionString ) ;

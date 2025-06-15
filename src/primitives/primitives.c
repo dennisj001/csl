@@ -188,10 +188,10 @@ CPrimitive CPrimitives [] = {
     { "_namespaceWords", 0, 0, 0, _CSL_NamespaceWords, 0, 0, 0, "Namespace", "Root" },
     { "namespaceWords", 0, 0, 0, CSL_NamespaceWords, 0, 0, 0, "Namespace", "Root" },
     { "namespace", 0, 0, 0, CSL_Namespace_New, 0, 0, 0, "Namespace", "Root" },
-    //{ "sealed", 0, 0, 0, CSL_NamespaceSealed, 0, 0, 0, "Namespace", "Root" },
     { "_find", 0, 0, 0, CSL_Find, PREFIXABLE, 0, 0, "Namespace", "Root" },
     { "_findUsing", 0, 0, 0, CSL_Find_Using, PREFIXABLE, 0, 0, "Namespace", "Root" },
     { "_findAny", 0, 0, 0, CSL_Find_Any, PREFIXABLE, 0, 0, "Namespace", "Root" },
+    //{ "sealed", 0, 0, 0, CSL_NamespaceSealed, 0, 0, 0, "Namespace", "Root" },
 
     { "memspace", 0, 0, 0, CSL_MemorySpace_New, 0, 0, 0, "MemorySpace", "Root" },
     { "msDelete", 0, 0, 0, CSL_MemorySpace_Delete, 0, 0, 0, "MemorySpace", "Root" },

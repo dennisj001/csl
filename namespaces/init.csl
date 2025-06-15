@@ -131,12 +131,12 @@ User
 StartupMacros                                       // switch to that namespace
 // create string words in StartupMacros namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
-: namespaces "/usr/local/lib/csl/namespaces" ;    // our currently only ?!overloaded!? string macro allowing 
+: namespaces "/usr/local/lib/csl/namespaces" ;      // our currently only ?!overloaded!? string macro allowing 
                                                     // us to parameterize the startup; can be properly started 
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/csl"
-stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
-                                                    // nb. we don't turn it on here until about line 304
+// stringMacrosOn                                   // turn on the macros; doesn't work if not initialized like eg. above initialization
+                                                    // nb. we don't turn it on here until about line 497
 // stringMacrosOff                                  // turn off the macros
 #endif
 Lexer User 
@@ -496,7 +496,7 @@ Root.atoi ( "7" ) 7 _assert //pause
 #if startupMacros
 stringMacrosOn
 #endif
-: tCSL stringMacrosOn "namespaces/ninit.csl" include ; // namespaces init
+: tCSL "namespaces/ninit.csl" include ; // namespaces init
 : tc 2 ti 1 ti lispOff tCSL rtw ;
 : x64 "namespaces/compiler/x64.csl" include ; 
 : bx "namespaces/test/bigNum.test.csl" include ;

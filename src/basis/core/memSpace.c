@@ -235,6 +235,7 @@ Mem_Allocate ( int64 size, uint64 allocType )
         case COMPILER_TEMP: return _Allocate ( size, ms->CompilerTempObjectSpace ) ;
         case WORD_RECYCLING: return _Allocate ( size, ms->WordRecylingSpace ) ;
         case FORTH_SPACE: return _Allocate ( size, ms->ForthSpace ) ;
+        case EXCEPTION_SPACE: return _Allocate ( size, ms->ExceptionSpace ) ;
 
         case T_CSL: case DATA_STACK: return _Allocate ( size, ovt->CSL_InternalSpace ) ;
         case INTERNAL_OBJECT_MEM: return _Allocate ( size, ovt->InternalObjectSpace ) ;
@@ -247,12 +248,6 @@ Mem_Allocate ( int64 size, uint64 allocType )
         default: CSL_Exception ( MEMORY_ALLOCATION_ERROR, 0, QUIT ) ;
     }
     return 0 ;
-}
-
-void *
-sl9_malloc ( int size )
-{
-    return ( void* ) Mem_Allocate ( size, LISP_TEMP ) ;
 }
 
 void
@@ -278,6 +273,7 @@ MemorySpace_Init ( MemorySpace * ms )
     ms->WordRecylingSpace = NBA_MemSpace_New ( ms, ( byte* ) "WordRecylingSpace", ovt->WordRecylingSize, WORD_RECYCLING ) ;
     ms->SessionObjectsSpace = NBA_MemSpace_New ( ms, ( byte* ) "SessionObjectsSpace", ovt->SessionObjectsSize, SESSION ) ;
     ms->ForthSpace = NBA_MemSpace_New ( ms, ( byte* ) "ForthSpace", ovt->ForthSize, FORTH_SPACE ) ;
+    ms->ExceptionSpace = NBA_MemSpace_New ( ms, ( byte* ) "ExceptionSpace", ovt->ExceptionSpaceSize, EXCEPTION_SPACE ) ;
 
     if ( ovt->OVT_CSL && ovt->OVT_CSL->Context0 )
     {
@@ -424,5 +420,11 @@ _MemChunk_WithSymbol_Show ( MemChunk * mchunk, int64 flag )
     Symbol * sym = ( Symbol * ) ( mchunk + 1 ) ;
     iPrintf ( "\n%s : %s : 0x%lld : %d, ", ( flag == MEM_ALLOC ) ? "Alloc" : "Free",
         ( ( int64 ) ( sym->S_Name ) > 0x80000000 ) ? ( char* ) sym->S_Name : "(null)", mchunk->mc_AllocType, mchunk->mc_ChunkSize ) ;
+}
+
+void *
+sl9_malloc ( int size )
+{
+    return ( void* ) Mem_Allocate ( size, LISP_TEMP ) ;
 }
 

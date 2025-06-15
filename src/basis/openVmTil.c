@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.941.672" )
+#define VERSION ((byte*) "0.941.740" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -40,6 +40,7 @@ OpenVmTil_Init ( OpenVmTil * ovt )
     ovt->BufferList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->RecycledWordList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->RecycledOptInfoList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
+    ovt->OVT_Exception = Exception_New ()  ;
     ovt->VersionString = VERSION ;
     // ? where do we want the init file ?
 #if 1    
@@ -87,16 +88,14 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     else
     {
         restartCondition = FULL_RESTART ;
-        startedTimes = ovt->StartedTimes ;
+        startedTimes = ovt->OVT_Exception->StartedTimes ;
     }
 
     ovt = OpenVmTil_Allocate ( ovt ) ;
     TimerInit ( &ovt->Timer ) ;
 
-    OVT_SetRestartCondition ( ovt, restartCondition ) ;
     ovt->Argc = argc ;
     ovt->Argv = argv ;
-    ovt->StartedTimes = startedTimes ;
     OVT_GetStartupOptions ( ovt ) ;
 
     allocSize = 1 * M ; //430 * K ;
@@ -117,10 +116,13 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
     ovt->WordRecylingSize = 1 * M ; //2 * K * ( sizeof (Word ) + sizeof (WordData ) ) ; //50 * K ; //COMPILER_TEMP_OBJECTS_SIZE ;
     ovt->SessionObjectsSize = 2 * M ; //50 * K ;
     ovt->ForthSize = 5 * M ; //1100 * K ; //50 * K ;
-    ovt->ContextSize = 2 * M ; 
+    ovt->ContextSize = 2 * M ;
+    ovt->ExceptionSpaceSize = 3 * K ;
 
     OpenVmTil_Init ( ovt ) ;
-    Linux_SetupSignals ( &ovt->JmpBuf0, 1 ) ;
+    Linux_SetupSignals ( ) ;
+    OVT_SetRestartCondition (restartCondition) ;
+    ovt->OVT_Exception->StartedTimes = startedTimes ;
     return ovt ;
 }
 
@@ -128,45 +130,49 @@ void
 OpenVmTil_Run ( int64 argc, char * argv [ ] )
 {
     OpenVmTil * ovt ;
-    int64 restartCondition = INITIAL_START, restarts = 0, sigSegvs = 0 ;
+    Exception *e ; //int64 restartCondition = INITIAL_START, restarts = 0, sigSegvs = 0 ;
+    int64 restarts = 0, sigSegvs = 0 ;
     while ( 1 )
     {
         if ( _O_ )
         {
-            sigSegvs = _O_->SigSegvs ;
-            restarts = ++ _O_->Restarts ;
-            if ( _O_->Restarts > 20 ) OVT_Exit ( ) ;
-            if ( ( _O_->RestartCondition == COMPLETE_INITIAL_START ) || ( _O_->SigSegvs > 1 ) )
+            e = _O_->OVT_Exception ;
+            sigSegvs = e->SigSegvs ;
+            restarts = ++ e->Restarts ;
+            if ( e->Restarts > 20 ) OVT_Exit ( ) ;
+            if ( ( _O_->OVT_Exception->RestartCondition == COMPLETE_INITIAL_START ) || ( e->SigSegvs > 1 ) )
             {
-                _OVT_SimpleFinal_Key_Pause ( _O_, "SigSegv : COMPLETE_INITIAL_START" ) ;
+                e->Message = "SigSegv : COMPLETE_INITIAL_START" ;
+                _OVT_SimpleFinal_Key_Pause ( ) ;
                 OVT_FullRestartCompleteDelete ( ) ;
             }
         }
         ovt = _O_ = OpenVmTil_New ( _O_, argc, argv ) ;
-        OVT_SetRestartCondition ( ovt, restartCondition ) ;
-        ovt->SigSegvs = sigSegvs ;
+        e = _O_->OVT_Exception ;
+        e->SigSegvs = sigSegvs ;
         ovt->Verbosity = 1 ;
-        ovt->Restarts = restarts ;
-        if ( ovt->Restarts ) OVT_ExceptionState_Print ( ) ;
+        e->Restarts = restarts ;
+        if ( e->Restarts ) OVT_ExceptionState_Print ( ) ;
         //SetState ( ovt, OVT_PROMPT_DONE, false ) ;
         if ( ! sigsetjmp ( ovt->JmpBuf0, 0 ) ) // nb. siglongjmp always comes to beginning of the block 
         {
             ovt->OVT_CSL = CSL_New ( ovt->OVT_CSL ) ;
-            CSL_Run ( ovt->OVT_CSL, ovt->RestartCondition ) ;
+            CSL_Run ( ovt->OVT_CSL, e->RestartCondition ) ;
         }
-        restartCondition = ovt->RestartCondition ;
-        OVT_SetRestartCondition ( ovt, restartCondition ) ;
+        //restartCondition = ovt->OVT_Exception->RestartCondition ;
+        //OVT_SetRestartCondition ( ovt, restartCondition ) ;
     }
 }
 
 void
 Ovt_RunInit ( OpenVmTil * ovt )
 {
+    Exception *e = _O_->OVT_Exception ;
     //static int loopTimes ;
-    ovt->StartedTimes ++ ;
-    OVT_SetRestartCondition ( ovt, CSL_RUN_INIT ) ;
+    e->StartedTimes ++ ;
+    OVT_SetRestartCondition (CSL_RUN_INIT) ;
     //OVT_StartupMessage ( startupMessageFlag && ( ++csl->InitSessionCoreTimes <= 2 ) ) ;
-    OVT_StartupMessage ( ( ++_CSL_->InitSessionCoreTimes <= 2 ) ) ;
+    OVT_StartupMessage ( ( ++ _CSL_->InitSessionCoreTimes <= 2 ) ) ;
     //CSL_Prompt (ovt->OVT_CSL, 1, 1 , 0) ; //++loopTimes < 2, 1 ) ;
     //SetState ( _O_, OVT_PROMPT_DONE, false ) ;
 }
@@ -218,7 +224,7 @@ OVT_ResetOutputPrintBuffer ( )
 int64
 Verbosity ( )
 {
-    return (_O_ && (_O_->Verbosity & 0x7 ) ) ; // higher bits for specific functions
+    return (_O_ && ( _O_->Verbosity & 0x7 ) ) ; // higher bits for specific functions
 }
 
 void
@@ -236,7 +242,13 @@ OVT_Set_UnknowStringPushedFlag ( )
 void
 OVT_UnSet_UnknowStringFlag ( )
 {
-    SetState ( _O_, (OVT_UNKNOWN_STRING_IS_ERROR|OVT_UNKNOWN_STRING_PUSHED), false ) ;
+    SetState ( _O_, ( OVT_UNKNOWN_STRING_IS_ERROR | OVT_UNKNOWN_STRING_PUSHED ), false ) ;
+}
+
+void
+OVT_Exception_Init ( )
+{
+    Exception_Init ( _O_->OVT_Exception ) ;
 }
 
 void
@@ -248,7 +260,7 @@ _OVT_openvmtil ( )
 void
 OVT_openvmtil ( )
 {
-    _O_->RestartCondition = COMPLETE_INITIAL_START ;
+    _O_->OVT_Exception->RestartCondition = COMPLETE_INITIAL_START ;
     _OVT_openvmtil ( ) ;
 }
 

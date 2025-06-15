@@ -13,6 +13,7 @@ DLList_CheckRecycledForAllocation ( dllist * list, int64 size )
         dlnode_Remove ( ( dlnode* ) node ) ; // necessary else we destroy the list!
         Mem_Clear ( ( byte* ) node, size ) ;
         node->n_DLNode.n_InUseFlag = N_IN_USE ;
+        OVT_RecyclingAccounting ( OVT_RA_RECYCLED ) ; //{ _O_->MemorySpace0->RecycledWordCount ++ ; _O_->MemorySpace0->WordsInRecycling -- ; }
         return ( byte* ) node ;
     }
     else return 0 ;

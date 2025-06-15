@@ -522,6 +522,7 @@
 #define STATIC_MEM ( (uint64) 1 << 28 )
 #define PRE_STATIC_MEM ( (uint64) 1 << 29 )
 #define FORTH_SPACE ( (uint64) 1 << 30 )
+#define EXCEPTION_SPACE ( (uint64) 1 << 31 )
 
 //#define ALL      ( INTERNAL | EXTERNAL | csl | TEMPORARY | DATA_STACK | SESSION )
 
@@ -849,6 +850,10 @@
 #define OVT_UNKNOWN_STRING_IS_ERROR ( (uint64) 1 << 7 ) 
 #define OVT_UNKNOWN_STRING_PUSHED   ( (uint64) 1 << 8 ) 
 #define OVT_PROMPT_DONE             ( (uint64) 1 << 10 )
+
+// Exception State defines 
+#define EXCEPTION_SIMPLE_KEY_PAUSED     ( (uint64) 1 << 0 )
+#define EXCEPTION_ERROR_COMMAND_LINE    ( (uint64) 1 << 1 )
 
 // tree node states
 // #define GONE_DEPTH 

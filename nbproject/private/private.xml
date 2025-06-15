@@ -7,13 +7,26 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
+        <file>
+            <url>src/basis/core/dllist.c</url>
+            <bookmark id="2">
+                <name/>
+                <line>94</line>
+                <key/>
+            </bookmark>
+            <bookmark id="1">
+                <name/>
+                <line>683</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/dennisj/csl.0.941.610/src/basis/openVmTil.c</file>
-            <file>file:/home/dennisj/csl.0.941.610/src/primitives/primitives.c</file>
-            <file>file:/home/dennisj/csl.0.941.610/src/basis/core/dllist.c</file>
-            <file>file:/home/dennisj/csl.0.941.610/src/primitives/namespaces.c</file>
+            <file>file:/home/dennisj/csl/src/primitives/kernel.original.c</file>
+            <file>file:/home/dennisj/csl/src/primitives/primitives.c</file>
+            <file>file:/home/dennisj/csl/Makefile</file>
         </group>
     </open-files>
 </project-private>

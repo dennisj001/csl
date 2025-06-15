@@ -20,7 +20,8 @@ CSL_Run ( CSL * csl, int64 restartCondition )
 void
 CSL_RunInit ( )
 {
-    if ( _O_->Signal > QUIT ) CSL_DataStack_Init ( ) ;
+    Exception *e = _O_->OVT_Exception ;
+    if ( e->Signal > QUIT ) CSL_DataStack_Init ( ) ;
     else if ( DataStack_Underflow ( ) || ( DataStack_Overflow ( ) ) ) CSL_PrintDataStack ( ) ;
 }
 
@@ -203,7 +204,7 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     CSL_Setup_For_DObject_ValueDefinition_Init ( ) ; // nb! before _CSL_NamespacesInit
     if ( nss ) csl->Namespaces = nss ;
     else _CSL_NamespacesInit ( csl ) ;
-    // with _O_->RestartCondition = STOP from Debugger_Stop
+    // with _O_->OVT_Exception->RestartCondition = STOP from Debugger_Stop
     if ( csl->SaveDsp && csl->DataStack ) _DspReg_ = csl->SaveDsp ;
     else
     {
@@ -251,6 +252,7 @@ CSL_ResetMemory ( CSL * csl )
     OVT_MemListFree_Buffers ( ) ;
     OVT_MemListFree_CompilerTempObjects ( ) ;
     _OVT_MemListFree_CSLInternal ( ) ;
+    OVT_MemListFree_ExcetptionSpace ( ) ;
     if ( Verbosity ( ) > 1 ) OVT_ShowMemoryAllocated ( ) ;
 }
 
@@ -261,7 +263,7 @@ CSL_New ( CSL * csl )
     Namespace * nss = 0 ;
     if ( csl )
     {
-        if ( _O_->RestartCondition < RESET_ALL )
+        if ( _O_->OVT_Exception->RestartCondition < RESET_ALL )
         {
             nss = csl->Namespaces ; // in this case (see also below) only preserve Namespaces, all else is recycled and reinitialized
             if ( csl->LogFILE ) CSL_LogOff ( ) ;
@@ -271,8 +273,8 @@ CSL_New ( CSL * csl )
     else nss = 0 ;
     _Context_ = 0 ;
     csl = ( CSL* ) Mem_Allocate ( sizeof ( CSL ), OPENVMTIL ) ;
+    //Linux_SetupSignals () ;
     _CSL_Init ( csl, nss ) ;
-    Linux_SetupSignals ( &csl->JmpBuf0, 1 ) ;
     //_DoPrompt ( ) ;
     return csl ;
 }

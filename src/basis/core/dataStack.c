@@ -171,7 +171,7 @@ GetDataStackPointer ( )
 void
 CSL_CheckInitDataStack ( )
 {
-    if ( _O_->RestartCondition >= QUIT ) _CSL_DataStack_Init ( _CSL_ ) ;
+    if ( _O_->OVT_Exception->RestartCondition >= QUIT ) _CSL_DataStack_Init ( _CSL_ ) ;
     else if ( Stack_Depth ( _DataStack_ ) < 0 )
     {
         _Stack_PrintHeader ( _DataStack_, ( byte* ) "DataStack" ) ;

@@ -164,11 +164,11 @@
 //#define _catch( e ) if ( _OpenVmTil_Catch () ) // nb. : if no _throw in _catch block don't use 'return'
 #define _finally _OpenVmTil_Finally () // nb. : ! use only once and after the first _try block !
 //OpenVmTil_Throw (byte * excptMessage, byte * specialMessage, int64 restartCondition, int64 infoFlag , int64 pauseFlag)
-#define _Throw( e ) OpenVmTil_Throw ((e == QUIT) ? (byte*) "\nQuit?\n" : (e == ABORT) ? (byte*) "\nAbort?\n" : (byte*) "", "", e, 1, 0)
+#define _Throw( e ) OpenVmTil_Throw ((e == QUIT) ? (byte*) "\nQuit?\n" : (e == ABORT) ? (byte*) "\nAbort?\n" : (byte*) "", "", e, 1)
 #define _throw( e ) _Throw (e) _longjmp( *(jmp_buf*) _Stack_PopOrTop ( _O_->ExceptionStack ), e ) 
-#define _ThrowIt OpenVmTil_Throw ((byte*) "", (byte*) "", 0,  _O_->Thrown, 0, 0)
-#define Throw( emsg, smsg, e ) OpenVmTil_Throw ((byte*) emsg, smsg, e, 1, 0 )
-#define ThrowIt( msg ) OpenVmTil_Throw ((byte*) msg, 0,  _O_->Thrown, 1, 0 )
+#define _ThrowIt OpenVmTil_Throw ((byte*) "", (byte*) "", 0,  _O_->Thrown)
+#define Throw( emsg, smsg, e ) OpenVmTil_Throw ((byte*) emsg, smsg, e, 1)
+#define ThrowIt( msg ) OpenVmTil_Throw ((byte*) msg, 0,  _O_->Thrown, 1)
 #define catchAll if ( _OpenVmTil_Catch () ) 
 #define _SyntaxError( message, abortFlag ) CSL_Exception (SYNTAX_ERROR, message, abortFlag )
 #define SyntaxError( abortFlag ) _SyntaxError( 0, abortFlag ) 
@@ -176,7 +176,7 @@
 #define stopTrying _OVT_ClearExceptionStack ( )
 
 #define Pause() OpenVmTil_Pause ()
-#define _Pause( msg ) _OpenVmTil_Pause ( msg )
+#define _Pause( msg ) _OpenVmTil_Pause ()
 #define Pause_1( msg ) AlertColors; iPrintf ( (byte*)"\n%s", msg ) ; OpenVmTil_Pause () ;
 #define Pause_2( msg, arg ) AlertColors; iPrintf ( (byte*)msg, arg ) ; OpenVmTil_Pause () ;
 

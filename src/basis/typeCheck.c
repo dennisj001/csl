@@ -658,7 +658,7 @@ _TypeMismatch_CheckError_Print ( Word * lvalueWord, Word *rvalueWord, Boolean qu
 void
 TSI_TypeStatus_Print ( TSI *tsi )
 {
-    //CSL_ShowInfo_Token (tsi->OpWord, "", _O_->RestartCondition, tsi->OpWord->Name, "" ) ;
+    //CSL_ShowInfo_Token (tsi->OpWord, "", _O_->OVT_Exception->RestartCondition, tsi->OpWord->Name, "" ) ;
     if ( tsi->TypeErrorStatus & TSE_SIZE_MISMATCH ) _TypeMismatch_CheckError_Print ( tsi->StackWord1, tsi->StackWord0, 0 ) ; //TSI_TypeMismatchError_Print ( tsi ) ;
     iPrintf ( "\n%s :: %s.%s :: type expected : %s :: type recorded : %s : at %s", tsi->TypeErrorStatus ? "apparent type mismatch" : "type match",
         tsi->OpWord->S_ContainingNamespace ? tsi->OpWord->S_ContainingNamespace->Name : ( byte* ) "<literal>",

@@ -76,8 +76,8 @@ void
 Debugger_Locals_Show ( Debugger * debugger )
 {
     Word * scWord = Compiling ? _Context_->CurrentWordBeingCompiled : //Debugger_GetWordFromAddress ( debugger ) ; //debugger->w_Word :
-        debugger->DebugAddress ? Word_UnAlias ( Word_GetFromCodeAddress ( debugger->DebugAddress ) ) : 
-            _Context_->CurrentlyRunningWord ? _Context_->CurrentlyRunningWord : debugger->w_Word ;
+        debugger->DebugAddress ? Word_UnAlias ( Word_GetFromCodeAddress ( debugger->DebugAddress ) ) :
+        _Context_->CurrentlyRunningWord ? _Context_->CurrentlyRunningWord : debugger->w_Word ;
     if ( scWord && ( scWord->W_NumberOfVariables || _Context_->Compiler0->NumberOfVariables ) )
         _Debugger_Locals_Show_Loop ( debugger->cs_Cpu, scWord ) ;
 }
@@ -116,6 +116,7 @@ _Debugger_ShowEffects ( Debugger * debugger, Word * word, Boolean stepFlag, int6
 void
 _Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal, int64 force )
 {
+    Exception * e = _O_->OVT_Exception ;
     if ( force || ( debugger->w_Word != debugger->LastShowInfoWord ) )
     {
         Context * cntx = _Context_ ;
@@ -145,10 +146,10 @@ _Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal, int64 for
         //if ( debugger->w_Word == cntx->LastEvalWord ) word = 0, debugger->w_Word = 0, token0 = cntx->CurrentToken ;
 
         if ( ! ( cntx && cntx->Lexer0 ) ) Throw ( ( byte* ) "\n_CSL_ShowInfo:", ( byte* ) "\nNo token at _CSL_ShowInfo\n", QUIT ) ;
-        if ( ( signal == 11 ) || _O_->SigAddress )
+        if ( ( signal == 11 ) || e->SigAddress )
         {
-            snprintf ( ( char* ) signalAscii, 127, ( char * ) "Error : signal " INT_FRMT ":: attempting address : \n" UINT_FRMT, signal, ( uint64 ) _O_->SigAddress ) ;
-            debugger->DebugAddress = ( byte* ) _O_->SigAddress ;
+            snprintf ( ( char* ) signalAscii, 127, ( char * ) "Error : signal " INT_FRMT ":: attempting address : \n" UINT_FRMT, signal, ( uint64 ) e->SigAddress ) ;
+            debugger->DebugAddress = ( byte* ) e->SigAddress ;
         }
         else if ( signal ) snprintf ( ( char* ) signalAscii, 127, ( char * ) "Error : signal " INT_FRMT " ", signal ) ;
         else signalAscii[0] = 0 ;
@@ -181,6 +182,7 @@ _Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal, int64 for
 void
 Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal )
 {
+    Exception * e = _O_->OVT_Exception ;
     Context * cntx = _Context_ ;
     int64 sif = 0 ;
     if ( ( GetState ( debugger, DBG_INFO ) ) || GetState ( debugger, DBG_STEPPING ) )
@@ -199,13 +201,13 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal )
         Debugger_FindUsing ( debugger ) ;
     }
     else if ( debugger->w_Word ) debugger->Token = debugger->w_Word->Name ;
-    if ( ( _O_->SigSegvs < 2 ) && GetState ( debugger, DBG_STEPPING ) )
+    if ( ( e->SigSegvs < 2 ) && GetState ( debugger, DBG_STEPPING ) )
     {
         iPrintf ( "\nDebug Stepping Address : 0x%016lx", ( uint64 ) debugger->DebugAddress ) ;
         Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
     }
     if ( ( ! sif ) && ( ! GetState ( debugger, DBG_STEPPING ) ) && ( GetState ( debugger, DBG_INFO ) ) ) _Debugger_ShowInfo ( debugger, prompt, signal, 1 ) ;
-    if ( prompt == _O_->ExceptionMessage ) _O_->ExceptionMessage = 0 ;
+    if ( prompt == e->ExceptionMessage ) e->ExceptionMessage = 0 ;
 }
 
 void
@@ -289,7 +291,7 @@ Debugger_DoState ( Debugger * debugger )
         if ( GetState ( debugger, DBG_START_STEPPING ) && GetState ( _CSL_, DBG_UDIS ) ) iPrintf ( "\n ... Next stepping instruction ..." ) ;
         SetState ( debugger, DBG_START_STEPPING, false ) ;
         debugger->cs_Cpu->Rip = ( uint64 * ) debugger->DebugAddress ;
-        if ( debugger->DebugAddress != debugger->LastDisAddress ) 
+        if ( debugger->DebugAddress != debugger->LastDisAddress )
             Debugger_UdisOneInstructionWithSourceCode ( debugger, debugger->w_Word, debugger->DebugAddress, ( byte* ) "\r", ( byte* ) "" ) ;
         debugger->LastDisAddress = 0 ;
     }
@@ -378,7 +380,7 @@ Debugger_ShowChange ( Debugger * debugger, Word * word, Boolean stepFlag )
         {
             if ( _DspReg_ > debugger->SaveDsp ) iPrintf ( "\nLiteral :> 0x%016lx <: was pushed onto the stack ...", TOS ) ;
             else if ( _DspReg_ < debugger->SaveDsp ) iPrintf ( "\n%s popped %d value off the stack.", insert, ( debugger->SaveDsp - _DspReg_ ) ) ;
-            DefaultColors ;  
+            DefaultColors ;
         }
         //if ( ( ! ( achange [0] ) ) && ( ( change > 1 ) || ( change < - 1 ) || ( Verbosity () > 1 ) ) ) _Debugger_PrintDataStack ( change + 1 ) ;
         if ( ( ! achange [0] ) && ( change || ( Verbosity ( ) > 1 ) ) ) _Debugger_PrintDataStack ( change + 1 ) ;
@@ -518,7 +520,7 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
     if ( ! scWord )
     {
         if ( ( _LC_ && _LC_->Sc_Word ) && word && ( word->W_MySourceCodeWord == _LC_->Sc_Word ) ) scWord = _LC_->Sc_Word ;
-        //if ( ! scWord ) 
+            //if ( ! scWord ) 
         else scWord = Get_SourceCodeWord ( word ) ; //_CSL_->SC_Word ;
     }
     scs = scWord ? scWord->W_OriginalCodeText : 0 ;
@@ -526,7 +528,7 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
     {
         scWord = Get_SourceCodeWord ( word ) ;
         scs = scWord ? scWord->W_OriginalCodeText : 0 ;
-     }
+    }
     // if no scs we use il : by design : it works!
     if ( word || token0 )
     {
@@ -539,7 +541,7 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
         else token1 = token0 ;
         token2 = String_ConvertToBackSlash ( token1, 0 ) ;
         slt = Strlen ( token2 ) ;
-        index0 = scs ? word->W_SC_Index : rlIndex ; 
+        index0 = scs ? word->W_SC_Index : rlIndex ;
         if ( debugger->w_AliasOf )
         {
             token2 = word->Name ;
@@ -586,9 +588,26 @@ CSL_PrepareDbgShowInfoString ( Word * word, byte* token, int64 twAlreayUsed )
 }
 
 void
+CSL_Show_ErrorCommandLine ( )
+{
+    Exception *e = _O_->OVT_Exception ;
+    if ( ! GetState ( e, EXCEPTION_ERROR_COMMAND_LINE ) )
+    {
+        SetState ( e, EXCEPTION_ERROR_COMMAND_LINE, true ) ;
+        ReadLiner * rl = _ReadLiner_ ;
+        if ( AtCommandLine ( rl ) )
+        {
+            byte * buffer = Buffer_DataCleared ( _CSL_->ScratchB5 ) ;
+            strncpy ( buffer, _ReadLiner_->InputLineString, BUFFER_SIZE ) ;
+            e->ErrorCommandLine = String_New ( String_RemoveFinalNewline ( buffer ), EXCEPTION_SPACE) ;
+            oPrintf ( "\nError Command Line : <? \'%s\' ?>", e->ErrorCommandLine ) ;
+        }
+    }
+}
+
+void
 CSL_Show_SourceCode_TokenLine ( Word * word, byte * prompt, int64 signal, byte * token0, byte * signalAscii )
 {
-    //ReadLiner * rl = _ReadLiner_ ;
     char * mode ;
     if ( GetState ( _Context_, TDI_PARSING ) ) mode = "[td]" ;
     else mode = ( char* ) ( ( signal || ( int64 ) signalAscii[0] ) ?
@@ -628,6 +647,7 @@ CSL_Show_SourceCode_TokenLine ( Word * word, byte * prompt, int64 signal, byte *
             "<literal>", cc_Token ) ; //, _O_->StartedTimes, _O_->SignalExceptionsHandled ) ;
     }
     //int columns = atoi(getenv("COLUMNS"));
+    CSL_Show_ErrorCommandLine ( ) ;
     byte *cc_line = ( char* ) CSL_PrepareDbgShowInfoString ( word, token1, ( int64 ) Strlen ( obuffer ) ) ;
     if ( cc_line ) strncat ( obuffer, cc_line, BUFFER_IX_SIZE ) ;
     _Printf ( "%s", obuffer ) ;

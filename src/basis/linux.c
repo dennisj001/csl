@@ -7,16 +7,17 @@ struct termios SavedTerminalAttributes ;
 void
 _DisplaySignal ( int64 signal )
 {
+    Exception *e = _O_->OVT_Exception ;
     if ( signal )
     {
         byte * location ; 
-        if ( _O_->SigSegvs < 2 ) location = ( byte* ) Context_Location ( ) ;
+        if ( e->SigSegvs < 2 ) location = ( byte* ) Context_Location ( ) ;
         else location = (byte*) "" ;
         switch ( signal )
         {
             case SIGSEGV:
             {
-                printf ( "\nSIGSEGV : memory access violation : address = 0x%016lx : %s", (uint64) _O_->SigAddress, location ) ;
+                printf ( "\nSIGSEGV : memory access violation : address = 0x%016lx : %s", (uint64) e->SigAddress, location ) ;
                 fflush ( stdout ) ;
                 break ;
             }
@@ -41,19 +42,23 @@ _DisplaySignal ( int64 signal )
 }
 
 void
-Linux_SetupSignals ( sigjmp_buf * sjb, int64 startTimes )
+Linux_SetupSignals ()
 {
     struct sigaction signalAction ;
     // from http://www.linuxjournal.com/article/6483
     int64 i, result ;
     Mem_Clear ( ( byte* ) & signalAction, sizeof ( struct sigaction ) ) ;
-    Mem_Clear ( ( byte* ) sjb, sizeof ( *sjb ) ) ;
+    //Mem_Clear ( ( byte* ) _O_->OVT_Exception, sizeof ( Exception ) ) ;
+    if ( _CSL_ ) Mem_Clear ( ( byte* ) &_CSL_->JmpBuf0, sizeof ( sigjmp_buf ) ) ; 
+    Mem_Clear ( ( byte* ) &_O_->JmpBuf0, sizeof ( sigjmp_buf ) ) ;
     signalAction.sa_sigaction = OpenVmTil_SignalAction ;
     signalAction.sa_flags = SA_SIGINFO | SA_RESTART ; // restarts the set handler after being used instead of the default handler
     for ( i = SIGHUP ; i <= _NSIG ; i ++ )
     {
         result = sigaction ( i, &signalAction, NULL ) ;
-        d0 ( if ( ( result && ( startTimes ) && ( _O_ && ( Verbosity () > 2 ) ) ) printf ( "\nLinux_SetupSignals : signal number = " INT_FRMT_02 " : result = " INT_FRMT " : This signal can not have a handler.", i, result ) ) ) ;
+        if ( result && ( _O_ && ( Verbosity () > 2 ) ) ) 
+            printf ( "\nLinux_SetupSignals : signal number = " INT_FRMT_02 " : result = " INT_FRMT " : This signal can not have a handler.", 
+                i, result ) ;
     }
     //signal ( SIGWINCH, SIG_IGN ) ; // a fix for a netbeans problem but causes crash with gcc 6.x -O2+
 }

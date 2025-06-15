@@ -58,11 +58,12 @@ CSL_SessionInit ( )
 void
 CSL_ResetAll_Init ( CSL * csl )
 {
+    Exception *e = _O_->OVT_Exception ;
     _CSL_Init_SessionCore ( csl, 1, 0 ) ;
     //CSL_DebugOn () ; //Pause () ;
-    if ( ( _O_->RestartCondition >= RESET_ALL ) )
+    if ( _O_->OVT_Exception->RestartCondition >= RESET_ALL )
     {
-        _O_->StartIncludeTries = 0 ;
+        e->StartIncludeTries = 0 ;
         _CSL_Namespace_NotUsing ( ( byte* ) "BigNum" ) ;
         _CSL_Namespace_NotUsing ( ( byte* ) "Lisp" ) ;
         if ( _O_->StartupFilename )
@@ -73,12 +74,12 @@ CSL_ResetAll_Init ( CSL * csl )
         }
         else
         {
-            if ( ! _O_->StartIncludeTries ++ )
+            if ( ! e->StartIncludeTries ++ )
             {
                 _CSL_ContextNew_InterpretString ( csl, _O_->InitString ) ;
                 _CSL_ContextNew_InterpretString ( csl, _O_->StartupString ) ;
             }
-            else if ( _O_->StartIncludeTries < 3 )
+            else if ( e->StartIncludeTries < 3 )
             {
                 AlertColors ;
                 CSL_ContextNew_IncludeFile (( byte* ) "./namespaces/init.csl", 0) ;
@@ -86,7 +87,7 @@ CSL_ResetAll_Init ( CSL * csl )
                 {
                     if ( strcmp ( ( char* ) _O_->ErrorFilename, "Debug Context" ) )
                     {
-                        iPrintf ( "\nError : \"%s\" include error!\n", _O_->SigLocation ? _O_->SigLocation : _O_->ErrorFilename ) ;
+                        iPrintf ( "\nError : \"%s\" include error!\n", e->SigLocation ? e->SigLocation : _O_->ErrorFilename ) ;
                     }
                 }
                 DefaultColors ;
