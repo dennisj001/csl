@@ -61,7 +61,7 @@ CSL_ResetAll_Init ( CSL * csl )
     Exception *e = _O_->OVT_Exception ;
     _CSL_Init_SessionCore ( csl, 1, 0 ) ;
     //CSL_DebugOn () ; //Pause () ;
-    if ( _O_->OVT_Exception->RestartCondition >= RESET_ALL )
+    if ( e->RestartCondition >= RESET_ALL )
     {
         e->StartIncludeTries = 0 ;
         _CSL_Namespace_NotUsing ( ( byte* ) "BigNum" ) ;

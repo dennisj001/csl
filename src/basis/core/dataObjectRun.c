@@ -423,67 +423,16 @@ CSL_Do_AccumulatedAddress ( Word * word, byte * accumulatedAddress, int64 offset
 
 // nb. 'word' is the previous word to the '.' (dot) cf. CSL_Dot so it can be recompiled, a little different maybe, as an object
 // .
-#if 1 // this is handled by Word_ObjectRun
-
+// this is handled by Word_ObjectRun
+#if 1
 void
 CSL_Dot ( )
 {
 }
-
+#else
 void
 _CSL_Do_Dot ( Context * cntx, Word * word )
 {
-}
-#elif 0
-
-void
-_CSL_Do_Dot ( Context * cntx, Word * word ) // .
-{
-    if ( word && ( ! cntx->BaseObject ) )
-    {
-        if ( word->W_ObjectAttributes & NAMESPACE_TYPE ) Finder_SetQualifyingNamespace ( cntx->Finder0, word ) ;
-        else cntx->BaseObject = word ;
-    }
-}
-
-void
-CSL_Dot ( ) // .
-{
-    Context * cntx = _Context_ ;
-    SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
-    Word * word = Compiler_PreviousNonDebugWord ( 0 ) ; // 0 : rem: we just popped the WordStack above
-    _CSL_Do_Dot ( cntx, word ) ;
-}
-
-#else
-
-void
-_CSL_Do_Dot ( Context * cntx, Word * prevWord ) // .
-{
-    if ( prevWord && ( ! cntx->BaseObject ) )
-    {
-        if ( prevWord->W_ObjectAttributes & CLASS_TYPE )
-        {
-            oPrintf ( "\nprevWord = %s", prevWord->Name ) ;
-            Finder_SetQualifyingNamespace ( cntx->Finder0, prevWord ) ;
-        }
-        else if ( ( ! cntx->BaseObject->W_ObjectAttributes & CLASS_TYPE ) )
-        {
-            //oPrintf ( "\nprevWord = %s", prevWord->Name ) ;
-            //Finder_SetQualifyingNamespace ( cntx->Finder0, prevWord ) ;
-            //else 
-            cntx->BaseObject = prevWord ;
-        }
-    }
-}
-
-void
-CSL_Dot ( ) // .
-{
-    Context * cntx = _Context_ ;
-    SetState ( cntx, CONTEXT_PARSING_QID, true ) ;
-    //Word * prevWord = Compiler_PreviousNonDebugWord ( 0 ) ; // 0 : rem: we just popped the WordStack above
-    //_CSL_Do_Dot ( cntx, prevWord ) ; // this is handled bye Word_ObjectRun/Do_Variable
 }
 #endif
 

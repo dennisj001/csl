@@ -29,7 +29,7 @@ _TypeClassStructDef (Namespace * ns, Boolean cloneFlag)
     byte * token = _Context_->CurrentEvalWord ? _Context_->CurrentEvalWord->Name : (byte*) "" ; //, *name = ns ? ns->Name : 0 ;
     if ( String_Equal ( token, "+:{" ) ) { cloneFlag = 1 ; } //Pause () ; }
     //else cloneFlag = 0 ;
-    oPrintf ( "\n_ClassTypedef : at %s : token = %s : cloneFlag = %b", Context_Location(), token, cloneFlag ) ;
+    iPrintf ( "\n_ClassTypedef : at %s : token = %s : cloneFlag = %b", Context_Location(), token, cloneFlag ) ;
     TDI * tdi = TDI_Start ( ns, 0, ( cloneFlag ? TDI_CLONE_FLAG : 0 ) ) ;
     if ( cloneFlag || String_Equal ( token, "class" ) )
     {

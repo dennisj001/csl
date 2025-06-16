@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.941.740" )
+#define VERSION ((byte*) "0.941.752" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -140,7 +140,7 @@ OpenVmTil_Run ( int64 argc, char * argv [ ] )
             sigSegvs = e->SigSegvs ;
             restarts = ++ e->Restarts ;
             if ( e->Restarts > 20 ) OVT_Exit ( ) ;
-            if ( ( _O_->OVT_Exception->RestartCondition == COMPLETE_INITIAL_START ) || ( e->SigSegvs > 1 ) )
+            if ( (e->RestartCondition == COMPLETE_INITIAL_START ) || ( e->SigSegvs > 1 ) )
             {
                 e->Message = "SigSegv : COMPLETE_INITIAL_START" ;
                 _OVT_SimpleFinal_Key_Pause ( ) ;
@@ -260,7 +260,7 @@ _OVT_openvmtil ( )
 void
 OVT_openvmtil ( )
 {
-    _O_->OVT_Exception->RestartCondition = COMPLETE_INITIAL_START ;
+    //_O_->OVT_Exception->RestartCondition = COMPLETE_INITIAL_START ;
     _OVT_openvmtil ( ) ;
 }
 

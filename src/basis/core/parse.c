@@ -317,7 +317,7 @@ _CSL_ParseQid_Token ( byte * token0 )
             }
             else if ( token0 )
             {
-                if ( ! nst ) _CSL_Do_Dot ( cntx, word ) ;
+                //if ( ! nst ) _CSL_Do_Dot ( cntx, word ) ;
                 break ;
             }
             token = 0 ;

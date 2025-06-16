@@ -600,7 +600,7 @@ CSL_Show_ErrorCommandLine ( )
             byte * buffer = Buffer_DataCleared ( _CSL_->ScratchB5 ) ;
             strncpy ( buffer, _ReadLiner_->InputLineString, BUFFER_SIZE ) ;
             e->ErrorCommandLine = String_New ( String_RemoveFinalNewline ( buffer ), EXCEPTION_SPACE) ;
-            oPrintf ( "\nError Command Line : <? \'%s\' ?>", e->ErrorCommandLine ) ;
+            iPrintf ( "\nError Command Line : <? \'%s\' ?>", e->ErrorCommandLine ) ;
         }
     }
 }

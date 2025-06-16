@@ -698,10 +698,10 @@ TDI_Print_Field ( int64 t_type, int64 size )
                 ( GetState ( tdi, TDI_POINTER ) ? " * " : "" ), token, value ) ;
             if ( ! ( t_type & ( TD_POST_STRUCTURE_ID | TD_PRE_STRUCTURE_ID ) ) ) tdi->Tdi_Field_Size = size ;
             //if ( Is_DebugOn ) 
-            oPrintf ( "\t\toffset = 0x%lx : dataPtr = 0x%lx", tdi->Tdi_Offset, dataPtr ) ;
+            iPrintf ( "\t\toffset = 0x%lx : dataPtr = 0x%lx", tdi->Tdi_Offset, dataPtr ) ;
             if ( String_Equal ( tdi->Tdi_Field_Type_Namespace->Name, "byte" ) && GetState ( tdi, TDI_POINTER ) )
                 if ( IsString ( ( byte* ) ( * ( int64 * ) dataPtr ) ) )
-                    oPrintf ( "\n\t%s = \'%s\'", tdi->FieldName, ( ( byte* ) ( * ( int64 * ) dataPtr ) ) ) ;
+                    iPrintf ( "\n\t%s = \'%s\'", tdi->FieldName, ( ( byte* ) ( * ( int64 * ) dataPtr ) ) ) ;
         }
         SetState ( tdi, TDI_POINTER, false ) ;
     }
