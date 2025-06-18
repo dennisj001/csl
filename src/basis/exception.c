@@ -137,7 +137,7 @@ _OpenVmTil_ShowExceptionInfo ( )
     }
     Debugger_ShowInfo ( debugger, e->ExceptionMessage, e->Signal ) ;
     if ( word != _Context_->LastEvalWord ) _CSL_Source ( word, 0 ) ;
-    iPrintf ( "\nOpenVmTil_SignalAction : address = 0x%016lx : %s", e->SigAddress, e->SigLocation ) ;
+    iPrintf ( "\nOpenVmTil_SignalAction : address = 0x%016lx : %s", e->SigAddress, e->Location ) ;
 }
 
 int64
@@ -150,7 +150,8 @@ OpenVmTil_ShowExceptionInfo ( )
         if ( e->ExceptionMessage )
         {
             iPrintf ( "\n%s : %s\n",
-                e->ExceptionMessage, e->ExceptionSpecialMessage ? e->ExceptionSpecialMessage : Context_Location ( ) ) ;
+                //e->ExceptionMessage, e->ExceptionSpecialMessage ? e->ExceptionSpecialMessage : Context_Location ( ) ) ;
+                e->ExceptionMessage, e->ExceptionSpecialMessage ? e->ExceptionSpecialMessage : e->Location ) ;
         }
         if ( ( e->SigSegvs < 2 ) && ( e->SignalExceptionsHandled ++ < 2 ) && _CSL_ )
         {
@@ -220,7 +221,7 @@ OVT_Pause ( byte * prompt )
             ( byte * ) "\n%s\n%s : at %s : %s:: <key>/(c)ontinue (d)ebugger s(t)ack '\\'/(i)interpret (q)uit e(x)it, <esc> cancel%s" ;
         snprintf ( ( char* ) buffer, BUFFER_IX_SIZE, prompt ? ( char* ) prompt : ( char* ) defaultPrompt,
             e->ExceptionMessage ? ( char* ) e->ExceptionMessage : "\r",
-            c_gd ( "pause" ), _Context_Location ( _Context_ ),
+            c_gd ( "pause" ), e->Location,
             c_gd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : String_RemoveFinalNewline ( _Context_->ReadLiner0->InputLine ) ),
             c_gd ( "\n-> " ) ) ;
         DebugColors ;
@@ -384,7 +385,8 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
         Exception *e = _O_->OVT_Exception ;
         e->Signal = signal ;
         e->SigAddress = si->si_addr ; //( Is_DebugOn && _Debugger_->DebugAddress ) ? _Debugger_->DebugAddress : si->si_addr ;
-        e->SigLocation = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
+        //e->Location = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
+        e->Location = _Context_ ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
         if ( ( signal == SIGTTIN ) || ( signal == SIGCHLD ) ) return ;
         if ( ( signal != SIGWINCH ) && ( signal != SIGCHLD ) ) iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ; // 28 = SIGWINCH window resizing
         if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) ) OVT_Exit ( ) ;
@@ -421,7 +423,9 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
     e->ExceptionMessage = message ;
     e->ExceptionCode = exceptionCode ;
     e->RestartCondition = restartCondition ;
-    iPrintf ( "\n\nCSL_Exception at %s : %s\n", Context_Location ( ), message ? message : ( byte* ) "" ) ;
+    //e->Location = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
+    e->Location = _Context_ ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
+    iPrintf ( "\n\nCSL_Exception at %s : %s\n", e->Location, message ? message : ( byte* ) "" ) ;
     switch ( exceptionCode )
     {
         case CASE_NOT_LITERAL_ERROR:
@@ -671,7 +675,8 @@ _OVT_SimpleFinal_Key_Pause ( )
         if ( ! msg ) msg = "" ;
         byte * instr = ".: (p)ause, e(x)it, <key> restart" ;
         if ( e->SigSegvs < 3 ) printf ( "\n%s\n%s : at %s : (SIGSEGVs == %ld)", msg, instr,
-            ( ( e->SigSegvs < 2 ) ? Context_Location ( ) : ( byte* ) "" ), e->SigSegvs ), fflush ( stdout ) ;
+            //( ( e->SigSegvs < 2 ) ? Context_Location ( ) : ( byte* ) "" ), e->SigSegvs ), fflush ( stdout ) ;
+            e->Location, e->SigSegvs ), fflush ( stdout ) ;
         //( ( byte* ) "" ), e->SigSegvs ), fflush ( stdout ) ;
         key = Key ( ) ;
         if ( key == 'p' )

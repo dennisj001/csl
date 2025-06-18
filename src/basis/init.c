@@ -87,7 +87,7 @@ CSL_ResetAll_Init ( CSL * csl )
                 {
                     if ( strcmp ( ( char* ) _O_->ErrorFilename, "Debug Context" ) )
                     {
-                        iPrintf ( "\nError : \"%s\" include error!\n", e->SigLocation ? e->SigLocation : _O_->ErrorFilename ) ;
+                        iPrintf ( "\nError : \"%s\" include error!\n", e->Location ? e->Location : _O_->ErrorFilename ) ;
                     }
                 }
                 DefaultColors ;

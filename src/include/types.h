@@ -1050,10 +1050,9 @@ typedef struct
     byte * Message ;
     siginfo_t * SignalInfo ;
     Context * Context ;
-    byte * Prompt, *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken, *Location ;
+    byte * Prompt, *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken, *Location, *ErrorCommandLine ;
     Word * ExceptionWord ;
     void * SigAddress ;
-    byte * SigLocation, *ErrorCommandLine ;
     //byte Key ;
 } Exception ;
 
