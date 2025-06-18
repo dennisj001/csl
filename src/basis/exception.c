@@ -13,7 +13,7 @@ OVT_CheckThrowState ( )
     if ( e->RestartCondition == COMPLETE_INITIAL_START )
     {
         iPrintf ( "%s", e->ExceptionMessage ) ;
-        if ( ! ( e->Signal & ( SIGSEGV | SIGBUS ) ) ) if ( OVT_Pause ( 0, e->SignalExceptionsHandled ) ) return 1 ;
+        if ( ! ( e->Signal & ( SIGSEGV | SIGBUS ) ) ) if ( OVT_Pause ( 0 ) ) return 1 ;
         _OVT_SigLongJump ( & _O_->JmpBuf0 ) ;
     }
     if ( GetState ( _O_, OVT_THROW ) ) CSL_FullRestartComplete ( ) ;
@@ -82,8 +82,8 @@ OVT_Throw ( ) //, Boolean pausedFlag )
             else jb = & _CSL_->JmpBuf0 ;
         }
         //OVT_SetExceptionMessage ( _O_ ) ;
-        eword = _Context_->CurrentTokenWord ; //_Context_->CurrentEvalWord ;
         byte * buffer = Buffer_DataCleared ( _O_->ExceptionBuffer ) ;
+        eword = e->ExceptionWord = _Context_->CurrentTokenWord ; //_Context_->CurrentEvalWord ;
         snprintf ( buffer, BUFFER_IX_SIZE, "\n%s\n%s %s from %s : the current evalWord is %s.%s -> ...",
             e->ExceptionMessage ? ( char* ) e->ExceptionMessage : "", ( jb == & _CSL_->JmpBuf0 ) ? "reseting csl" : "restarting OpenVmTil",
             ( e->Signal == SIGSEGV ) ? ": SIGSEGV" : "", Context_Location ( ),
@@ -93,7 +93,7 @@ OVT_Throw ( ) //, Boolean pausedFlag )
         {
             if ( ( e->SignalExceptionsHandled < 2 ) && ( e->SigSegvs < 2 ) )
             {
-                if ( OVT_Pause ( 0, e->SignalExceptionsHandled ) ) return ;
+                if ( OVT_Pause ( 0 ) ) return ;
             }
             else if ( e->SigSegvs < 3 ) e->Message = "OVT_Throw", _OVT_SimpleFinal_Key_Pause ( ) ;
         }
@@ -160,7 +160,7 @@ OpenVmTil_ShowExceptionInfo ( )
     }
     else
     {
-        rtrn = OVT_Pause ( 0, e->SignalExceptionsHandled ) ;
+        rtrn = OVT_Pause ( 0 ) ;
         e->Signal = 0 ;
     }
     return rtrn ;
@@ -181,20 +181,20 @@ OVT_PauseInterpret ( Context * cntx, byte key )
     ReadLine_Init ( rl, _CSL_Key ) ;
     SetState ( cntx, AT_COMMAND_LINE, true ) ;
     if ( ( key <= ' ' ) || ( key == '\\' ) ) key = 0 ;
-    iPrintf ( "\nPause interpreter : hit <enter> with an empy line or <esc> to exit : \n" ) ;
+    iPrintf ( "\nPause interpreter : hit <enter> with an empy line to exit : \n" ) ;
     do
     {
         svPrompt = ReadLine_GetPrompt ( rl ) ;
         ReadLine_SetPrompt ( rl, "=> " ) ;
+        _O_->Pbf8[0] = 0 ; // trigger for Prompt
         DoPrompt ( ) ;
         _ReadLine_GetLine ( rl, key ) ;
         if ( ReadLine_PeekNextChar ( rl ) < ' ' ) break ; // '\n', <esc>, etc.
+        SetState ( _Lexer_, ( END_OF_LINE | END_OF_STRING ), false ) ; // controls Interpret_ToEndOfLine
         Interpret_ToEndOfLine ( cntx->Interpreter0 ) ;
-        CSL_NewLine ( ) ;
         if ( key == lastKey ) loop ++ ; // stop looping here, just noticed 0.907.39x??
         else loop = 0 ;
         lastKey = key ;
-        key = 0 ;
     }
     while ( loop < 5 ) ;
     ReadLine_SetPrompt ( rl, svPrompt ) ;
@@ -207,7 +207,7 @@ OVT_PauseInterpret ( Context * cntx, byte key )
 }
 
 int64
-OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
+OVT_Pause ( byte * prompt )
 {
     Exception *e = _O_->OVT_Exception ;
     int64 rtrn = 0 ;
@@ -226,8 +226,8 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
         DebugColors ;
         int64 tlw = Strlen ( defaultPrompt ) ;
         if ( tlw > _CSL_->TerminalLineWidth ) _CSL_->TerminalLineWidth = tlw ;
-        if ( signalExceptionsHandled ) iPrintf ( "\n_OVT_Pause : Signals Handled = %d : signal = %d : restart condition = %d\n",
-            signalExceptionsHandled, e->Signal, e->RestartCondition ) ;
+        if ( e->SignalExceptionsHandled ) iPrintf ( "\n_OVT_Pause : Signals Handled = %d : signal = %d : restart condition = %d\n",
+            e->SignalExceptionsHandled, e->Signal, e->RestartCondition ) ;
         do
         {
             if ( ( ! debugger->w_Word ) && ( ! debugger->Token ) ) debugger->w_Word = Context_CurrentWord ( ) ;
@@ -245,7 +245,6 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
                     iPrintf ( "\n%s : 'x' to e(x)it csl : any other <key> to cancel%s", msg, c_gd ( "\n-> " ) ) ;
                     key = Key ( ) ;
                     if ( ( key == 'x' ) || ( key == 'X' ) ) OVT_Exit ( ) ;
-                    //goto done ;
                     break ;
                 }
                 case 'q':
@@ -254,22 +253,7 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
                     iPrintf ( "\n%s : 'q' to (q)uit : any other key to cancel%s", msg, c_gd ( "\n-> " ) ) ;
                     key = Key ( ) ;
                     if ( ( key == 'q' ) || ( key == 'Q' ) ) DefaultColors, _CSL_Quit ( 1 ) ;
-                    //goto done ;
                     break ;
-                }
-                case 'd':
-                {
-                    //DebugOff ;
-                    //byte * token =  Lexer_ReadToken ( _Lexer_ ) ;
-                    //debugger->w_Word = Interpreter_ReadNextTokenToWord ( _Interpreter_ ) ;
-
-                    _CSL_DebugOn ( ) ;
-                    //Debugger_On ( Debugger * debugger )
-                    //SetState ( _Debugger_, DBG_INFO | DBG_MENU | DBG_PROMPT, true ) ;
-                    //SetState ( debugger, DBG_AUTO_MODE | DBG_AUTO_MODE_ONCE, false ) ; // stop auto mode and get next key command code
-                    //Debugger_InterpreterLoop ( debugger ) ;
-                    goto done ;
-                    //break ;
                 }
                 case ESC:
                 {
@@ -281,9 +265,15 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
                 case 't':
                 {
                     CSL_PrintDataStack ( ) ;
-                    break ; // continue with next char command input
+                    break ; 
                 }
                 case '\\':
+                case 'd':
+                {
+                    _CSL_DebugOn ( ) ;
+                    //goto done ;
+                    //fall thru to interpret
+                }
                 case 'i':
                 {
                     if ( _O_->OVT_Exception->RestartCondition < RESET_ALL )
@@ -297,27 +287,11 @@ OVT_Pause ( byte * prompt, int64 signalExceptionsHandled )
                 }
                 case 'c':
                 default: return 0 ; // continue ;
-#if 0                    
-                {
-                    if ( _O_->OVT_Exception->RestartCondition < RESET_ALL )
-                    {
-                        // interpret in this context
-                        Context * cntx = _Context_ ;
-                        OVT_PauseInterpret ( cntx, 0 ) ;
-                    }
-                    goto done ;
-                }
-                case 'p':
-                case 'e':
-                case '\n':
-                case '\r':
-                case ' ':
-#endif                    
             }
         }
         while ( 1 ) ;
     }
-done:
+done :    
     DefaultColors ;
     SetState ( _O_, OVT_PAUSE, false ) ;
 
@@ -331,7 +305,7 @@ _OpenVmTil_Pause ( )
     //e->Location = msg ;
     iPrintf ( "\n%s", e->Location ) ;
     e->RestartCondition = PAUSE ;
-    return OVT_Pause ( 0, e->SignalExceptionsHandled ) ;
+    return OVT_Pause ( 0 ) ;
 }
 
 void
@@ -442,7 +416,9 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
 {
     Exception *e = _O_->OVT_Exception ;
     AlertColors ;
+    e->ExceptionMessage = message ;
     e->ExceptionCode = exceptionCode ;
+    e->RestartCondition = restartCondition ;
     iPrintf ( "\n\nCSL_Exception at %s : %s\n", Context_Location ( ), message ? message : ( byte* ) "" ) ;
     switch ( exceptionCode )
     {

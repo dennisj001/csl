@@ -207,7 +207,8 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal )
         Debugger_UdisOneInstructionWithSourceCode ( debugger, 0, debugger->DebugAddress, ( byte* ) "", ( byte* ) "" ) ; // the next instruction
     }
     if ( ( ! sif ) && ( ! GetState ( debugger, DBG_STEPPING ) ) && ( GetState ( debugger, DBG_INFO ) ) ) _Debugger_ShowInfo ( debugger, prompt, signal, 1 ) ;
-    if ( prompt == e->ExceptionMessage ) e->ExceptionMessage = 0 ;
+    //if ( prompt == e->ExceptionMessage ) e->ExceptionMessage = 0 ;
+    if ( prompt ) e->ExceptionMessage = prompt ;
 }
 
 void
