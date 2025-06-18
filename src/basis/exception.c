@@ -271,7 +271,7 @@ OVT_Pause ( byte * prompt )
                 case 'd':
                 {
                     _CSL_DebugOn ( ) ;
-                    //goto done ;
+                    goto done ;
                     //fall thru to interpret
                 }
                 case 'i':

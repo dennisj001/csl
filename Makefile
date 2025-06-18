@@ -155,10 +155,13 @@ optimize :
 	#-rm bin/csl*
 	#make optimize1
 	#make optimize2
-	make -j 20 #optimize1
-	#make optimize3
+	make -j 20 optimize3
+	#make -j 20 
+	#make optimize1
+	#make optimize2
+	#make -j 20 optimize3
 	make -j 20 csls
-	make oclean
+	#make oclean
 	#make
 	#-sudo cp bin/cslo3 /usr/local/bin/csl
 	#cp bin/cslo3 bin/csl
