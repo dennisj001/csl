@@ -28,14 +28,21 @@ GetTerminalWidth ( )
 int
 _kbhit ( int64 key )
 {
-    int64 oldf ;
+    int64 oldf ; int ch ;
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
-    int ch = getc ( stdin ) ;
+    //if ( _O_ && _Context_ && _Lexer_ ) ch = _Lexer_->NextChar ( _Lexer_ ) ; 
+    //else 
+    ch = getc ( stdin ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf ) ;
-    if ( key == CHAR_PRINT ) return ( ch >= ' ' ) ;
-    else if ( key == CHAR_ANY ) return ( ch ) ;
-    else return (ch == key ) ; //return ch ;
+    //if ( key )
+    {
+        if ( key == CHAR_PRINT ) return ( ch >= ' ' ) ;
+        else if ( key == CHAR_ANY ) return ( ch ) ;
+        else if ( ch == 255 ) return ( 0 ) ;
+        else return (ch == key ) ; //return ch ;
+    }
+    //else return 0 ;
 }
 
 int
@@ -176,8 +183,8 @@ void
 DoPrompt ( )
 {
     //if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || (_O_->Pblc == '\n') || GetState ( _Lexer_, END_OF_LINE ) )   
-    if ( ( ! _O_->Pbf8[0] ) || ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) || GetState ( _Debugger_, DBG_COMMAND_LINE) )   
-    //if ( GetState ( _Lexer_, END_OF_LINE ) )   
+    if ( ( ! _O_->Pbf8[0] ) || ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) || GetState ( _Debugger_, DBG_COMMAND_LINE ) )
+        //if ( GetState ( _Lexer_, END_OF_LINE ) )   
     {
         _DoPrompt ( ) ;
     }

@@ -230,6 +230,7 @@ _CSL_Init ( CSL * csl, Namespace * nss )
     csl->SC_QuoteMode = 0 ;
     csl->EndBlockWord = Finder_FindWord_InOneNamespace ( _Finder_, ( byte* ) "C_Syntax", ( byte* ) "}" ) ;
     csl->BeginBlockWord = Finder_FindWord_InOneNamespace ( _Finder_, ( byte* ) "Reserved", ( byte* ) "{" ) ;
+    //Exception_Init ( _O_->OVT_Exception ) ;
     SetState ( csl, SOURCE_CODE_ON, true ) ;
 }
 

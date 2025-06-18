@@ -508,7 +508,7 @@ ReadLine_Get_Key ( ReadLiner * rl )
         ReadLiner_Done ( rl ) ;
         return 0 ;
     }
-    else return ReadLine_Set_KeyedChar ( rl, rl->Key ? rl->Key ( rl ) : 0 ) ;
+    else return ReadLine_Set_KeyedChar ( rl, rl->Key ( rl ) ) ;
 }
 
 byte

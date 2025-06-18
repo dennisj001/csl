@@ -265,7 +265,7 @@ OVT_Pause ( byte * prompt )
                 case 't':
                 {
                     CSL_PrintDataStack ( ) ;
-                    break ; 
+                    break ;
                 }
                 case '\\':
                 case 'd':
@@ -291,7 +291,7 @@ OVT_Pause ( byte * prompt )
         }
         while ( 1 ) ;
     }
-done :    
+done:
     DefaultColors ;
     SetState ( _O_, OVT_PAUSE, false ) ;
 
@@ -303,8 +303,11 @@ _OpenVmTil_Pause ( )
 {
     Exception *e = _O_->OVT_Exception ;
     //e->Location = msg ;
-    iPrintf ( "\n%s", e->Location ) ;
-    e->RestartCondition = PAUSE ;
+    if ( e )
+    {
+        iPrintf ( "\n%s", e->Location ) ;
+        e->RestartCondition = PAUSE ;
+    }
     return OVT_Pause ( 0 ) ;
 }
 
@@ -313,7 +316,7 @@ OpenVmTil_Pause ( )
 {
     Exception *e = _O_->OVT_Exception ;
     DebugColors ;
-    e->Location = Context_Location ( ) ;
+    if ( e ) e->Location = Context_Location ( ) ;
     _OpenVmTil_Pause ( ) ;
 }
 
@@ -329,7 +332,6 @@ OVT_ResetSignals ( int64 signals )
 void
 _OVT_SigLongJump ( sigjmp_buf * jb )
 {
-    if ( _O_ ) Exception_Init ( _O_->OVT_Exception ) ;
     siglongjmp ( *jb, 1 ) ;
 }
 
