@@ -598,9 +598,10 @@ CSL_Show_ErrorCommandLine ( )
         ReadLiner * rl = _ReadLiner_ ;
         if ( AtCommandLine ( rl ) )
         {
-            byte * buffer = Buffer_DataCleared ( _CSL_->ScratchB5 ) ;
+            byte * buffer = Buffer_DataCleared ( _CSL_->ScratchB5 ), *b ;
             strncpy ( buffer, _ReadLiner_->InputLineString, BUFFER_SIZE ) ;
-            e->ErrorCommandLine = String_New ( String_RemoveFinalNewline ( buffer ), EXCEPTION_SPACE) ;
+            b = String_RemoveFinalNewline ( buffer ) ;
+            e->ErrorCommandLine = String_New ( b, EXCEPTION_SPACE) ;
             iPrintf ( "\nError Command Line : <? \'%s\' ?>", e->ErrorCommandLine ) ;
         }
     }
