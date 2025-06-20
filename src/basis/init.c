@@ -61,7 +61,6 @@ CSL_ResetAll_Init ( CSL * csl )
     Exception *e = _O_->OVT_Exception ;
 #if 0
     byte * startDirectory ;
-    //if ( ! GetState ( _O_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/csl" ;
     if ( ! GetState ( _O_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/csl/namespaces" ;
     else startDirectory = ( byte* ) "namespaces" ;
     DataObject_New ( NAMESPACE_VARIABLE, 0, ( byte* ) "_startDirectory_", 0, NAMESPACE_VARIABLE, 0, 0, ( int64 ) startDirectory, 0, 0, 0, 0 ) ;
@@ -107,6 +106,7 @@ CSL_ResetAll_Init ( CSL * csl )
         OVT_ShowMemoryAllocated ( ) ;
     }
     //if ( ( _O_->InitSessionCoreTimes == 1 ) || ( ! Verbosity () ) ) Verbosity () = 1 ;
+    Exception_Init ( e ) ;
 }
 
 void

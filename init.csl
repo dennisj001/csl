@@ -131,7 +131,8 @@ User
 StartupMacros                                       // switch to that namespace
 // create string words in StartupMacros namespace
 : Delimiters "/" ;                                  // set delimiters to be used with string macros
-: namespaces "/usr/local/lib/csl/namespaces" ;      // our currently only ?!overloaded!? string macro allowing
+: namespaces { "init.csl" fexists } { "namespaces" } { "/usr/local/lib/csl/namespaces" } ifElse ;
+                                                   // our currently only ?!overloaded!? string macro allowing
                                                     // us to parameterize the startup; can be properly started 
                                                     // in any directory now if it is installed with 'make install' 
                                                     // in "/usr/local/lib/csl"

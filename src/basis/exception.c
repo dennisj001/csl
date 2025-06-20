@@ -99,6 +99,7 @@ OVT_Throw ( ) //, Boolean pausedFlag )
         }
     }
 jump:
+    //Exception_Init ( e ) ;
     _O_->Pbf8[0] = 0 ; // newline prompt control
     _OVT_SigLongJump ( jb ) ;
 }

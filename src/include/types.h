@@ -1099,7 +1099,8 @@ typedef struct
 
     // variables accessible from csl
     //int64 Verbosity, StartIncludeTries, StartedTimes, Restarts, SigSegvs, ReAllocations, Dbi ;
-    int64 Verbosity, StartIncludeTries, ReAllocations, Dbi ;
+    //int64 StartIncludeTries, RestartCondition ;
+    int64 Verbosity, ReAllocations, Dbi ;
     int64 DictionarySize, LispCopySize, LispTempSize, MachineCodeSize, ObjectSpaceSize, InternalObjectsSize, LispSpaceSize, ContextSize ;
     int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize, ForthSize ; 
     int64 CSLSize, BufferSpaceSize, ExceptionSpaceSize, StringSpaceSize, Thrown ;
