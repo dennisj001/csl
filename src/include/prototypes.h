@@ -1715,13 +1715,13 @@ Word *Compiler_LocalWord_UpdateCompiler(Compiler *compiler, Word *word, int64 ob
 Word *_Compiler_LocalWord_New(Compiler *compiler, byte *name, int64 morphismType, int64 objectType, int64 lispType, int64 allocType);
 Namespace *Compiler_LocalsNamespace_FindOrNew(Compiler *compiler);
 Word *Compiler_LocalWord_New(Compiler *compiler, byte *name, int64 morphismAttributes, int64 objectAttributes, int64 lispAttributes, int64 allocType);
-Boolean IsFrameNecessary(int64 numberOfLocals, int64 numberOfArgs);
-Boolean Compiler_IsFrameNecessary(Compiler *compiler);
 void Compile_Init_LocalRegisterParamenterVariables(Compiler *compiler);
 void _Compiler_AddLocalFrame(Compiler *compiler);
 void Compiler_SetLocalsFrameSize_AtItsCellOffset(Compiler *compiler);
 void CSL_Push(void);
 void CSL_DoReturnWord(Word *word);
+Boolean Word_IsFrameNecessary(Word *word);
+Boolean Compiler_IsFrameNecessary(Compiler *compiler);
 void Compiler_RemoveLocalFrame(BlockInfo *bi, Compiler *compiler);
 void CSL_LocalsAndStackVariablesBegin(void);
 void CSL_LocalVariablesBegin(void);

@@ -3,8 +3,10 @@
 #ifndef _DEV_H_
 #define _DEV_H_
 Interpreter
-: sp0 ; //stack pause ; sp0
+: sp0 ; //stack pause ; 
 Root  
+: sp0 ; //stack pause ; 
+sp0
 C 
 optimizeOn inlineOn 
 //typecheckOn 
@@ -41,7 +43,7 @@ int factoriali ( int8 REG n | REG res )
 } prefix
 
 factoriali ( 7 ) ; p () ;
-factoriali (7) ; dup p 5040 _assert //pause //sp0
+factoriali (7) ; dup p 5040 _assert sp0
 pwi factoriali //pause
 #endif
 //vb (3) ;
@@ -76,7 +78,7 @@ jcc8_Off
 : bexp ( n ) n @ 1 > if{ n @ dup -- bexp * }else{ 1 }fi ; 7 bexp dup p 5040 _assert
 : bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ; 7 bexp2 dup p 5040 _assert
 : bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;
-7 bexp3 dup nl p 5040 _assert //sp0
+7 bexp3 dup nl p 5040 _assert sp0
 //pwi bexp3 //pause
 c_syntaxOn
 jcc8_On
@@ -534,7 +536,7 @@ stack //pause
 // 40 fibx3 
 sp0
 //bnOn
-
+//pause
 sp0
 : tbn ( | n m ) n 0 = m 3 = n m @ += n m @ += n m @ += n @ p ; tbn nl "should be 9" ps
 : fibBN ( n | fn fn1 fn2 ) 

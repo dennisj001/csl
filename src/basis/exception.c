@@ -217,12 +217,13 @@ OVT_Pause ( byte * prompt )
         SetState ( _O_, OVT_PAUSE, true ) ;
         Debugger * debugger = _Debugger_ ;
         if ( _Context_->CurrentlyRunningWord ) _Debugger_->ShowLine = ( byte* ) "" ;
-        byte * buffer = Buffer_DataCleared ( _CSL_->StringInsertB4 ), *defaultPrompt =
+        byte *b, * buffer = Buffer_DataCleared ( _CSL_->StringInsertB4 ), *defaultPrompt =
             ( byte * ) "\n%s\n%s : at %s : %s:: <key>/(c)ontinue (d)ebugger s(t)ack '\\'/(i)interpret (q)uit e(x)it, <esc> cancel%s" ;
+        b = String_RemoveFinalNewline ( _Context_->ReadLiner0->InputLine ) ;
         snprintf ( ( char* ) buffer, BUFFER_IX_SIZE, prompt ? ( char* ) prompt : ( char* ) defaultPrompt,
             e->ExceptionMessage ? ( char* ) e->ExceptionMessage : "\r",
             c_gd ( "pause" ), e->Location,
-            c_gd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : String_RemoveFinalNewline ( _Context_->ReadLiner0->InputLine ) ),
+            c_gd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : b ),
             c_gd ( "\n-> " ) ) ;
         DebugColors ;
         int64 tlw = Strlen ( defaultPrompt ) ;
@@ -387,7 +388,7 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
         e->SigAddress = si->si_addr ; //( Is_DebugOn && _Debugger_->DebugAddress ) ? _Debugger_->DebugAddress : si->si_addr ;
         //e->Location = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
         e->Location = _Context_ ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
-        if ( ( signal == SIGTTIN ) || ( signal == SIGCHLD ) ) return ;
+        if ( ( signal == SIGTTIN ) || ( signal == SIGCHLD ) ) { Exception_Init ( e ) ; return ; }
         if ( ( signal != SIGWINCH ) && ( signal != SIGCHLD ) ) iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ; // 28 = SIGWINCH window resizing
         if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) ) OVT_Exit ( ) ;
         OVT_ResetSignals ( e->Signal ) ;
@@ -396,9 +397,10 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
             if ( ( signal != SIGCHLD ) && ( signal != SIGWINCH ) && ( signal != SIGTRAP ) ) OpenVmTil_ShowExceptionInfo ( ) ;
             else
             {
+                Exception_Init ( e ) ;
                 // ignore this category -- just return
-                e->SigAddress = 0 ; //|| ( signal == SIGWINCH ) ) _O_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
-                e->Signal = 0 ;
+                //e->SigAddress = 0 ; //|| ( signal == SIGWINCH ) ) _O_->SigAddress = 0 ; // 17 : "CHILD TERMINATED" : ignore; its just back from a shell fork
+                //e->Signal = 0 ;
             }
         }
         else

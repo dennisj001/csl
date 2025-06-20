@@ -35,8 +35,7 @@ _Debugger_Locals_ShowALocal ( Cpu * cpu, Word * localsWord, Word * scWord ) // u
         uint64 * fp = cpu->CPU_FP ; //? ( uint64* ) ((* cpu->CPU_FP)? ( uint64* ) (* cpu->CPU_FP) : (cpu->CPU_FP)) : 0 ;
         int64 localVarFlag = ( localsWord->W_ObjectAttributes & LOCAL_VARIABLE ) ; // nb! not a Boolean with '='
         //int64 varOffset = LocalOrParameterVar_Offset ( localsWord ) ;
-        int64 varOffset = _LocalOrParameterVar_Offset ( localsWord, scWord->W_NumberOfNonRegisterArgs,
-            IsFrameNecessary ( scWord->W_NumberOfNonRegisterLocals, scWord->W_NumberOfNonRegisterArgs ) ) ;
+        int64 varOffset = _LocalOrParameterVar_Offset ( localsWord, scWord->W_NumberOfNonRegisterArgs, Word_IsFrameNecessary ( scWord ) ) ;
         byte * address = ( byte* ) ( uint64 ) ( fp ? fp [ varOffset ] : 0 ) ;
 
         byte * stringValue = String_CheckForAtAdddress ( address, &_O_->Default, &_O_->User ) ;
