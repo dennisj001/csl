@@ -59,7 +59,7 @@ void
 CSL_ResetAll_Init ( CSL * csl )
 {
     Exception *e = _O_->OVT_Exception ;
-#if 1
+#if 0
     byte * startDirectory ;
     //if ( ! GetState ( _O_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/csl" ;
     if ( ! GetState ( _O_, OVT_IN_USEFUL_DIRECTORY ) ) startDirectory = ( byte* ) "/usr/local/lib/csl/namespaces" ;

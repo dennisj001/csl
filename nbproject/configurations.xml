@@ -323,6 +323,11 @@
       <item path="src/basis/history.c" ex="false" tool="0" flavor2="2">
       </item>
       <item path="src/basis/init.c" ex="false" tool="0" flavor2="2">
+        <cTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
       </item>
       <item path="src/basis/interpreter.c" ex="false" tool="0" flavor2="2">
       </item>

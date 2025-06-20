@@ -249,7 +249,6 @@ Compiler_IsFrameNecessary ( Compiler * compiler )
     return compiler->NumberOfNonRegisterVariables ; //compiler->NumberOfNonRegisterLocals + compiler->NumberOfNonRegisterArgs ;
 }
 
-#if 1
 void
 Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
 {
@@ -259,12 +258,9 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
     Word * returnVariable = compiler->ReturnVariableWord ; //? compiler->ReturnVariableWord : compiler->ReturnWord ; //?  compiler->ReturnLParenVariableWord :  compiler->ReturnWord ;
     Boolean returnValueFlag = GetState ( compiler, RETURN_TOS ) || returnVariable ;
     if ( compiler->NumberOfArgs ) parameterVarsSubAmount = ( compiler->NumberOfArgs - returnValueFlag ) * CELL_SIZE ;
-    if ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs )
-    //if ( compiler->NumberOfLocals || compiler->NumberOfArgs )
+    if ( compiler->NumberOfNonRegisterVariables )
     {
-        //if ( ( returnValueFlag ) || (! _LC_ ) ) //&& ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
         if ( returnValueFlag && ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
-            //if ( ( ! _LC_ ) ) //&& ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
         {
             byte add_r14_0x8__mov_r14_rax [ ] = { 0x49, 0x83, 0xc6, 0x08, 0x49, 0x89, 0x06 } ; //"add r14, 0x8,  mov [r14], rax"
             if ( ! memcmp ( add_r14_0x8__mov_r14_rax, Here - 7, 7 ) )
@@ -300,56 +296,6 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
         Compile_Move_ACC_To_TOS ( DSP ) ;
     }
 }
-#else
-void
-Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
-{
-    Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
-    if ( ! GetState ( _Context_, LISP_MODE ) ) Compiler_WordStack_SCHCPUSCA ( 0, 0 ) ;
-    int64 parameterVarsSubAmount = 0 ;
-    Word * returnVariable = compiler->ReturnVariableWord ; //? compiler->ReturnVariableWord : compiler->ReturnWord ; //?  compiler->ReturnLParenVariableWord :  compiler->ReturnWord ;
-    Boolean returnValueFlag = GetState ( compiler, RETURN_TOS ) || ( returnVariable ) ; //&& ( ! ( returnVariable->W_ObjectAttributes & REGISTER_VARIABLE ) ) ) ;
-    if ( compiler->NumberOfNonRegisterArgs ) parameterVarsSubAmount = ( compiler->NumberOfNonRegisterArgs - returnValueFlag ) * CELL_SIZE ;
-    //if ( compiler->NumberOfNonRegisterLocals || compiler->NumberOfNonRegisterArgs )
-    if ( compiler->NumberOfNonRegisterVariables ) //compiler->NumberOfLocals || compiler->NumberOfArgs )
-    {
-        if ( returnValueFlag && ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
-        {
-            byte add_r14_0x8__mov_r14_rax [ ] = { 0x49, 0x83, 0xc6, 0x08, 0x49, 0x89, 0x06 } ; //"add r14, 0x8,  mov [r14], rax"
-            if ( ! memcmp ( add_r14_0x8__mov_r14_rax, Here - 7, 7 ) )
-            {
-                CSL_AdjustDbgSourceCodeAddress ( Here, Here - 7 ) ;
-                _ByteArray_UnAppendSpace ( _O_CodeByteArray, 7 ) ;
-            }
-        }
-        // remove the incoming parameters -- like in C
-        _Compile_LEA ( DSP, FP, 0, - CELL_SIZE ) ; // restore sp - release locals stack frame
-        _Compile_Move_StackN_To_Reg ( FP, DSP, 1, 0 ) ; // restore the saved pre fp - cf AddLocalsFrame
-    }
-    if ( ( parameterVarsSubAmount > 0 ) && ( ! IsWordRecursive ) ) Compile_SUBI ( REG, DSP, 0, parameterVarsSubAmount, 0 ) ; // remove stack variables ; recursive handled below
-        // add a place on the stack for return value
-    else if ( parameterVarsSubAmount < 0 ) Compile_ADDI ( REG, DSP, 0, abs ( parameterVarsSubAmount ), 0 ) ;
-    else if ( ( parameterVarsSubAmount == 0 ) && returnValueFlag && ( ! compiler->NumberOfNonRegisterArgs ) && ( ! compiler->NumberOfArgs ) )
-        Compile_ADDI ( REG, DSP, 0, CELL_SIZE, 0 ) ;
-    // nb : stack was already adjusted accordingly for this above by reducing the SUBI subAmount or adding if there weren't any parameter variables
-    if ( returnValueFlag || IsWordRecursive )
-    {
-        if ( returnVariable ) Compiler_Word_SCHCPUSCA ( returnVariable, 0 ) ; // compiler->ReturnWord, 0 ) ;
-        if ( returnVariable && ( returnVariable->W_ObjectAttributes & REGISTER_VARIABLE ) )
-        {
-            if ( returnVariable->RegToUse != RAX ) Compile_Move_Reg_To_Reg ( RAX, returnVariable->RegToUse, 0 ) ;
-            _Compile_Move_Reg_To_StackN ( DSP, 0, returnVariable->RegToUse, 0 ) ;
-            return ;
-        }
-        byte mov_rax_r14 [ ] = { 0x49, 0x89, 0x06 } ;
-        //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) Here - 3, 3, 1 ) ;
-        if ( ! memcmp ( mov_rax_r14, Here - 3, 3 ) ) return ; //remember : memcmp returns a diff => returns 0 when there is no difference
-        //if ( ( IsWordRecursive ) && ( ! test ) ) 
-        //if ( ! test ) return ;
-        Compile_Move_ACC_To_TOS ( DSP ) ;
-    }
-}
-#endif
 
 void
 CSL_LocalsAndStackVariablesBegin ( )
