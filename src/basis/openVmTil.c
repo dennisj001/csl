@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.941.874" )
+#define VERSION ((byte*) "0.941.875" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -42,31 +42,11 @@ OpenVmTil_Init ( OpenVmTil * ovt )
     ovt->RecycledOptInfoList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->OVT_Exception = Exception_New ()  ;
     ovt->VersionString = VERSION ;
+    
     // ? where do we want the init file ?
-#if 1    
-    if ( _File_Exists ( ( byte* ) "./init.csl" ) )
-    {
-        ovt->InitString = ( byte* ) "\"./init.csl\" _include" ; // could allow override with a startup parameter
-        SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, true ) ;
-    }
-    else
-    {
-        ovt->InitString = ( byte* ) "\"/usr/local/lib/csl/init.csl\" _include" ; // could allow override with a startup parameter
-        SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, false ) ;
-    }
-#else
-    if ( _File_Exists ( ( byte* ) "./init.csl" ) )
-    {
-        ovt->InitString = ( byte* ) "\"./init.csl\" _include" ; // could allow override with a startup parameter
-        SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, true ) ;
-    }
-    else if ( _File_Exists ( ( byte* ) "/usr/local/lib/csl/init.csl" ) )
-    {
-        ovt->InitString = ( byte* ) "\"/usr/local/lib/csl/init.csl\" _include" ; // could allow override with a startup parameter
-        SetState ( ovt, OVT_IN_USEFUL_DIRECTORY, false ) ;
-    }
-    else ovt->InitString = internalInit ;
-#endif    
+    if ( _File_Exists ( ( byte* ) "./init.csl" ) ) ovt->InitString = ( byte* ) "\"./init.csl\" _include" ; 
+    else ovt->InitString = ( byte* ) "\"/usr/local/lib/csl/init.csl\" _include" ; 
+    
     if ( ovt->Verbosity > 1 )
     {
         iPrintf ( "\nRestart : All memory freed, allocated and initialized as at startup. "
