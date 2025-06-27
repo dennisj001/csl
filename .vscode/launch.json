@@ -9,7 +9,7 @@
       "stopAtEntry": false,
       "externalConsole": false,
       "cwd": "/home/dennisj/csl",
-      "program": "/home/dennisj/csl/build/Debug/outDebug",
+      "program": "/home/dennisj/csl/bin/csl-gdb",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

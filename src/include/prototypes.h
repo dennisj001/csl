@@ -2458,3 +2458,23 @@ void _Compile_Nop(void);
 /* src/primitives/shell.c */
 void shell(void);
 void handle_sigchld(int sig);
+/* src/primitives/kernel.c */
+void _lbforth(void);
+void lbforth(void);
+xt_t *exit_code(xt_t *IP, xt_t word);
+xt_t *dodoes_code(xt_t *IP, xt_t word);
+xt_t *zerobranch_code(xt_t *IP, xt_t word);
+xt_t *_literal__code(xt_t *IP, xt_t word);
+xt_t *store_code(xt_t *IP, xt_t word);
+xt_t *fetch_code(xt_t *IP, xt_t word);
+xt_t *plus_code(xt_t *IP, xt_t word);
+xt_t *greaterr_code(xt_t *IP, xt_t word);
+xt_t *rto_code(xt_t *IP, xt_t word);
+xt_t *nand_code(xt_t *IP, xt_t word);
+xt_t *cstore_code(xt_t *IP, xt_t word);
+xt_t *cfetch_code(xt_t *IP, xt_t word);
+xt_t *emit_code(xt_t *IP, xt_t word);
+xt_t *bye_code(xt_t *IP, xt_t word);
+xt_t *close_file_code(xt_t *IP, xt_t word);
+xt_t *open_file_code(xt_t *IP, xt_t word);
+xt_t *read_file_code(xt_t *IP, xt_t word);

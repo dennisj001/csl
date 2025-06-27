@@ -1,4 +1,41 @@
+#if 0 // lbForth - kernel.c
+//cOn d:
+#define REGPARM
+
+typedef long int cell ;
+typedef char char_t ;
+typedef unsigned char uint8 ;
+typedef unsigned char uint8 ;
+typedef uint8 uchar_t ;
+#define NAME_LENGTH 16
+struct word
+{
+    uchar_t nlen ;
+    char_t name[NAME_LENGTH - 1] ;
+    nt_t next ;
+    cell *does ;
+    code_t *code ;
+    cell param[] ;
+} ;
+
+typedef struct word *nt_t ;
+typedef struct word *xt_t ;
+typedef xt_t * REGPARM
+code_t( xt_t *, nt_t ) ;
+
+#define NEXT_XT  (*IP++)
+#define EXECUTE(XT)  IP = (XT)->code (IP, XT)
+
+extern struct word SP_word, RP_word ;
+
+#define POP_lbf(TYPE) ((TYPE)(*(*((cell **)SP_word.param))++))
+#define PUSH_lbf(X)  (*--(*((cell **)SP_word.param)) = (cell)(X))
+#define RPOP(TYPE) ((TYPE)(*(*((cell **)RP_word.param))++))
+#define RPUSH(X) (*--(*((cell **)RP_word.param)) = (cell)(X))
+#else 
 #include "../include/csl.h"
+#endif
+
 extern struct word docolcomma_word ;
 
 void
@@ -24,8 +61,22 @@ _lbforth ( void )
     {
         EXECUTE ( xt ) ;
         xt = NEXT_XT ;
-        if ( String_Equal ( _ReadLiner_->InputLineString, "bye\n" ) ) return ;
+        if ( String_Equal ( _ReadLiner_->InputLineString, "bye\n" ) ) 
+            return ;
+        //else if ( String_Equal ( _ReadLiner_->InputLineString, "ok\n" ) ) _DoPrompt ( ) ;
+        //iPrintf ( "%s", _ReadLiner_->InputLineString ) ;
     }
+}
+
+void
+lbforth ( ) //Context * cntx , byte * initFilename )
+{
+    SetState ( _Context_, LBFORTH_MODE, true ) ;
+    iPrintf ( "\ncsl lbforth : type 'bye' to exit lbforth : Lars Brinkhoff\n" ) ;
+    SetState ( _Context_, AT_COMMAND_LINE, true ) ;
+    _Repl ( _Context_, ( block ) _lbforth ) ;
+    iPrintf ( "\nleaving csl lbforth : Lars Brinkhoff : returning to csl interpreter\n" ) ;
+    SetState ( _Context_, LBFORTH_MODE, false ) ;
 }
 
 xt_t * REGPARM
@@ -253,9 +304,7 @@ read_file_code ( xt_t *IP, xt_t word )
 }
 #endif
 extern struct word less_word ;
-struct word cold_word = { 4, "cold", 0, 0, ( code_t * ) main,
-    {
-    } } ;
+struct word cold_word = { 4, "cold", 0, 0, ( code_t * ) main, { } } ;
 struct word exit_word = { 4, "exit", &cold_word, 0, exit_code, { } } ;
 struct word dodoes_word = { 6, "dodoes", &exit_word, 0, dodoes_code, { } } ;
 struct word zerobranch_word = { 7, "0branch", &dodoes_word, 0, zerobranch_code, { } } ;

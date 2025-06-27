@@ -576,7 +576,8 @@ doLispTest 0 =
 
 #if _doDemo 
 //demo 
-#else mem //pause
+#else 
+mem //pause
 #endif //dT0
 //rtw
 

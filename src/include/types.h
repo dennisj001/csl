@@ -1199,7 +1199,7 @@ typedef unsigned CELL_BASE_TYPE cell ;
 typedef unsigned DOUBLE_CELL_BASE_TYPE dcell ;
 typedef void(*builtin )( ) ;
 #endif
-#if 1
+#if 0
 // retro.c
 typedef struct NgaState NgaState ;
 
