@@ -173,9 +173,11 @@ void
 _DoPrompt ( )
 {
     byte lc = _ReadLiner_->InputKeyedCharacter ;
-    Boolean lcnl = ( lc == '\n' ) ; //, lcbnl = (_O_->Pblc == '\n') ;
-    //if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) || ( ( ! lcbnl ) && ( _O_->Pbf8[0] != '\r' ) ) ) CSL_PrintChar ( '\n' ) ;
-    if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) ) CSL_PrintChar ( '\n' ) ;
+    Boolean lcnl = ( lc == '\n' ), lcbnl = (_O_->Pblc == '\n') ;
+    //Boolean lcbnl = (_O_->Pblc == '\n') ;
+    if ( ( _O_->Pbf8[0] != '\r' ) || ( ! lcnl ) && ( ! lcbnl ) )  CSL_PrintChar ( '\n' ) ;
+    //if ( ( _O_->Pbf8[0] != '\r' ) && ( ! lcbnl ) ) CSL_PrintChar ( '\n' ) ;
+    //if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) ) CSL_PrintChar ( '\n' ) ;
     iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
     SetState ( _O_, OVT_PROMPT_DONE, true ) ;
 }
@@ -229,6 +231,7 @@ void
 iPrintf ( char *format, ... )
 {
     va_list args ;
+    byte * b ;
     if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     //if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
@@ -239,7 +242,8 @@ iPrintf ( char *format, ... )
         {
             vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBuffer ), ( char* ) format, args ) ;
             //strncpy ( Buffer_Data ( _O_->PrintBufferCopy ), Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
-            printf ( "%s", Buffer_Data ( _O_->PrintBuffer ) ) ;
+            b = Buffer_Data ( _O_->PrintBuffer ) ;
+            printf ( "%s", b ) ;
             _O_->Pblc = String_LastChar ( _Buffer_Data ( _O_->PrintBuffer ) ) ;
             strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
             //strncpy ( (char*) Buffer_Data ( _O_->PrintBufferCopy ), (char*) Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
@@ -296,6 +300,7 @@ void
 oPrintf ( char *format, ... )
 {
     va_list args ;
+    byte * b ;
     if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
     if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
     {
@@ -305,7 +310,8 @@ oPrintf ( char *format, ... )
         {
             vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBuffer ), ( char* ) format, args ) ;
             //strncpy ( Buffer_Data ( _O_->PrintBufferCopy ), Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
-            printf ( "%s", Buffer_Data ( _O_->PrintBuffer ) ) ;
+            b = Buffer_Data ( _O_->PrintBuffer ) ;
+            printf ( "%s", b ) ;
             _O_->Pblc = String_LastChar ( _Buffer_Data ( _O_->PrintBuffer ) ) ;
             strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
             //strncpy ( (char*) Buffer_Data ( _O_->PrintBufferCopy ), (char*) Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;

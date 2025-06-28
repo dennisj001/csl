@@ -32,6 +32,7 @@ ReadLine_ShowHistoryNode ( ReadLiner * rl )
     {
         byte * dst = Buffer_DataCleared ( _CSL_->ScratchB1 ) ;
         dst = _String_ConvertStringToBackSlash ( dst, rl->HistoryNode->mc_Name, - 1, 0 ) ;
+        //strncat ( dst, "\n", 2 ) ;
         Clear_Terminal_Line ( ) ;
         __ReadLine_DoStringInput ( rl, String_FilterMultipleSpaces ( dst, TEMPORARY ), rl->AltPrompt ) ;
         ReadLine_SetCursorPosition ( rl, rl->EndPosition ) ;
