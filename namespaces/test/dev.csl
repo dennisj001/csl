@@ -91,7 +91,7 @@ faccs3 ( n | rec )
     } 
     return rec ;
 }
-' faccs3 find wdiss
+' faccs3 find wdiss //pause
 faccs3 ( 7 ) dup p 5040 _assert 
 
 sp0

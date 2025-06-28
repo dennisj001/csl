@@ -1214,7 +1214,7 @@ _quit ( )
 int
 llkey ( )
 {
-    if ( *forth->initscript_pos ) return *( forth->initscript_pos ++ ) ;
+    if (( forth->initscript_pos ) && ( *forth->initscript_pos ) ) return *( forth->initscript_pos ++ ) ;
     int chr = ReadLine_NextChar ( _ReadLiner_ ) ; //getchar();
     //int chr = _CSL_Key ( _ReadLiner_ ) ; //  fgetc ( _ReadLiner_->InputFile ) ; //getchar();
     //putkey ( chr ) ;

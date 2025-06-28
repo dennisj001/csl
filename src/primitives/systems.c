@@ -24,13 +24,13 @@ emit ( int64 c )
 void
 CSL_Jcc8_On ( )
 {
-    SetState ( _CSL_, JCC8_ON, true ) ;
+    //SetState ( _CSL_, JCC8_ON, true ) ;
 }
 
 void
 CSL_Jcc8_Off ( )
 {
-    SetState ( _CSL_, JCC8_ON, false ) ;
+    //SetState ( _CSL_, JCC8_ON, false ) ;
 }
 
 void

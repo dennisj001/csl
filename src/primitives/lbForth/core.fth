@@ -258,7 +258,8 @@ create string-source   0 -1 ' string-refill ' noop source,
 create tib   256 allot
 
 \ : key   here dup 1 stdin read-file if bye then  0= if bye then  c@ ;
-: key   here dup 1 stdin read-file 1 = if bye then 0= if bye then  c@ ; \ daj
+\ : key   here dup 1 stdin read-file if  then  0= if bye then  c@ ;
+: key   here dup 1 stdin read-file 1 = if bye then 0= if bye then  c@ ;
 
 : terminal-refill   tib 256 bounds do
       key dup 10 = if drop leave then

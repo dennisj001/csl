@@ -1,6 +1,6 @@
 CC = gcc
 #M32 = -m32
-CFLAGS = $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time
+CFLAGS = -ggdb -fomit-frame-pointer -fno-unit-at-a-time
 CPPFLAGS = -I$(TDIR)
 #LDFLAGS = $(M32)
 

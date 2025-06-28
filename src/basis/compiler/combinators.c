@@ -139,7 +139,7 @@ CSL_WhileCombinator ( )
             goto recompile ;
         }
         SetState ( _CSL_, JCC8_ON, svJccState ) ;
-#endif
+//#endif
         svHere = 0 ;
         byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
         if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
@@ -166,10 +166,11 @@ CSL_WhileCombinator ( )
             SetHere ( svHere ) ;
             ( * Here ) = 0 ; // clear for jmp deduction below
         }
+#endif        
         Compile_JumpToAddress ( start, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ; // for controlBlock
-done:
 #if T1           
+done:
         if ( rcmpl ) CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
 #endif            
         CSL_EndCombinator ( 2, 1 ) ;
@@ -219,8 +220,8 @@ CSL_ForCombinator ( )
 
         d0 ( _CSL_SC_WordList_Show ( ( byte* ) "for combinator : before doPostBlock", 0, 0 ) ) ;
         BlockInfo * bidpb = Block_CopyCompile ( ( byte* ) doPostBlock, 1, 0 ) ;
+#if 0 // JCC8 setup       
         byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
-#if 1 // JCC8 setup       
         if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
         {
             svHere = Here ;
@@ -243,15 +244,15 @@ CSL_ForCombinator ( )
                 goto done ;
             }
         }
-#endif        
         if ( svHere )
         {
             SetHere ( svHere ) ;
             ( * Here ) = 0 ; // clear for jmp deduction below
         }
+#endif        
         Compile_JumpToAddress ( start, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-done:
+//done:
         CSL_EndCombinator ( 4, 1 ) ;
     }
     else
@@ -288,7 +289,7 @@ CSL_DoWhileDoCombinator ( )
 
         BlockInfo * bid = Block_CopyCompile ( ( byte* ) doBlock2, 0, 0 ) ;
 
-#if 1 // untested
+#if 0 // untested
         byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode, * bicCopiedToStart = bic->CopiedToStart ;
         if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
         {
@@ -311,7 +312,7 @@ CSL_DoWhileDoCombinator ( )
 
         Compile_JumpToAddress ( start, 0 ) ; // runtime
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-done:
+//done:
         CSL_EndCombinator ( 3, 1 ) ;
     }
     else

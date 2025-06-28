@@ -1270,7 +1270,7 @@ struct NgaState
 #if 1 // lbForth - kernel.c
 #define REGPARM
 
-typedef long int cell ;
+typedef long int cell ; 
 typedef char char_t ;
 typedef unsigned char uchar_t ;
 typedef struct word *nt_t ;

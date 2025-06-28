@@ -313,7 +313,7 @@ defer quit
    s" " searched
 
    [compile] [
-   s" load.fth" included
+   s" /usr/local/share/lbForth/load.fth" included
    ." ok" cr
    quit ;
 
