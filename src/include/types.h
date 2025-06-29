@@ -1065,7 +1065,7 @@ typedef struct
     Interpreter * OVT_Interpreter ;
     LambdaCalculus * OVT_LC ;
     ByteArray * CodeByteArray ; // a variable
-    Boolean LogFlag, DebugOutputFlag ;
+    int64 LogFlag, DebugOutputFlag ;
 
     //int64 SignalExceptionsHandled, LastRestartCondition, RestartCondition, Signal, ExceptionCode, Console ;
     int64 Console ;

@@ -115,66 +115,21 @@ CSL_WhileCombinator ( )
     if ( CompileMode )
     {
         CSL_BeginCombinator ( 2 ) ;
-        byte * start = Here, *svHere = 0 ;
+        byte * start = Here ;//, *svHere = 0 ;
         compiler->ContinuePoint = Here ;
         d0 ( if ( Is_DebugModeOn ) _CSL_SC_WordList_Show ( ( byte* ) "\nCheckOptimize : after optimize :", 0, 0 ) ) ;
-        Word * combinator = _Context_->CurrentCombinator ;
-        BlockInfo *bico = BlockInfo_GetCbisStackPick ( 1 ) ;
-        svHere = Here ;
-//recompile:
-        BlockInfo *bico2 = BlockInfo_Copy ( bico ) ;
-        BlockInfo *bic = BI_CopyCompile ( bico2, ( byte* ) controlBlock, 1 ) ;
+        //Word * combinator = _Context_->CurrentCombinator ;
+        //BlockInfo *bico = BlockInfo_GetCbisStackPick ( 1 ) ;
+        //svHere = Here ;
+        //BlockInfo *bico2 = BlockInfo_Copy ( bico ) ; 
+        //BlockInfo *bic = BI_CopyCompile ( bico2, ( byte* ) controlBlock, 1 ) ;
+        BlockInfo *bic = Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ;
         compiler->CombinatorStartsAt = bic->CopiedToStart ;
         CSL_InstallGotoCallPoints_Keyed ( bic, GI_JCC_TO_TRUE, Here, 1 ) ;
         BlockInfo *bid = Block_CopyCompile ( ( byte* ) doBlock, 0, 0 ) ;
-#define T1 0       
-#if T1
-        if ( ( bid->CopiedSize < 120 ) && svHere ) // approximate for JCC8 
-        {
-            SetState ( _CSL_, JCC8_ON, true ) ;
-            SetHere ( svHere ) ;
-            GotoInfo_Remove ( ( dlnode* ) bic->BI_Gi ), bic->BI_Gi = 0 ;
-            rcmpl = 1 ;
-            svHere = 0 ; // used as flag
-            goto recompile ;
-        }
-        SetState ( _CSL_, JCC8_ON, svJccState ) ;
-//#endif
-        svHere = 0 ;
-        byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
-        if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
-        {
-            svHere = Here ;
-            BlockInfo *bic1 = BlockInfo_Copy ( bico ) ;
-            BlockInfo *bic2 = BI_CopyCompile ( bico, 0, 1 ) ; //controlBlock
-            byte * bicJcc2Code = bic2->JccCode ? bic2->JccCode : bic2->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
-            //if ( bic2->JccCode ) SetHere ( bic2->JccCode ) ; // overwrite 'ret' insn
-            //else 
-            SetHere ( bicJcc2Code ) ; // overwrite 'ret' insn
-            int32 offset = CalculateOffsetForCallOrJump (Here, bid->CopiedToStart, T_JCC ) ;
-            if ( CheckOffset ( offset, 1 ) )
-            {
-                _Compile_Jcc ( JCC8, bic2->Ttt, ! bic2->N, offset ) ;
-                GotoInfo_Remove ( ( dlnode* ) bic2->BI_Gi ), bic2->BI_Gi = 0 ;
-                CalculateOffsetForCallOrJump (bicJcc2Code, bid->CopiedToStart, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
-                CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
-                goto done ;
-            }
-        }
-        if ( svHere )
-        {
-            SetHere ( svHere ) ;
-            ( * Here ) = 0 ; // clear for jmp deduction below
-        }
-#endif        
         Compile_JumpToAddress ( start, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ; // for controlBlock
-#if T1           
-done:
-        if ( rcmpl ) CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
-#endif            
         CSL_EndCombinator ( 2, 1 ) ;
-        //SetState ( _CSL_, JCC8_ON, svJccState ) ;
     }
     else
     {
@@ -220,39 +175,8 @@ CSL_ForCombinator ( )
 
         d0 ( _CSL_SC_WordList_Show ( ( byte* ) "for combinator : before doPostBlock", 0, 0 ) ) ;
         BlockInfo * bidpb = Block_CopyCompile ( ( byte* ) doPostBlock, 1, 0 ) ;
-#if 0 // JCC8 setup       
-        byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode ; //, * bicCopiedToStart = bic->CopiedToStart ;
-        if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
-        {
-            svHere = Here ;
-            BlockInfo *bic1 = BlockInfo_Copy ( bic ) ;
-#if 0    
-            if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, start, Here - start, 1 ) ;
-#endif    
-            BlockInfo *bic2 = BI_CopyCompile ( bic, 0, 1 ) ; // controlBlock
-#if 0    
-            if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, start, Here - start, 0 ) ;
-#endif    
-            if ( bic2->JccCode ) SetHere ( bic2->JccCode ) ; // overwrite 'ret' insn
-            else SetHere ( bic2->JccAddedCode ) ; // overwrite 'ret' insn
-            int32 offset = CalculateOffsetForCallOrJump (Here, bid->CopiedToStart, T_JCC ) ;
-            if ( CheckOffset ( offset, 1 ) ) //( offset >= (2^7)-1 ) && ( offset <= (2^7) ) )
-            {
-                _Compile_Jcc ( JCC8, bic1->Ttt, ! bic1->N, offset ) ;
-                GotoInfo_Remove ( ( dlnode* ) bic2->BI_Gi ), bic2->BI_Gi = 0 ;
-                CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
-                goto done ;
-            }
-        }
-        if ( svHere )
-        {
-            SetHere ( svHere ) ;
-            ( * Here ) = 0 ; // clear for jmp deduction below
-        }
-#endif        
         Compile_JumpToAddress ( start, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-//done:
         CSL_EndCombinator ( 4, 1 ) ;
     }
     else
@@ -283,36 +207,12 @@ CSL_DoWhileDoCombinator ( )
         start = Here ;
         Block_CopyCompile ( ( byte* ) doBlock1, 2, 0 ) ;
 
-        //Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ;
-        //BlockInfo *bico = BlockInfo_GetCbsStackPick ( 1 ) ;
         BlockInfo * bic = Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ; // 1 : jccFlag for this block
 
         BlockInfo * bid = Block_CopyCompile ( ( byte* ) doBlock2, 0, 0 ) ;
 
-#if 0 // untested
-        byte * bicJccCode = bic->JccCode ? bic->JccCode : bic->JccAddedCode, * bicCopiedToStart = bic->CopiedToStart ;
-        if ( GetState ( _CSL_, JCC8_ON ) && ( bic->CopiedSize < 64 ) ) // 11 : ?? approximate
-        {
-            svHere = Here ;
-            BlockInfo *bic1 = BlockInfo_Copy ( bico ) ;
-            BlockInfo *bic2 = BI_CopyCompile ( bico, ( byte* ) controlBlock, 1 ) ;
-            if ( bic2->JccCode ) SetHere ( bic2->JccCode ) ; // overwrite 'ret' insn
-            else SetHere ( bic2->JccAddedCode ) ; // overwrite 'ret' insn
-            int32 offset = CalculateOffsetForCallOrJump (Here, bid->CopiedToStart, T_JCC ) ;
-            if ( CheckOffset ( offset, 1 ) )
-            {
-                _Compile_Jcc ( JCC8, bic1->Ttt, ! bic1->N, offset ) ;
-                GotoInfo_Remove ( ( dlnode* ) bic2->BI_Gi ), bic2->BI_Gi = 0 ;
-                CalculateOffsetForCallOrJump (bicJccCode, Here, T_JCC) ; // ?? could recompile the insn to JCC8 if jump < 127 ??
-                goto done ;
-            }
-        }
-        if ( svHere ) SetHere ( svHere ) ;
-#endif        
-
         Compile_JumpToAddress ( start, 0 ) ; // runtime
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-//done:
         CSL_EndCombinator ( 3, 1 ) ;
     }
     else
@@ -502,7 +402,6 @@ CSL_CondCombinator ( int64 numBlocks )
             Block_CopyCompile ( ( byte* ) _DspReg_ [ - blockIndex ], blockIndex, 0 ) ;
             compiledAtAddress = Compile_UninitializedJccEqualZero ( ) ;
             Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
-            //bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, blockIndex ) ;
             bi = BlockInfo_GetCbisStackPick ( blockIndex ) ;
             Compile_BlockLogicTest ( bi ) ;
             blockIndex -- ;
