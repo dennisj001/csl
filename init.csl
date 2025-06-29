@@ -1,4 +1,4 @@
-logOn
+//logOn
 //_dbgOn 
 //ukseOn
 //optimizeOff
@@ -730,4 +730,4 @@ cOff
 //: tx ( a b ) a @ 2 = b @ 3 = a @ b @ * dup 0 !  p ;  4 5 tx pause
 2 + 7 assertStkChk // stack checking
 //rdim 
-//logOff
+logOff
