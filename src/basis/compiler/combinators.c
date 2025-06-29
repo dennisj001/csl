@@ -72,7 +72,9 @@ CSL_BlockRun ( )
     if ( CompileMode )
     {
         CSL_BeginCombinator ( 1 ) ;
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         Block_CopyCompile ( ( byte* ) doBlock, 0, 0 ) ;
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
         CSL_EndCombinator ( 1, 1 ) ; // 0 : don't copy
     }
     else
@@ -95,8 +97,10 @@ CSL_LoopCombinator ( )
         CSL_BeginCombinator ( 1 ) ;
         byte * start = Here ;
         compiler->ContinuePoint = start ;
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         Block_CopyCompile ( ( byte* ) loopBlock, 0, 0 ) ;
         Compile_JumpToAddress ( start, 0 ) ; //JMPI32 ) ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 1, 1 ) ;
     }
     else
@@ -125,10 +129,11 @@ CSL_WhileCombinator ( )
         //BlockInfo *bic = BI_CopyCompile ( bico2, ( byte* ) controlBlock, 1 ) ;
         BlockInfo *bic = Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ;
         compiler->CombinatorStartsAt = bic->CopiedToStart ;
-        CSL_InstallGotoCallPoints_Keyed ( bic, GI_JCC_TO_TRUE, Here, 1 ) ;
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         BlockInfo *bid = Block_CopyCompile ( ( byte* ) doBlock, 0, 0 ) ;
         Compile_JumpToAddress ( start, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ; // for controlBlock
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 2, 1 ) ;
     }
     else
@@ -177,6 +182,7 @@ CSL_ForCombinator ( )
         BlockInfo * bidpb = Block_CopyCompile ( ( byte* ) doPostBlock, 1, 0 ) ;
         Compile_JumpToAddress ( start, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ; // CSL_EndCombinator does this
         CSL_EndCombinator ( 4, 1 ) ;
     }
     else
@@ -209,10 +215,12 @@ CSL_DoWhileDoCombinator ( )
 
         BlockInfo * bic = Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ; // 1 : jccFlag for this block
 
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         BlockInfo * bid = Block_CopyCompile ( ( byte* ) doBlock2, 0, 0 ) ;
 
         Compile_JumpToAddress ( start, 0 ) ; // runtime
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 3, 1 ) ;
     }
     else
@@ -239,10 +247,12 @@ _CSL_DoWhileCombinator ( block controlBlock, block doBlock )
         CSL_BeginCombinator ( 2 ) ;
         byte * start = Here ;
         compiler->ContinuePoint = Here ;
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         BlockInfo * bid = Block_CopyCompile ( ( byte* ) doBlock, 1, 0 ) ;
         BlockInfo * bic = Block_CopyCompile ( ( byte* ) controlBlock, 0, 1 ) ; // 3 : use old version for jmp to back ref ??
         CalculateOffsetForCallOrJump (bic->JccCode ? bic->JccCode : bic->JccAddedCode, bid->CopiedToStart, T_JCC) ;
         GotoInfo_Remove ( ( dlnode* ) bic->BI_Gi ), bic->BI_Gi = 0 ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 2, 1 ) ;
     }
     else
@@ -278,8 +288,10 @@ CSL_If1Combinator ( )
         Compile_BlockLogicTest ( bi ) ;
         byte * compiledAtAddress = Compile_UninitializedJccEqualZero ( ) ;
         Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         Block_CopyCompile ( ( byte* ) doBlock, 0, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 1, 1 ) ;
         //DBI_OFF ;
     }
@@ -302,7 +314,7 @@ CSL_If2Combinator ( )
         Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ;
         CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         Block_CopyCompile ( ( byte* ) doBlock, 0, 0 ) ;
-        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 2, 1 ) ;
     }
     else
@@ -332,6 +344,7 @@ CSL_TrueFalseCombinator2 ( )
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
         Block_CopyCompile ( ( byte* ) elseBlock, 0, 0 ) ;
         CSL_EndIf ( ) ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 2, 1 ) ;
     }
     else
@@ -359,6 +372,7 @@ CSL_TrueFalseCombinator3 ( )
         CSL_Else ( ) ;
         Block_CopyCompile ( ( byte* ) elseBlock, 0, 0 ) ;
         CSL_EndIf ( ) ;
+        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 3, 1 ) ;
         //DBI_OFF ;
     }

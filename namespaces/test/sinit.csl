@@ -233,7 +233,7 @@ BigNum
 //: bnInit ( precision width ) precision @ pPrecision width @ pWidth ;; 
 //'bnInit find wdis 
 bnOn
-: _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if ; 
+: _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if2 ; 
 bnOff
 
 Compiler String
@@ -295,7 +295,7 @@ System
     pword @ setSourceCodeWord
     pword @ wdis 
     { pword @ } 
-    { nl "Word :" _ps hex pword @ p ":: Compiled at :" ps pword @ definition p decimal } if
+    { nl "Word :" _ps hex pword @ p ":: Compiled at :" ps pword @ definition p decimal } if2
     nl pel decimal 
     nl "::> 'wdiss' was called at" _ps location "<::" ps nl
 ;
@@ -340,8 +340,8 @@ dscOn
 //pwi _assert0 sp0 //{ str @ ps " : ok\n" ps nl } ifElse ; // no "ok" with this word
 : _assert ( n m ) nl  nl "_assert ::" ps { n @ m @ != } { n @ p "!=" ps m @ p "<:" ps "Assert Inconsistency?!" adps _info _pause } 
     { " ok\n" ps nl } ifElse ; //pwi _assert sp0
-: assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info _pause } if ;
-: assert0 ( n m ) { n @ m @ != } { nl "error" ps _info stack _pause } if ; 
+: assert1s ( s1 s2 str ) { s1 @ s2 @ strcmp } { nl str @ ps "error" ps _info _pause } if2 ;
+: assert0 ( n m ) { n @ m @ != } { nl "error" ps _info stack _pause } if2 ; 
 "assert" ' _assert1 find alias debugWord
 'assert1 ' _assert1dbg find alias debugWord
 'assert1 ' _assert1 find alias debugWord
@@ -404,7 +404,7 @@ sp0
 User 
 : pause nl _pause ;
 : opOff optimizeOff inlineOff state ;
-: opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if ; //'opOn1 find wdiss //pause
+: opOn1 optimizeOn inlineOn { verbosity @ 1 > } { state } if2 ; //'opOn1 find wdiss //pause
 : vck ( n str ) { verbosity @ n @ != } { verbosity n @ = str @ _findUsing wordRun } if2 ; // for testing
 //'vck find wdiss //pause
 : opOn ( n )

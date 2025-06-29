@@ -707,10 +707,17 @@ OVT_SeriousErrorPause ( byte * msg )
 }
 
 Exception *
-Exception_New ( )
+_Exception_New ( )
 {
     Exception * e = ( Exception * ) Mem_Allocate ( sizeof (Exception ), EXCEPTION_SPACE ) ;
     return e ;
+}
+
+Exception *
+Exception_New ( )
+{
+    _O_->OVT_Exception = ( Exception * ) Mem_Allocate ( sizeof (Exception ), EXCEPTION_SPACE ) ;
+    return _O_->OVT_Exception ;
 }
 
 void

@@ -41,7 +41,7 @@ pause
 d: : bexpl ( n | l ) { l x @ = n @ 1 <= } { 1 l @ fprint } { n @ dup 1 - bexpl * } ifElse ; 
 7 d: bexpl //fprint 
 sp 
-: _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if ; 
+: _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if2 ; 
 5040 _bassert
 #endif
 

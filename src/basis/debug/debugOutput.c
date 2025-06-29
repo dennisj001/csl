@@ -181,6 +181,7 @@ _Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal, int64 for
 void
 Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal )
 {
+    if ( ! _O_->OVT_Exception ) Exception_New ( ) ; 
     Exception * e = _O_->OVT_Exception ;
     Context * cntx = _Context_ ;
     int64 sif = 0 ;

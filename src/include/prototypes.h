@@ -1693,6 +1693,7 @@ void _Error(byte *msg, uint64 state);
 void OVT_ExceptionState_Print(void);
 byte _OVT_SimpleFinal_Key_Pause(void);
 void OVT_SeriousErrorPause(byte *msg);
+Exception *_Exception_New(void);
 Exception *Exception_New(void);
 void Exception_Init(Exception *e);
 /* src/basis/recycle.c */

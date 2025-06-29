@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.942.000" )
+#define VERSION ((byte*) "0.942.120" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -41,7 +41,7 @@ OpenVmTil_Init ( OpenVmTil * ovt )
     ovt->BufferList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->RecycledWordList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->RecycledOptInfoList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
-    ovt->OVT_Exception = Exception_New ( ) ;
+    ovt->OVT_Exception = _Exception_New ( ) ;
     ovt->VersionString = VERSION ;
 
     // ? where do we want the init file ?

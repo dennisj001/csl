@@ -153,6 +153,7 @@ sp0
 
 Int
 lcOn //(lcDbOn)
+"/\" tick _lambda find alias
 (define fibc2 ( lambda ( n ) ( ifElse ( < n 2 ) n ( + ( fibc2 ( - n 1 ) ) ( fibc2 ( - n 2 ) ) ) ) ) )
 pwi fibc2 
 (fibc2 20) sp0
@@ -242,7 +243,7 @@ tick yfac find wdiss
 `( Its a beautiful day don\'t ,@x1 it get away )
 
 (define ff ( lambda (n) (+ n 1)))
-((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) )
+((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) ) //pause
 (ff 6)
 (sp0)
 (define h36 (lambda (a b) (a b a b a a b b)))

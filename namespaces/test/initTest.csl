@@ -4,7 +4,7 @@ verbosity 1 =
 Root     
 : sp ; //stack pause ; sp
 Int User Combinators
-{ "_TestDone_" _defined not } { "_TestDone_" _var } if 
+{ "_TestDone_" _defined not } { "_TestDone_" _var } if2 
 sp
 : iinc "./init.csl" include ;
 : interpT "namespaces/compiler/interpreter.csl" include ;

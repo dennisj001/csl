@@ -150,7 +150,7 @@ sp0
 : hip ( n ) 1 2 + {| infixOn |} + n @ + 3 infixOff n store return n @ ; 3 hip 9 _assert
 cOff
 Combinators
-'ok var ok 1 = { ok @ 1 == } { "\nok" ps } if 
+'ok var ok 1 = { ok @ 1 == } { "\nok" ps } if2 
 { ok @ 1 == } { "\rok" ps } { "\nerror" ps } if3 sp0
 2 + 7 assertStkChk // stack checking
 sp0
