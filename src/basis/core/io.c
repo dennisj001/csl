@@ -174,10 +174,7 @@ _DoPrompt ( )
 {
     byte lc = _ReadLiner_->InputKeyedCharacter ;
     Boolean lcnl = ( lc == '\n' ), lcbnl = (_O_->Pblc == '\n') ;
-    //Boolean lcbnl = (_O_->Pblc == '\n') ;
     if ( ( _O_->Pbf8[0] != '\r' ) || ( ! lcnl ) && ( ! lcbnl ) )  CSL_PrintChar ( '\n' ) ;
-    //if ( ( _O_->Pbf8[0] != '\r' ) && ( ! lcbnl ) ) CSL_PrintChar ( '\n' ) ;
-    //if ( ( ! _O_->Pbf8[0] ) || ( ! lcnl ) ) CSL_PrintChar ( '\n' ) ;
     iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
     SetState ( _O_, OVT_PROMPT_DONE, true ) ;
 }

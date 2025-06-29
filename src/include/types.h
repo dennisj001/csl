@@ -825,7 +825,7 @@ typedef struct
     Stack * PointerToJmpInsnStack ;
     Stack * LocalsCompilingNamespacesStack ;
     Stack * CombinatorBlockInfoStack ;
-    Stack * BlockStack, *CombinatorStack ;
+    Stack * BlockStack ; //, *CombinatorStack ;
     Stack * InternalNamespacesStack ;
     Stack * InfixOperatorStack ;
     dllist * OptimizeInfoList ;

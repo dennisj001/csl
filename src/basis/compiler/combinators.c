@@ -17,7 +17,7 @@ void
 CSL_EndCombinator ( int64 quotesUsed, int64 moveFlag )
 {
     Compiler * compiler = _Context_->Compiler0 ;
-    BlockInfo *bi = BlockInfo_GetCbsStackPick ( quotesUsed - 1 ) ;
+    BlockInfo *bi = BlockInfo_GetCbisStackPick ( quotesUsed - 1 ) ;
     Combinator * combinator ;
     if ( C_SyntaxOn ) combinator = _Context_->SC_CurrentCombinator ;
     else combinator = _Context_->CurrentCombinator ;
@@ -43,7 +43,7 @@ CSL_BeginCombinator ( int64 quotesUsed )
 {
     Compiler * compiler = _Context_->Compiler0 ;
     //BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
-    BlockInfo *bi = BlockInfo_GetCbsStackPick ( quotesUsed - 1 ) ;
+    BlockInfo *bi = BlockInfo_GetCbisStackPick ( quotesUsed - 1 ) ;
     compiler->CombinatorStartsAt = Here ;
     CalculateOffsetForCallOrJump (bi->PtrToJmpInsn, compiler->CombinatorStartsAt, T_JMP) ;
     compiler->CombinatorLevel ++ ;
@@ -119,7 +119,7 @@ CSL_WhileCombinator ( )
         compiler->ContinuePoint = Here ;
         d0 ( if ( Is_DebugModeOn ) _CSL_SC_WordList_Show ( ( byte* ) "\nCheckOptimize : after optimize :", 0, 0 ) ) ;
         Word * combinator = _Context_->CurrentCombinator ;
-        BlockInfo *bico = BlockInfo_GetCbsStackPick ( 1 ) ;
+        BlockInfo *bico = BlockInfo_GetCbisStackPick ( 1 ) ;
         svHere = Here ;
 //recompile:
         BlockInfo *bico2 = BlockInfo_Copy ( bico ) ;
@@ -204,7 +204,7 @@ CSL_ForCombinator ( )
 
         byte * start = Here ;
 
-        BlockInfo *bico = BlockInfo_GetCbsStackPick ( 1 ) ;
+        //BlockInfo *bico = BlockInfo_GetCbsStackPick ( 1 ) ;
 #if 0    
         if ( Is_DebugOn ) Debugger_Disassemble ( _Debugger_, start, Here - start, 0 ) ;
 #endif    
@@ -284,7 +284,7 @@ CSL_DoWhileDoCombinator ( )
         Block_CopyCompile ( ( byte* ) doBlock1, 2, 0 ) ;
 
         //Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ;
-        BlockInfo *bico = BlockInfo_GetCbsStackPick ( 1 ) ;
+        //BlockInfo *bico = BlockInfo_GetCbsStackPick ( 1 ) ;
         BlockInfo * bic = Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ; // 1 : jccFlag for this block
 
         BlockInfo * bid = Block_CopyCompile ( ( byte* ) doBlock2, 0, 0 ) ;
@@ -503,7 +503,7 @@ CSL_CondCombinator ( int64 numBlocks )
             compiledAtAddress = Compile_UninitializedJccEqualZero ( ) ;
             Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
             //bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, blockIndex ) ;
-            bi = BlockInfo_GetCbsStackPick ( blockIndex ) ;
+            bi = BlockInfo_GetCbisStackPick ( blockIndex ) ;
             Compile_BlockLogicTest ( bi ) ;
             blockIndex -- ;
             Block_CopyCompile ( ( byte* ) _DspReg_ [ - blockIndex ], blockIndex, 0 ) ;

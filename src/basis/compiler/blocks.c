@@ -137,10 +137,11 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
 #if 1    
     //if ( Is_DebugOn || svHere ) //( control == 1 )  
     //    Debugger_Disassemble ( _Debugger_, bi->CopiedToStart, bi->CopiedSize, 1 ) ;
-    if ( Is_DebugOn && svHere ) //( control == 1 )  
-        Debugger_Disassemble ( _Debugger_, svHere, bi->CopiedSize, 1 ),
+    if ( Is_DebugOn && svHere ) //( control == 1 ) 
+    {
+        Debugger_Disassemble ( _Debugger_, svHere, bi->CopiedSize, 1 ) ;
         Debugger_Disassemble ( _Debugger_, bi->CopiedToStart, bi->CopiedSize, 1 ) ;
-    ;
+    }
 #endif    
     return bi ;
 }
@@ -158,7 +159,7 @@ BI_CopyCompile ( BlockInfo *bi, byte * srcAddress, Boolean cntrlBlkFlg )
 BlockInfo *
 Block_CopyCompile ( byte * srcAddress, int64 bindex, Boolean cntrlBlkFlg )
 {
-    BlockInfo *bi = BlockInfo_GetCbsStackPick ( bindex ) ;
+    BlockInfo *bi = BlockInfo_GetCbisStackPick ( bindex ) ;
     BlockInfo *biNew = BlockInfo_Copy ( bi ) ;
     BI_CopyCompile ( biNew, srcAddress, cntrlBlkFlg ) ;
     _Block_RecordCopy ( biNew ) ;
@@ -169,7 +170,7 @@ Block_CopyCompile ( byte * srcAddress, int64 bindex, Boolean cntrlBlkFlg )
 BlockInfo *
 Block_CopyCompile ( byte * srcAddress, int64 bindex, Boolean cntrlBlkFlg )
 {
-    BlockInfo *bi = BlockInfo_GetCbsStackPick ( bindex ) ;
+    BlockInfo *bi = BlockInfo_GetCbisStackPick ( bindex ) ;
     //BlockInfo *biNew = BlockInfo_Copy ( bi ) ;
     BI_CopyCompile ( bi, srcAddress, cntrlBlkFlg ) ;
     _Block_RecordCopy ( bi ) ;
@@ -184,6 +185,15 @@ _Block_RecordCopy ( BlockInfo *bi )
     bi->CopiedSize = bi->CopiedToEnd - bi->CopiedToStart ;
 }
 
+BlockInfo *
+BlockInfo_GetCbisStackPick ( int64 bindex )
+{
+    Compiler * compiler = _Context_->Compiler0 ;
+    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ;
+    return bi ;
+}
+
+
 #if 0
 
 inline void
@@ -193,14 +203,5 @@ Block_RecordCopy ( BlockInfo *bi )
     //bi->bp_First = bi->CopiedToStart ;
     //bi->bp_Last = bi->CopiedToEnd ;
 }
+
 #endif
-
-BlockInfo *
-BlockInfo_GetCbsStackPick ( int64 bindex )
-{
-    Compiler * compiler = _Context_->Compiler0 ;
-    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ;
-    return bi ;
-}
-
-

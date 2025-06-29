@@ -7,6 +7,7 @@ typedef char char_t ;
 typedef unsigned char uint8 ;
 typedef unsigned char uint8 ;
 typedef uint8 uchar_t ;
+
 #define NAME_LENGTH 16
 struct word
 {
@@ -17,7 +18,7 @@ struct word
     code_t *code ;
     cell param[] ;
 } ;
-
+ 
 typedef struct word *nt_t ;
 typedef struct word *xt_t ;
 typedef xt_t * REGPARM

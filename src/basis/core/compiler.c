@@ -296,7 +296,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     Stack_Init ( compiler->LocalsCompilingNamespacesStack ) ;
     Stack_Init ( compiler->LHS_Word ) ;
     Stack_Init ( compiler->BlockStack ) ;
-    Stack_Init ( compiler->CombinatorStack ) ;
+    //Stack_Init ( compiler->CombinatorStack ) ;
     Stack_Init ( compiler->CombinatorBlockInfoStack ) ;
     _dllist_Init ( compiler->GotoList ) ;
     _dllist_Init ( compiler->CurrentMatchList ) ;
@@ -312,7 +312,7 @@ Compiler_New ( uint64 allocType )
     Compiler * compiler = ( Compiler * ) Mem_Allocate ( sizeof (Compiler ), allocType ) ;
     compiler->Lrpo = LocalsRegParameterOrder_Init ;
     compiler->BlockStack = _Stack_Allocate ( 64, allocType ) ;
-    compiler->CombinatorStack = _Stack_Allocate ( 64, allocType ) ;
+    //compiler->CombinatorStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->InfixOperatorStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->PointerToJmpInsnStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->CombinatorBlockInfoStack = _Stack_Allocate ( 64, allocType ) ;

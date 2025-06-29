@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.941.930" )
+#define VERSION ((byte*) "0.941.960" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -41,13 +41,13 @@ OpenVmTil_Init ( OpenVmTil * ovt )
     ovt->BufferList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->RecycledWordList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
     ovt->RecycledOptInfoList = _dllist_New ( OPENVMTIL ) ; // put it here to minimize allocating chunks for each node and the list
-    ovt->OVT_Exception = Exception_New ()  ;
+    ovt->OVT_Exception = Exception_New ( ) ;
     ovt->VersionString = VERSION ;
-    
+
     // ? where do we want the init file ?
-    if ( _File_Exists ( ( byte* ) "./init.csl" ) ) ovt->InitString = ( byte* ) "\"./init.csl\" _include" ; 
-    else ovt->InitString = ( byte* ) "\"/usr/local/lib/csl/init.csl\" _include" ; 
-    
+    if ( _File_Exists ( ( byte* ) "./init.csl" ) ) ovt->InitString = ( byte* ) "\"./init.csl\" _include" ;
+    else ovt->InitString = ( byte* ) "\"/usr/local/lib/csl/init.csl\" _include" ;
+
     if ( ovt->Verbosity > 1 )
     {
         iPrintf ( "\nRestart : All memory freed, allocated and initialized as at startup. "
@@ -77,7 +77,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
 
     ovt->Argc = argc ;
     ovt->Argv = argv ;
-    OVT_GetStartupOptions ( ovt ) ;
+    if ( ovt->Argc < 4 ) OVT_GetStartupOptions ( ovt ) ;
 
     allocSize = 1 * M ; //430 * K ;
     ovt->InternalObjectsSize = 1 * M ;
@@ -102,7 +102,7 @@ OpenVmTil_New ( OpenVmTil * ovt, int64 argc, char * argv [ ] )
 
     OpenVmTil_Init ( ovt ) ;
     Linux_SetupSignals ( ) ;
-    OVT_SetRestartCondition (restartCondition) ;
+    OVT_SetRestartCondition ( restartCondition ) ;
     ovt->OVT_Exception->StartedTimes = startedTimes ;
     return ovt ;
 }
@@ -121,7 +121,7 @@ OpenVmTil_Run ( int64 argc, char * argv [ ] )
             sigSegvs = e->SigSegvs ;
             restarts = ++ e->Restarts ;
             if ( e->Restarts > 20 ) OVT_Exit ( ) ;
-            if ( (e->RestartCondition == COMPLETE_INITIAL_START ) || ( e->SigSegvs > 1 ) )
+            if ( ( e->RestartCondition == COMPLETE_INITIAL_START ) || ( e->SigSegvs > 1 ) )
             {
                 e->Message = "SigSegv : COMPLETE_INITIAL_START" ;
                 _OVT_SimpleFinal_Key_Pause ( ) ;
@@ -152,7 +152,7 @@ Ovt_RunInit ( OpenVmTil * ovt )
     Exception *e = _O_->OVT_Exception ;
     //static int loopTimes ;
     e->StartedTimes ++ ;
-    OVT_SetRestartCondition (CSL_RUN_INIT) ;
+    OVT_SetRestartCondition ( CSL_RUN_INIT ) ;
     //OVT_StartupMessage ( startupMessageFlag && ( ++csl->InitSessionCoreTimes <= 2 ) ) ;
     OVT_StartupMessage ( ( ++ _CSL_->InitSessionCoreTimes <= 2 ) ) ;
     //CSL_Prompt (ovt->OVT_CSL, 1, 1 , 0) ; //++loopTimes < 2, 1 ) ;
@@ -163,8 +163,11 @@ void
 OVT_PrintStartupOptions ( OpenVmTil * ovt )
 {
     int i ;
-    for ( i = ovt->Argc ; i ; i -- ) iPrintf ( "\n\nOVT_GetStartupOptions :: ovt->Argv [%d] = %s\n\n", i, ovt->Argv [i] ) ;
-    iPrintf ( "\n\nOVT_GetStartupOptions :: ovt->StartupFilename = %s\n\n", ovt->StartupFilename ) ;
+    //if ( ovt->Argc < 4 )
+    {
+        for ( i = ovt->Argc ; i ; i -- ) iPrintf ( "\n\nOVT_GetStartupOptions :: ovt->Argv [%d] = %s\n\n", i, ovt->Argv [i] ) ;
+        iPrintf ( "\n\nOVT_GetStartupOptions :: ovt->StartupFilename = %s\n\n", ovt->StartupFilename ) ;
+    }
 }
 
 void
@@ -172,15 +175,18 @@ OVT_GetStartupOptions ( OpenVmTil * ovt )
 {
     int64 i ;
     byte * arg ;
-    for ( i = 0 ; i < ovt->Argc ; i ++ )
+    //if ( ovt->Argc < 4 )
     {
-        arg = ovt->Argv [ i ] ;
-        if ( String_Equal ( "-m", arg ) ) ovt->TotalMemSizeTarget = ( atoi ( ovt->Argv [ ++ i ] ) * MB ) ;
-            // -s : a script file with "#! csl -s" -- as first line includes the script file, the #! whole line is treated as a comment
-        else if ( String_Equal ( "-f", arg ) || ( String_Equal ( "-s", arg ) ) ) ovt->StartupFilename = ( byte* ) ovt->Argv [ ++ i ] ;
-        else if ( String_Equal ( "-e", arg ) ) ovt->StartupString = ( byte* ) ovt->Argv [ ++ i ] ;
+        for ( i = 0 ; i < ovt->Argc ; i ++ )
+        {
+            arg = ovt->Argv [ i ] ;
+            if ( String_Equal ( "-m", arg ) ) ovt->TotalMemSizeTarget = ( atoi ( ovt->Argv [ ++ i ] ) * MB ) ;
+                // -s : a script file with "#! csl -s" -- as first line includes the script file, the #! whole line is treated as a comment
+            else if ( String_Equal ( "-f", arg ) || ( String_Equal ( "-s", arg ) ) ) ovt->StartupFilename = ( byte* ) ovt->Argv [ ++ i ] ;
+            else if ( String_Equal ( "-e", arg ) ) ovt->StartupString = ( byte* ) ovt->Argv [ ++ i ] ;
+        }
+        OVT_PrintStartupOptions ( ovt ) ;
     }
-    OVT_PrintStartupOptions ( ovt ) ;
 }
 
 // only partially working ??
