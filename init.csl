@@ -397,7 +397,7 @@ dscOn
     endif
 ; 
 #endif
-' _assertStkChk find wdiss //pause
+//' _assertStkChk find wdiss //pause
 #if 0
 : assertStkChk "\n_assertStkChk : " ps _assertStkChk stack pause ; 
 #else

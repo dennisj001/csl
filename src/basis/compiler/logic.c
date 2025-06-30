@@ -161,7 +161,7 @@ BI_Check_SetTttnJccGotoInfo ( BlockInfo * bi, Rllafl * r, int forVar )
 }
 
 void
-_Compile_GetCmpLogicFromTOS ( BlockInfo *bi )
+_Compile_GetCmpLogicFromTOSwithJcc (BlockInfo *bi)
 {
     //DBI_ON ;
     byte * setCc, * movedSetCc ;
@@ -193,14 +193,13 @@ _Compile_GetCmpLogicFromTOS ( BlockInfo *bi )
             Compile_CMPI ( REG, ACC, 0, 0, 0 ) ;
         }
     }
-    _BI_SetTttnJccGotoInfo ( bi, bi->N ? bi->N :
-        ( bi->LogicCodeWord && ( bi->LogicCodeWord->Definition == CSL_LogicalNot ) ) ? N_1 : N_0,
-        GI_JCC_TO_FALSE ) ;
+    _BI_SetTttnJccGotoInfo ( bi, 
+        bi->N ? bi->N : ( bi->LogicCodeWord && ( bi->LogicCodeWord->Definition == CSL_LogicalNot ) ) ? N_1 : N_0, GI_JCC_TO_FALSE ) ;
     //DBI_OFF ;
 }
 
 void
-Compile_BlockLogicTest ( BlockInfo * bi )
+Compile_BlockLogicTest (BlockInfo * bi)
 {
     int64 n, jccType = 0 ;
     if ( bi )
@@ -210,7 +209,7 @@ Compile_BlockLogicTest ( BlockInfo * bi )
         Word * lcw = bi->LogicCodeWord ;
         if ( ! bi->JccCode )
         {
-            if ( ( ! bi->CmpCode ) ) _Compile_GetCmpLogicFromTOS ( bi ), bi->JccAddedCode = bi->JccCode, bi->JccCode = 0 ;
+            if ( ( ! bi->CmpCode ) ) _Compile_GetCmpLogicFromTOSwithJcc (bi), bi->JccAddedCode = bi->JccCode, bi->JccCode = 0 ;
             else if ( lcw && ( lcw->W_MorphismAttributes & RAX_RETURN ) ) jccType = GI_JCC_TO_FALSE ;
             else if ( lcw && ( lcw->W_MorphismAttributes & CATEGORY_LOGIC ) )
             {

@@ -150,7 +150,7 @@ BlockInfo *
 BI_CopyCompile ( BlockInfo *bi, byte * srcAddress, Boolean cntrlBlkFlg )
 {
     BI_Block_Copy ( bi, Here, srcAddress ? srcAddress : bi->bp_First, bi->bp_Last - bi->bp_First ) ;
-    if ( cntrlBlkFlg ) Compile_BlockLogicTest ( bi ) ;
+    if ( cntrlBlkFlg ) Compile_BlockLogicTest (bi) ;
     return bi ;
 }
 

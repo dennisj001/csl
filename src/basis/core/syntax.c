@@ -27,7 +27,7 @@ Interpret_C_Block_EndBlock ( byte * tokenToUse, Boolean insertFlag, Boolean cont
     {
         //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         BlockInfo *bi = ( BlockInfo * ) Stack_Top ( _Compiler_->CombinatorBlockInfoStack ) ;
-        Compile_BlockLogicTest ( bi ) ;
+        Compile_BlockLogicTest (bi) ;
     }
 #endif    
 }

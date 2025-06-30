@@ -33,24 +33,34 @@ BI_Compile_JccFlipN ( BlockInfo *bi, byte * jmpToAddress ) // , int8 nz
     if ( bi->TttnCode ) compiledAtAddress = BI_Compile_Jcc_FlipN ( bi, jmpToAddress, 0 ) ;
     else
     {
-        //Compile_BlockLogicTest ( bi ) ;
-        //compiledAtAddress = bi->JccCode ;
-        compiledAtAddress = CSL_If_0Branch ( ) ;
+            Compile_BlockLogicTest (bi) ;
+            compiledAtAddress = bi->JccCode ;
     }
     return compiledAtAddress ;
 }
-
 // non-combinator 'if'
 
 byte *
-Compiler_Compile_JccFlipN ( Compiler * compiler, int64 bindex ) // , int8 nz
+Compiler_Compile_TestJccFlipN ( Compiler * compiler, int64 bindex ) // , int8 nz
 {
+    byte * compiledAtAddress ;
     BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
-    byte * compiledAtAddress = BI_Compile_JccFlipN ( bi, 0 ) ;
+    if ( ( ! bi->JccCode ) && ( ! bi->TttnCode ) )
+    {
+        //DBI_ON ;
+        if ( ! bi->CmpCode ) 
+        {
+            _Compile_GetCmpLogicFromTOSwithJcc (bi) ;
+            compiledAtAddress = bi->JccCode ;
+        }
+        else compiledAtAddress = CSL_If_0Branch ( ) ;
+        //DBI_OFF ;
+    }
+    else compiledAtAddress = BI_Compile_JccFlipN ( bi, 0 ) ;
     return compiledAtAddress ;
 }
 
-byte * 
+byte *
 CSL_If_0Branch ( )
 {
     if ( CompileMode )
@@ -68,7 +78,7 @@ CSL_If_TttN_ConditionalExpression ( )
     if ( CompileMode )
     {
         //DBI_ON ;
-        byte * compiledAtAddress = Compiler_Compile_JccFlipN ( _Compiler_, 0 ) ;
+        byte * compiledAtAddress = Compiler_Compile_TestJccFlipN ( _Compiler_, 0 ) ;
         //DBI_OFF ;
         // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
         // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 

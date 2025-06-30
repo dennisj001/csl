@@ -285,7 +285,7 @@ CSL_If1Combinator ( )
     {
         //DBI_ON ;
         BlockInfo * bi = CSL_BeginCombinator ( 1 ) ;
-        Compile_BlockLogicTest ( bi ) ;
+        Compile_BlockLogicTest (bi) ;
         byte * compiledAtAddress = Compile_UninitializedJccEqualZero ( ) ;
         Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
         CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
@@ -338,7 +338,7 @@ CSL_TrueFalseCombinator2 ( )
     if ( CompileMode )
     {
         BlockInfo * bi = CSL_BeginCombinator ( 2 ) ;
-        Compile_BlockLogicTest ( bi ) ;
+        Compile_BlockLogicTest (bi) ;
         CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         Block_CopyCompile ( ( byte* ) trueBlock, 1, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
@@ -417,7 +417,7 @@ CSL_CondCombinator ( int64 numBlocks )
             compiledAtAddress = Compile_UninitializedJccEqualZero ( ) ;
             Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
             bi = BlockInfo_GetCbisStackPick ( blockIndex ) ;
-            Compile_BlockLogicTest ( bi ) ;
+            Compile_BlockLogicTest (bi) ;
             blockIndex -- ;
             Block_CopyCompile ( ( byte* ) _DspReg_ [ - blockIndex ], blockIndex, 0 ) ;
             byte * compiledAtAddress = Compile_UninitializedJump ( ) ; // at the end of the 'if block' we need to jmp over the 'else block'

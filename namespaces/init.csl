@@ -355,7 +355,7 @@ dscOn
 'assert1 ' _assert1 find alias debugWord
 "_assert" ' _assert0 find alias debugWord
 #if 0
-: _assertStkChk ( n m | str )  
+: _assertStkChk0 ( n m | str )  
     { verbosity @ } 
     {
         { DebugFlag @ } 
