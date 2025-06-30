@@ -1,4 +1,4 @@
-logOn
+//logOn
 //_dbgOn 
 //ukseOn
 //optimizeOff
@@ -175,8 +175,7 @@ Interpreter
 "semi" wordNew { _end _semi } _semi 
 ";" ' semi find alias immediate syntactic
 : word swap wordNew swap _semi ;  //'word wordDisassemble pause
-//: word ( name block ) name @ wordNew block @ _semi ;  // works but it is 10 bytes more code
-//'word find wdis //pause
+: word ( name block ) name @ wordNew block @ _semi ;  // works but it is 10 bytes more code
 ":" { compileModeOn sourceCodeInit token wordNew begin } word // immediate // begin is not an immediate word
 : ;; ' ; find compileWord ' _prefix find compileWord ; immediate
 

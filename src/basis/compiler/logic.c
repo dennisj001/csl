@@ -174,6 +174,7 @@ _Compile_GetCmpLogicFromTOSwithJcc (BlockInfo *bi)
     }
     else
     {
+#if 1        
         // for special case optimization when control block is a register variable : setup by CSL_Interpret_C_Blocks
         // new, not thoroughly tested
         if ( bi->RegisterVariableControlWord )
@@ -188,6 +189,7 @@ _Compile_GetCmpLogicFromTOSwithJcc (BlockInfo *bi)
             bi->RegisterVariableControlWord->Coding = 0 ;
         }
         else
+#endif            
         {
             Compile_Pop_To_Acc ( DSP ) ;
             Compile_CMPI ( REG, ACC, 0, 0, 0 ) ;

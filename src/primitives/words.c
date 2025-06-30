@@ -75,17 +75,6 @@ Word_Xt_LValue ( )
     DataStack_Push ( ( int64 ) & word->Definition ) ;
 }
 
-#if  0
-
-void
-Word_DefinitionStore ( )
-{
-    Word * word = ( Word * ) DataStack_Pop ( ) ;
-    block b = ( block ) TOS ; // leave word on tos for anticipated further processing
-    _Word_DefinitionStore ( word, b ) ;
-}
-#endif
-
 void
 Word_DefinitionEqual ( )
 {

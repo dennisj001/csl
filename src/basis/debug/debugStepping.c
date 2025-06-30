@@ -311,7 +311,7 @@ Debugger_CanWeStep ( Debugger * debugger, Word * word )
     int64 result = true ;
     if ( ! word ) result = false ;
     else if ( ! word->CodeStart ) result = false ;
-    else if ( ! NamedByteArray_CheckAddress ( _O_CodeSpace, word->CodeStart ) ) result = false ;
+    else if ( ! NamedByteArray_CheckAddress ( _O_->MemorySpace0->CodeSpace, word->CodeStart ) ) result = false ;
     else if ( word->W_MorphismAttributes & ( CSL_ASM_WORD | CPRIMITIVE | DLSYM_WORD | C_PREFIX_RTL_ARGS ) ) result = false ;
     else if ( word->W_MorphismAttributes & ( CSL_WORD ) ) result = true ;
     SetState ( debugger, DBG_CAN_STEP, result ) ;
