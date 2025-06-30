@@ -354,8 +354,9 @@ dscOn
 'assert1 ' _assert1dbg find alias debugWord
 'assert1 ' _assert1 find alias debugWord
 "_assert" ' _assert0 find alias debugWord
-: _assertStkChk ( n m | str )  
-    { verbosity @ }
+#if 0
+: _assertStkChk0 ( n m | str )  
+    { verbosity @ } 
     {
         { DebugFlag @ } 
         { 
@@ -375,7 +376,28 @@ dscOn
     } if2
     //stack pause
 ; 
-//' _assertStkChk find wdiss sp0
+//' _assertStkChk0 find wdiss sp0
+#else
+: _assertStkChk ( n m | str )  
+    verbosity @ 
+    if
+        DebugFlag @ 
+        if 
+            debugColors str "\n assertStkChk ::" = 
+            n @ m @  == 
+            if
+                nl location ":" ps str @ ps "ok : " ps n @ p "==" ps m @ p nl //stack pause  
+            else
+                tab nl location ":" ps str @ ps alertColors "\n Error!\n" ps n @ p "!=" ps m @ p nl stack pause nl  
+            endif 
+            defaultColors 
+        else 
+            n @ m @ _assert0
+        endif 
+    endif
+; 
+#endif
+' _assertStkChk find wdiss //pause
 #if 0
 : assertStkChk "\n_assertStkChk : " ps _assertStkChk stack pause ; 
 #else
@@ -434,7 +456,6 @@ User
 "istring" ' interpretString find alias 
 "def" ' word find alias 
 Compiler
-">;" ' >? find alias
 
 Root C
 "allot" ' allocateMem find alias
@@ -614,7 +635,6 @@ cOff
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
 #if 0 //DEBUG_ON 
-jcc8_On // must be on here !
 c_syntaxOn
 int _fib1cr ( REG n ) { if ( n < 2 ) { n ; } else { _fib1cr ( n - 1 ) + _fib1cr ( n - 2 ) ; }  }
 int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
@@ -652,7 +672,7 @@ pwi fd sp0
 //cc1 ( REG amount, REG koc | REG rtrn ) //, REG one, REG int64 two ) 
 //cc1 ( REG amount, REG koc | REG rtrn ) // gives wrong result ??
 //cc1 ( REG amount, REG koc) // doesn't work ??
-#if 0
+#if 1
 int64
 cc1 ( int64 amount, int64 koc | rtrn, one, two )
 #else
@@ -664,7 +684,7 @@ cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ?
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
     {
-#if 1
+#if 0
         rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
 #else // no REGs this works
         one = cc1 ( amount, koc - 1) ;
@@ -707,27 +727,20 @@ cOff
 
 #endif // ifdef _DEV_H_
 //$gcc --version
-#if 0 // don't use this coding style - doesn't compile yet
-cOn scOn
-int64 te0 ( c | a, b, d, e ) { a = b = d = e = c ; p ( a ) ; p ( b ) ; p ( c ) ; p ( d ) ; p ( e ) ; } 
-pwi te0 
-te0 ( 3 ) ; 
-//pause
-int64 te2 ( c | a, b ) { a = ( b = c ) ; p ( b ) ; p ( a ) ; } 
-pwi te2 te2 ( 3 ) ; //pause
-//#else 
-int64 te3 ( b, c | a ) { a = ( b + c ) ; p ( a ) ; } 
-//pwi te3 
-te3 ( 1, 2 ) ; //pause
-int64 te4 ( b, c | a ) { a = b + c ; p ( a ) ; } 
-//pwi te4 
-te4 ( 1, 2 ) ; //pause
-int64 te1 ( c | a, b ) { b = c ; a = b ; p ( b ) ; p ( a ) ; } 
-//pwi te1 
-te1 ( 3 ) ; //pause
-cOff
+#if 0
+: qexp dup 1 <= if else dup -- qexp * endif ; 'qexp find wdiss 7 qexp dup p 5040 _assert 
+: qexp2 dup 1 <= if else dup -- qexp2 * endif ; 7 qexp2 dup p 5040 _assert
+: bexp ( n ) n @ 1 > if n @ dup -- bexp * else 1 endif ; 7 bexp dup p 5040 _assert
+: qexp5 dup 1 <= if  else dup -- qexp5 * endif ; 'qexp5 find wdiss 7 qexp5 dup p 5040 _assert 
+: qexp3 dup 1 <= if else dup -- qexp3 * endif ; 7 qexp3 dup p 5040 _assert
+: bexp4 ( n ) n @ 1 > if n @ dup -- bexp4 * else 1 endif ; 7 bexp4 dup p 5040 _assert
+: bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ; 7 bexp2 dup p 5040 _assert
+: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;
+7 bexp3 dup nl p 5040 _assert sp0
+: t if 1 p else 0 p then ; 0 t 1 t nl //pause
+: t1 dup dup dup if 1 p t t t else 0 p t t t then ; 0 t1 nl 1 t1 //pause
+pwi t1 pwi t
 #endif
-//: tx ( a b ) a @ 2 = b @ 3 = a @ b @ * dup 0 !  p ;  4 5 tx pause
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff

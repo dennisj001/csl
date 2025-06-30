@@ -576,7 +576,7 @@ CO_OptimizeOp2Literals ( Compiler * compiler )
     CompileOptimizeInfo * optInfo = compiler->OptInfo ;
 
     if ( optInfo->wordArg1->Coding ) SetHere ( optInfo->wordArg1->Coding ) ;
-    int64 value, svOpState = GetState ( _CSL_, CO_ON );
+    int64 value, svOpState = GetState ( _CSL_, CO_ON ) ;
     // a little tricky here ...
     // maybe we should setup a special compiler stack and use it here ? ... but no we are setting up for Block_Eval !!
     DataStack_Push ( ( int64 ) * optInfo_0_two->W_PtrToValue ) ;
@@ -729,7 +729,7 @@ CO_X_OpEqual ( Compiler * compiler, block op )
 
     CO_GetWordStackState ( compiler, zero ) ;
     CompileOptimizeInfo * optInfo = compiler->OptInfo ; // nb. after _Compiler_GetOptimizeState
-    Word * dstWord = optInfo->wordArg1, * srcWord = optInfo->wordArg2, * lhsWord = (Word *) Stack_Top (compiler->LHS_Word) ;
+    Word * dstWord = optInfo->wordArg1, * srcWord = optInfo->wordArg2, * lhsWord = ( Word * ) Stack_Top ( compiler->LHS_Word ) ;
     Boolean dstReg = dstWord ? ( dstWord->RegToUse ? dstWord->RegToUse : ACC ) : 0 ; ///*arg1*/, srcReg = OREG ; // arg2
     Boolean srcReg = srcWord ? ( srcWord->RegToUse ? srcWord->RegToUse : OREG ) : 0 ; ///*arg1*/, srcReg = OREG ; // arg2
     CO_SetStandardPreHere_ForDebugDisassembly ( compiler ) ;
@@ -962,7 +962,7 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
         }
         else
 #endif        
-        Compile_Move_Reg_To_Rm ( dstReg, srcReg, 0, dstWord ? dstWord->CompiledDataFieldByteSize : lvalueSize ) ;
+            Compile_Move_Reg_To_Rm ( dstReg, srcReg, 0, dstWord ? dstWord->CompiledDataFieldByteSize : lvalueSize ) ;
         //DBI_OFF ;
         goto done ;
     }
@@ -1010,7 +1010,7 @@ CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
                 if ( word->StackPushRegisterCode )
                 {
                     byte * src = word->StackPushRegisterCode + STACK_PUSH_REGISTER_CODE_SIZE ;
-                    BI_Block_Copy (0, word->StackPushRegisterCode, src, Here - src) ;
+                    BI_Block_Copy ( 0, word->StackPushRegisterCode, src, Here - src ) ;
                 }
                 compiler->OptInfo->wordArg0_ForOpEqual = 0 ;
                 goto done ; //return ;
@@ -1131,6 +1131,17 @@ CO_PeepHole_Optimize ( )
             Compile_TEST_Reg_To_Reg ( ACC, ACC ) ;
         }
 #endif        
+    }
+}
+
+void
+Optimize_Remove_add_r14_0x8__mov_r14_rax ( )
+{
+    byte add_r14_0x8__mov_r14_rax [ ] = { 0x49, 0x83, 0xc6, 0x08, 0x49, 0x89, 0x06 } ; //"add r14, 0x8,  mov [r14], rax"
+    if ( ! memcmp ( add_r14_0x8__mov_r14_rax, Here - 7, 7 ) )
+    {
+        CSL_AdjustDbgSourceCodeAddress ( Here, Here - 7 ) ;
+        _ByteArray_UnAppendSpace ( _O_CodeByteArray, 7 ) ;
     }
 }
 

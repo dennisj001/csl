@@ -34,14 +34,14 @@
 #define Compile_AND_BYTE( toRegOrMem, mod, reg, rm, sib, disp ) _Compile_Group1_BYTE ( AND_OPCODE, toRegOrMem, mod, reg, rm, sib, disp )
 
 #define CfrtTil_Compile_JG( jmpToAddr ) Compile_Jcc (GREATER, 0, jmpToAddr )
-#define CfrtTil_Compile_JGE( jmpToAddr ) Compile_Jcc (TTT_LESS, _NOT_, jmpToAddr )
-#define CfrtTil_Compile_JEQ( jmpToAddr ) Compile_Jcc (EQ, 0, jmpToAddr )
-#define CfrtTil_Compile_JNE( jmpToAddr ) Compile_Jcc (EQ, _NOT_, jmpToAddr )
-#define CfrtTil_Compile_JNG( jmpToAddr ) Compile_Jcc (GREATER, _NOT_, jmpToAddr )
-#define CfrtTil_Compile_JNB( jmpToAddr ) Compile_Jcc (TTT_BELOW, _NOT_, jmpToAddr )
+#define CfrtTil_Compile_JGE( jmpToAddr ) Compile_Jcc (TTT_LESS, NOT_ZERO, jmpToAddr )
+#define CfrtTil_Compile_JEQ( jmpToAddr ) Compile_Jcc (TTT_EQUAL, 0, jmpToAddr )
+#define CfrtTil_Compile_JNE( jmpToAddr ) Compile_Jcc (TTT_EQUAL, NOT_ZERO, jmpToAddr )
+#define CfrtTil_Compile_JNG( jmpToAddr ) Compile_Jcc (GREATER, NOT_ZERO, jmpToAddr )
+#define CfrtTil_Compile_JNB( jmpToAddr ) Compile_Jcc (TTT_BELOW, NOT_ZERO, jmpToAddr )
 #define CfrtTil_Compile_JB( jmpToAddr ) Compile_Jcc (TTT_BELOW, 0, jmpToAddr )
-#define CfrtTil_Compile_JNL( jmpToAddr ) Compile_Jcc (TTT_LESS, _NOT_, jmpToAddr )
-#define CfrtTil_Compile_JLE( jmpToAddr ) Compile_Jcc (GREATER, _NOT_, jmpToAddr )
+#define CfrtTil_Compile_JNL( jmpToAddr ) Compile_Jcc (TTT_LESS, NOT_ZERO, jmpToAddr )
+#define CfrtTil_Compile_JLE( jmpToAddr ) Compile_Jcc (GREATER, NOT_ZERO, jmpToAddr )
 #define CfrtTil_Compile_JL( jmpToAddr ) Compile_Jcc (TTT_LESS, 0, jmpToAddr )
 
 // group 2

@@ -429,8 +429,6 @@ User
 "istring" ' interpretString find alias 
 "def" ' word find alias 
 Compiler
-">;" ' >? find alias
-
 Root C
 "allot" ' allocateMem find alias
 : include1 _dup debugColors "\n'include'" ps ps " :: at :" ps location nl defaultColors sp include  ;

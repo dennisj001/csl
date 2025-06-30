@@ -73,12 +73,18 @@ cOff
 jcc8_Off
 'factorial006 find wdiss 
 7 factorial006 dup p 5040 "factorial006" _assert1 //pause
-: qexp dup 1 <= if{ }else{ dup -- qexp * }fi ; 'qexp find wdiss 7 qexp dup p 5040 _assert 
-: qexp2 dup 1 <= ?< >:< dup -- qexp2 * >? ; 7 qexp2 dup p 5040 _assert
-: bexp ( n ) n @ 1 > if{ n @ dup -- bexp * }else{ 1 }fi ; 7 bexp dup p 5040 _assert
+: qexp dup 1 <= if else dup -- qexp * endif ; 'qexp find wdiss 7 qexp dup p 5040 _assert 
+: qexp2 dup 1 <= if else dup -- qexp2 * endif ; 7 qexp2 dup p 5040 _assert
+: bexp ( n ) n @ 1 > if n @ dup -- bexp * else 1 endif ; 7 bexp dup p 5040 _assert
+: qexp5 dup 1 <= if  else dup -- qexp5 * endif ; 'qexp5 find wdiss 7 qexp5 dup p 5040 _assert 
+: qexp3 dup 1 <= if else dup -- qexp3 * endif ; 7 qexp3 dup p 5040 _assert
+: bexp4 ( n ) n @ 1 > if n @ dup -- bexp4 * else 1 endif ; 7 bexp4 dup p 5040 _assert
 : bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ; 7 bexp2 dup p 5040 _assert
 : bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;
 7 bexp3 dup nl p 5040 _assert sp0
+: t if 1 p else 0 p then ; 0 t 1 t nl //pause
+: t1 dup dup dup if 1 p t t t else 0 p t t t then ; 0 t1 nl 1 t1 //pause
+pwi t1 pwi t
 //pwi bexp3 //pause
 c_syntaxOn
 jcc8_On
@@ -435,20 +441,20 @@ sp0
 
 : _fib 
     dup 2 <  
-    if{ 
-    }else{ 
+    if 
+    else 
         dup -- _fib swap 2 - _fib + 
-    }fi 
+    endif 
 ;
 ' _fib2 find wdiss 
 20 _fib dup p 6765 assert0 //pause
-: _fib2 dup 2 < ?< >:< dup -- _fib2 swap 2 - _fib2 + >; ; 
+: _fib2 dup 2 < if else dup -- _fib2 swap 2 - _fib2 + endif ; 
 20 _fib2 nl dup p 6765 assert0 //pause
 : _fib3 
     dup 2 < 
-    ?< >:< 
+    if else 
         dup -- _fib3 swap 2 - _fib3 + 
-    >; 
+    endif 
 ;
 ' _fib3 find wdiss 
 20 _fib3 dup p 6765 assert0 

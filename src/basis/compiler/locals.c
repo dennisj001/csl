@@ -178,7 +178,7 @@ void
 Compiler_SetLocalsFrameSize_AtItsCellOffset ( Compiler * compiler )
 {
     //int64 size = compiler->NumberOfLocals ; // new save/restore regs setup
-    int64 size = compiler->NumberOfNonRegisterLocals ;  
+    int64 size = compiler->NumberOfNonRegisterLocals ;
     int64 fsize = compiler->LocalsFrameSize = ( ( ( size <= 0 ? 0 : size ) + 1 ) * CELL_SIZE ) ; //1 : the frame pointer 
     if ( fsize ) *( ( int32* ) ( compiler->FrameSizeCellOffset ) ) = fsize ; //compiler->LocalsFrameSize ; //+ ( IsSourceCodeOn ? 8 : 0 ) ;
 }
@@ -261,15 +261,7 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
     if ( compiler->NumberOfNonRegisterVariables )
     {
         if ( returnValueFlag && ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
-        {
-            byte add_r14_0x8__mov_r14_rax [ ] = { 0x49, 0x83, 0xc6, 0x08, 0x49, 0x89, 0x06 } ; //"add r14, 0x8,  mov [r14], rax"
-            if ( ! memcmp ( add_r14_0x8__mov_r14_rax, Here - 7, 7 ) )
-            {
-                CSL_AdjustDbgSourceCodeAddress ( Here, Here - 7 ) ;
-                _ByteArray_UnAppendSpace ( _O_CodeByteArray, 7 ) ;
-            }
-        }
-        // remove the incoming parameters -- like in C
+            Optimize_Remove_add_r14_0x8__mov_r14_rax ( ) ; // remove the incoming parameters -- like in C
         _Compile_LEA ( DSP, FP, 0, - CELL_SIZE ) ; // restore sp - release locals stack frame
         _Compile_Move_StackN_To_Reg ( FP, DSP, 1, 0 ) ; // restore the saved pre fp - cf AddLocalsFrame
     }

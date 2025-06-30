@@ -360,9 +360,9 @@ void
 OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondition, int64 infoFlag )
 {
     Exception *e = _O_->OVT_Exception ;
-    e->ExceptionMessage = excptMessage ;
+    e->ExceptionMessage = String_New ( excptMessage, TEMPORARY ) ;
     _O_->Thrown = e->RestartCondition = restartCondition ;
-    e->ExceptionSpecialMessage = specialMessage ;
+    e->ExceptionSpecialMessage = String_New ( specialMessage, TEMPORARY ) ; ;
 #if 1
     //LinuxInit ( ) ; // reset termios
     if ( e->InfoFlag = infoFlag )
@@ -423,7 +423,7 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
 {
     Exception *e = _O_->OVT_Exception ;
     AlertColors ;
-    e->ExceptionMessage = message ;
+    e->ExceptionMessage = String_New ( message, TEMPORARY ) ;  ;
     e->ExceptionCode = exceptionCode ;
     e->RestartCondition = restartCondition ;
     //e->Location = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
@@ -707,19 +707,19 @@ OVT_SeriousErrorPause ( byte * msg )
 }
 
 Exception *
-_Exception_New ( )
+Exception_New ( )
 {
     Exception * e = ( Exception * ) Mem_Allocate ( sizeof (Exception ), EXCEPTION_SPACE ) ;
     return e ;
 }
-
+#if 0
 Exception *
 Exception_New ( )
 {
     _O_->OVT_Exception = ( Exception * ) Mem_Allocate ( sizeof (Exception ), EXCEPTION_SPACE ) ;
     return _O_->OVT_Exception ;
 }
-
+#endif
 void
 Exception_Init ( Exception * e )
 {

@@ -230,24 +230,20 @@ iPrintf ( char *format, ... )
     va_list args ;
     byte * b ;
     if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
-    //if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
-    if ( Verbosity ( ) ) //GetState ( _ReadLiner_, CHAR_ECHO ) )
+    if ( Verbosity ( ) ) 
     {
         va_start ( args, format ) ;
         if ( IS_INCLUDING_FILES ) vprintf ( ( char* ) format, args ) ;
         else
         {
             vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBuffer ), ( char* ) format, args ) ;
-            //strncpy ( Buffer_Data ( _O_->PrintBufferCopy ), Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
             b = Buffer_Data ( _O_->PrintBuffer ) ;
             printf ( "%s", b ) ;
             _O_->Pblc = String_LastChar ( _Buffer_Data ( _O_->PrintBuffer ) ) ;
             strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
-            //strncpy ( (char*) Buffer_Data ( _O_->PrintBufferCopy ), (char*) Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
         }
         va_end ( args ) ;
         fflush ( stdout ) ;
-#if 1        
         if ( _O_->LogFlag )
         {
             va_start ( args, format ) ;
@@ -255,41 +251,8 @@ iPrintf ( char *format, ... )
             va_end ( args ) ;
             fflush ( _CSL_->LogFILE ) ;
         }
-#endif        
     }
 }
-#if 0
-
-void
-dPrintf ( char *format, ... )
-{
-    va_list args ;
-    if ( _O_->DebugOutputFlag & 3 ) //CSL_DebugOutputOn
-    {
-        va_start ( args, ( char* ) format ) ;
-        if ( _O_->DebugOutputFlag |= 4 ) //CSL_DebugOutputConcatOn
-        {
-            vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBufferConcatCopy ), ( char* ) format, args ) ;
-            strncat ( _O_->PrintBufferCopy->B_Data, _O_->PrintBufferConcatCopy->B_Data, BUFFER_SIZE ) ;
-        }
-        else vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBufferCopy ), ( char* ) format, args ) ;
-        va_end ( args ) ;
-    }
-}
-
-void
-lPrintf ( char *format, ... )
-{
-    va_list args ;
-    //if ( _O_->LogFlag )
-    {
-        va_start ( args, ( char* ) format ) ;
-        vfprintf ( _CSL_->LogFILE, ( char* ) format, args ) ;
-        va_end ( args ) ;
-        fflush ( _CSL_->LogFILE ) ;
-    }
-}
-#endif
 // oPrintf : printf with PrintBufferCopy added logic
 // printf for user output not for internal output
 
@@ -306,12 +269,10 @@ oPrintf ( char *format, ... )
         else
         {
             vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBuffer ), ( char* ) format, args ) ;
-            //strncpy ( Buffer_Data ( _O_->PrintBufferCopy ), Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
             b = Buffer_Data ( _O_->PrintBuffer ) ;
             printf ( "%s", b ) ;
             _O_->Pblc = String_LastChar ( _Buffer_Data ( _O_->PrintBuffer ) ) ;
             strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
-            //strncpy ( (char*) Buffer_Data ( _O_->PrintBufferCopy ), (char*) Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
         }
         va_end ( args ) ;
         fflush ( stdout ) ;

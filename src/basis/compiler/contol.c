@@ -1,6 +1,147 @@
 #include "../../include/csl.h"
 #define TEST_0 0
 
+byte *
+_BI_Compile_Jcc_FlipBiN ( BlockInfo *bi, byte * jmpToAddress )
+{
+    byte insn = 0 ; //GetState ( _CSL_, JCC8_ON ) ? JCC8 : 0 ;
+    int64 n = ! bi->N ;
+    byte * compiledAtAddress = Compile_Jcc ( bi->Ttt, n, jmpToAddress, insn ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_Tttn_REG
+    return compiledAtAddress ;
+
+}
+
+// bi->JccCode may be set by a previous logic op
+
+byte *
+BI_Compile_Jcc_FlipN ( BlockInfo *bi, byte * jmpToAddress, Boolean logicFlag )
+{
+    if ( bi->JccCode ) SetHere ( bi->JccCode ) ;
+    else if ( bi->TttnCode ) SetHere ( bi->TttnCode ) ;
+    bi->JccCode = Here ;
+    bi->ActualCopiedToJccCode = Here ;
+    byte * compiledAtAddress = _BI_Compile_Jcc_FlipBiN ( bi, jmpToAddress ) ;
+    if ( logicFlag ) Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
+    return compiledAtAddress ;
+}
+
+byte *
+BI_Compile_JccFlipN ( BlockInfo *bi, byte * jmpToAddress ) // , int8 nz
+{
+    byte * compiledAtAddress ;
+    if ( bi->JccCode ) SetHere ( bi->JccCode ) ;
+    if ( bi->TttnCode ) compiledAtAddress = BI_Compile_Jcc_FlipN ( bi, jmpToAddress, 0 ) ;
+    else
+    {
+        //Compile_BlockLogicTest ( bi ) ;
+        //compiledAtAddress = bi->JccCode ;
+        compiledAtAddress = CSL_If_0Branch ( ) ;
+    }
+    return compiledAtAddress ;
+}
+
+// non-combinator 'if'
+
+byte *
+Compiler_Compile_JccFlipN ( Compiler * compiler, int64 bindex ) // , int8 nz
+{
+    BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, bindex ) ; // -1 : remember - stack is zero based ; stack[0] is top
+    byte * compiledAtAddress = BI_Compile_JccFlipN ( bi, 0 ) ;
+    return compiledAtAddress ;
+}
+
+byte * 
+CSL_If_0Branch ( )
+{
+    if ( CompileMode )
+    {
+        byte * compiledAtAddress ;
+        Optimize_Remove_add_r14_0x8__mov_r14_rax ( ) ;
+        compiledAtAddress = Compile_Jcc ( TTT_ZERO, ZERO, 0, 0 ) ;
+        return compiledAtAddress ;
+    }
+}
+
+void
+CSL_If_TttN_ConditionalExpression ( )
+{
+    if ( CompileMode )
+    {
+        //DBI_ON ;
+        byte * compiledAtAddress = Compiler_Compile_JccFlipN ( _Compiler_, 0 ) ;
+        //DBI_OFF ;
+        // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
+        // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
+        // the cmp, or is a value on the stack. 
+        // We cmp that value with zero and jmp if this second cmp sets the flag to zero else do the immediately following block code
+        // ?? an explanation of the relation of the setcc terms with the flags is not clear to me yet (20110801) from the intel literature ?? 
+        // but by trial and error this works; the logic i use is given in _Compile_Jcc.
+        // ?? if there are problems check this area ?? cf. http://webster.cs.ucr.edu/AoA/Windows/HTML/IntegerArithmetic.html
+        Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
+    }
+    else
+    {
+        byte *str = _Context_->ReadLiner0->InputLine ;
+        int64 index = _Context_->Lexer0->TokenStart_ReadLineIndex - 1 ;
+        if ( String_IsPreviousCharA_ ( str, index, '}' ) ) CSL_If2Combinator ( ) ;
+        else if ( String_IsPreviousCharA_ ( str, index, '#' ) ) CSL_If_ConditionalInterpret ( ) ;
+        else if ( GetState ( _Context_, C_SYNTAX | PREFIX_MODE | INFIX_MODE ) &&
+            ( ! ( String_Equal ( _Lexer_->OriginalToken, "?" ) ) ) ) CSL_If_PrefixCombinators ( ) ;
+        else
+        {
+            int64 value ;
+            Interpreter * interp = _Context_->Interpreter0 ;
+            if ( value = DataStack_Pop ( ) )
+            {
+                byte * token ;
+                // interpret until ":", "else" or "endif"
+                token = Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) "else",
+                    ( byte* ) "endif", ( byte* ) ":", ( byte* ) ")", ( byte* ) "#", 0, 1, 0 ) ;
+                if ( ( token == 0 ) || ( String_Equal ( token, "endif" ) ) ) return ;
+                Parse_SkipUntil_EitherToken_OrNewline ( ( byte* ) "endif", 0 ) ;
+                //Parse_SkipUntil_EitherToken_OrNewline ( ( byte* ) "endif", "\n" ) ;
+            }
+            else
+            {
+                // skip until ":" or "else"
+                Parse_SkipUntil_EitherToken_OrNewline ( ( byte* ) ":", ( byte* ) "else" ) ;
+                Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) ";", ( byte* ) ",",
+                    ( byte* ) "endif", ( byte* ) "#", ( byte* ) ")", 0, 1, 0 ) ;
+            }
+        }
+    }
+}
+
+// same as CSL_JMP
+
+void
+CSL_Else ( )
+{
+    if ( CompileMode )
+    {
+        byte * compiledAtAddress = Compile_UninitializedJump ( ) ;
+        CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ; // if 0 branch to here after the jmp to endif
+        Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
+        CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
+    }
+    else
+    {
+        if ( String_IsPreviousCharA_ ( _Context_->ReadLiner0->InputLine, _Context_->Lexer0->TokenStart_ReadLineIndex - 1, '#' ) )
+            CSL_Else_ConditionalInterpret ( ) ;
+        else Interpret_Until_Token ( _Context_->Interpreter0, ( byte* ) "endif", 0 ) ;
+    }
+}
+
+void
+CSL_EndIf ( )
+{
+    if ( CompileMode )
+    {
+        CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
+    }
+    else Compiler_Init ( _Compiler_, 0 ) ;
+}
+
 byte
 OffsetSize ( byte insn )
 {

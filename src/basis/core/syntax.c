@@ -356,73 +356,35 @@ CSL_C_ConditionalExpression ( )
     if ( ( ! Compiling ) && ( ! GetState ( compiler, C_CONDITIONAL_IN ) ) ) Compiler_Init ( _Compiler_, 0 ) ;
     SetState ( compiler, C_CONDITIONAL_IN, true ) ;
     compiler->CombinatorLevel ++ ; // trigger for below ...
-    if ( ! CompileMode ) CSL_If_ConditionalExpression ( ) ;
+    if ( ! CompileMode ) CSL_If_TttN_ConditionalExpression ( ) ;
     else
     {
         word1 = CSL_WordList ( 1 ) ;
         if ( word1 && word1->StackPushRegisterCode ) SetHere ( word1->StackPushRegisterCode ) ;
         BlockInfo *bi = ( BlockInfo * ) Stack_Top ( compiler->CombinatorBlockInfoStack ) ;
-        //if ( compiler->CombinatorLevel == 1 ) // the first '?' is compiled 'old style' without this
-        {
-            int64 ttt, negFlag, jccType ;
-            //ttt = TTT_ZERO ;
-            ttt = bi->Ttt ? bi->Ttt : TTT_ZERO ;
-            //negFlag = ( bi->Ttt != TTT_ZERO ) ? ! bi->N : N_0 ; 
-            negFlag = bi->Ttt ? ! bi->N : N_0 ;
-            //jccType = ( compiler->CombinatorLevel == 1 ) ? GI_JCC_TO_FALSE : GI_JCC_TO_TRUE ;
-            jccType = GI_JCC_TO_FALSE ;
-            if ( ! bi->CmpCode ) BI_CompileRecord_CmpCode_Reg ( bi, ACC ) ;
-            else if ( bi->TttnCode ) SetHere ( bi->TttnCode ) ;
-            BI_SetTttN ( bi, ttt, negFlag, 0, jccType ) ;
-            Compile_JccGotoInfo ( bi, jccType ) ;
-            BI_ResetLogicCode ( bi ) ;
-        }
-#if 0        
-else
-        {
-            Compiler_Word_SCHCPUSCA ( word1, 0 ) ;
-            if ( ! bi->CmpCode )
-            {
-                if ( word1 && word1->StackPushRegisterCode )
-                {
-                    // nb. there is only one block so don't use BlockInfo code ; we may have nested conditionals
-                    SetHere ( word1->StackPushRegisterCode ) ;
-                    BI_CompileRecord_CmpCode_Reg ( bi, word1->RegToUse ) ;
-
-                }
-                else
-                {
-                    Compile_Pop_To_Acc ( DSP ) ;
-                    BI_CompileRecord_CmpCode_Reg ( bi, ACC ) ;
-                }
-            }
-            if ( bi->AfterCmpCode ) SetHere ( bi->AfterCmpCode ) ;
-            byte * compiledAtAddress = Compile_UninitializedJccNotEqualZero ( ) ;
-            Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
-        }
-#endif        
+        int64 ttt, negFlag, jccType ;
+        ttt = bi->Ttt ? bi->Ttt : TTT_ZERO ;
+        negFlag = bi->Ttt ? ! bi->N : N_0 ;
+        jccType = GI_JCC_TO_FALSE ;
+        if ( ! bi->CmpCode ) BI_CompileRecord_CmpCode_Reg ( bi, ACC ) ;
+        else if ( bi->TttnCode ) SetHere ( bi->TttnCode ) ;
+        BI_SetTttN ( bi, ttt, negFlag, 0, jccType ) ;
+        Compile_JccGotoInfo ( bi, jccType ) ;
+        BI_ResetLogicCode ( bi ) ;
         byte * token = Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) ":", ( byte* ) ",", ( byte* ) ")", ( byte* ) "}", "#", 0, 0, 1 ) ;
         if ( token && _String_EqualSingleCharString ( token, ':' ) )
         {
             CSL_InstallGotoCallPoints_Keyed ( bi, GI_JCC_TO_FALSE, Here, 0 ) ;
-#if 1            
-            //if ( compiler->CombinatorLevel > 1 ) 
             if ( compiler->CombinatorLevel > 1 )
             {
                 CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
-                //byte * compiledAtAddress = Compile_UninitializedJump ( ) ;
-                //Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
             }
-#endif            
             Lexer_ReadToken ( _Lexer_ ) ;
             CSL_Else ( ) ;
             Interpret_C_Until_NotIncluding_Token5 ( interp, ( byte* ) ";", ( byte* ) ",", ( byte* ) ")", ( byte* ) "}", "]", 0, 0, 1 ) ; //( byte* ) "}", ( byte* ) " \n\r\t", 0 ) ;
             CSL_EndIf ( ) ;
         }
-        else
-            if ( ! String_Equal ( token, "#" ) ) SyntaxError ( 1 ) ;
-        //CSL_InstallGotoCallPoints_Keyed ( bi, GI_JCC_TO_TRUE, Here, 1 ) ;
-        //bi->CmpCode = 0 ; //reset
+        else if ( ! String_Equal ( token, "#" ) ) SyntaxError ( 1 ) ;
     }
     SetState ( compiler, C_CONDITIONAL_IN, false ) ;
     compiler->CombinatorLevel -- ;

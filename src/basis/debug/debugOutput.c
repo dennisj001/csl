@@ -181,7 +181,7 @@ _Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal, int64 for
 void
 Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal )
 {
-    if ( ! _O_->OVT_Exception ) Exception_New ( ) ; 
+    if ( ! _O_->OVT_Exception ) _O_->OVT_Exception = Exception_New ( ) ; 
     Exception * e = _O_->OVT_Exception ;
     Context * cntx = _Context_ ;
     int64 sif = 0 ;
@@ -208,7 +208,7 @@ Debugger_ShowInfo ( Debugger * debugger, byte * prompt, int64 signal )
     }
     if ( ( ! sif ) && ( ! GetState ( debugger, DBG_STEPPING ) ) && ( GetState ( debugger, DBG_INFO ) ) ) _Debugger_ShowInfo ( debugger, prompt, signal, 1 ) ;
     //if ( prompt == e->ExceptionMessage ) e->ExceptionMessage = 0 ;
-    if ( prompt ) e->ExceptionMessage = prompt ;
+    if ( prompt ) e->ExceptionMessage = String_New ( prompt, TEMPORARY ) ;
 }
 
 void

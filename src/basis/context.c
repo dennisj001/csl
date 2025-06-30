@@ -20,11 +20,12 @@ _Context_Location ( Context * cntx )
     byte * str = 0 ;
     if ( cntx && cntx->ReadLiner0 )
     {
-        byte * buffer = Buffer_DataCleared ( _CSL_->StringB ) ;
+        //byte * buffer = Buffer_DataCleared ( _CSL_->StringB ) ;
+        byte * buffer = _Buffer_New_pbyte ( BUFFER_SIZE, 0 ) ;
         snprintf ( ( char* ) buffer, BUFFER_IX_SIZE, "%s : %ld.%ld", ( char* ) cntx->ReadLiner0->Filename ? ( char* ) cntx->ReadLiner0->Filename : "<command line>",
             cntx->ReadLiner0->LineNumber, cntx->Lexer0->CurrentReadIndex ) ;
         str = cntx->Location = String_New ( buffer, TEMPORARY ) ;
-        _O_->OVT_Exception->Location = _O_->OVT_Exception->Location = str ;
+        _O_->OVT_Exception->Location = str ;
     }
     return str ;
 }
