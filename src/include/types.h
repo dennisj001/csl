@@ -614,9 +614,9 @@ typedef struct
     byte * InsnAddress ; // compiledAtAddress
     //byte *JmpToAddress ;
     byte InsnType ;
-    byte Insn ; // JCC8 JCC32, etc
     byte InsnSize ;
     byte OffsetSize ;
+    uint16 Insn ; // JCC8 JCC32, etc
     int32 Disp ; // Displacement 
 } BlockInfo ;
 typedef struct
@@ -812,6 +812,7 @@ typedef struct
     Boolean InLParenBlock, SemicolonEndsThisBlock, TakesLParenAsBlock, BeginBlockFlag ;
     int32 * AccumulatedOffsetPointer ;
     int64 * FrameSizeCellOffset, BlocksBegun ;
+    byte * BeginAddress ; //, * RspSaveOffset, * RspRestoreOffset ;
     Word *ReturnWord, * ReturnVariableWord, * ReturnLParenOperandWord, * Current_Word_New, *Current_Word_Create, *PrefixWord ;
     Namespace *C_BackgroundNamespace, *C_FunctionBackgroundNamespace, *Qid_BackgroundNamespace, *LocalsNamespace, *NonCompilingNs ; //, ** FunctionTypesArray ;
     dllist * GotoList, *SetccMovedList ;
@@ -826,7 +827,7 @@ typedef struct
     Stack * BlockStack ; //, *CombinatorStack ;
     Stack * InternalNamespacesStack ;
     Stack * InfixOperatorStack ;
-    Stack * BeginAddressStack ; //RspSaveOffset ;    byte * RspRestoreOffset ;
+    Stack * BeginAddressStack ;
     dllist * OptimizeInfoList ;
     BlockInfo * CurrentTopBlockInfo ;
     LocalsRegParameterOrder Lrpo ;

@@ -6,8 +6,6 @@ _BI_Compile_Jcc_AdjustBiN ( BlockInfo *bi, byte * jmpToAddress, int64 flipN )
 {
     byte insn = 0 ; //GetState ( _CSL_, JCC8_ON ) ? JCC8 : 0 ;
     int64 n = flipN ? ( ! bi->N ) : ( bi->N ) ;
-    //if ( bi->Disp )  _Compile_Jcc ( JCC32, bi->Ttt, n, bi->Disp ) ;
-
     byte * compiledAtAddress = Compile_Jcc ( bi->Ttt, n, jmpToAddress, insn ) ; // we do need to store and get this logic set by various conditions by the compiler : _Compile_SET_Tttn_REG
     return compiledAtAddress ; // Here 
 
@@ -18,12 +16,9 @@ _BI_Compile_Jcc_AdjustBiN ( BlockInfo *bi, byte * jmpToAddress, int64 flipN )
 byte *
 BI_Compile_Jcc_AdjustN ( BlockInfo *bi, byte * jmpToAddress, int64 flipN )
 {
-    //if ( bi->JccCode ) SetHere ( bi->JccCode ) ;
-    //else if ( bi->TttnCode ) SetHere ( bi->TttnCode ) ;
     bi->JccCode = Here ;
     bi->ActualCopiedToJccCode = Here ;
     byte * compiledAtAddress = _BI_Compile_Jcc_AdjustBiN ( bi, jmpToAddress, flipN ) ;
-    //if ( logicFlag ) Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
     return compiledAtAddress ;
 }
 
@@ -32,7 +27,11 @@ BI_Compile_JccAdjustN ( BlockInfo *bi, byte * jmpToAddress, int64 flipN ) // , i
 {
     byte * compiledAtAddress ;
     if ( bi->JccCode ) SetHere ( bi->JccCode ) ;
-    if ( bi->TttnCode ) SetHere ( bi->TttnCode ), compiledAtAddress = BI_Compile_Jcc_AdjustN ( bi, jmpToAddress, flipN ) ; //jmpToAddress) ;
+    if ( bi->TttnCode )
+    {
+        SetHere ( bi->TttnCode ) ;
+        compiledAtAddress = BI_Compile_Jcc_AdjustN ( bi, jmpToAddress, flipN ) ;
+    }
     else
     {
         Compile_BlockLogicTest ( bi ) ;
@@ -56,6 +55,104 @@ Compiler_TestJccAdjustN ( Compiler * compiler, byte * jmpToAddress, int64 flipN 
     return compiledAtAddress ;
 }
 
+int32
+BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi ) //( byte * insnAddress, byte * jmpToAddr, byte insn, byte insnType )
+{
+    if ( ! bi->Insn )
+    {
+        if ( bi->InsnAddress )
+        {
+            bi->Insn = ( * bi->InsnAddress ) ;
+        }
+        else Error ( "\nBI_CalculateOffsetForCallOrJumpOrJcc : No insn or InsnAddress", QUIT ) ;
+    }
+    if ( ! bi->InsnType )
+    {
+        if ( ( bi->Insn == JCC32 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
+        else bi->InsnType = ( T_JMP | T_CALL ) ;
+    }
+    bi->InsnSize = ( bi->Insn == JCC32 ) ? 2 : 1 ;
+    if ( ( bi->InsnType & ( T_JMP | T_CALL ) ) ) //&& ( insnSize == 1 ) ) //offsetSize = 1, insnSize = 1
+    {
+        if ( bi->Insn )
+        {
+            if ( ( bi->Insn == JMP32 ) || ( bi->Insn == CALL32 ) ) bi->OffsetSize = 4 ;
+            else bi->OffsetSize = 1 ;
+        }
+        else // deduce insn
+        {
+            if ( bi->InsnType == T_CALL ) bi->Insn = CALL32 ;
+            else
+            {
+                bi->OffsetSize = 1 ;
+                bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
+                if ( ( bi->Disp >= - 127 ) && ( bi->Disp <= 128 ) ) bi->OffsetSize = 1, bi->Insn = JMP8 ;
+                else bi->OffsetSize = 4, bi->Insn = JMP32 ;
+            }
+        }
+    }
+    else if ( bi->InsnType & ( T_JCC ) )
+    {
+        if ( bi->Insn == JCC32 ) bi->OffsetSize = 4 ;
+        else bi->OffsetSize = 1 ;
+    }
+    bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
+#if 0      
+    if ( ( bi->Disp >= - 123 ) && ( bi->Disp <= 124 ) ) bi->OffsetSize = 1 ; //, bi->Insn = JMP8 ;
+    else bi->OffsetSize = 4 ;
+    bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
+#endif        
+    if ( ( bi->Disp >= - 127 ) && ( bi->Disp <= 128 ) && ( bi->OffsetSize == 1 ) ) bi->IiFlags |= COULD_BE_8 ;
+    else bi->IiFlags |= SHOULD_BE_32 ;
+    //else if ( ( bi->Disp >= ( - ( 65535 ) ) ) && ( bi->Disp <= ( 65536 ) ) ) bi->IiFlags |= COULD_BE_16 ;
+    return bi->Disp ;
+}
+
+int32
+SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, byte insnType, byte insn )
+{
+    int32 disp = bi->Disp = BI_CalculateOffsetForCallOrJumpOrJcc ( bi ) ; //( insnAddr, jmpToAddr, insn, insnType ) ;
+    byte * offsetAddress = bi->InsnAddress + bi->InsnSize ; //insnAddr + insnSize ;
+    if ( IS_INSN_JCC8 ( bi->Insn ) || ( bi->Insn == JMP8 ) ) //|| ( insn == JCC8 ) )
+    {
+        if ( ( disp > - 127 ) && ( disp < 128 ) )
+        {
+            * ( ( int8* ) offsetAddress ) = ( byte ) disp ;
+        }
+    }
+    else * ( ( int32* ) ( offsetAddress ) ) = disp ;
+    return disp ;
+}
+
+int32
+CalculateOffsetForCallOrJump ( byte * insnAddr, byte * jmpToAddr, byte insnType )
+{
+    BlockInfo *bi = BlockInfo_Allocate ( ) ; // just COMPILER_TEMP
+    bi->InsnAddress = insnAddr ;
+    bi->JmpToAddress = jmpToAddr ;
+    bi->Insn = 0 ; //insn ;// correct previous useages
+    bi->InsnType = insnType ;
+    return SetOffsetForCallOrJump ( bi ) ; //nb bi->Disp is set 
+}
+
+int32
+GetDispForCallOrJumpFromInsnAddr ( byte * insnAddr )
+{
+    int32 disp ;
+    if ( insnAddr )
+    {
+        byte insn = * insnAddr ;
+        int64 insnSize = ( insn == JCC32 ) ? 2 : 1 ; //( (insn == JMPI32) || (insn == JCC8) ) ? 1 : 2 ;
+        byte * offsetAddress = insnAddr + insnSize ;
+        if ( insn == JCC32 )
+            disp = * ( int32* ) offsetAddress ;
+        else // insn == JCC8
+            disp = ( int8 ) * ( byte* ) offsetAddress ;
+        return disp ;
+    }
+    return 0 ;
+}
+
 void
 CSL_If_TttN_0Branch ( )
 {
@@ -69,9 +166,6 @@ CSL_If_TttN_0Branch ( )
         // for non-inline|optimize ( reverse polarity : cf. _Compile_Jcc comment ) : jmp if cc is not true; cc is set by setcc after 
         // the cmp, or is a value on the stack. 
         // We cmp that value with zero and jmp if this second cmp sets the flag to zero else do the immediately following block code
-        // ?? an explanation of the relation of the setcc terms with the flags is not clear to me yet (20110801) from the intel literature ?? 
-        // but by trial and error this works; the logic i use is given in _Compile_Jcc.
-        // ?? if there are problems check this area ?? cf. http://webster.cs.ucr.edu/AoA/Windows/HTML/IntegerArithmetic.html
         Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
     }
     else
@@ -165,7 +259,7 @@ CSL_Repeat ( )
 {
     //if ( CompileMode )
     {
-        byte * beginAddress = (byte*) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
+        byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
         Compile_JumpToAddress ( beginAddress, 0 ) ;
         //d1 ( Debugger_Dis ( _Debugger_ ) ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
@@ -177,7 +271,7 @@ CSL_Until ( )
 {
     //if ( CompileMode )
     {
-        byte * beginAddress = (byte*) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
+        byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
         Compiler_TestJccAdjustN ( _Compiler_, beginAddress, 1 ) ;
     }
 }
@@ -206,124 +300,6 @@ CheckOffset ( int64 offset, byte offsetSize ) // offsetSize in bytes
         }
     }
     return r ;
-}
-
-int32
-BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi ) //( byte * insnAddress, byte * jmpToAddr, byte insn, byte insnType )
-{
-    if ( ! bi->Insn )
-    {
-        if ( bi->InsnAddress )
-        {
-            bi->Insn = ( * bi->InsnAddress ) ;
-        }
-        else Error ( "\nCalculateDispForCallOrJumpOrJcc : No insn or InsnAddress", QUIT ) ;
-    }
-    if ( ! bi->InsnType )
-    {
-        if ( ( bi->Insn == JCC32 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
-        else bi->InsnType = ( T_JMP | T_CALL ) ;
-    }
-    bi->InsnSize = ( bi->Insn == JCC32 ) ? 2 : 1 ;
-    if ( ( bi->InsnType & ( T_JMP | T_CALL ) ) ) //&& ( insnSize == 1 ) ) //offsetSize = 1, insnSize = 1
-    {
-        if ( bi->Insn )
-        {
-            if ( ( bi->Insn == JMP32 ) || ( bi->Insn == CALL32 ) ) bi->OffsetSize = 4 ;
-            else bi->OffsetSize = 1 ;
-        }
-        else // deduce insn
-        {
-            if ( bi->InsnType == T_CALL ) bi->Insn = CALL32 ;
-            else
-            {
-                bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + 1 ) ;
-                bi->OffsetSize = 1 ;
-                if ( ( bi->Disp >= - 127 ) && ( bi->Disp <= 128 ) ) bi->OffsetSize = 1, bi->Insn = JMP8 ;
-                else
-                {
-                    bi->OffsetSize = 4, bi->Insn = JMP32 ;
-                    bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
-                }
-            }
-            goto done ;
-        }
-        bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
-#if 1        
-        if ( ( bi->Disp >= - 127 ) && ( bi->Disp <= 128 ) && ( bi->OffsetSize == 1 ) ) bi->IiFlags |= COULD_BE_8 ;
-        //else if ( ( bi->Disp >= ( - ( 65535 ) ) ) && ( bi->Disp <= ( 65536 ) ) ) bi->IiFlags |= COULD_BE_16 ;
-#else        
-        if ( ( bi->OffsetSize == 1 ) && CheckOffset ( bi->Disp, 1 ) ) bi->IiFlags |= COULD_BE_8 ;
-        else if ( CheckOffset ( bi->Disp, 2 ) ) bi->IiFlags |= COULD_BE_16 ;
-#endif        
-        else bi->IiFlags |= SHOULD_BE_32 ;
-    }
-    else if ( bi->InsnType & (T_JCC) ) 
-    {
-        if ( bi->Insn == JCC32 ) bi->OffsetSize = 4 ;
-        else bi->OffsetSize = 1 ;
-        bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
-#if 0      
-        if ( ( bi->Disp >= - 123 ) && ( bi->Disp <= 124 ) ) bi->OffsetSize = 1 ; //, bi->Insn = JMP8 ;
-        else bi->OffsetSize = 4 ;
-        bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
-#endif        
- #if 1        
-        if ( ( bi->Disp >= - 127 ) && ( bi->Disp <= 128 ) && ( bi->OffsetSize == 1 ) ) bi->IiFlags |= COULD_BE_8 ;
-        //else if ( ( bi->Disp >= ( - ( 65535 ) ) ) && ( bi->Disp <= ( 65536 ) ) ) bi->IiFlags |= COULD_BE_16 ;
-#else        
-        if ( ( bi->OffsetSize == 1 ) && CheckOffset ( bi->Disp, 1 ) ) bi->IiFlags |= COULD_BE_8 ;
-        else if ( CheckOffset ( bi->Disp, 2 ) ) bi->IiFlags |= COULD_BE_16 ;
-#endif        
-        else bi->IiFlags |= SHOULD_BE_32 ;
-    }
-done:
-    return bi->Disp ;
-}
-
-int32
-SetOffsetForCallOrJump ( BlockInfo * bi ) //byte * insnAddr, byte * jmpToAddr, byte insnType, byte insn )
-{
-    int32 disp = bi->Disp = BI_CalculateOffsetForCallOrJumpOrJcc ( bi ) ; //( insnAddr, jmpToAddr, insn, insnType ) ;
-    byte * offsetAddress = bi->InsnAddress + bi->InsnSize ; //insnAddr + insnSize ;
-    if ( IS_INSN_JCC8 ( bi->Insn ) || ( bi->Insn == JMP8 ) ) //|| ( insn == JCC8 ) )
-    {
-        if ( ( disp > - 127 ) && ( disp < 128 ) )
-        {
-            * ( ( int8* ) offsetAddress ) = ( byte ) disp ;
-        }
-    }
-    else * ( ( int32* ) ( offsetAddress ) ) = disp ;
-    return disp ;
-}
-
-int32
-CalculateOffsetForCallOrJump ( byte * insnAddr, byte * jmpToAddr, byte insnType )
-{
-    BlockInfo *bi = BlockInfo_Allocate ( ) ; // just COMPILER_TEMP
-    bi->InsnAddress = insnAddr ;
-    bi->JmpToAddress = jmpToAddr ;
-    bi->Insn = 0 ; //insn ;// correct previous useages
-    bi->InsnType = insnType ;
-    return SetOffsetForCallOrJump ( bi ) ; //nb bi->Disp is set 
-}
-
-int32
-GetDispForCallOrJumpFromInsnAddr ( byte * insnAddr )
-{
-    int32 disp ;
-    if ( insnAddr )
-    {
-        byte insn = * insnAddr ;
-        int64 insnSize = ( insn == JCC32 ) ? 2 : 1 ; //( (insn == JMPI32) || (insn == JCC8) ) ? 1 : 2 ;
-        byte * offsetAddress = insnAddr + insnSize ;
-        if ( insn == JCC32 )
-            disp = * ( int32* ) offsetAddress ;
-        else // insn == JCC8
-            disp = ( int8 ) * ( byte* ) offsetAddress ;
-        return disp ;
-    }
-    return 0 ;
 }
 
 // JE, JNE, JZ, JNZ, ... see machineCode.h
@@ -377,7 +353,7 @@ Compile_Jcc ( int64 ttt, int64 n, byte * jmpToAddr, byte insn )
     }
     else
 #endif        
-    _Compile_Jcc ( JCC32, ttt, n, disp ) ;
+        _Compile_Jcc ( JCC32, ttt, n, disp ) ;
     return compiledAtAddress ;
 }
 
@@ -810,6 +786,7 @@ CSL_RemoveGotoPoints ( int64 key )
 }
 
 #if 0
+
 byte
 OffsetSize ( byte insn )
 {

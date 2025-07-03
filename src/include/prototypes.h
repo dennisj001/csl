@@ -602,7 +602,7 @@ void Tree_Map_Namespaces(dllist *list, MapSymbolFunction mf);
 Word *Tree_Map_OneNamespace_OneArg(Word *word, MapFunction_1 mf1, int64 one);
 void Tree_Map_OneNamespace(Namespace *ns, MapFunction mf);
 void Tree_Map_OneList(dllist *list, MapFunction mf);
-void Tree_Map_NamespacesTree1(dllist *list, MapSymbolFunction1 mf2, int64 one);
+void Tree_Map_NamespacesTree1(dllist *list, MapSymbolFunction1 mf1, int64 one);
 Word *Tree_Map_OneNamespace_TwoArgs(Namespace *ns, MapFunction_2 mf2, int64 one, int64 two);
 Word *Tree_Map_State_OneArg(uint64 state, MapFunction_1 mf, int64 one);
 void List_N_M_Node_PrintWords(dllist *alist);

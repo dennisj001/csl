@@ -752,7 +752,7 @@ Tree_Map_OneList ( dllist* list, MapFunction mf )
 
 
 void
-Tree_Map_NamespacesTree1 ( dllist * list, MapSymbolFunction1 mf2, int64 one  )
+Tree_Map_NamespacesTree1 ( dllist * list, MapSymbolFunction1 mf1, int64 one  )
 {
     dlnode * node, *nextNode ;
     Word * word ;
@@ -760,8 +760,8 @@ Tree_Map_NamespacesTree1 ( dllist * list, MapSymbolFunction1 mf2, int64 one  )
     {
         nextNode = dlnode_Next ( node ) ;
         word = ( Word * ) node ;
-        if ( Is_NamespaceType ( word ) ) Tree_Map_NamespacesTree1 ( word->W_List, mf2, one ) ;
-        else mf2 ( ( Symbol* ) word, one ) ;
+        if ( Is_NamespaceType ( word ) ) Tree_Map_NamespacesTree1 ( word->W_List, mf1, one ) ;
+        mf1 ( ( Symbol* ) word, one ) ;
     }
 }
 

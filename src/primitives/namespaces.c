@@ -409,7 +409,8 @@ Word_PrintWithUseage ( Symbol * s )
     ThisWordNode * twn = ( ThisWordNode * ) s ;
     Word * word = twn->ThisWord ;
     //if ( word && word->W_UseCount ) oPrintf ( "%s.%s : %d, ", word->ContainingNamespace->Name, word->Name, word->W_UseCount ) ;
-    if ( word && word->W_UseCount ) oPrintf ( "%s.\'%s\':%d, ", word->ContainingNamespace->Name, word->Name, word->W_UseCount ) ;
+    byte b [128] ; sprintf ( b, "%d", word->W_UseCount, 127 ) ;
+    if ( word && word->W_UseCount ) oPrintf ( "%s.\'%s\':%s, ", c_d (word->ContainingNamespace->Name), c_g(word->Name), c_n(b) ) ;
 }
 
 void

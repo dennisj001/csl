@@ -37,7 +37,11 @@ Interpreter_InterpretSelectedTokens ( Interpreter * interp, byte * target )
 Word *
 Interpreter_DoWord_Default ( Interpreter * interp, Word * word0, int64 tsrli, int64 scwi )
 {
-    word0->W_UseCount ++ ;
+    if ( word0->S_ContainingNamespace )
+    {
+        word0->W_UseCount ++ ;
+        word0->S_ContainingNamespace->W_UseCount ++ ;
+    }
     Word * word = Compiler_CopyDuplicatesAndPush ( word0, tsrli, scwi ) ;
     interp->w_Word = word ;
     Word_Eval ( word ) ;
