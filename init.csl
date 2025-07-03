@@ -199,9 +199,6 @@ type quad ; quad.size = 16 ;
 type Boolean ; Boolean.size = 1 ;
 type Pointer ; Pointer.size = 8 ;
 type block ; block.size = 8 ;
-//cOff
-//: clib "/lib/libc.so.6" ;
-//cOn
 C
 "Dlsym" namespace 
 Dlsym 
@@ -243,12 +240,18 @@ bnOff
 
 Compiler String
 scOn 
+#if 0
 : var: { token dup ";var" strcmp } { _var } while drop ;  // nb : no quotation marks around variable names with var: ... ; 
+#else
+Forth
+: var: begin token dup ";var" strcmp while _var repeat drop ;  // nb : no quotation marks around variable names with var: ... ; 
+#endif
 //'var: find wdis //pause
 var: DebugFlag classTestRead doInit1 doDemo doTest doLisp testing testLisp x ;var sp0 // _TestDone_ ; 
 "mod" 'modulo find alias
 
 Namespace
+Combinators
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
 : usingLast: { token dup ";" strcmp } { usingLast } while drop ; 
@@ -299,8 +302,15 @@ System
     nl pdl 
     pword @ setSourceCodeWord
     pword @ wdis 
+#if 0
     { pword @ } 
     { nl "Word :" _ps hex pword @ p ":: Compiled at :" ps pword @ definition p decimal } if2
+#else // Forth control
+    pword @ 
+    if
+        nl "Word :" _ps hex pword @ p ":: Compiled at :" ps pword @ definition p decimal 
+    endif
+#endif
     nl pel decimal 
     nl "::> 'wdiss' was called at" _ps location "<::" ps nl
 ;
@@ -311,7 +321,7 @@ System
 : pwdissu tokenQID _findUsing wdiss ; // nb. a prefix function
 'pwi 'pwdiss find alias
 'pwu 'pwdissu find alias
-//pwi wdiss //pause
+//pwi _wdiss //pause
 : fload ftoken include ;
 : sys mem stateAll words stack namespaces in ; 
 'aw 'allWords find alias
@@ -376,7 +386,7 @@ dscOn
     //stack pause
 ; 
 //' _assertStkChk0 find wdiss sp0
-#else
+#else // forth control
 : _assertStkChk ( n m | str )  
     verbosity @ 
     if
@@ -618,10 +628,10 @@ d: : hi0 ( n m ) n @ m @ - dup <dbg> p return tos ; pwi hi0 13 2 d: hi0 11 _asse
 #if 1
 : hi ( n m | x ) x n @ m @ - = x @ p return ( x @ ) ; pwi hi 13 2 hi 11 _assert
 cOn
-jcc8_On
+//jcc8_On
 d: int fac5 ( REG n | REG facc )  {  facc = 1 ; while ( n > 1 )  { facc = facc * (n --) ; } return facc ; } 
 fac5 ( 7 ) ; p
-jcc8_Off
+//jcc8_Off
 pwi fac5    
 cOff
 #endif 
@@ -739,6 +749,11 @@ cOff
 : t if 1 p else 0 p then ; 0 t 1 t nl //pause
 : t1 dup dup dup if 1 p t t t else 0 p t t t then ; 0 t1 nl 1 t1 //pause
 pwi t1 pwi t
+#endif
+#if 0
+Forth 
+: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
+: tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
 #endif
 2 + 7 assertStkChk // stack checking
 //rdim 

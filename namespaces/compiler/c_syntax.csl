@@ -434,9 +434,9 @@ void tfw1 ( Word * w )
 pwi tfw1
 //wdiss ( 'tfw1 find ) 
 tfw ('tfw1 find) ; tfw1 ( 'tfw1 find ) ; sp0 //pause
-cOff
 'C_Syntax.tfw find wdiss 
 fw @ C_Syntax.tfw
+cOff
 infixOn
 : ftfw1 ( Word * w ) nl w->Definition hp w->S_Name ps w->Name ps w->W_Filename ps w->W_Filename ps w->W_WordData->Filename ps ;
 //pwi ftfw1

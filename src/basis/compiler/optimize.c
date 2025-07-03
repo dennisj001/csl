@@ -1134,6 +1134,19 @@ CO_PeepHole_Optimize ( )
     }
 }
 
+#if 0 // not used
+void
+Optimize_Remove_cmp_rax_0x0 ( )
+{
+    byte add_r14_0x8__mov_r14_rax [ ] = { 0x48, 0x83, 0xf8, 0x0 } ; //"add r14, 0x8,  mov [r14], rax"
+    if ( ! memcmp ( add_r14_0x8__mov_r14_rax, Here - 4, 4 ) )
+    {
+        CSL_AdjustDbgSourceCodeAddress ( Here, Here - 4 ) ;
+        _ByteArray_UnAppendSpace ( _O_CodeByteArray, 4 ) ;
+    }
+}
+#endif
+
 void
 Optimize_Remove_add_r14_0x8__mov_r14_rax ( )
 {

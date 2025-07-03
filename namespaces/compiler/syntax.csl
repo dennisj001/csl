@@ -157,6 +157,12 @@ Combinators
 : t1 dup dup dup if 1 p t t t else 0 p t t t then ; 0 t1 nl 1 t1 //pause
 pwi t pwi t1
 #endif
+#if 1
+Forth 
+: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
+: tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
+//pause
+#endif
 2 + 7 assertStkChk // stack checking
 sp0
 //pause

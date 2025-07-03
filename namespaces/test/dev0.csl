@@ -64,7 +64,7 @@ factorial ( REG n | REG rec )
 c_syntaxOff
 //pwi factorial
 7 factorial dup p 5040 _assert sp //pause
-
+Combinators
 : fac ( n  | rec ) 
     rec 1 = 
     { n @ 1 > } { n @ rec @ * rec store n -- } while 

@@ -812,8 +812,6 @@ typedef struct
     Boolean InLParenBlock, SemicolonEndsThisBlock, TakesLParenAsBlock, BeginBlockFlag ;
     int32 * AccumulatedOffsetPointer ;
     int64 * FrameSizeCellOffset, BlocksBegun ;
-    byte * RspSaveOffset ;
-    byte * RspRestoreOffset ;
     Word *ReturnWord, * ReturnVariableWord, * ReturnLParenOperandWord, * Current_Word_New, *Current_Word_Create, *PrefixWord ;
     Namespace *C_BackgroundNamespace, *C_FunctionBackgroundNamespace, *Qid_BackgroundNamespace, *LocalsNamespace, *NonCompilingNs ; //, ** FunctionTypesArray ;
     dllist * GotoList, *SetccMovedList ;
@@ -828,6 +826,7 @@ typedef struct
     Stack * BlockStack ; //, *CombinatorStack ;
     Stack * InternalNamespacesStack ;
     Stack * InfixOperatorStack ;
+    Stack * BeginAddressStack ; //RspSaveOffset ;    byte * RspRestoreOffset ;
     dllist * OptimizeInfoList ;
     BlockInfo * CurrentTopBlockInfo ;
     LocalsRegParameterOrder Lrpo ;

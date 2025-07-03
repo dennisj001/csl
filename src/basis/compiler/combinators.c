@@ -122,11 +122,6 @@ CSL_WhileCombinator ( )
         byte * start = Here ;//, *svHere = 0 ;
         compiler->ContinuePoint = Here ;
         d0 ( if ( Is_DebugModeOn ) _CSL_SC_WordList_Show ( ( byte* ) "\nCheckOptimize : after optimize :", 0, 0 ) ) ;
-        //Word * combinator = _Context_->CurrentCombinator ;
-        //BlockInfo *bico = BlockInfo_GetCbisStackPick ( 1 ) ;
-        //svHere = Here ;
-        //BlockInfo *bico2 = BlockInfo_Copy ( bico ) ; 
-        //BlockInfo *bic = BI_CopyCompile ( bico2, ( byte* ) controlBlock, 1 ) ;
         BlockInfo *bic = Block_CopyCompile ( ( byte* ) controlBlock, 1, 1 ) ;
         compiler->CombinatorStartsAt = bic->CopiedToStart ;
         CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;

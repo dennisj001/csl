@@ -11,6 +11,7 @@ sp0
 Int 
 C
 cOff
+Combinators
 // testing before bignum starts // - tail recursion ideas from http://c2.com/cgi/wiki?TailCallOptimization
 //: factorial ( n | rec ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while return ( rec @ ) ;
 : factorial ( REG n | REG rec ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while return ( rec @ ) ;

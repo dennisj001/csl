@@ -13,7 +13,7 @@ Interpret_DoParenthesizedValue ( )
 }
 
 void
-Interpret_C_Block_EndBlock ( byte * tokenToUse, Boolean insertFlag, Boolean controlBlock )
+Interpret_C_Block_EndBlock (byte * tokenToUse, Boolean insertFlag)
 {
     if ( tokenToUse ) _CSL_->EndBlockWord->Name = tokenToUse ;
     if ( insertFlag ) SetState ( _Debugger_, DBG_OUTPUT_INSERTION, true ) ;
@@ -22,14 +22,6 @@ Interpret_C_Block_EndBlock ( byte * tokenToUse, Boolean insertFlag, Boolean cont
     _CSL_->EndBlockWord->Name = ( byte* ) "}" ;
     _Debugger_->SubstitutedWord = 0 ;
     SetState ( _Debugger_, DBG_OUTPUT_INSERTION, false ) ;
-#if 0    
-    if ( controlBlock )
-    {
-        //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
-        BlockInfo *bi = ( BlockInfo * ) Stack_Top ( _Compiler_->CombinatorBlockInfoStack ) ;
-        Compile_BlockLogicTest (bi) ;
-    }
-#endif    
 }
 
 void
@@ -86,7 +78,7 @@ CSL_Interpret_C_Blocks ( int64 blocks, Boolean takesAnElseFlag, Boolean semicolo
                     List_InterpretLists ( compiler->PostfixLists ) ;
                     compiler->InLParenBlock = false ;
                     compiler->TakesLParenAsBlock = false ;
-                    Interpret_C_Block_EndBlock ( ( byte* ) ")", 1, ( blocksParsed == controlBlockNumber ) ) ;
+                    Interpret_C_Block_EndBlock (( byte* ) ")", 1) ;
                     byte *token = Lexer_Peek_NextToken ( cntx->Lexer0, 0, 1 ) ;
                     if ( token && ( ! ( ( String_Equal ( ( char* ) token, ( char* ) "{" ) || ( String_Equal ( ( char* ) token, ( char* ) ";" ) ) ) ) ) )
                     {
@@ -107,7 +99,7 @@ CSL_Interpret_C_Blocks ( int64 blocks, Boolean takesAnElseFlag, Boolean semicolo
             case '}':
             {
                 blocksParsed ++ ;
-                Interpret_C_Block_EndBlock ( 0, 0, ( blocksParsed == controlBlockNumber ) ) ;
+                Interpret_C_Block_EndBlock (0, 0) ;
                 break ;
             }
             case ';':
@@ -117,7 +109,7 @@ CSL_Interpret_C_Blocks ( int64 blocks, Boolean takesAnElseFlag, Boolean semicolo
                 {
                     blocksParsed ++ ;
                     if ( blocksParsed == controlBlockNumber ) Compile_Logic_LookAround_CheckSetBI_Ttt_JccGotoInfo ( compiler ) ;
-                    Interpret_C_Block_EndBlock ( ( byte* ) ";", 0, ( blocksParsed == controlBlockNumber ) ) ;
+                    Interpret_C_Block_EndBlock (( byte* ) ";", 0) ;
                     if ( ( ( blocksParsed + 1 ) == controlBlockNumber ) && ( blocks == 4 ) ) checkNextVariableFlag = 1 ;
                     else if ( ( ( blocksParsed ) == controlBlockNumber ) && ( blocks == 4 ) && registerVariableControlWord )
                     {
@@ -177,7 +169,7 @@ doDefault:
                         {
                             if ( semicolonEndsThisBlock )
                             {
-                                Interpret_C_Block_EndBlock ( ( byte* ) "}", String_Equal ( token, ";" ), 0 ) ;
+                                Interpret_C_Block_EndBlock (( byte* ) "}", String_Equal ( token, ";" )) ;
                                 blocksParsed ++ ;
                             }
                         }
@@ -356,7 +348,7 @@ CSL_C_ConditionalExpression ( )
     if ( ( ! Compiling ) && ( ! GetState ( compiler, C_CONDITIONAL_IN ) ) ) Compiler_Init ( _Compiler_, 0 ) ;
     SetState ( compiler, C_CONDITIONAL_IN, true ) ;
     compiler->CombinatorLevel ++ ; // trigger for below ...
-    if ( ! CompileMode ) CSL_If_TttN_ConditionalExpression ( ) ;
+    if ( ! CompileMode ) CSL_If_TttN_0Branch ( ) ;
     else
     {
         word1 = CSL_WordList ( 1 ) ;

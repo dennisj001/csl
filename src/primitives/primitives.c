@@ -283,7 +283,7 @@ CPrimitive CPrimitives [] = {
 
     { "_fi", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "_else_", 0, 0, 0, CSL_Else, IMMEDIATE, 0, 0, "Asm", "Root" },
-    { "if_", 0, 0, 0, CSL_If_TttN_ConditionalExpression, IMMEDIATE, 0, 0, "Asm", "Root" },
+    { "if_", 0, 0, 0, CSL_If_TttN_0Branch, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "Jmp", 0, 0, 0, CSL_JMP, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "jmpHere", 0, 0, 0, CSL_JmpToHere, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "Jcc", 0, 0, 0, CSL_Compile_Jcc, IMMEDIATE, 0, 0, "Asm", "Root" },
@@ -429,13 +429,6 @@ CPrimitive CPrimitives [] = {
     { "pPrecision", 0, 0, 0, BigNum_Set_PrintfPrecision, 0, 0, 0, "System", "Root" },
     { "internalBitPrecision", 0, 0, 0, BigNum_Set_InternalBitPrecision, 0, 0, 0, "System", "Root" },
     { "bnState", 0, 0, 0, BigNum_StateShow, 0, 0, 0, "System", "Root" },
-
-    { "if", 0, 0, 0, CSL_If_TttN_ConditionalExpression, IMMEDIATE | PREFIXABLE, 0, 0, "Shell", "Root" },
-    { "else", 0, 0, 0, CSL_Else, IMMEDIATE, 0, 0, "Shell", "Root" },
-    { "endif", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Shell", "Root" },
-    { "_sh", 0, 0, 0, ShellEscape_Postfix, 0, 0, 0, "Shell", "Root" },
-    { "$", 0, 0, 0, _shell, 0, 0, 0, "Shell", "Root" },
-    { "sh", 0, 0, 0, shell, 0, 0, 0, "Shell", "Root" },
 
     { "fopen", 0, 0, 0, File_Open, PREFIXABLE, 0, 0, "File", "System" },
     { "fclose", 0, 0, 0, File_Close, PREFIXABLE, 0, 0, "File", "System" },
@@ -679,6 +672,10 @@ CPrimitive CPrimitives [] = {
     //{ "stackVariable", 0, 0, 0, CSL_StackVariable, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
     { "syntactic", 0, 0, 0, CSL_Syntactic, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
 
+    { "_sh", 0, 0, 0, ShellEscape_Postfix, 0, 0, 0, "Shell", "Root" },
+    { "$", 0, 0, 0, _shell, 0, 0, 0, "Shell", "Root" },
+    { "sh", 0, 0, 0, shell, 0, 0, 0, "Shell", "Root" },
+
     { "'", 0, 0, 0, CSL_SingleQuote, IMMEDIATE | KEYWORD, 0, 0, "Forth", "Root" },
     { "1,", 0, 0, 0, Compile_Int8, 0, 0, 0, "Forth", "Root" },
     { "2,", 0, 0, 0, Compile_Int16, 0, 0, 0, "Forth", "Root" },
@@ -687,12 +684,15 @@ CPrimitive CPrimitives [] = {
     { "8,", 0, 0, 0, CompileInt64, 0, 0, 0, "Forth", "Root" },
     { "n,", 0, 0, 0, Compile_N_Bytes, 0, 0, 0, "Forth", "Root" },
     { "rpn", 0, 0, 0, CSL_PostfixModeOn, 0, 0, 0, "Forth", "Root" },
-    { "if", 0, 0, 0, CSL_If_TttN_ConditionalExpression, IMMEDIATE, 0, 0, "Forth", "Root" },
-    //{ "if0", 0, 0, 0, (block) CSL_If_0Branch, IMMEDIATE, 0, 0, "Forth", "Root" },
+    { "if", 0, 0, 0, CSL_If_TttN_0Branch, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "else", 0, 0, 0, CSL_Else, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "endif", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "then", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "end", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Forth", "Root" },
+    { "begin", 0, 0, 0, CSL_Begin, IMMEDIATE, 0, 0, "Forth", "Root" },
+    { "while", 0, 0, 0, CSL_While, IMMEDIATE, 0, 0, "Forth", "Root" },
+    { "repeat", 0, 0, 0, CSL_Repeat, IMMEDIATE, 0, 0, "Forth", "Root" },
+    { "until", 0, 0, 0, CSL_Until, IMMEDIATE, 0, 0, "Forth", "Root" },
     //{ ".", 0, 0, 0, CSL_PrintInt, 0, 0, 0, "Forth", "Root" },
 
     { "dlsym:", 0, 0, 0, CSL_Dlsym, 0, 0, 0, "Reserved", "Compiler" },

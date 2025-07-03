@@ -293,6 +293,7 @@ Compiler_Init ( Compiler * compiler, uint64 state )
     compiler->Current_Word_Create = 0 ;
     Stack_Init ( compiler->PointerToJmpInsnStack ) ;
     Stack_Init ( compiler->InfixOperatorStack ) ;
+    Stack_Init ( compiler->BeginAddressStack ) ;
     Stack_Init ( compiler->LocalsCompilingNamespacesStack ) ;
     Stack_Init ( compiler->LHS_Word ) ;
     Stack_Init ( compiler->BlockStack ) ;
@@ -314,6 +315,7 @@ Compiler_New ( uint64 allocType )
     compiler->BlockStack = _Stack_Allocate ( 64, allocType ) ;
     //compiler->CombinatorStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->InfixOperatorStack = _Stack_Allocate ( 64, allocType ) ;
+    compiler->BeginAddressStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->PointerToJmpInsnStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->CombinatorBlockInfoStack = _Stack_Allocate ( 64, allocType ) ;
     compiler->LocalsCompilingNamespacesStack = _Stack_Allocate ( 64, allocType ) ; // allow recycling across contexts

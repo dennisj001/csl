@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.942.281" )
+#define VERSION ((byte*) "0.943.000" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -131,18 +131,14 @@ OpenVmTil_Run ( int64 argc, char * argv [ ] )
         ovt = _O_ = OpenVmTil_New ( _O_, argc, argv ) ;
         e = _O_->OVT_Exception ;
         e->SigSegvs = sigSegvs ;
-        ovt->Verbosity = 1 ;
         e->Restarts = restarts ;
         if ( e->Restarts ) OVT_ExceptionState_Print ( ) ;
-        //SetState ( ovt, OVT_PROMPT_DONE, false ) ;
+        ovt->Verbosity = 1 ;
         if ( ! sigsetjmp ( ovt->JmpBuf0, 0 ) ) // nb. siglongjmp always comes to beginning of the block 
         {
             ovt->OVT_CSL = CSL_New ( ovt->OVT_CSL ) ;
             CSL_Run ( ovt->OVT_CSL, e->RestartCondition ) ;
         }
-
-        //restartCondition = ovt->OVT_Exception->RestartCondition ;
-        //OVT_SetRestartCondition ( ovt, restartCondition ) ;
     }
 }
 
@@ -150,13 +146,9 @@ void
 Ovt_RunInit ( OpenVmTil * ovt )
 {
     Exception *e = _O_->OVT_Exception ;
-    //static int loopTimes ;
     e->StartedTimes ++ ;
     OVT_SetRestartCondition ( CSL_RUN_INIT ) ;
-    //OVT_StartupMessage ( startupMessageFlag && ( ++csl->InitSessionCoreTimes <= 2 ) ) ;
     OVT_StartupMessage ( ( ++ _CSL_->InitSessionCoreTimes <= 2 ) ) ;
-    //CSL_Prompt (ovt->OVT_CSL, 1, 1 , 0) ; //++loopTimes < 2, 1 ) ;
-    //SetState ( _O_, OVT_PROMPT_DONE, false ) ;
 }
 
 void
@@ -204,7 +196,6 @@ OVT_RecycleAllWordsDebugInfo ( )
 void
 OVT_ResetOutputPrintBuffer ( )
 {
-    //strncpy ( Buffer_Data ( _O_->PrintBufferCopy ), Buffer_Data ( _O_->PrintBuffer ), BUFFER_SIZE ) ;
     Buffer_DataCleared ( _O_->PrintBuffer ) ; //[0] = 0 ;
     _O_->PrintBuffer->B_Data[0] = 0 ;
 }
@@ -248,7 +239,6 @@ _OVT_openvmtil ( )
 void
 OVT_openvmtil ( )
 {
-    //_O_->OVT_Exception->RestartCondition = COMPLETE_INITIAL_START ;
     _OVT_openvmtil ( ) ;
 }
 

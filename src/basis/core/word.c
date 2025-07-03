@@ -50,6 +50,7 @@ _Word_Eval ( Word * word )
         if ( ( word->W_MorphismAttributes & IMMEDIATE ) || ( ! CompileMode ) )
         {
             SetState ( _Context_, RUN_MODE, true ) ;
+            //if ( ( word->W_MorphismAttributes & IMMEDIATE ) ) Compiler_Word_SCHCPUSCA ( word, 0 ) ;
             Word_Morphism_Run ( word ) ;
             SetState ( _Context_, RUN_MODE, false ) ;
         }
