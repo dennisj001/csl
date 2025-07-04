@@ -45,7 +45,7 @@ CSL_BeginCombinator ( int64 quotesUsed )
     //BlockInfo *bi = ( BlockInfo * ) _Stack_Pick ( compiler->CombinatorBlockInfoStack, quotesUsed - 1 ) ; // -1 : remember - stack is zero based ; stack[0] is top
     BlockInfo *bi = BlockInfo_GetCbisStackPick ( quotesUsed - 1 ) ;
     compiler->CombinatorStartsAt = Here ;
-    CalculateOffsetForCallOrJump (bi->PtrToJmpInsn, compiler->CombinatorStartsAt, T_JMP) ;
+    CalculateOffsetForCallOrJump (bi->PtrToJmpInsn, compiler->CombinatorStartsAt, T_JMP, 0) ;
     compiler->CombinatorLevel ++ ;
     return bi ;
 }
@@ -245,7 +245,7 @@ _CSL_DoWhileCombinator ( block controlBlock, block doBlock )
         CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_TRUE, Here, 1 ) ;
         BlockInfo * bid = Block_CopyCompile ( ( byte* ) doBlock, 1, 0 ) ;
         BlockInfo * bic = Block_CopyCompile ( ( byte* ) controlBlock, 0, 1 ) ; // 3 : use old version for jmp to back ref ??
-        CalculateOffsetForCallOrJump (bic->JccCode ? bic->JccCode : bic->JccAddedCode, bid->CopiedToStart, T_JCC) ;
+        CalculateOffsetForCallOrJump (bic->JccCode ? bic->JccCode : bic->JccAddedCode, bid->CopiedToStart, T_JCC, 0) ;
         GotoInfo_Remove ( ( dlnode* ) bic->BI_Gi ), bic->BI_Gi = 0 ;
         //CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;// CSL_EndCombinator does this
         CSL_EndCombinator ( 2, 1 ) ;

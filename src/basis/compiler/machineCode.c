@@ -882,7 +882,7 @@ _Compile_JumpToDisp ( int32 disp, byte insn )
 void
 Compile_JumpToAddress ( byte * jmpToAddr, byte insn ) // runtime
 {
-    int32 disp = CalculateOffsetForCallOrJump ( Here, jmpToAddr, T_JMP ) ;
+    int32 disp = CalculateOffsetForCallOrJump (Here, jmpToAddr, T_JMP , 0) ;
     _Compile_JumpToDisp ( disp, insn ) ;
 }
 

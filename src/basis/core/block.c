@@ -118,14 +118,14 @@ CSL_FinalizeBlocks ( BlockInfo * bi )
     Compiler * compiler = _Context_->Compiler0 ;
     if ( Compiler_IsFrameNecessary ( compiler ) )
     {
-        Compiler_SetLocalsFrameSize_AtItsCellOffset ( compiler ) ;
+        Compiler_SetLocalsFrameSize_AtItsCellOffset (compiler ) ;
         CSL_InstallGotoCallPoints_Keyed ( bi, GI_RETURN, 0, 0 ) ;
         Compiler_RemoveLocalFrame ( bi, compiler ) ;
         bi->bp_First = bi->LocalFrameStart ; // default 
     }
     else
     {
-        if ( compiler->NumberOfRegisterVariables ) Compiler_RemoveLocalFrame ( bi, compiler ) ;
+        if ( compiler->NumberOfRegisterVariables ) Compiler_RemoveLocalFrame ( bi, _Compiler_ ) ;
         bi->bp_First = bi->AfterLocalFrame ;
     }
 }
@@ -133,39 +133,39 @@ CSL_FinalizeBlocks ( BlockInfo * bi )
 void
 _CSL_EndBlock1 ( BlockInfo * bi )
 {
-    Compiler * compiler = _Context_->Compiler0 ;
-    if ( ! Compiler_BlockLevel ( compiler ) ) CSL_FinalizeBlocks ( bi ) ;
+    //Compiler * compiler = _Context_->Compiler0 ;
+    if ( ! Compiler_BlockLevel ( _Compiler_ ) ) CSL_FinalizeBlocks ( bi ) ;
     Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
     _Compile_Return ( ) ;
     DataStack_Push ( ( int64 ) bi->bp_First ) ;
     bi->bp_Last = Here ;
     Compiler_CalculateAndSetPreviousJmpOffset ( bi->PtrToJmpInsn ) ;
-    CalculateOffsetForCallOrJump (bi->PtrToJmpInsn, Here, T_JMP) ;
+    CalculateOffsetForCallOrJump (bi->PtrToJmpInsn, Here, T_JMP, 0) ;
 }
 
 byte *
 _CSL_EndBlock2 ( BlockInfo * bi )
 {
-    Context * cntx = _Context_ ;
-    Compiler * compiler = cntx->Compiler0 ;
+    //Context * cntx = _Context_ ;
+    //Compiler * compiler = cntx->Compiler0 ;
     byte * first = bi->bp_First ;
-    if ( ! Compiler_BlockLevel ( compiler ) )
+    if ( ! Compiler_BlockLevel ( _Compiler_ ) )
     {
         CSL_InstallGotoCallPoints_Keyed ( bi, GI_GOTO | GI_RECURSE, 0, 0 ) ;
         CSL_TurnOffBlockCompiler ( ) ;
-        compiler->CurrentTopBlockInfo = 0 ;
+        _Compiler_->CurrentTopBlockInfo = 0 ;
     }
-    else if ( ! GetState ( compiler, C_BLOCK_INTERPRETER ) ) _Namespace_RemoveFromUsingList_ClearFlag ( bi->BI_LocalsNamespace, 1, 0 ) ; // a block namespace
+    else if ( ! GetState ( _Compiler_, C_BLOCK_INTERPRETER ) ) _Namespace_RemoveFromUsingList_ClearFlag ( bi->BI_LocalsNamespace, 1, 0 ) ; // a block namespace
     return first ;
 }
 
 void
 CSL_EndBlock ( )
 {
-    Context * cntx = _Context_ ;
-    Compiler * compiler = cntx->Compiler0 ;
-    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( compiler->BlockStack ) ;
-    compiler->BlockLevel -- ;
+    //Context * cntx = _Context_ ;
+    //Compiler * compiler = cntx->Compiler0 ;
+    BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Compiler_->BlockStack ) ;
+    _Compiler_->BlockLevel -- ;
     bi->LogicCodeWord = CSL_WordList ( 1 ) ;
     _CSL_EndBlock1 ( bi ) ;
     _CSL_EndBlock2 ( bi ) ;
@@ -175,17 +175,17 @@ CSL_EndBlock ( )
 BlockInfo *
 BlockInfo_Allocate ( )
 {
-    Context * cntx = _Context_ ;
+    //Context * cntx = _Context_ ;
     BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), COMPILER_TEMP ) ;
     return bi ;
 }
 BlockInfo *
 BlockInfo_New ( )
 {
-    Context * cntx = _Context_ ;
+    //Context * cntx = _Context_ ;
     BlockInfo *bi = BlockInfo_Allocate ( ) ;
     bi->BI_Symbol.Name = & ( _CSL_->SC_Buffer [ _CSL_->SC_Index - 1 ] ) ;
-    bi->OurCombinator = cntx->CurrentCombinator ;
+    bi->OurCombinator = _Context_->CurrentCombinator ;
     return bi ;
 }
 

@@ -102,14 +102,14 @@ _DObject_C_StartupCompiledWords_DefInit ( byte * function, int64 arg, Word * wor
 {
     if ( arg == - 1 )
     {
+        //DBI_ON ;
         ( ( void ( * )( ) )( function ) ) ( ) ;
+        //DBI_OFF ;
     }
-#if 1    
     else if ( arg == - 2 ) // namespace
     {
         Compile_CallCFunctionWithParameter_TestAlignRSP2 ( ( byte* ) DoNamespace, word ) ;
     }
-#endif    
     else
     {
         ( ( void ( * ) ( int64 ) )( function ) ) ( arg ) ;

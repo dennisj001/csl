@@ -348,7 +348,7 @@ CSL_C_ConditionalExpression ( )
     if ( ( ! Compiling ) && ( ! GetState ( compiler, C_CONDITIONAL_IN ) ) ) Compiler_Init ( _Compiler_, 0 ) ;
     SetState ( compiler, C_CONDITIONAL_IN, true ) ;
     compiler->CombinatorLevel ++ ; // trigger for below ...
-    if ( ! CompileMode ) CSL_If_TttN_0Branch ( ) ;
+    if ( ! CompileMode ) CSL_If_TttN_0Branch_Jcc ( ) ;
     else
     {
         word1 = CSL_WordList ( 1 ) ;

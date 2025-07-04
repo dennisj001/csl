@@ -283,7 +283,7 @@ CPrimitive CPrimitives [] = {
 
     { "_fi", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "_else_", 0, 0, 0, CSL_Else, IMMEDIATE, 0, 0, "Asm", "Root" },
-    { "if_", 0, 0, 0, CSL_If_TttN_0Branch, IMMEDIATE, 0, 0, "Asm", "Root" },
+    { "if_", 0, 0, 0, CSL_If_TttN_0Branch_Jcc, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "Jmp", 0, 0, 0, CSL_JMP, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "jmpHere", 0, 0, 0, CSL_JmpToHere, IMMEDIATE, 0, 0, "Asm", "Root" },
     { "Jcc", 0, 0, 0, CSL_Compile_Jcc, IMMEDIATE, 0, 0, "Asm", "Root" },
@@ -684,7 +684,7 @@ CPrimitive CPrimitives [] = {
     { "8,", 0, 0, 0, CompileInt64, 0, 0, 0, "Forth", "Root" },
     { "n,", 0, 0, 0, Compile_N_Bytes, 0, 0, 0, "Forth", "Root" },
     { "rpn", 0, 0, 0, CSL_PostfixModeOn, 0, 0, 0, "Forth", "Root" },
-    { "if", 0, 0, 0, CSL_If_TttN_0Branch, IMMEDIATE, 0, 0, "Forth", "Root" },
+    { "if", 0, 0, 0, CSL_If_TttN_0Branch_Jcc, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "else", 0, 0, 0, CSL_Else, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "endif", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "then", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Forth", "Root" },
