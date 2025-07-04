@@ -62,7 +62,8 @@
 #define JMP8 (0xeb ) // x86 - jmp opcode
 #define JCC8 (0x70)
 #define JCC16 (0x80) //??
-#define JCC32 (0x0f) //0x0f8x
+#define JCC32 (0x0f) // this is somehow useful now ? //0x0f8x
+#define JCC32_2 (0x800f)
 #define NOOP4 (0x000401f0f) //(0x0f1f4000)
 #define TEST_ISN ()
 // insn types

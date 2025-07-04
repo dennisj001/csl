@@ -597,7 +597,8 @@ typedef struct
     uint64 State ;
     int64 CopiedSize, JccType, ParenLevel ;
     byte *LocalFrameStart, *AfterLocalFrame, *bp_First, *bp_Last, *PtrToJumpOffset, *PtrToJmpInsn, *CompiledAtAddress ;
-    byte *TttnCode, *JccCode, *JccAddedCode, *TestCode, *CmpCode, *AfterCmpCode, *OriginalActualCodeStart, *CopiedToStart, *BI_StackPushRegisterCode, *SetccCode, * MovzxCode ;
+    byte *TttnCode, *JccCode, *JccAddedCode, *TestCode, *CmpCode, *AfterCmpCode, *OriginalActualCodeStart ; 
+    byte *CopiedToStart, *BI_StackPushRegisterCode, *SetccCode, * MovzxCode ;
     byte *CopiedToEnd, *CopiedToLogicJccCode, *ActualCopiedToJccCode, *JmpToAddress ;
     Boolean SetccTtt, Ttt, SetccNegFlag, N ;
     Word * LogicCodeWord, *OurCombinator, *RegisterVariableControlWord ;
@@ -616,7 +617,8 @@ typedef struct
     byte InsnType ;
     byte InsnSize ;
     byte OffsetSize ;
-    uint16 Insn ; // JCC8 JCC32, etc
+    uint16 Insn16 ; // JCC8 JCC32, etc
+    byte Insn ;
     int32 Disp ; // Displacement 
 } BlockInfo ;
 typedef struct

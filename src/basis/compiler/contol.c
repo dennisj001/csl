@@ -63,15 +63,18 @@ BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi )
         if ( bi->InsnAddress )
         {
             bi->Insn = ( * bi->InsnAddress ) ;
+            bi->Insn16 = ( * ((int16 *) bi->InsnAddress)) ;
         }
         else Error ( "\nBI_CalculateOffsetForCallOrJumpOrJcc : No insn or InsnAddress", QUIT ) ;
     }
     if ( ! bi->InsnType )
     {
-        if ( ( bi->Insn == JCC32 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
+        if ( ( (bi->Insn16 & (0x800f)) == JCC32_2 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
+        //if ( ( bi->Insn == JCC32 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
         else bi->InsnType = ( T_JMP | T_CALL ) ;
     }
-    bi->InsnSize = ( bi->Insn == JCC32 ) ? 2 : 1 ;
+    bi->InsnSize = ( ( (bi->Insn16 & (0x800f)) == JCC32_2 ) ) ? 2 : 1 ;
+    //bi->InsnSize = ( bi->Insn == JCC32 ) ? 2 : 1 ;
     if ( ( bi->InsnType & ( T_JMP | T_CALL ) ) ) //&& ( insnSize == 1 ) ) //offsetSize = 1, insnSize = 1
     {
         if ( bi->Insn )
@@ -93,7 +96,8 @@ BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi )
     }
     else if ( bi->InsnType & ( T_JCC ) )
     {
-        if ( bi->Insn == JCC32 ) bi->OffsetSize = 4 ;
+        if ( ( (bi->Insn16 & (0x800f)) == JCC32_2 ) ) bi->OffsetSize = 4 ;
+        //if ( bi->Insn == JCC32 ) bi->OffsetSize = 4 ;
         else bi->OffsetSize = 1 ;
     }
     bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
@@ -132,6 +136,7 @@ CalculateOffsetForCallOrJump ( byte * insnAddr, byte * jmpToAddr, byte insnType,
     bi->InsnAddress = insnAddr ;
     bi->JmpToAddress = jmpToAddr ;
     bi->Insn = insn ; // correct previous useages
+    bi->Insn16 = ( * ((int16 *) insnAddr)) ;
     bi->InsnType = insnType ;
     return SetOffsetForCallOrJump ( bi ) ; //nb bi->Disp is set 
 }
