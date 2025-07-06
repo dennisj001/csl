@@ -70,11 +70,13 @@ ShellEscape ( byte * str )
     int status ;
     status = system ( str ) ;
     if ( Verbosity ( ) > 1 ) printf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
-    _DoPrompt () ;
-    fflush ( stdout ) ;
+    _DoPrompt ( ) ;
+    //fflush ( stdout ) ;
+    //CSL_NewLine () ;
 }
 
 #if 0
+
 void
 ShellEscape ( byte * str )
 {
@@ -109,7 +111,7 @@ shell ( )
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     ReadLine_SetPrompt ( rl, "$ " ) ;
     iPrintf ( "\n type \'.\' to exit" ) ;
-    DoPrompt () ;
+    DoPrompt ( ) ;
     system ( "bash -i" ) ;
     //execl ("/bin/bash", "bash", "-i", "-c", str, (char *) NULL) ;
 
@@ -129,7 +131,7 @@ shell ( )
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     ReadLine_SetPrompt ( rl, "$ " ) ;
     iPrintf ( "\n type \'.\' to exit" ) ;
-    DoPrompt () ;
+    DoPrompt ( ) ;
     while ( 1 )
     {
         _ReadLine_GetLine ( rl, 0 ) ;
@@ -147,6 +149,28 @@ shell ( )
 }
 
 #endif
+
+void
+CSL_ChangeDirectory ( )
+{
+    byte * filename = _Lexer_LexNextToken_WithDelimiters ( _Lexer_, 0, 1, 0, 1, LEXER_ALLOW_DOT ) ; 
+    if ( String_Equal ( filename, ".." ) )
+    {
+        byte * b = Buffer_New_pbyte ( BUFFER_SIZE ) ;
+        byte * directory = getcwd ( b, BUFFER_SIZE ) ;
+        int i, l = strlen ( directory ) ;
+        for ( i = l ; i > 0 ; i -- )
+        {
+            if ( directory[i] == '/' )
+            {
+                directory [i] = 0 ;
+                break ;
+            }
+        }
+        filename = directory ;
+    }
+    chdir ( filename ) ;
+}
 
 void
 CSL_Filename ( )

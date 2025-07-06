@@ -2117,6 +2117,7 @@ void CSL_Throw(void);
 void ShellEscape(byte *str);
 void ShellEscape_Postfix(void);
 void _shell(void);
+void CSL_ChangeDirectory(void);
 void CSL_Filename(void);
 void CSL_Location(void);
 void CSL_LineNumber(void);

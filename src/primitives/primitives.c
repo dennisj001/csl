@@ -371,6 +371,7 @@ CPrimitive CPrimitives [] = {
     { "warmInit", 0, 0, 0, CSL_WarmInit, 0, 0, 0, "System", "Root" },
     { "stackInit", 0, 0, 0, CSL_DataStack_Init, 0, 0, 0, "System", "Root" },
     { "filename", 0, 0, 0, CSL_Filename, 0, 0, 0, "System", "Root" },
+    { "changeDirectory", 0, 0, 0, CSL_ChangeDirectory, 0, 0, 0, "System", "Root" },
     { "throw", 0, 0, 0, CSL_Throw, 0, 0, 0, "System", "Root" },
     { "lineNumber", 0, 0, 0, CSL_LineNumber, 0, 0, 0, "System", "Root" },
     { "charNumber", 0, 0, 0, CSL_LineCharacterNumber, 0, 0, 0, "System", "Root" },

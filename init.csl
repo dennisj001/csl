@@ -74,6 +74,8 @@ User
 "_const" ' _constant find alias
 "var" ' variable find alias
 "_var" ' _variable find alias
+'cd ' changeDirectory find alias
+#define ll $ls -al 
 Debug
 //"dbg" '_dbg find alias immediate debugWord
 "dbrk" ' <dbg> find alias debugWord
@@ -768,7 +770,7 @@ CountChange ( int64 amount )
 CountChange (100) ; stack //pause
 countChangec (100 ) ; drop
 ti(4) ; countChangec (1000 ) ; drop time(4) ;
-ti(4) ; countChangec (10000 ) ; drop time(4) ;
+//ti(4) ; countChangec (10000 ) ; drop time(4) ;
 ti(4) ; CountChange (1000) ; time(4) ; stack
 //ti(4) ; CountChange (10000) ; time(4) ; stack
 //logOff

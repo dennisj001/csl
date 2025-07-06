@@ -1,8 +1,32 @@
 
+#if 0 // original unedited shell.c from Luiz Santos. thank you!
+MIT License
+
+Copyright ( c ) 2021 Luiz Santos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation
+files ( the "Software" ), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions :
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+#endif
 #include "../include/csl.h"
 
-void
-shell ( )
+    void
+    shell ( )
 {
     Context * cntx = _Context_ ;
     ReadLiner * rl = cntx->ReadLiner0 ;
@@ -57,7 +81,27 @@ shell ( )
         _DoPrompt ( ) ;
         _ReadLine_GetLine ( rl, 0 ) ;
         byte * str = & rl->InputLine [0] ;
+        if ( str[0] == '$' )
+        {
+            Interpret_String ( &str[1] ) ;
+            continue ;
+        }
+        if ( ( str[0] == 'c' ) && ( str[1] == 'd' ) )
+        {
+            Interpret_String ( str ) ;
+            continue ;
+        }
         if ( String_Equal ( str, ".\n" ) ) goto done ;
+        if ( String_Equal ( str, "bye\n" ) )
+        {
+            rl->InputLine [0] = 0 ;
+            ReadLine_SetPrompt ( rl, svPrompt ) ;
+            Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
+            _O_->Pbf8[0]  = _ReadLiner_->NormalPrompt[0] ;
+            _DoPrompt ( ) ;
+            return ;
+        }
+        if ( String_Equal ( str, "exit\n" ) ) goto done ;
         // Create pipe between process
         int fd[2] ;
         pipe ( fd ) ;
@@ -110,7 +154,7 @@ shell ( )
 done:
     ReadLine_SetPrompt ( rl, svPrompt ) ;
     Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
-    iPrintf ( " leaving shell ..." ) ;
+    iPrintf ( " leaving shell ...\r" ) ;
 }
 
 void
@@ -121,26 +165,3 @@ handle_sigchld ( int sig )
     pid = waitpid ( - 1, &status, ( WNOHANG | WUNTRACED | WCONTINUED ) ) ;
 }
 
-#if 0 // original unedited shell.c from Luiz Santos. thank you!
-MIT License
-
-Copyright ( c ) 2021 Luiz Santos
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files ( the "Software" ), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions :
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
-#endif
