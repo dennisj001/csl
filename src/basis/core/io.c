@@ -172,9 +172,15 @@ Emit ( byte c )
 void
 _DoPrompt ( )
 {
+#if 0    
     byte lc = _ReadLiner_->InputKeyedCharacter ;
     Boolean lcnl = ( lc == '\n' ), lcbnl = (_O_->Pblc == '\n') ;
-    if ( ( _O_->Pbf8[0] != '\r' ) || ( ! lcnl ) && ( ! lcbnl ) )  CSL_PrintChar ( '\n' ) ;
+    if ( (( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) || ( ! lcnl ) && ( ! lcbnl ) )  CSL_PrintChar ( '\n' ) ;
+#elif 0   
+    if (( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) )  CSL_PrintChar ( '\n' ) ;
+#else    
+    if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) )  CSL_PrintChar ( '\n' ) ;
+#endif    
     iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
     SetState ( _O_, OVT_PROMPT_DONE, true ) ;
 }

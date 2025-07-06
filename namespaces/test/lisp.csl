@@ -188,9 +188,9 @@ Lisp
 //(define q1x (lambda (a) (a))) 
 (define ( q1x a) (a)) 
 (define q2 q1x)
-//sp    
+   
 ((q2 /) (q2 14) (q2 2)) 
-//sp    
+   
 (define q3 q2)
 (define q4 q3)
 (define q5 q4)
@@ -220,7 +220,7 @@ tick fibc2 find wdiss //pause
 "\nfibc 20 = " ps (fibc 20)
 "\nfibc2 20 = " ps (fibc2 20)
 //pause
-sp
+
 //syntatic experiments ...
 // causes as yet unresolved source code display problems
 //d: (ld:) 
@@ -234,13 +234,13 @@ C
 'bexp43 find wdiss //pause
 7 C bexp43 dup 5040 "C : bexp43_assert" assert p 
 //pause
-sp
+
 Lisp
 ( :: C : bexp44 ( n ) { n @ 1 > } { n @ n @ -- bexp44 * } { 1 } ifElse ; )
 tick bexp44 find wdiss //pause
 7 C bexp44 dup 5040 "C : bexp43_assert" assert p //pause
 Root
-sp
+
 lispOff
 : goedel3 (| n ) 
     "\n goedel3 :: " ps 
@@ -327,7 +327,7 @@ Lisp
 "testing unquote above line should show : ( Its a beautiful day don't x1 it get away )\n" ps 
 `( Its ,@a beautiful day don\'t ,@x it get away )
 `( Its a beautiful day don\'t ,@x1 it get away )
-sp
+
 lispOff 
 C
 "\nending lisp.csl\n" ddps
@@ -336,20 +336,21 @@ String
 $ls -al /usr/local ; 
 $etc/script ; 
 $etc/lispScript ; 
-: hi 1 2 + p ; hi nl
 $ls  -al ;
-: hi ( a b | c ) c a @ b @ + = oPrintf ("\n%d", c ) ; 1 2 hi 1 _assert nl //pause
+Forth
+: hi 1 2 + p ; hi nl
+: hi1 ( a b | c ) c a @ b @ + = oPrintf ("\n%d", c ) return ( c @ ) ; pwi hi1 1 2 hi1 3 _assert nl //pause
 //stack pause
 verbosity 1 =
-sp
+
 #endif
 C
-sp
+
 Int
 2 + 7 assertStkChk // stack checking
 location 
 bnOff
-sp
+
 //pause
 
 

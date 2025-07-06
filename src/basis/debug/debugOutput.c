@@ -640,7 +640,6 @@ CSL_Show_SourceCode_TokenLine ( Word * word, byte * prompt, int64 signal, byte *
                 word->ContainingNamespace ? ( char* ) word->ContainingNamespace->Name : ( char* ) "<literal>",
                 ( char* ) cc_Token, ( uint64 ) word ) ;
         }
-        //fflush ( stdout ) ;
     }
     else
     {
@@ -669,11 +668,7 @@ LO_Debug_ExtraShow ( int64 showStackFlag, int64 verbosity, int64 wordList, byte 
             va_end ( args ) ;
             DebugColors ;
             if ( wordList ) _CSL_SC_WordList_Show ( ( byte* ) out, 0, 0 ) ;
-            else
-            {
-                printf ( "%s", out ) ;
-                fflush ( stdout ) ;
-            }
+            else _Printf ( "%s", out ) ;
             if ( showStackFlag && Verbosity ( ) > verbosity ) Stack ( ) ;
             DefaultColors ;
         }

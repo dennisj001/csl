@@ -1,4 +1,4 @@
-//logOn
+logOn
 //_dbgOn 
 //ukseOn
 //optimizeOff
@@ -209,11 +209,11 @@ dlsym: printf LIBC ; void_return
 dlsym: strcmp LIBC ; rax_return
 dlsym: sprintf LIBC ; void_return
 dlsym: strcat LIBC ; void_return
-//dlsym: _strlen LIBC ; rax_return
+//dlsym: strlen LIBC ; rax_return
 dlsym: memset LIBC ; void_return
 dlsym: sscanf LIBC ; void_return
 dlsym: atoi LIBC ; rax_return
-//int strlen ( s ) { return _strlen ( s ); }
+//int _strlen ( s ) { return strlen ( s ); }
 c_syntaxOff
 Root  
 sp0
@@ -232,7 +232,7 @@ BigNum
 // pPrecision : this sets the number of digits to be printed after the decimal point" 
 // pWidth : sets the "Minimum number of characters to be printed. If the value to be printed is shorter than this number, 
 // the result is padded with blank spaces. The value is not truncated even if the result is larger."
-//: bnInit ( precision width ) precision @ pPrecision width @ pWidth ;; 
+: bnInit ( precision width ) precision @ pPrecision width @ pWidth ;; 
 //'bnInit find wdis 
 bnOn
 : _bassert ( n m ) { n @ m @ != } { nl "error" ps _info pause } if2 ; 
@@ -535,16 +535,51 @@ stringMacrosOn
 lispOff
 : mrm mem rdi mem ; 
 : mem2 verbosity 2 = mem verbosity 1 = ; 
+#ifndef INCLUDES 
+#define INCLUDES
 //: typesInclude "namespaces/types.csl" include ;
 //: minc vb2 _c_syntaxOn "/home/dennisj/csl-code/archive/maru-2.4/eval.c" include ;
 //: minc2 vb2 cOn includesOnlyOn minc cOff includesOnlyOff ;
 //: mci "namespaces/compiler/machineCode.c" include ;
-: loT "namespaces/test/logic.csl" include ;
-: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
-: ppT preprocessorTest ;
+: iinc "./init.csl" include ;
+: interpT "namespaces/compiler/interpreter.csl" include ;
+: itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
+: classTest "namespaces/test/classTest.csl" include ;
+: arrayTest "namespaces/test/arrayTest.csl" include ;
+: localsTest "namespaces/test/localsTest.csl" include ;
 : bigNumTest "namespaces/test/bigNum.csl" include ;
+: stackTest "namespaces/test/stack.csl" include ;
+: controlTest "namespaces/test/control.csl" include ;
+: objectTest "namespaces/test/dobject.csl" include ;
+: c_SyntaxTest "namespaces/compiler/c_syntax.csl" include ;
+: syntaxTest "namespaces/compiler/syntax.csl" include ;
+: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
+: test "namespaces/test/test.csl" include ;
+: dT0 "namespaces/test/dev0.csl" include ;
+: dT2 "namespaces/test/dev2.csl" include ;
+: dT3 "namespaces/test/dev3.csl" include ;
+: loT "namespaces/test/logic.csl" include ;
+: dT "namespaces/test/dev.csl" include ; inline
+: dT2 "namespaces/test/dev2.csl" include ;
+: mT "namespaces/test/math.csl" include ;
+: fT "namespaces/test/file.csl" include ;
+: sT "namespaces/compiler/syntax.csl" include ;
+: nT "namespaces/test/namespace.csl" include ;
+: sysT "namespaces/test/system.csl" include ;
+: lispTest "namespaces/test/lisp.csl" include ;
+: oldL "namespaces/test/oldLisp.csl" include ;
+: stT stackTest ;
 : bT bigNumTest ;
-//: jforth "src/primitives/lbForth.c" include ; //jforth 
+: locT localsTest ;
+: aT arrayTest ;
+: cT classTest ;
+: cntT controlTest ;
+: oT objectTest ;
+: cST c_SyntaxTest ;
+: ppT preprocessorTest ;
+: lT lispTest ;
+#endif
+
 // === startup extra controls ===
 Root 
 'todo 0 const  
@@ -582,7 +617,9 @@ dbgOff
 //lisp
 //tc
 
-// ===================
+// ===========================
+// extra, debug, testing, etc.
+// ===========================
 #if Is_DebugOn forStarters ||
 
 #if todo
@@ -644,14 +681,17 @@ cOff
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
 #if 0 //DEBUG_ON 
+Forth
+: _fib1cr ( n ) n 2 < if n @ else n  n @ 1 - = _fib1cr n n @ 2 - = _fib1cr + endif ;
 c_syntaxOn
-int _fib1cr ( REG n ) { if ( n < 2 ) { n ; } else { _fib1cr ( n - 1 ) + _fib1cr ( n - 2 ) ; }  }
 int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
 pwi _fib1c
 pwi _fib1cr
 _fib1c (20) ; dup p 6765 _assert
+pwi _fib1cr 
 //_fib1cr (20) ; dup p 6765 _assert // not working
 c_syntaxOff
+//#endif
 C
 scOn
 cOn 

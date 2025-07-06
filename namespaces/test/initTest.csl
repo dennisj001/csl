@@ -6,24 +6,25 @@ Root
 Int User Combinators
 { "_TestDone_" _defined not } { "_TestDone_" _var } if2 
 sp
+#ifndef INCLUDES 
 : iinc "./init.csl" include ;
 : interpT "namespaces/compiler/interpreter.csl" include ;
 : itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
 : classTest "namespaces/test/classTest.csl" include ;
 : arrayTest "namespaces/test/arrayTest.csl" include ;
 : localsTest "namespaces/test/localsTest.csl" include ;
-//: bigNumTest "namespaces/test/bigNum.csl" include ;
+: bigNumTest "namespaces/test/bigNum.csl" include ;
 : stackTest "namespaces/test/stack.csl" include ;
 : controlTest "namespaces/test/control.csl" include ;
 : objectTest "namespaces/test/dobject.csl" include ;
 : c_SyntaxTest "namespaces/compiler/c_syntax.csl" include ;
 : syntaxTest "namespaces/compiler/syntax.csl" include ;
-//: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
+: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
 : test "namespaces/test/test.csl" include ;
 : dT0 "namespaces/test/dev0.csl" include ;
 : dT2 "namespaces/test/dev2.csl" include ;
 : dT3 "namespaces/test/dev3.csl" include ;
-//: loT "namespaces/test/logic.csl" include ;
+: loT "namespaces/test/logic.csl" include ;
 : dT "namespaces/test/dev.csl" include ; inline
 : dT2 "namespaces/test/dev2.csl" include ;
 : mT "namespaces/test/math.csl" include ;
@@ -34,19 +35,21 @@ sp
 : lispTest "namespaces/test/lisp.csl" include ;
 : oldL "namespaces/test/oldLisp.csl" include ;
 : stT stackTest ;
-//: bT bigNumTest ;
+: bT bigNumTest ;
 : locT localsTest ;
 : aT arrayTest ;
 : cT classTest ;
 : cntT controlTest ;
 : oT objectTest ;
 : cST c_SyntaxTest ;
-//: ppT preprocessorTest ;
+: ppT preprocessorTest ;
 : lT lispTest ;
+#endif
+
 C
 : sp ; //stack pause ; sp
 #if 1 //doX64
-: basicT ppT loT nT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 ; //x64 ;
+: basicT ppT loT nT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 dT ; //x64 ;
 //: basicT ppT loT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST x64 ; //x64 ;
 #elif 1 //doTX64
 : basicT bT ppT loT nT cT mT aT locT fT oT cntT lT sT sysT interpT stT dT0 x64 ; //cST dT0 x64 ; //x64 ;
@@ -65,7 +68,7 @@ C
 : demo 1 ti _TestDone_ @ not { itest } if1 dT rtw 1 time 2 time ; //dT0 ; 
 : tdemo ( n ) { n @ } { demo n -- } while ; 
 //' demo wdiss pause
-// : demo dT ;
+//: demo dT ;
 : test0 x64 dT ; inline
 : test1 inlineOff optimizeOff test0 ;
 : aoTest odemo cntT ;

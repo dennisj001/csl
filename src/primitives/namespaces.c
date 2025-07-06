@@ -152,7 +152,7 @@ CSL_Namespaces ( )
 {
     iPrintf ( "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
     _CSL_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint, 0 ) ; // 0 : no indentLevel
-    iPrintf ( "\n" ) ;
+    //iPrintf ( "\n" ) ;
 }
 
 void
@@ -160,7 +160,7 @@ CSL_NamespacesIndented ( )
 {
     iPrintf ( "\nAll Namespaces : \n<list> ':' '-' <namespace>" ) ;
     _CSL_ForAllNamespaces ( ( MapSymbolFunction2 ) Symbol_NamespacePrettyPrint, 1 ) ; // 1 : indentLevel
-    iPrintf ( "\n" ) ;
+    //iPrintf ( "\n" ) ;
 }
 
 int64
