@@ -318,7 +318,7 @@ sp
 ;;
 //' a9dump find wdiss
 //verbosity 3 =
-jcc8_Off
+
 Ar9
 #if 1
 : a9 ( Ar9 ar9 | d x y z ) 
@@ -350,7 +350,7 @@ Ar9
     oPrintf ( "\nar9.ar[0][246][67] = %lx", ar9.ar[0][246][67]) 
     a9dump ( 0 246 67 ar9 )
 ;
-jcc8_Off
+
 scOn
 ' a9 find wdiss s //pause
 #if 1
@@ -425,7 +425,7 @@ c_syntaxOff
 
 #if 1
 cOn 
-jcc8_Off
+
 sp0
 
 Ar10 'arr10 new ;

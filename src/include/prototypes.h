@@ -271,11 +271,11 @@ void _CompileFromName_Inline(byte *wordName);
 /* src/basis/core/system.c */
 void TimerInit(struct timespec *timer);
 void _System_TimerInit(System *system, int64 i);
-void Time(struct timespec *timer, char *format, byte *toString);
-void _System_Time(System *system, uint64 timer, char *format, byte *toString);
-void System_Time(System *system, uint64 timer, char *string);
-void OVT_Time(char *string);
 void System_InitTime(System *system);
+void Time(struct timespec *timer, char *format, byte *toString);
+void _CSL_Time(struct timespec *timer, uint64 utimer, char *string);
+void System_Time(System *system, uint64 utimer, char *string);
+void OVT_Time(char *string);
 void _System_Copy(System *system, System *system0);
 System *System_Copy(System *system0, uint64 type);
 void _System_Init(System *system);
@@ -2108,8 +2108,6 @@ void SortWordByCountOntoList(Symbol *s, dllist *list);
 void Word_PrintWithUseage(Symbol *s);
 void Namespaces_WordUseage(void);
 /* src/primitives/systems.c */
-void CSL_Jcc8_On(void);
-void CSL_Jcc8_Off(void);
 void CSL_InitTime(void);
 void CSL_TimerInit(void);
 void CSL_Time(void);
@@ -2460,6 +2458,7 @@ void _Compile_MOVZX_WORD_REG(Boolean reg, Boolean rm);
 void _Compile_Return(void);
 void _Compile_Nop(void);
 /* src/primitives/shell.c */
+void Shell_SetPrompt(byte *b);
 void shell(void);
 void handle_sigchld(int sig);
 /* src/primitives/kernel.c */

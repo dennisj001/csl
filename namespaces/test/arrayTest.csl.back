@@ -295,7 +295,7 @@ sp
 ;;
 //'adump find wdiss
 //verbosity 3 =
-jcc8_Off
+
 #if 1
 : a9 ( Ar9 a | x y z ) 
     x 0 = y 0 = z 0 = 
@@ -326,7 +326,7 @@ jcc8_Off
     printf ( "\na.ar[0][246][67] = %lx", a.ar[0][246][67]) 
     adump ( 0 246 67 a )
 ;
-jcc8_On
+
 //scOff
 ' a9 find wdiss s //pause
 #if 1
@@ -399,7 +399,7 @@ c_syntaxOff
 
 #if 1
 cOn
-jcc8_Off
+
 sp1
 #define CSL_PARAM
 #undef CSL_PARAM 

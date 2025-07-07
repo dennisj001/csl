@@ -1,4 +1,4 @@
-logOn
+//logOn
 //_dbgOn 
 //ukseOn
 //optimizeOff
@@ -22,7 +22,7 @@ optimizeOn inlineOn
 #else
 optimizeOff inlineOff
 #endif
-jcc8_Off
+
 typecheckOn dbgTypecheckOn
 : sp1 stack pause ;
 : sp0 ;
@@ -481,7 +481,7 @@ Interpreter
 '_defined '_findUsing find alias 
 //' defined '_findUsing find alias immediate 
 C Compiler Int Lexer
-jcc8_Off
+
 : orpfile ( name | file input result )
     input 0 =
     "open/read/print :: " ps name @ ps nl
@@ -667,10 +667,9 @@ d: : hi0 ( n m ) n @ m @ - dup <dbg> p return tos ; pwi hi0 13 2 d: hi0 11 _asse
 #if 1
 : hi ( n m | x ) x n @ m @ - = x @ p return ( x @ ) ; pwi hi 13 2 hi 11 _assert
 cOn
-//jcc8_On
 d: int fac5 ( REG n | REG facc )  {  facc = 1 ; while ( n > 1 )  { facc = facc * (n --) ; } return facc ; } 
 fac5 ( 7 ) ; p
-//jcc8_Off
+//
 pwi fac5    
 cOff
 #endif 

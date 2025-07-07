@@ -58,7 +58,6 @@ Root
 : get ( _var ) _var @ @ return tos ;; //'get wdiss
 "x1" var set ( x1 876543 ) get ( x1 ) dup dup nl p nl 876543 _assert x1 @ _assert //pause
 sp
-jcc8_Off
 String Shell Interpreter
 "streol" 'getStringToEndOfLine find alias
 : $ streol _sh ;  

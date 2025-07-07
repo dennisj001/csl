@@ -64,6 +64,8 @@ CSL_Dlsym ( )
 
 // callNumber | errno
 
+//%rdi, %rsi, %rdx, %rcx, %r8, and %r9
+// this is ??
 void
 CSL_system0 ( )
 {
@@ -76,17 +78,16 @@ void
 CSL_system1 ( )
 {
     _Compile_Stack_PopToReg ( DSP, ACC ) ;
-    _Compile_Stack_PopToReg ( DSP, OREG ) ;
+    _Compile_Stack_PopToReg ( DSP, RDI ) ;
     _Compile_INT80 ( ) ;
     _Compile_Stack_PushReg ( DSP, ACC, 0 ) ;
 }
-
 void
 CSL_system2 ( )
 {
     _Compile_Stack_PopToReg ( DSP, ACC ) ;
-    _Compile_Stack_PopToReg ( DSP, OREG ) ;
-    _Compile_Stack_PopToReg ( DSP, OREG ) ;
+    _Compile_Stack_PopToReg ( DSP, RDI ) ;
+    _Compile_Stack_PopToReg ( DSP, RSI ) ;
     _Compile_INT80 ( ) ;
     _Compile_Stack_PushReg ( DSP, ACC, 0 ) ;
 }
@@ -95,8 +96,8 @@ void
 CSL_system3 ( )
 {
     _Compile_Stack_PopToReg ( DSP, ACC ) ;
-    _Compile_Stack_PopToReg ( DSP, OREG ) ;
-    _Compile_Stack_PopToReg ( DSP, OREG ) ;
+    _Compile_Stack_PopToReg ( DSP, RDI ) ;
+    _Compile_Stack_PopToReg ( DSP, RSI ) ;
     _Compile_Stack_PopToReg ( DSP, RDX ) ;
     _Compile_INT80 ( ) ;
     _Compile_Stack_PushReg ( DSP, ACC, 0 ) ;

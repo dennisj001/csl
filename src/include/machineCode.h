@@ -210,7 +210,7 @@
       Fortunately this case is rare in the kernel.
 #endif
 
-#define REG_ORDER { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } //System V AMD64 ABI
+#define REG_ORDER { RDI, RSI, RDX, RCX, R8D, R9D, R10D, R11D } //System V AMD64 ABI : %rdi, %rsi, %rdx, %rcx, %r8, and %r9
 #define CSL_REG_ORDER { RDI, RSI, R8D, R9D } 
 #define NUM_CSL_REGS 4      
 #define THRU_REG                R11D //(RegOrder(7)) 

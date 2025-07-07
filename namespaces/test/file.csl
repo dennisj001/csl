@@ -1,7 +1,7 @@
 5
 #if 1 // already added to .init.csl
 C Compiler Int Lexer
-jcc8_Off
+
 : ofile ( name | file input result )
     input 0 =
     "open/read/print :: " ps name @ ps nl

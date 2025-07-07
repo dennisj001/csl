@@ -19,7 +19,6 @@ emit ( int64 c )
     putc ( Chr, stdout ) ;
     //_Printf ( (byte*)"%c", (char) c ) ;
 }
-#endif
 
 void
 CSL_Jcc8_On ( )
@@ -32,6 +31,7 @@ CSL_Jcc8_Off ( )
 {
     //SetState ( _CSL_, JCC8_ON, false ) ;
 }
+#endif
 
 void
 CSL_InitTime ( )

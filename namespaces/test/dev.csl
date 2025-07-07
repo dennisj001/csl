@@ -18,7 +18,7 @@ bnOff
 Compiler Logic Int C User 
 
 // tail recursion : http://c2.com/cgi/wiki?TailCallOptimization
-jcc8_On
+
 c_syntaxOn 
 #if 1
 int factoriali ( int8 REG n | REG res )
@@ -47,7 +47,7 @@ factoriali (7) ; dup p 5040 _assert sp0
 pwi factoriali //pause
 #endif
 //vb (3) ;
-jcc8_On
+
 int factoriali2 ( int8 REG n | REG res )
 {
     res = 1;
@@ -70,7 +70,7 @@ cOff
 7 factorial005 dup p 5040 _assert
 
 : factorial006 ( REG n | REG rec ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while return ( rec @ ) ;
-jcc8_Off
+
 'factorial006 find wdiss 
 7 factorial006 dup p 5040 "factorial006" _assert1 //pause
 : qexp dup 1 <= if else dup -- qexp * endif ; 'qexp find wdiss 7 qexp dup p 5040 _assert 
@@ -87,7 +87,7 @@ jcc8_Off
 pwi t1 pwi t
 //pwi bexp3 //pause
 c_syntaxOn
-jcc8_On
+
 int
 faccs3 ( n | rec ) 
 {
@@ -192,18 +192,18 @@ Locals User
 ;
 7 fac dup p 5040 _assert 
 // : bexp2 ( n | res ) { n @ 1 <= } { 1 } { n @ dup -- bexp2 * } ifElse ;
-jcc8_Off
+
 
 : s1 ( j ) { stackDepth 20 > } { state regs nl "stackDepth = " ps stackDepth p nl hex { j stackDepth = } { j @ 0 > } { j -- } { p } for quit } if2 decimal ;
 sp0
 User
 //'dn 'dfnba find alias  
-jcc8_On optRegs
+ optRegs
 : factorial ( REG n | REG rec ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while return rec ;
 : factorial2 ( REG n | REG rec ) rec 1 = { rec @ n @ * rec store n -- } { n @ 1 > } doWhile return rec ;
 pwi factorial2 
 7 factorial2 5040 _assert //pause
-jcc8_Off //initRegs
+ //initRegs
 'reps0 var 
 'reps1 var
 : _ifx ( w | j ) 
@@ -249,7 +249,7 @@ nl "ffx ... " ps nl
 //: ffx ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss 3 w @ _ffx nl wn @ ps ":" ps 1 time nl ;
 : ffx2 ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss w @ 3 _ffx2 1 time nl ;
 c_syntaxOn
-jcc8_On
+
 User
 int
 fibPTC2? ( REG n | REG fn, REG fn1, REG fn2 )
@@ -262,7 +262,7 @@ fibPTC2? ( REG n | REG fn, REG fn1, REG fn2 )
     }
     return fn ;
 }
-jcc8_Off
+
 c_syntaxOff
 C_Syntax User 
 ' fibPTC2? find wdiss
@@ -316,7 +316,7 @@ using
 sp0
 //pause
 
-jcc8_Off initRegs
+ initRegs
 //verbosity 3 =
 c_syntaxOn
 Root
@@ -473,7 +473,7 @@ User
 "fib1" ( n ) { 1 ti n @ _fib1 p 1 time } word 
 C 
 
-jcc8_Off
+
 'cfib2_O3 find wdiss //sp0
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) 1 ti n @ _fib2 p 1 time ;
