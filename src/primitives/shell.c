@@ -17,7 +17,7 @@ shell ( )
     byte b[128] ;
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
     //byte * b = Buffer_New_pbyte ( BUFFER_SIZE ) ;
-    SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
+    //SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
     Shell_SetPrompt ( b ) ;
     iPrintf ( " shell : type \'.\' or \'bye\' or \'exit\' to exit" ) ;
 
@@ -141,7 +141,7 @@ endPrompt:
     iPrintf ( " leaving shell ...\n" ) ;
     _O_->Pbf8[0] = _ReadLiner_->NormalPrompt[0] ;
     _DoPrompt ( ) ;
-    SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, true ) ;
+    //SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, true ) ;
 }
 
 void
