@@ -609,6 +609,7 @@ WDISS_ON 1 =
     } for
     nl wn @ ps 
     4 time 
+    nl
     wn @ ps reps0 @ p " = "ps reps0 @ w @ wordRun decimal p nl // test output 
     wn @ comment nl
 ;

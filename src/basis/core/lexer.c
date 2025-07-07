@@ -882,37 +882,6 @@ GreaterThan ( Lexer * lexer ) // '>':
 }
 
 // package the dot to be lexed as a token
-#if 0
-
-void
-Dot ( Lexer * lexer ) //  '.':
-{
-    if ( ( Lexer_LastChar ( lexer ) != '/' ) && ( ! GetState ( lexer, LEXER_ALLOW_DOT ) ) ) //allow for lisp special char sequence "/." as a substitution for lambda
-    {
-        int64 i ;
-        if ( ( ! GetState ( lexer, PARSING_STRING ) ) ) //&& ( ! GetState ( _Context_, CONTEXT_PARSING_QUALIFIED_ID ) ) ) // if we are not parsing a String ?
-        {
-            if ( lexer->TokenWriteIndex )
-            {
-                for ( i = lexer->TokenWriteIndex - 1 ; i >= 0 ; i -- ) // go back into previous chars read, check if it is a number
-                {
-                    if ( ! isdigit ( lexer->TokenBuffer [ i ] ) )
-                    {
-                        ReadLine_UnGetChar ( lexer->ReadLiner0 ) ; // allow to read '.' as next token
-                        break ;
-                    }
-                }
-            }
-            else if ( ! isdigit ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ) ) ) Lexer_AppendInputedToTokenBuffer ( lexer ) ;
-            SetState ( lexer, LEXER_DONE, true ) ;
-
-            return ;
-        }
-    }
-    Lexer_AppendInputedToTokenBuffer ( lexer ) ;
-}
-
-#else
 
 void
 Dot ( Lexer * lexer ) //  '.':
@@ -939,7 +908,6 @@ Dot ( Lexer * lexer ) //  '.':
     }
     Lexer_AppendInputedToTokenBuffer ( lexer ) ;
 }
-#endif
 
 void
 RightCurlyBracket ( Lexer * lexer )

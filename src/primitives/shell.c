@@ -79,20 +79,9 @@ shell ( )
             Shell_SetPrompt ( b ) ;
             continue ;
         }
-        if ( String_Equal ( str, ".\n" ) )
+        if ( String_Equal ( str, ".\n" ) || String_Equal ( str, "bye\n" ) || String_Equal ( str, "exit\n" ) )
         {
-deleteHistory:
-#if 0 // history not added to in shell see above : SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;        
-            HistoryStringNode * hsn ;
-            str[strlen ( str ) - 1] = 0 ;
-            hsn = HistorySymbolList_Find ( str ) ;
-            if ( hsn ) dlnode_Remove ( ( dlnode* ) hsn ) ; 
-#endif            
             goto endPrompt ;
-        }
-        if ( String_Equal ( str, "bye\n" ) || ( String_Equal ( str, "exit\n" ) ) )
-        {
-            goto deleteHistory ;
         }
         // Create pipe between process
         int fd[2] ;

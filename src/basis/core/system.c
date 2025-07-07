@@ -5,13 +5,19 @@ void
 TimerInit ( struct timespec * timer )
 {
     clock_gettime ( CLOCK_REALTIME, timer ) ;
-    //clock_gettime ( CLOCK_MONOTONIC, timer ) ;
 }
 
 void
 _System_TimerInit ( System * system, int64 i )
 {
     TimerInit ( &system->Timers [ i ] ) ;
+}
+
+void
+System_InitTime ( System * system )
+{
+    int64 i ;
+    for ( i = 0 ; i < 8 ; i ++ ) _System_TimerInit ( system, i ) ;
 }
 
 void
@@ -24,7 +30,6 @@ Time ( struct timespec * timer, char * format, byte * toString )
     TimerInit ( timer ) ;
     seconds2 = timer->tv_sec ;
     nseconds2 = timer->tv_nsec ;
-    //clock_settime ( CLOCK_MONOTONIC, &system->Timers [ timer ] ) ;
     //clock_settime ( CLOCK_REALTIME, &system->Timers [ timer ] ) ;
     if ( nseconds > nseconds2 )
     {
@@ -35,51 +40,29 @@ Time ( struct timespec * timer, char * format, byte * toString )
 }
 
 void
-_System_Time ( System * system, uint64 timer, char * format, byte * toString )
+_CSL_Time ( struct timespec * timer, uint64 utimer, char * string )
 {
-    if ( timer < 8 )
+    byte buffer [ 256 ] ;
+    Time ( timer, ( char* ) "%ld.%09ld", buffer ) ;
+    if ( Verbosity ( ) )
     {
-        __time_t seconds, seconds2 ;
-        int64 nseconds, nseconds2 ;
-        seconds = system->Timers [ timer ].tv_sec ;
-        nseconds = system->Timers [ timer ].tv_nsec ;
-        _System_TimerInit ( system, timer ) ;
-        seconds2 = system->Timers [ timer ].tv_sec ;
-        nseconds2 = system->Timers [ timer ].tv_nsec ;
-        //clock_settime ( CLOCK_MONOTONIC, &system->Timers [ timer ] ) ;
-        //clock_settime ( CLOCK_REALTIME, &system->Timers [ timer ] ) ;
-        if ( nseconds > nseconds2 )
-        {
-            seconds2 -- ;
-            nseconds2 += 1000000000 ;
-        }
-        sprintf ( ( char* ) toString, format, seconds2 - seconds, nseconds2 - nseconds ) ;
+        if ( utimer ) iPrintf ( "\n%s [ %d ] : elapsed time = %s seconds at %s", string, (utimer & 0xf), buffer, Context_Location ( ) ) ;
+        else iPrintf ( "\n%s : elapsed time = %s seconds at %s", string, buffer, Context_Location ( ) ) ;
     }
+    _O_->Pbf8[0] = '\n' ;
+}
+
+void
+System_Time ( System * system, uint64 utimer, char * string )
+{
+    if ( utimer < 8 ) _CSL_Time ( &system->Timers [ (utimer ) ], (utimer + 0x10 ), string ) ; // so we can use timer 0
     else Throw ( ( byte* ) "_System_Time : ", ( byte* ) "Error: timer index must be less than 8\n", QUIT ) ;
 }
 
 void
-System_Time ( System * system, uint64 timer, char * string, int64 tflag )
+OVT_Time ( char * string )
 {
-    byte buffer [ 256 ] ;
-    _System_Time ( system, timer, ( char* ) "%ld.%09ld", buffer ) ;
-    if ( tflag && ( Verbosity () ) ) iPrintf ( "%s [ %d ] : elapsed time = %s seconds at %s", string, timer, buffer, Context_Location ( ) ) ;
-}
-
-void
-OVT_Time ( char * string, int64 tflag )
-{
-    byte buffer [ 256 ] ;
-    //_System_Time ( system, timer, ( char* ) "%ld.%09ld", buffer ) ;
-    Time ( &_O_->Timer,  ( char* ) "%ld.%09ld", buffer ) ;
-    if ( tflag && ( Verbosity () ) ) iPrintf ( "%s : elapsed time = %s seconds", string, buffer ) ;
-}
-
-void
-System_InitTime ( System * system )
-{
-    int64 i ;
-    for ( i = 0 ; i < 8 ; i ++ ) _System_TimerInit ( system, i ) ;
+    _CSL_Time ( &_O_->Timer, 0, string ) ;
 }
 
 void
