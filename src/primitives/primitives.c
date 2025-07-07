@@ -442,6 +442,7 @@ CPrimitive CPrimitives [] = {
     { "cd", 0, 1, 0, File_ChangeDirectory, PREFIXABLE, 0, 0, "File", "System" },
     { "pwd", 0, 0, 0, File_GetCurrentDirectory, PREFIXABLE, 0, 0, "File", "System" },
     { "freadToString", 0, 0, 0, File_ReadToString, PREFIXABLE, 0, 0, "File", "System" },
+    { "freadNtoString", 0, 0, 0, File_ReadNtoString, PREFIXABLE, 0, 0, "File", "System" },
 
     { "setDefaultRGB", 0, 0, 0, CSL_SetDefaultRGB, 0, 0, 0, "Colors", "System" },
     { "setAlertRGB", 0, 0, 0, CSL_SetAlertRGB, 0, 0, 0, "Colors", "System" },

@@ -12,6 +12,8 @@ C Compiler Int Lexer
 #endif 
 ' ofile find wdiss //pause
 ofile ( "namespaces/test/file.csl" )
+"namespaces/test/file.csl" freadToString ps
+"init.csl" 100 freadNtoString ps 
 //pause
 : hi 1 2 + p ;
 : hey hi hi ;

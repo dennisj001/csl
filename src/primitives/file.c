@@ -26,6 +26,20 @@ _File_Exists ( byte * fname )
 }
 
 byte *
+_File_ReadNtoString_ ( FILE * file, int64 n )
+{
+    int64 size, result ;
+
+    if ( ! n ) size = _File_Size ( file ) ;
+    else size = n ;
+    byte * fstr = Mem_Allocate ( size + 2, CONTEXT ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
+    result = fread ( fstr, 1, size, file ) ;
+    fclose ( file ) ;
+    if ( result != size ) return 0 ;
+    return fstr ;
+}
+
+byte *
 _File_ReadToString_ ( FILE * file )
 {
     int64 size, result ;
@@ -33,7 +47,7 @@ _File_ReadToString_ ( FILE * file )
     size = _File_Size ( file ) ;
     byte * fstr = Mem_Allocate ( size + 2, CONTEXT ) ; // 2 : an extra so readline doesn't read into another area of allocated mem
     result = fread ( fstr, 1, size, file ) ;
-    //fclose ( file ) ;
+    fclose ( file ) ;
     if ( result != size ) return 0 ;
     return fstr ;
 }
@@ -51,6 +65,17 @@ File_ReadToString ( )
 {
     byte * filename = ( byte* ) DataStack_Pop ( ), *str ;
     str = _File_ReadToString ( filename ) ;
+    DataStack_Push (( int64 ) str) ;
+}
+
+// ( filename n -- str )
+void
+File_ReadNtoString ( )
+{
+    int64 n = DataStack_Pop ( ) ;
+    byte * filename = ( byte* ) DataStack_Pop ( ), *str ;
+    FILE * file = fopen ( ( char* ) filename, "rb" ) ;
+    str = _File_ReadNtoString_ ( file, n ) ;
     DataStack_Push (( int64 ) str) ;
 }
 
