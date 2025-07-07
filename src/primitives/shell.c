@@ -1,38 +1,25 @@
 
-#if 0 // original unedited shell.c from Luiz Santos. thank you!
-MIT License
-
-Copyright ( c ) 2021 Luiz Santos
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation
-files ( the "Software" ), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions :
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
-#endif
 #include "../include/csl.h"
 
-    void
-    shell ( )
+void
+Shell_SetPrompt ( byte * b )
+{
+    byte buf [ 128] ; //= _Buffer_New_pbyte ( BUFFER_SIZE, N_UNLOCKED ) ;
+    sprintf ( b, "[%s]$ ", getcwd ( buf, BUFFER_SIZE ) ) ;
+    ReadLine_SetPrompt ( _ReadLiner_, b ) ;
+}
+
+void
+shell ( )
 {
     Context * cntx = _Context_ ;
     ReadLiner * rl = cntx->ReadLiner0 ;
+    byte b[128] ;
     byte * svPrompt = ReadLine_GetPrompt ( rl ) ;
-    ReadLine_SetPrompt ( rl, "$ " ) ;
-    iPrintf ( " shell : type \'.\' to exit" ) ;
+    //byte * b = Buffer_New_pbyte ( BUFFER_SIZE ) ;
+    SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;
+    Shell_SetPrompt ( b ) ;
+    iPrintf ( " shell : type \'.\' or \'bye\' or \'exit\' to exit" ) ;
 
     pid_t pid, shell_pgid, tcgid ;
     // from libc.pdf
@@ -73,7 +60,7 @@ furnished to do so, subject to the following conditions :
     {
         perror ( "\nShell is not interactive!?" ) ;
         //exit ( 1 ) ;
-        goto done ;
+        goto endPrompt ;
     }
 
     while ( 1 )
@@ -86,22 +73,27 @@ furnished to do so, subject to the following conditions :
             Interpret_String ( &str[1] ) ;
             continue ;
         }
-        if ( ( str[0] == 'c' ) && ( str[1] == 'd' ) )
+        if ( ! strncmp ( str, "cd", 2 ) )
         {
             Interpret_String ( str ) ;
+            Shell_SetPrompt ( b ) ;
             continue ;
         }
-        if ( String_Equal ( str, ".\n" ) ) goto done ;
-        if ( String_Equal ( str, "bye\n" ) )
+        if ( String_Equal ( str, ".\n" ) )
         {
-            rl->InputLine [0] = 0 ;
-            ReadLine_SetPrompt ( rl, svPrompt ) ;
-            Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
-            _O_->Pbf8[0]  = _ReadLiner_->NormalPrompt[0] ;
-            _DoPrompt ( ) ;
-            return ;
+deleteHistory:
+#if 0 // history not added to in shell see above : SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, false ) ;        
+            HistoryStringNode * hsn ;
+            str[strlen ( str ) - 1] = 0 ;
+            hsn = HistorySymbolList_Find ( str ) ;
+            if ( hsn ) dlnode_Remove ( ( dlnode* ) hsn ) ; 
+#endif            
+            goto endPrompt ;
         }
-        if ( String_Equal ( str, "exit\n" ) ) goto done ;
+        if ( String_Equal ( str, "bye\n" ) || ( String_Equal ( str, "exit\n" ) ) )
+        {
+            goto deleteHistory ;
+        }
         // Create pipe between process
         int fd[2] ;
         pipe ( fd ) ;
@@ -109,7 +101,8 @@ furnished to do so, subject to the following conditions :
         if ( pid < 0 )
         {
             perror ( "\nError : fork" ) ;
-            exit ( 0 ) ;
+            ///exit ( 0 ) ;
+            goto endPrompt ;
         }
         else if ( pid == 0 )
         {
@@ -127,7 +120,8 @@ furnished to do so, subject to the following conditions :
             if ( execl ( "/bin/bash", "bash", "-i", "-c", str, ( char * ) NULL ) )
             {
                 perror ( str ) ;
-                exit ( 0 ) ;
+                //exit ( 0 ) ;
+                goto endPrompt ;
             }
         }
             //?? i don't fully understand this stuff yet but this works    
@@ -151,10 +145,14 @@ furnished to do so, subject to the following conditions :
             close ( fd[1] ) ;
         }
     }
-done:
+endPrompt:
+    rl->InputLine [0] = 0 ;
     ReadLine_SetPrompt ( rl, svPrompt ) ;
     Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
-    iPrintf ( " leaving shell ...\r" ) ;
+    iPrintf ( " leaving shell ...\n" ) ;
+    _O_->Pbf8[0] = _ReadLiner_->NormalPrompt[0] ;
+    _DoPrompt ( ) ;
+    SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, true ) ;
 }
 
 void
@@ -165,3 +163,29 @@ handle_sigchld ( int sig )
     pid = waitpid ( - 1, &status, ( WNOHANG | WUNTRACED | WCONTINUED ) ) ;
 }
 
+
+
+#if 0 // original unedited shell.c from Luiz Santos. thank you!
+MIT License
+
+Copyright ( c ) 2021 Luiz Santos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation
+files ( the "Software" ), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions :
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+#endif

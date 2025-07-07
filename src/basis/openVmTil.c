@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.943.130" )
+#define VERSION ((byte*) "0.943.220" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -203,7 +203,7 @@ OVT_ResetOutputPrintBuffer ( )
 int64
 Verbosity ( )
 {
-    return (_O_ && ( _O_->Verbosity & 0x7 ) ) ; // higher bits for specific functions
+    if ( _O_ ) return ( _O_->Verbosity & 0x7 ) ; // higher bits for specific functions
 }
 
 void
