@@ -596,6 +596,8 @@ CPrimitive CPrimitives [] = {
     { "clone", 0, 0, 0, CSL_DObject_Clone, 0, 0, 0, "DObject", "Root" },
     { "new", 0, 0, 0, CSL_DObject_New, 0, 0, 0, "DObject", "Root" },
 
+    { "forthSyntaxOn", 0, 0, 0, CSL_ForthSyntaxOn, 0, 0, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
+    { "forthSyntaxOff", 0, 0, 0, CSL_ForthSyntaxOff, 0, 0, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
     { "_c_syntaxOn", 0, 0, 0, CSL_C_Syntax_On, 0, 0, 0, "Compiler", "Root" }, // put this here so Compiler will be in Root namespace and Compiler will close to the top
     { "c_syntaxOff", 0, 0, 0, CSL_C_Syntax_Off, IMMEDIATE, 0, 0, "Compiler", "Root" },
     { "rpn", 0, 0, 0, CSL_PostfixModeOn, 0, 0, 0, "Compiler", "Root" },
@@ -693,6 +695,7 @@ CPrimitive CPrimitives [] = {
     { "end", 0, 0, 0, CSL_EndIf, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "begin", 0, 0, 0, CSL_Begin, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "while", 0, 0, 0, CSL_While, IMMEDIATE, 0, 0, "Forth", "Root" },
+    { "doWhile", 0, 0, 0, CSL_DoWhile, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "repeat", 0, 0, 0, CSL_Repeat, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "until", 0, 0, 0, CSL_Until, IMMEDIATE, 0, 0, "Forth", "Root" },
     //{ ".", 0, 0, 0, CSL_PrintInt, 0, 0, 0, "Forth", "Root" },

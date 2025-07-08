@@ -196,17 +196,19 @@ CSL_Push ( )
     SetState ( _Compiler_, DOING_RETURN, false ) ;
 }
 
+// ??
 void
 CSL_DoReturnWord ( Word * word )
 {
     Compiler * compiler = _Compiler_ ;
+    //compiler->ReturnVariableWord = word ;
     Word * word1 = CSL_Parse_Interpret_KeywordOperand ( word, 1 ) ;
     if ( word1 )
     {
         compiler->ReturnVariableWord = word1 ;
         if ( word1->W_ObjectAttributes & REGISTER_VARIABLE ) SetHere ( word1->Coding ) ;
         else Word_Check_ReSet_To_Here_StackPushRegisterCode ( word1 ) ;
-        if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ;
+        if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ; //??
         return ;
     }
     if ( word && ( word->W_MorphismAttributes & ( T_TOS ) ) ) CSL_Push ( ) ;
@@ -276,7 +278,7 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
         Compiler_Word_SCHCPUSCA ( returnVariable, 0 ) ; // compiler->ReturnWord, 0 ) ;
         if ( returnVariable && ( returnVariable->W_ObjectAttributes & REGISTER_VARIABLE ) )
         {
-            if ( returnVariable->RegToUse != RAX ) Compile_Move_Reg_To_Reg ( RAX, returnVariable->RegToUse, 0 ) ;
+            //if ( returnVariable->RegToUse != RAX ) Compile_Move_Reg_To_Reg ( RAX, returnVariable->RegToUse, 0 ) ;
             _Compile_Move_Reg_To_StackN ( DSP, 0, returnVariable->RegToUse, 0 ) ;
             return ;
         }

@@ -48,8 +48,9 @@ Root
 '_cOn '_c_syntaxOn find alias
 'cOn 'c_syntaxOn find alias
 'cOff 'c_syntaxOff find alias
+'fOn 'forthSyntaxOn find alias
+'fOff 'forthSyntaxOff find alias
 "log" variable 
-'fOn 'postfixOn find alias // the default state 
 'n- 'namespaces find alias
 Root
 "User" namespace 
@@ -795,6 +796,84 @@ pwi t1 pwi t
 Forth 
 : tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
 : tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
+cOn
+int
+fibPTC4? ( REG n | REG fn, REG fn1, REG fn2 )
+{
+    fn = 0, fn1 = 0, fn2 = 1 ; 
+    do 
+    {   
+        fn1 = fn2 ;
+        fn2 = fn ;
+        fn = fn1 + fn2 ; 
+        n -- ;
+    }
+    while ( n > 0 ) ;
+    return fn ;
+}
+pwi fibPTC4? 
+fibPTC4? (20) ; 
+c_syntaxOff
+dup p 6765 _assert sp0 //pause
+cOff
+Forth
+: fibPTC5 ( REG n | REG fn REG fn1 REG fn2 )
+    fn 0 = fn1 0 = fn2 1 = 
+    begin 
+        fn1 fn2 @ =
+        fn2 fn @ =
+        fn fn1 @ fn2 @ + = 
+        n n @ 1 - = 
+        n @ 0 > 
+    while
+    repeat
+    return fn @ 
+;
+pwi fibPTC5 
+20 fibPTC5 dup p 6765 _assert
+Combinators
+: factorial2 ( REG n | REG rec ) rec 1 = { rec @ n @ * rec store n -- } { n @ 1 > } doWhile return rec ;
+pwi factorial2 
+7 factorial2 dup p 5040 _assert //pause
+fOn scOn
+: factorial3 ( REG n | REG rec ) 
+    rec 1 = 
+    begin rec rec @ n @ * = n n @ 1 - =  n @ 1 > doWhile  
+    return rec @ 
+;
+pwi factorial3 
+7 factorial3 dup p 5040 _assert //pause
+fOff
+Combinators
+#endif
+#if 0
+fOn 
+bnOff
+: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
+: tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
+: tfor ( n | x ) x n @ =  begin x @ 0 > while x @ p x x @ 1 - = repeat ; pwi tfor 10 tfor        
+: factorial3 ( REG n | REG rec ) 
+    rec 1 = 
+    begin rec rec @ n @ * = n --  n @ 1 > doWhile  
+    //begin rec rec @ n @ * = n n @ 1 - =  n @ 1 > doWhile  
+    return rec @ 
+;
+pwi factorial3 
+7 factorial3 dup p 5040 _assert //pause
+: fibPTC5 ( REG n | REG fn REG fn1 REG fn2 )
+    fn 0 = fn1 0 = fn2 1 = 
+    begin 
+        fn1 fn2 @ =
+        fn2 fn @ =
+        fn fn1 @ fn2 @ + = 
+        n n @ 1 - = 
+        n @ 0 > 
+    doWhile
+    return fn @ 
+;
+pwi fibPTC5 
+20 fibPTC5 dup p 6765 _assert
+fOff                                                                                   
 #endif
 2 + 7 assertStkChk // stack checking
 //rdim 

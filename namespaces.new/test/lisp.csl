@@ -1,0 +1,356 @@
+
+Int
+bnOff
+5
+"\nstarting lisp.csl\n" ddps
+//Lisp
+lcOn
+#if 0 // debug
+: sp stack pause ; sp
+#else
+: sp ; //stack pause ; sp
+#endif 
+//lcReset
+decimal
+"lambda" tick _lambda find alias immediate
+"/\" tick _lambda find alias
+"/." tick _lambda find alias
+"/|" tick _lambda find alias
+//(define list (lambda (args) (args)))
+
+//verbosity 2 =
+(+ 1 6)
+'( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) 121 ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) 
+'( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) () ( ( ( ( 12 ) ) 121 ) 122 ) 13 ( 14 ( 141 ) ) 15 ( 16 (161 (162 (163)) ) ( 17 ( 18 ) ) ) ) ) 
+"above line should show :: \n ( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ) ( ( ( ( 12 ) ) 121 ) 122 ) 13 ( 14 ( 141 ) ) 15 ( 16 ( 161 ( 162 ( 163 ) ) ) ( 17 ( 18 ) ) ) ) )\n" ddps  
+( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) 
+(+ 1 6) 
+( - ( + 1 2 ( * 3 4 ) ( / 4 2 ) ( - 9 8 ) 10 770 ) 21 )  // == 777
+( + 1 2 4 ) 
+
+( define f ( lambda (a) ( + a 1 2 ) ) ) 
+//tick f find wdiss 
+pwi f
+( f 4 )
+//pause
+( define f1 ( lambda ( a b ) ( + a b ) ) ) 
+( f1 3 4 ) //pause
+( define (f2 a b ) ( + a b ) ) 
+( f2 3 4 ) //pause
+( begin ( define f ( lambda ( x y ) ( + x y ) ) ) ( f 4 3 ) ) ( f 4 3 ) 
+( begin ( define ( f x y ) ( + x y ) ) ) ( f 4 3 ) ) ( f 4 3 ) 
+
+( - ( + 1 2 ( * 3 4 ) ( / 4 2 ) ( - 9 8 ) 10 770 ) 21 )  // == 777 
+( ( lambda ( x y ) ( + x y ) ) 3 4 ) 
+//pause
+( ( lambda ( x y z ) ( + x y z ) ) 3 4 70 ) // 77
+( ( /\ ( x y z ) ( + x y z ) ) 3 4 70 ) 
+( ( /\ ( x y z ) ( + x y z ) ) 3 4 70 ) 
+( ( /\ ( x y z ) ( + x y z ) ) 3 4 70 ) 
+( ( /\ ( x y z ) ( + x y z ) ) 3 4 70 ) // 77 
+
+( ( /\ ( x y z ) ( + x y z ) ) ((/\ (x y) (+ x y)) 3 4) ((/\ (x y) (+ x y)) 50 10 ) ((/\ (x y) (+ x y)) 8 2 ) )  // 77
+( ( /\ ( x y z ) ( + x y z ) ) ((/\ (x y) (/ x y)) 70 10) ((/\ (x y) (- x y)) 93 33 ) ((/\ (x y) (+ x y)) 8 2 ) )  // 77
+
+
+( define x 7 )
+//ld: 
+//( begin ( define x 2 ) ( + x 5 ) ( define x 14 ) ( / x 2 ) ) // doesn't work yet ??
+( begin ( define f0 ( /\ (x) ( + x 1 ) ) ) ( f0 6 ) )
+( define f1 ( /\ (z) ( + z 1 ) ) ) 
+//tick f1 find wdiss //pause
+( f1 6 )
+//sp
+( begin ( define f2 ( /\ ( x ) ( + x 3 ) ) ) ( f2 4 ) )
+( begin ( define f3 ( /\ ( x ) ( + x 2 ) ) ) ( f3 5 ) )
+( define f4 ( /\ ( x ) ( - x 2 ) ) )
+
+( set zs1 77 abc 7 )
+//sp
+( define zs1 78 )
+( define f3 ( lambda ( x ) ( + x 8 ) ) ) ( f3 5 )
+( define f4 ( lambda ( y ) ( - y 9 ) ) )
+
+(f4 (f3 zs1) )
+
+(quote zs1)
+
+//sp
+
+( if 1 7 0 )
+( if 0 0 7 )
+( if ( + 1 1 ) (+ 1 6 ) (+ 1 2 ) )
+( if ( + 0 0 ) ( + 1 2 ) ( + 0 0 ) ( + 1 2 ) ( + 0 0 ) ( + 1 2 ) (+ 1 6 ) )
+( if ( + 0 0 ) ( + 1 0 ) (+ 0 0 ) (+ 1 5 ) 7 )
+( if ( + 0 0 ) ( + 1 2 ) ( + 1 0 ) ( + 1 10 ) ( + 0 0 ) ( + 1 2 ) (+ 1 6 ) )
+"\n if :: should show 7 7 7 0 0 1 \n" ps 
+( cond (1 7) (else 0) )
+( cond (0 0) (else 7) )
+( cond (( + 1 1 ) (+ 1 6 )) (+ 1 2 ) )
+( cond (( + 0 0 ) ( + 1 2 )) (( + 0 0 ) ( + 1 2 )) (( + 0 0 ) ( + 1 2 )) (else (+ 1 6 )) )
+( cond (( + 0 0 ) ( + 1 0 )) ((+ 0 0 ) (+ 1 5 )) (else 7) )
+( cond (( + 0 0 ) ( + 1 2 )) (( + 1 0 ) ( + 1 10 )) (( + 0 0 ) ( + 1 2 )) (else (+ 1 6 )) )
+"\n cond :: should show 7 7 7 7 7 11\n" ps
+//pause
+//sp
+//lcReset
+//using
+(define g ( /\ (a b c) (a b c) ) )
+(define h ( /\ (a b c) (a c b) ) ) 
+
+(g + 3 4 ) (g / 14 2 ) 
+( h - 4 11 ) ( h - 5 12 ) ( h - 6 13 ) ( h / 9 63 ) ( h / 3 21 ) //pause
+(define h1 ( lambda (c b a) (a b c) ) ) 
+(h1 4 11 -) ( h1 5 12 -) ( h1 6 13 -) ( h1 9 63 / ) ( h1 3 21 / ) 
+(g (lambda (a b) (+ a b)) 3 4)
+//pause
+
+((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) )
+//sp
+
+( g + ( g + 1 2 ) ( g + 2 2 ) ) 
+( g + ( g * ( g + 3 4 ) ( g + (h - (h - 4 8) 8) 5 ) ) 14 )
+( + ( h + 10 5 ) ( g + 7 ( + 3 (g + 4 5) 5) ) ( g + 7 31 ) ) 
+(define pd +) (pd 1 2 4)
+//stack pause 
+sp
+
+#if 1
+"\nstarting BigNum\n" ddps
+//sp
+bnOn
+Lisp
+lcReset
+(define g ( /\ (a b c) (a b c) ) )
+(define h ( /\ (a b c) (a c b) ) ) 
+( h - 4 5 ) ( h - 5 4 ) ( h - 6 4 ) ( h / 9 3 ) ( h / 3 9 ) 
+( g + ( g - 8 5 ) ( g + 1 3 ) ) 
+( h + ( g - 5 8 ) ( g + 3 7 ) ) 
+"\nending BigNum\n" ddps
+//lcClearDefines
+bnOff
+//stack pause 
+sp
+#endif
+Lisp
+
+(define a 3) (define b 4)
+( a b 1 2 )
+'( a b 1 2 ) 
+#if 0
+(set x ( a b 1 2 ))
+#else
+(define x ( a b 1 2 )) 
+#endif
+( 'x x ,x ,@x ) 
+'( 'x x ,x ,@x ) 
+`( 'x x ,x ,@x ) 
+//sp
+#if 0 // test define
+#if 0
+(define y `( 'x x ,x ,@x ) )
+#elif 0
+(define y '( 'x x ,x ,@x ) )
+#elif 1
+(define y ( 'x x ,x ,@x ) )
+#endif
+#else // test set
+#if 1
+(set y `( 'x x ,x ,@x ) )
+#elif 0
+(set y '( 'x x ,x ,@x ) )
+#elif 1
+(set y ( 'x x ,x ,@x ) ) 
+#endif
+#endif
+( 'y y ,y ,@y ) 
+'( 'y y ,y ,@y ) 
+`( 'y y ,y ,@y ) 
+"\nlisp test\n" ddps location //pause
+(define a 3) (define b 4)
+(define y ( a b 1 2 ))
+(define x (7 8 9) ) 
+(define y ( 1 2 a b 5 6 )) 
+`( 'x x ,x ,@y ,@x y ) 
+//pause
+'( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) 121 ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) 
+( 1 2 ( 3 4 ) 5 6 ( 7 ( 8 ( 9 ) 10 11 ) ( ( ( ( 12 ) ) ) ) 13 ( 14 ) ) 15 ( 16 ( 17 ( 18 ) ) ) ) 
+//sp
+((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) )
+(define x (7 8 9 47))
+(list 1 2 3 `x) 
+(list 1 2 3 `,x )
+(list 1 2 3 x )
+(list 1 2 3 ,@x )
+(+ 1 2 3 ,@x)
+//sp
+
+//(define q1x (lambda (a) (a))) 
+(define ( q1x a) (a)) 
+(define q2 q1x)
+   
+((q2 /) (q2 14) (q2 2)) 
+   
+(define q3 q2)
+(define q4 q3)
+(define q5 q4)
+//sp
+//ld: 
+((q5 +) (q5 28) (q5 2)(q3 2) (q4 45))
+//;ld
+"above line should show 77" ps
+stack 
+//pause
+(( lambda ( x y ) ( + x y ) ) 3 4 ) 
+(define yfac (lambda (yy n) (if (< n 2) (n) (* n (yy yy (- n 1))))))
+(yfac yfac 10) 
+(yfac yfac 7) 
+(define fibc (lambda ( n ) (ifElse (< n 2) n (+ (fibc (- n 1)) (fibc (- n 2))))))
+tick fibc find wdiss
+#if 0 // ifc currently doesn't work with lambda
+//(define fibc1 (lambda ( n ) (ifc (< n 2) n (+ (fibc1 (- n 1)) (fibc1 (- n 2))))))
+#endif
+(define fibc1 (lambda ( n ) (ifElse (< n 2) n (+ (fibc1 (- n 1)) (fibc1 (- n 2))))))
+(definec ( fibc2 n ) (ifElse (< n 2) n (+ (fibc2 (- n 1)) (fibc2 (- n 2))))))
+tick fibc1 find wdiss //pause
+tick fibc find wdiss //pause
+tick fibc2 find wdiss //pause
+//sp
+"\nfibc1 20 = " ps (fibc1 20)
+"\nfibc 20 = " ps (fibc 20)
+"\nfibc2 20 = " ps (fibc2 20)
+//pause
+
+//syntatic experiments ...
+// causes as yet unresolved source code display problems
+//d: (ld:) 
+( :: : hioo 3 4 + dup p ; : hio 5 6 + dup p ; ) hio hioo 7 _assert 11 _assert s //pause
+hioo hio 11 _assert 7 _assert hio hioo 7 _assert 11 _assert 
+tick hioo find wdiss 
+tick hio find wdiss 
+lispOff
+C
+: bexp43 ( n ) { n @ 1 > } { n @ n @ -- bexp43 * } { 1 } ifElse ;
+'bexp43 find wdiss //pause
+7 C bexp43 dup 5040 "C : bexp43_assert" assert p 
+//pause
+
+Lisp
+( :: C : bexp44 ( n ) { n @ 1 > } { n @ n @ -- bexp44 * } { 1 } ifElse ; )
+tick bexp44 find wdiss //pause
+7 C bexp44 dup 5040 "C : bexp43_assert" assert p //pause
+Root
+
+lispOff
+: goedel3 (| n ) 
+    "\n goedel3 :: " ps 
+    n 9 =
+    { 
+        (| n ) n @ p n 2 = n @ dup p 2 "goedel3_assert1" assert // first n should be garbage here; second n 2
+        { (| n ) n @ p n 3 = n @ 4 + dup p 7 "goedel3_assert2" assert } ix // first n should be garbage here; second 7
+        //{ (| n ) n @ p n 3 = <dbg> n @ 4 + dup p 7 "goedel3_assert" assert } ix  // test comment //level 2
+        n @ 6 + 8 "goedel3_assert4" assert 
+    } ix
+    { 
+        (| n ) 
+        n @ p 
+        n 3 = 
+        n dup @ 4 + = 
+        n @ dup p 7 "goedel3_assert5" assert
+    } ix // n should be garbage here
+    n @ dup p
+    return tos
+;
+//' goedel3 find wdiss pause   
+"goedel3 :: " ps 
+9 goedel3 _assert0  "\ngoedel3 output should read (after ignoring _asserts) : \n'junk' 2 'junk' 7 'junk' 7 9" ps 
+//pause
+Debug Lisp 
+( :: 
+    : goedel6 (| n ) 
+        "\n goedel6 :: " ps 
+        n 9 =
+        { 
+            (| n ) n @ p n 2 = n @ dup p 2 "goedel6_1_assert" assert // first n should be garbage here; second n 2
+            { (| n ) n @ p n 3 = n @ 4 + dup p 7 "goedel6_2_assert" assert } ix // first n should be garbage here; second 7
+            n @ 6 + 8 "goedel6_3_assert" assert 
+        } ix
+        { (| n ) 
+            n @ p 
+            n 3 = 
+            n dup @ 4 + = 
+            n @ dup p 7 "goedel6_4_assert" assert 
+        } ix // n should be garbage here
+        n @ dup p
+        return tos
+    ; ".I" typeSignature
+    ' goedel6 find wdiss //pause   
+    9 goedel6 "goedel6_0_assert" assert
+    "\ngoedel6 output should read (after ignoring _asserts) : \n 'junk' 2 'junk' 7 'junk' 7 9" ps 
+)
+scOn
+( ::
+    "\ngoedel8 output : " ps  
+    : goedel8 (| n -t "V.I"  ) 
+        n 1 =
+        { 
+            'n var n @ p 
+            n 2 = n @ dup p 2 "goedel8_1_assert" assert  // first n should be garbage here; second n 2
+            //{ 'n var n @ p n 3 = n @ 4 + dup p 7 "goedel8_2_assert" assert } ix // first n should be garbage here; second 7
+            { 'n var n @ p n 3 = n @ 4 + dup p 7 "goedel8_3_assert" assert } ix // first n should be garbage here; second 7
+            n @ 6 + 8 "goedel8_4_assert" assert 
+        } ix
+        { 
+            'n var n @ p 
+            n 3 = 
+            n dup @ 7 + = 
+            n @ dup p 10 "goedel8_5_assert" assert 
+        } ix // first n should be garbage here; second 7
+        n @ 8 + dup p
+        return tos 
+    ;
+    goedel8 9 "goedel8_6_assert" assert1 "\ngoedel8 output should read : \n'junk' 2 'junk' 7 'junk' 10 9" ps //pause
+) 
+tick goedel8 find wdiss //pause sp
+Lisp
+(list (1 2)) (list 1 2)
+(define x "let") (define a "the") // 'let' is a special word
+(define x1 'let) (define a1 the)
+( Its 'a beautiful day don\'t 'let it get away )
+( Its a beautiful day don\'t x it get away )
+'( Its a beautiful day don\'t let it get away )
+'( Its a beautiful day don\'t @x1 it get away ) 
+`( ,Its ,a ,beautiful ,day ,don\'t ,@x1 ,it ,get ,away )
+`( Its ,a beautiful day don\'t ,x it get away ) 
+"testing unquote above line should show : ( Its a beautiful day don't x it get away )\n" ps
+`( Its 'a beautiful day don\'t ,x1 it get away )
+"testing unquote above line should show : ( Its a beautiful day don't x1 it get away )\n" ps 
+`( Its ,@a beautiful day don\'t ,@x it get away )
+`( Its a beautiful day don\'t ,@x1 it get away )
+
+lispOff 
+C
+"\nending lisp.csl\n" ddps
+#if doScript
+String
+$ls -al /usr/local ; 
+$etc/script ; 
+$etc/lispScript ; 
+$ls  -al ;
+Forth
+: hi 1 2 + p ; hi nl
+: hi1 ( a b | c ) c a @ b @ + = oPrintf ("\n%d", c ) return ( c @ ) ; pwi hi1 1 2 hi1 3 _assert nl //pause
+//stack pause
+verbosity 1 =
+
+#endif
+C
+
+Int
+2 + 7 assertStkChk // stack checking
+location 
+bnOff
+
+//pause
+
+

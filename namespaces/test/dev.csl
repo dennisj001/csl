@@ -133,7 +133,7 @@ int
 faccs1 ( REG n | REG rec ) 
 {
     rec = 1 ; 
-    if ( n > 1 )
+   if ( n > 1 )
    {
         do
         { 
@@ -202,7 +202,19 @@ User
 : factorial ( REG n | REG rec ) rec 1 = { n @ 1 > } { rec @ n @ * rec store n -- } while return rec ;
 : factorial2 ( REG n | REG rec ) rec 1 = { rec @ n @ * rec store n -- } { n @ 1 > } doWhile return rec ;
 pwi factorial2 
-7 factorial2 5040 _assert //pause
+7 factorial2 dup p 5040 _assert //pause
+fOn
+: factorial3 ( REG n | REG rec ) 
+    rec 1 = 
+    begin rec rec @ n @ * = n --  n @ 1 > doWhile  
+    //begin rec rec @ n @ * = n n @ 1 - =  n @ 1 > doWhile  
+    return rec @ 
+;
+pwi factorial3 
+7 factorial3 dup p 5040 _assert //pause
+fOff
+Combinators
+Root
  //initRegs
 'reps0 var 
 'reps1 var
@@ -245,7 +257,7 @@ nl "ffx ... " ps nl
 
 : comment ( wn ) ":: function :" ps wn @ ps ": called on args : 1 -" ps reps0 @ p ":" ps reps @ p "reps" ps ;
 //: ffx ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss 3 w @ _ffx nl wn @ ps ":" ps 1 time wn @ comment nl ;
-: ffx ( wn | w ) 1 ti w wn @ _findAny = 3 w @ _ffx nl wn @ ps ":" ps 1 time wn @ comment nl ;
+: ffx ( wn | w ) 5 ti w wn @ _findAny = 3 w @ _ffx nl wn @ ps ":" ps 5 time wn @ comment nl ;
 //: ffx ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss 3 w @ _ffx nl wn @ ps ":" ps 1 time nl ;
 : ffx2 ( wn | w ) 1 ti w wn @ _findAny = w @ wdiss w @ 3 _ffx2 1 time nl ;
 c_syntaxOn
@@ -430,6 +442,24 @@ fibPTC4? (20) ;
 c_syntaxOff
 "fibPTC4?" ffx 
 dup p 6765 _assert sp0 //pause
+cOff
+fOn
+: fibPTC5 ( REG n | REG fn REG fn1 REG fn2 )
+    fn 0 = fn1 0 = fn2 1 = 
+    begin 
+        fn1 fn2 @ =
+        fn2 fn @ =
+        fn fn1 @ fn2 @ + = 
+        n n @ 1 - = 
+        n @ 0 > 
+    doWhile
+    return fn @ 
+;
+pwi fibPTC5 
+20 fibPTC5 dup p 6765 _assert
+"fibPTC5" ffx //pause
+fOff
+Combinators
 //"cfib_O3" ffx 
 "cfib2_O3" ffx 
 sp0
@@ -624,10 +654,13 @@ WDISS_ON 1 =
 #else
         "fibPTC2?" n @ _shootout 
         "cfib2_O3" n @ _shootout
+        "fibPTC5"  n @ _shootout
         "fibPTC2?" n @ _shootout
         "cfib2_O3" n @ _shootout
+        "fibPTC5"  n @ _shootout
         "fibPTC2?" n @ _shootout
         "cfib2_O3" n @ _shootout 
+        "fibPTC5"  n @ _shootout
 #endif
     } for
     "\nfib_shootout end ...\n" ps 
@@ -654,10 +687,13 @@ reps1 @ fib_shootout // pause
         "factorial2" n @ _shootout //pause
 #else
         "factorial2" n @ _shootout //pause
+        "factorial3" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
         "factorial2" n @ _shootout //pause
+        "factorial3" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
         "factorial2" n @ _shootout //pause
+        "factorial3" n @ _shootout //pause
         "cfactorial3" n @ _shootout
 #endif
     } for

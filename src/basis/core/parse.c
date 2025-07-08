@@ -247,7 +247,7 @@ Parse_Macro ( int64 type )
 }
 
 byte *
-Lexer_ParseTerminatingMacro (Lexer * lexer, byte termChar, Boolean stringFlag )
+Lexer_ParseTerminatingMacro ( Lexer * lexer, byte termChar, Boolean stringFlag )
 {
     ReadLiner * rl = _ReadLiner_ ;
     byte * token ;
@@ -277,7 +277,7 @@ start:
             return &token [1] ;
         }
     }
-    return token ; 
+    return token ;
 }
 
 int64
@@ -408,7 +408,7 @@ CSL_CheckDo_KeywordOperand ( )
     byte *token1, * token = Lexer_ReadToken ( _Lexer_ ) ; // remember this was a peeked word
     if ( token[0] == '\"' )
     {
-        token1 = Lexer_ParseTerminatingMacro (_Lexer_, '\"', 0 ) ;
+        token1 = Lexer_ParseTerminatingMacro ( _Lexer_, '\"', 0 ) ;
         word = Lexer_ParseToken_ToWord ( _Lexer_, token1, - 1, - 1 ) ;
     }
     else
@@ -426,7 +426,7 @@ CSL_Parse_Interpret_KeywordOperand ( Word * word, Boolean otherwiseFlag )
     Compiler * compiler = _Compiler_ ;
     byte * token = 0 ;
     compiler->ReturnLParenOperandWord = 0 ;
-    if ( word && word->W_MorphismAttributes & T_TOS ) return 0 ;
+    if ( word && word->W_MorphismAttributes & T_TOS ) return 0 ; // && ( GetState ( compiler, RETURN_TOS ) ) ) return 0 ;
     if ( word && ( word->Name [0] == '(' ) ) // remember this was a peeked word
     {
         token = Lexer_ReadToken ( _Lexer_ ) ; // remember this was a peeked word
@@ -439,6 +439,9 @@ CSL_Parse_Interpret_KeywordOperand ( Word * word, Boolean otherwiseFlag )
             CSL_CheckDo_KeywordOperand ( ) ;
     }
     //if (token) Lexer_ReadToken ( _Lexer_ ) ; // read final ')' which was just peeked
-    return compiler->ReturnLParenOperandWord ;
+    //if ( compiler->ReturnLParenOperandWord ) 
+    return compiler->ReturnLParenOperandWord ? compiler->ReturnLParenOperandWord : word ;
+    //else return word ;
 }
+
 

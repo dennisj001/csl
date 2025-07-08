@@ -716,6 +716,7 @@
 #define C_CONDITIONAL_IN ( (uint64) 1 << 32 )
 #define C_TYPEDEC_WITH_EQUAL ( (uint64) 1 << 33 )
 #define ASM_MODE ( (uint64) 1 << 34 )
+#define POSTFIX_MODE ( (uint64) 1 << 35 )
 #define C_BLOCK_INTERPRETER ( (uint64) 1 << 36 )
 #define DOING_C_TYPE_DECLARATION ( (uint64) 1 << 37 )
 #define DOING_CASE ( (uint64) 1 << 38 )
@@ -750,6 +751,7 @@
 #define JFORTH_MODE ( (uint64) 1 << 41 )
 #define RETRO_MODE ( (uint64) 1 << 42 )
 #define LBFORTH_MODE ( (uint64) 1 << 43 )
+#define FORTH_SYNTAX ( (uint64) 1 << 44 )
 
 #define NON_INLINABLE ( (uint64) 1 << 0 )
 #define DONE true

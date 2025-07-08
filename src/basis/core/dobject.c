@@ -210,6 +210,7 @@ DObject_Finish ( Word * word )
     word->W_NumberOfNonRegisterLocals = compiler->NumberOfNonRegisterLocals ;
     word->W_NumberOfVariables = compiler->NumberOfVariables ;
     if ( GetState ( _Context_, INFIX_MODE ) ) word->W_MorphismAttributes |= INFIX_WORD ;
+    if ( GetState ( _Context_, POSTFIX_MODE ) ) word->W_MorphismAttributes |= POSTFIX_MODE ;
     _CSL_->LastFinished_DObject = word ;
     _CSL_SetSourceCodeWord ( word ) ;
 }

@@ -1,0 +1,118 @@
+5 
+C
+scOn
+Root
+lispOff
+: sp0 ; //stack pause ;
+sp0
+System Interpreter 
+// these #defines are purposefully unnecessarily complex (and confusing looking) for testing
+// rpn
+#define xhe0 xhi1  
+#define xhe1 nl 
+#define xhe12( str ) str @ nl ps 
+#define xhi2( n ) xhe12 ( xhe0 ) 1 2 \
+            + n @ \
+            + p // backslash also works like in a C #define 
+#define xhi2a( str n ) xhe12 ( str @ ) 1 2 \
+            + n @ \
+            + p 
+#define xhi01 xhe0 xhe1
+#define xhi1 p (1 + 2 + 4) 
+// #define is in the preprocessor vocabulary and can be used anywhere
+infixOn 
+#define xhi0 p (1 + 2 + 4) 
+c_syntaxOn
+// note syntax is tolerant
+#define xhii( n ) p (1 + 2 + n) 
+#define xhi( n ) ps ( "\nxhi = " ), p ( 1 + 2 + n ) 
+#define xxhi( n ) ps ( "\nxxhi : " ) xhi ( n ) xhii ( n ) 
+#define yhi( n ) ps ("\nyhi : " ) ; p ( 1 + 2 + n ) xxhi ( n )
+#define zhi( n ) ps ("\nzhi : " ) ; yhi(4) ; p ( 1 + 2 + n ) ; xxhi ( n ) ;
+sp0
+xxhi ( 4 ) ; yhi ( 4 ) ; zhi(4) ;
+sp0
+
+void
+testc1 () 
+{
+    int tdbg = 1, tdbg2 = 2, tdbg3 = 3 ; 
+    int tdbg4 = 4, tdbg5 = 5, tdbg6 = 6 ; 
+    ps ( "\ntdbg =" ) ; p ( tdbg ) ; 
+    ps ( "\ntdbg2 =" ) ; p ( tdbg2 ) ; 
+    ps ( "\ntdbg3 =" ) ; p ( tdbg3 ) ; //pause () ;
+    ps ( "\ntdbg4 =" ) ; p ( tdbg4 ) ; 
+    ps ( "\ntdbg5 =" ) ; p ( tdbg5 ) ; 
+    ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //_pause () ;
+    ps ("\nlast line"); ps ( "\nxhii =" ) ; xhii (4) ; xhi (4) ; xhi0; xhi1  ; xhi( 4 ); xhi01 ; xhi1 ; xhi2(8) ; xhi2a ( "xhi2a =", 8 ) ; 
+} prefix
+'testc1 find wdiss sp0
+testc1 () ; 
+sp0
+#if 1
+C libc
+void
+interpret ( | atoken aword ) 
+{
+#if 1
+    testc1 () ; xhi01 ; xhi1( ) ; xhi2 ( 8 ) ; xhi2a ( "xhi2a =", 8 ) ; 
+    nl( ) ; tab ( ) ; ps ( "interpret :> " ) ; nl ( ) ;
+#endif
+    while ( 1 )
+    {   
+        atoken = token () ; 
+        if ( ! atoken ) break ; 
+        oPrintf ( "\n\tinterpret : token = %s", atoken ) ; 
+        //location ;
+#if 0
+        //<dbg>
+        if ( ! strcmp ( atoken, "ihalt" ) ) 
+        //if ( strcmp ( atoken, "ihalt" ) == 0 ) 
+        {
+#else
+        if ( StringEqual ( atoken, "ihalt" ) )        
+        { 
+#endif
+            oPrintf ( "\n\n\ttoken = %s :: interpret exiting ...", atoken ) ; 
+            break ; // not working ??
+            //goto: done ; // ok
+            //return ;
+        }        
+        else
+        {
+            aword = tokenToWord ( atoken ) ;
+            doWord ( aword ) ;
+        }
+    }
+    label: done ;
+}
+
+pwi interpret sp0 //pause
+interpret 
+c_syntaxOff 
+
+using 
+//pause
+User
+: hi1 1 2 + p ; hi1
+: hey1 hi1 hi1 ; 
+: heey1 hey1 hey1 hey1 ;
+nl heey1 
+
+ihalt 
+sp0
+C
+sp
+"PrefixCombinators" notUsing
+//infixOff
+sp
+#endif
+
+
+c_syntaxOff 
+2 + 7 assertStkChk // stack checking
+//
+1 ? "hi" ps : "error" ps 
+//
+Root
+: sp0 ;

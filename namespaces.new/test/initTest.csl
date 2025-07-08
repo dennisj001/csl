@@ -1,0 +1,96 @@
+5
+// nb. some of the testing code is attempting to see if it can cause an error it is not necessarily meant to be exemplary 
+verbosity 1 = 
+Root     
+: sp ; //stack pause ; sp
+Int User Combinators
+{ "_TestDone_" _defined not } { "_TestDone_" _var } if2 
+sp
+#ifndef INCLUDES 
+: iinc "./init.csl" include ;
+: interpT "namespaces/compiler/interpreter.csl" include ;
+: itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
+: classTest "namespaces/test/classTest.csl" include ;
+: arrayTest "namespaces/test/arrayTest.csl" include ;
+: localsTest "namespaces/test/localsTest.csl" include ;
+: bigNumTest "namespaces/test/bigNum.csl" include ;
+: stackTest "namespaces/test/stack.csl" include ;
+: controlTest "namespaces/test/control.csl" include ;
+: objectTest "namespaces/test/dobject.csl" include ;
+: c_SyntaxTest "namespaces/compiler/c_syntax.csl" include ;
+: syntaxTest "namespaces/compiler/syntax.csl" include ;
+: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
+: test "namespaces/test/test.csl" include ;
+: dT0 "namespaces/test/dev0.csl" include ;
+: dT2 "namespaces/test/dev2.csl" include ;
+: dT3 "namespaces/test/dev3.csl" include ;
+: loT "namespaces/test/logic.csl" include ;
+: dT "namespaces/test/dev.csl" include ; inline
+: dT2 "namespaces/test/dev2.csl" include ;
+: mT "namespaces/test/math.csl" include ;
+: fT "namespaces/test/file.csl" include ;
+: sT "namespaces/compiler/syntax.csl" include ;
+: nT "namespaces/test/namespace.csl" include ;
+: sysT "namespaces/test/system.csl" include ;
+: lispTest "namespaces/test/lisp.csl" include ;
+: oldL "namespaces/test/oldLisp.csl" include ;
+: stT stackTest ;
+: bT bigNumTest ;
+: locT localsTest ;
+: aT arrayTest ;
+: cT classTest ;
+: cntT controlTest ;
+: oT objectTest ;
+: cST c_SyntaxTest ;
+: ppT preprocessorTest ;
+: lT lispTest ;
+#endif
+
+C
+: sp ; //stack pause ; sp
+#if 1 //doX64
+: basicT ppT loT nT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST dT0 x64 dT ; //x64 ;
+//: basicT ppT loT bT cT mT aT locT fT oT cntT lT sT sysT interpT stT cST x64 ; //x64 ;
+#elif 1 //doTX64
+: basicT bT ppT loT nT cT mT aT locT fT oT cntT lT sT sysT interpT stT dT0 x64 ; //cST dT0 x64 ; //x64 ;
+#else
+: basicT ppT loT nT cT mT aT bT locT fT oT cntT lT sT sysT interpT stT cST dT0 nT ;
+//: basicT ppT loT cT mT aT bT locT fT oT     cntT lT sT sysT dT0 ; //interpT stT cST dT0 ;
+#endif
+: _basicT bT mT cntT lT fT sysT  ;
+: testBasic basicT ;
+// : testAll testBasic testX ;
+: testAll cT aT loT bT locT mT oT x64 cntT lT fT sT cST ;
+: testIt testAll ;
+: dtestAll cT aT lT loT mT oT x64 cntT ; // for stepping thru test
+: demo! sOn 5 itest ;
+: odemo sOff 5 itest ;
+: demo 1 ti _TestDone_ @ not { itest } if1 dT rtw 1 time 2 time ; //dT0 ; 
+: tdemo ( n ) { n @ } { demo n -- } while ; 
+//' demo wdiss pause
+//: demo dT ;
+: test0 x64 dT ; inline
+: test1 inlineOff optimizeOff test0 ;
+: aoTest odemo cntT ;
+: aTest demo cntT ;
+: tL lT dT0 ;
+: tL2 dT0 lT ;
+: tcd tc demo ;
+
+// the action starts here
+nl "before testAll" prints
+ 
+"doTest" 1 const
+System Combinators
+
+"\ntest nested elif 1 - correct \n" ps //pause
+: shellOff "Shell" notUsing ;
+Shell
+if ( doTest _TestDone_ @ not && ) basicT _TestDone_ ++ 
+endif
+Interpreter
+nl "_TestDone_ =" ps _TestDone_ @ p nl
+{ _TestDone_ @ not } { pause } if2 
+2 + 7 assertStkChk // stack checking
+
+

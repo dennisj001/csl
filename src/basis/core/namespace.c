@@ -49,12 +49,13 @@ _Namespace_AddToNamespacesTail ( Namespace * ns )
 }
 
 #if 0
+
 void
 Namespace_Do_Namespace ( Namespace * ns )
 {
     Context * cntx = _Context_ ;
     if ( GetState ( cntx, IS_FORWARD_DOTTED ) ) Compiler_Save_Qid_BackgroundNamespace ( cntx->Compiler0 ) ;
-    //if ( ( ! CompileMode ) || GetState ( cntx, C_SYNTAX | LISP_MODE ) ) _Namespace_Do_Namespace ( ns ) ;
+        //if ( ( ! CompileMode ) || GetState ( cntx, C_SYNTAX | LISP_MODE ) ) _Namespace_Do_Namespace ( ns ) ;
     else if ( ( ! GetState ( cntx, IS_FORWARD_DOTTED ) ) && ( ! GetState ( cntx->Compiler0, LC_ARG_PARSING ) ) )
     {
         //_Compile_C_Call_1_Arg ( ( byte* ) 
@@ -62,6 +63,7 @@ Namespace_Do_Namespace ( Namespace * ns )
     }
 }
 //#else
+
 void
 Namespace_Do_Namespace ( Namespace * ns )
 {
@@ -73,7 +75,7 @@ Namespace_Do_Namespace ( Namespace * ns )
         //_Compile_C_Call_1_Arg ( ( byte* ) 
         //return ;
     }
-    //else   //if ( GetState ( cntx, IS_FORWARD_DOTTED ) ) Compiler_Save_Qid_BackgroundNamespace ( cntx->Compiler0 ) ;
+        //else   //if ( GetState ( cntx, IS_FORWARD_DOTTED ) ) Compiler_Save_Qid_BackgroundNamespace ( cntx->Compiler0 ) ;
     else if ( ( ! CompileMode ) || GetState ( cntx, C_SYNTAX | LISP_MODE ) ) _Namespace_Do_Namespace ( ns ) ;
 }
 #endif
@@ -165,12 +167,12 @@ void
 Namespace_Do_Namespace ( Namespace * ns )
 {
     Context * cntx = _Context_ ;
-    if ( GetState ( cntx, IS_FORWARD_DOTTED )  ) 
+    if ( GetState ( cntx, IS_FORWARD_DOTTED ) )
     {
         Finder_SetQualifyingNamespace ( cntx->Finder0, ns ) ;
         //_CSL_Namespace_QidInNamespaceSet ( ns ) ;
     }
-    else  _Namespace_ActivateAsPrimary ( ns ) ; //Namespace_SetState ( ns, USING ) ; //
+    else _Namespace_ActivateAsPrimary ( ns ) ; //Namespace_SetState ( ns, USING ) ; //
     if ( ! GetState ( cntx->Compiler0, ( LC_ARG_PARSING | ARRAY_MODE ) ) ) cntx->BaseObject = 0 ;
 }
 
@@ -350,7 +352,7 @@ _Namespace_SetState_AsUsing ( Namespace * ns )
     _Namespace_SetState ( ns, USING ) ;
 }
 
-Namespace * 
+Namespace *
 Namespace_AreWeUsing ( byte * name )
 {
     Namespace * ns = Namespace_Find ( name ) ;
@@ -545,7 +547,7 @@ Namespace *
 _Namespace_New ( byte * name, Namespace * containingNs )
 {
     //Namespace * ns = _DObject_New ( name, 0, 0, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, -2, 0, containingNs, DICTIONARY ) ;
-    Namespace * ns = _DObject_New ( name, 0, IMMEDIATE, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, -2, 0, containingNs, DICTIONARY ) ;
+    Namespace * ns = _DObject_New ( name, 0, IMMEDIATE, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, - 2, 0, containingNs, DICTIONARY ) ;
     //Namespace * ns = _DObject_New ( name, 0, 0, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
     //Namespace * ns = _DObject_New ( name, 0, 0, NAMESPACE, 0, NAMESPACE, ( byte* ) _DataObject_Run, 0, 0, containingNs, DICTIONARY ) ;
     ns->S_SymbolList = _dllist_New ( DICTIONARY ) ;
@@ -640,7 +642,11 @@ void
 CSL_SetInNamespaceFromBackground ( )
 {
     Context * cntx = _Context_ ;
-    if ( cntx->Compiler0->C_FunctionBackgroundNamespace ) _CSL_Namespace_InNamespaceSet ( cntx->Compiler0->C_FunctionBackgroundNamespace ) ;
+    if ( cntx->Compiler0->C_FunctionBackgroundNamespace )
+    {
+        _CSL_Namespace_InNamespaceSet ( cntx->Compiler0->C_FunctionBackgroundNamespace ) ;
+        //cntx->Compiler0->C_FunctionBackgroundNamespace = 0 ;
+    }
     else Compiler_SetAs_InNamespace_C_BackgroundNamespace ( cntx->Compiler0 ) ;
 }
 
@@ -699,7 +705,7 @@ TypeNamespace_Get ( Word * w )
     else if ( w->TypeNamespaceName && ( ( ns = Namespace_Find ( w->TypeNamespaceName ) ) && ( ns->W_ObjectAttributes & ( STRUCTURE_TYPE ) ) ) )
         return ns ; //Word_UnAlias ( ns ) ;
 #endif    
-    else return w->ContainingNamespace ;
+else return w->ContainingNamespace ;
 }
 
 void

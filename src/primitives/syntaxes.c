@@ -56,13 +56,34 @@ CSL_C_Syntax_On ( )
 }
 
 void
-CSL_BigNum_On ()
+CSL_ForthSyntaxOn ( )
+{
+    Context * cntx = _Context_ ;
+    CSL_C_Syntax_Off ( ) ;
+    CSL_PostfixModeOn ( ) ;
+    SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
+    SetState ( cntx, FORTH_SYNTAX, true ) ;
+    Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "Combinators" ) ;
+    Namespace_DoNamespace_Name ( ( byte* ) "Forth" ) ;
+}
+
+void
+CSL_ForthSyntaxOff ( )
+{
+    Context * cntx = _Context_ ;
+    SetState ( cntx, FORTH_SYNTAX, false ) ;
+    Namespace_DoNamespace_Name ( ( byte* ) "Combinators" ) ;
+}
+
+void
+CSL_BigNum_On ( )
 {
     //Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
-    BigNum_Init () ;
+    BigNum_Init ( ) ;
 }
+
 void
-CSL_BigNum_Off ()
+CSL_BigNum_Off ( )
 {
     Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "BigNum" ) ;
 }
@@ -160,7 +181,7 @@ void
 CSL_If_PrefixCombinators ( )
 {
     Compiler * compiler = _Compiler_ ;
-    Word * combinator = CSL_WordList ( 0 );
+    Word * combinator = CSL_WordList ( 0 ) ;
     combinator->W_SC_Index = _Lexer_->SC_Index ;
     byte svscp = GetState ( compiler, C_COMBINATOR_PARSING ) ;
     SetState ( compiler, C_COMBINATOR_PARSING, true ) ;
@@ -169,7 +190,7 @@ CSL_If_PrefixCombinators ( )
     int64 blocksParsed = CSL_Interpret_C_Blocks ( 2, 1, 0, 1 ) ;
     _Context_->SC_CurrentCombinator = combinator ;
     if ( blocksParsed > 2 ) CSL_TrueFalseCombinator3 ( ) ;
-    //else if ( blocksParsed == 1 ) CSL_If1Combinator () ;
+        //else if ( blocksParsed == 1 ) CSL_If1Combinator () ;
     else
     {
         d0 ( if ( Is_DebugOn ) iPrintf ( "\n\nbefore CSL_If2Combinator : blockStack depth = %d : %s : %s\n\n", _Stack_Depth ( compiler->BlockStack ), _Context_->CurrentlyRunningWord->Name, Context_Location ( ) ) ) ;
@@ -182,7 +203,7 @@ void
 CSL_DoWhile_PrefixCombinators ( )
 {
     SetState ( _Compiler_, IN_DO_WHILE, true ) ;
-    Word * combinator = CSL_WordList ( 0 );
+    Word * combinator = CSL_WordList ( 0 ) ;
     combinator->W_SC_Index = _Lexer_->SC_Index ;
     byte * start = Here ;
     _Compiler_->BeginBlockFlag = false ;
@@ -200,7 +221,7 @@ CSL_DoWhile_PrefixCombinators ( )
 void
 CSL_For_PrefixCombinators ( )
 {
-    Word * combinator = CSL_WordList ( 0 );
+    Word * combinator = CSL_WordList ( 0 ) ;
     combinator->W_SC_Index = _Lexer_->SC_Index ;
     _Compiler_->TakesLParenAsBlock = true ;
     _Compiler_->BeginBlockFlag = false ;
@@ -212,7 +233,7 @@ CSL_For_PrefixCombinators ( )
 void
 CSL_Loop_PrefixCombinators ( )
 {
-    Word * combinator = CSL_WordList ( 0 );
+    Word * combinator = CSL_WordList ( 0 ) ;
     combinator->W_SC_Index = _Lexer_->SC_Index ;
     _Compiler_->BeginBlockFlag = false ;
     CSL_Interpret_C_Blocks ( 1, 0, 0, 0 ) ;
@@ -224,7 +245,7 @@ void
 CSL_While_PrefixCombinators ( )
 {
     if ( GetState ( _Compiler_, IN_DO_WHILE ) ) return ;
-    Word * combinator = CSL_WordList ( 0 );
+    Word * combinator = CSL_WordList ( 0 ) ;
     combinator->W_SC_Index = _Lexer_->SC_Index ;
     byte * start = Here ;
     _Compiler_->TakesLParenAsBlock = true ;

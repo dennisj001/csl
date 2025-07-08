@@ -208,6 +208,7 @@ CSL_If_TttN_0Branch_Jcc ( )
 void
 CSL_Else ( )
 {
+    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         byte * compiledAtAddress = Compile_UninitializedJump ( ) ;
@@ -226,6 +227,7 @@ CSL_Else ( )
 void
 CSL_EndIf ( )
 {
+    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
@@ -233,9 +235,12 @@ CSL_EndIf ( )
     //else Compiler_Init ( _Compiler_, 0 ) ;
 }
 
+//: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
+//: tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
 void
 CSL_Begin ( )
 {
+    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         //Stack_Push_PointerToJmpOffset ( Here ) ;
@@ -244,9 +249,11 @@ CSL_Begin ( )
     }
 }
 
+//: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
 void
 CSL_While ( )
 {
+    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         byte * compiledAtAddress = Compiler_TestJccAdjustN ( _Compiler_, 0, 1 ) ; // whatever logic < > <= >= == this jmps if not true -'AdjustN'
@@ -256,9 +263,31 @@ CSL_While ( )
     }
 }
 
+#if 0
+: factorial3 ( REG n | REG rec ) 
+    rec 1 = 
+    begin rec rec @ n @ * = n n @ 1 - =  n @ 1 > doWhile  
+    return rec @ 
+;
+pwi factorial3 
+7 factorial3 dup p 5040 _assert //pause
+#endif
+void
+CSL_DoWhile ( )
+{
+    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
+    if ( CompileMode )
+    {
+        byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
+        byte * compiledAtAddress = Compiler_TestJccAdjustN ( _Compiler_, beginAddress, 0 ) ; // whatever logic < > <= >= == this jmps if not true -'AdjustN'
+    }
+}
+
+//: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
 void
 CSL_Repeat ( )
 {
+    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
@@ -268,9 +297,11 @@ CSL_Repeat ( )
     }
 }
 
+//: tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
 void
 CSL_Until ( )
 {
+    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;

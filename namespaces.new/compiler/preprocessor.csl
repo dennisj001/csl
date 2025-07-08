@@ -1,0 +1,149 @@
+5
+#ifndef _PP_H_
+#define _PP_H_ 
+: apause ; //pause ;
+: epause ; // pause ;
+"ppx" var "ppxe" var
+//#endif
+
+#if 0 // if 0
+
+#if 0 // if 1
+
+#if 0 // if 2
+"\npreprocessor test error 0.0\n" ps epause
+ppxe dup @ 1 + =
+#endif // if 2 : endif
+
+"\npreprocessor test error 0.1\n" ps epause
+ppxe dup @ 1 + =
+
+#if 1 // if 3
+"\npreprocessor test error 0.2\n" ps epause
+ppxe dup @ 1 + =
+#endif // if 3 : endif
+
+#endif // if 1 : endif
+
+#else // t if 0 else -> true
+
+#if 0 // if 4
+#else // else 4 t 
+"\npreprocessor test ok1\n" ps apause
+ppx dup @ 1 + =
+
+#if 0 // if 5 // t else 4 
+
+#elif 1 // t else 4 : else t preprocessor testing ... : the only if 5 true
+"\npreprocessor test ok2\n" ps apause
+ppx dup @ 1 + =
+
+#elif 0 // f else 4 elif 0 : elif no 1  : if 0,4,5 remain  
+
+#elif 1  // f //else 4 has elif 1 : elif no 2  : if 0,4,5 remain  // multiple elif trues possible? :-> yes??
+"\npreprocessor test error 1\n" ps location epause
+ppxe dup @ 1 + =
+
+#if 0  // if 6
+#else // f because elif was false
+"\npreprocessor test error 2\n" ps location epause
+ppxe dup @ 1 + =
+#endif // if 6 : endif
+
+#if 0 // f if 7 // on a false elif branch
+#elif 0
+#elif 0
+#elif 1 // f // if 5 -> 7
+"\npreprocessor test error 3\n" ps location epause
+ppxe dup @ 1 + =
+#elif 1 // f
+"\npreprocessor test error 4\n" ps location epause
+ppxe dup @ 1 + =
+#endif // if 7 : endif
+
+#if 1 // f if 8 // on a false elif branch
+"\npreprocessor test error 5\n" ps location epause
+ppxe dup @ 1 + =
+#endif // if 8 : endif
+
+#elif 0 // f if 5 : elif no 3  : if 0,4,5 remain 
+
+#if 0 // if 9
+#else // f
+"\npreprocessor test error 6\n" ps location epause
+ppxe dup @ 1 + =
+#endif // if 9 : endif
+
+#if 0 // if 10
+#else // f
+"\npreprocessor test error 7\n" ps location epause
+ppxe dup @ 1 + =
+#endif // if 10 : endif
+
+#elif 1 // if 5 : elif  
+"\npreprocessor test error 8\n" ps location epause
+ppxe dup @ 1 + =
+
+#if 0 // if 11
+#else
+"\npreprocessor test error 9\n" ps location epause
+ppxe dup @ 1 + =
+#endif // if 11 : endif
+
+#elif 1 // if 5 : elif no 5  : if 0,4,5 remain 
+"\npreprocessor test error 10\n" ps location epause
+ppxe dup @ 1 + =
+
+#if 0 // if 12
+#else
+"\npreprocessor test error 11\n" ps epause
+ppxe dup @ 1 + =
+#endif // if 12 : endif
+
+#endif // if 5 : endif
+
+#endif // if 4 : endif 
+
+#endif // if 0 : endif
+
+
+#endif // ifndef _PP_H_
+
+#if 0
+#elif 1
+#if 0
+"\npreprocessor test error 12\n" ps epause
+ppxe dup @ 1 + =
+#else
+"\npreprocessor test ok3\n" ps apause
+ppx dup @ 1 + =
+#endif
+#endif
+
+#if 0
+#else 
+#if 0
+"\npreprocessor test error 13\n" ps epause
+ppxe dup @ 1 + =
+#else
+"\npreprocessor test ok4\n" ps apause
+ppx dup @ 1 + =
+#endif
+#endif
+
+
+sp
+#if 1 // there is still one obscure error here which doesn't affect much
+ppx @ dup "\nppx =" ps p 4 _assert 
+ppxe @ dup "\nppxe =" ps p 0 _assert 
+apause
+#else 
+ppx @ "\nppx =" ps p ": should be 4" ps 
+ppxe @ "\nppxe =" ps p ": should be 0" ps 
+//"\nthere is still one obscure error here which probably doesn't affect much??\n" ps
+#endif
+
+sp
+2 + 7 assertStkChk // stack checking 
+//pause
+;d

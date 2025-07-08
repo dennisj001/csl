@@ -1,0 +1,466 @@
+5 
+Root
+: sp ; //stack pause ; sp
+
+lispOff bnOff
+#if _TestDone_ @ not // prevent including twice
+//dbgOff
+decimal
+Int Class DLLNode
+"DLLNodeAlloc" class :{ DLLNode nodes [ 32 ] ; };
+#if 1
+: sp ;  //stack pause ; sp
+#else
+: sp stack pause ; sp
+#endif    
+
+DLLNodeAlloc "testna" new
+"DLLNode size = " prints DLLNode size @ Io.print nl 
+"DLLNodeAlloc size = " prints DLLNodeAlloc size @ Io.print nl 
+testna.nodes [ 1 2 + ].AfterReference 1 =
+testna.nodes [ 2 ].BeforeReference 2 =
+testna 64 dump
+testna.nodes [ 3 ].AfterReference @ 1 _assert
+sp
+"DLLNodeAlloc4" class :{ DLLNode nodes [ 32 ] [ 4 ] ; };
+"DLLNodeAlloc4 size = " prints DLLNodeAlloc4 size @ Io.print nl 
+DLLNodeAlloc4 "testna4" new
+// test just using a object but not as a local variable 
+// nb. doesn't work as a local variable yet
+//verbosity 3 =
+"\ntestna4 = " ps testna4 hp
+: testna5 ( DLLNodeAlloc4 dlna4o )
+    "\ndlna4o = " ps dlna4o hp
+    dlna4o.nodes [ 1 ] [ 0 ].AfterReference 1 =
+    dlna4o.nodes [ 1 ] [ 0 ].BeforeReference 2 =
+    dlna4o.nodes [ 1 ] [ 0 ] 32 dump
+    dlna4o.nodes [ 2 ] [ 1 ].AfterReference 1 =
+    dlna4o.nodes [ 2 ] [ 1 ].BeforeReference 2 =
+    "\njust before : dlna4o.nodes [ 2 ] [ 1 ] 32 dump" ps 
+    dlna4o.nodes [ 2 ] [ 1 ] 32 dump
+    dlna4o.nodes [ 3 ] [ 2 ].AfterReference  1 =
+    dlna4o.nodes [ 3 ] [ 2 ].BeforeReference  2 =
+    "\njust before : dlna4o.nodes [ 3 ] [ 2 ] 32 dump" ps 
+    dlna4o.nodes [ 3 ] [ 2 ] 32 dump
+    dlna4o.nodes [ 3 ] [ 2 ].AfterReference  dlna4o.nodes [ 3 ] [ 2 ].BeforeReference =
+    dlna4o.nodes [ 3 ] [ 2 ].BeforeReference  dlna4o.nodes [ 3 ] [ 2 ].AfterReference =
+    "\njust before : dlna4o.nodes [ 3 ] [ 2 ] 32 dump" ps 
+    dlna4o.nodes [ 3 ] [ 2 ] 32 dump
+    "dlna4o = " ps dlna4o hp
+;
+' testna5 find wdiss
+
+testna4 testna5 //pause
+: testna5 
+    "\ntestna4 = " ps testna4 hp
+    testna4.nodes [ 1 ] [ 0 ].AfterReference 1 =
+    testna4.nodes [ 1 ] [ 0 ].BeforeReference 2 =
+    testna4.nodes [ 1 ] [ 0 ] 32 dump
+    testna4.nodes [ 2 ] [ 1 ].AfterReference 1 =
+    testna4.nodes [ 2 ] [ 1 ].BeforeReference 2 =
+    "\njust before : testna4.nodes [ 2 ] [ 1 ] 32 dump" ps 
+    testna4.nodes [ 2 ] [ 1 ] 32 dump
+    testna4.nodes [ 3 ] [ 2 ].AfterReference  1 =
+    testna4.nodes [ 3 ] [ 2 ].BeforeReference  2 =
+    "\njust before : testna4.nodes [ 3 ] [ 2 ] 32 dump" ps 
+    testna4.nodes [ 3 ] [ 2 ] 32 dump
+    testna4.nodes [ 3 ] [ 2 ].AfterReference  testna4.nodes [ 3 ] [ 2 ].BeforeReference =
+    testna4.nodes [ 3 ] [ 2 ].BeforeReference  testna4.nodes [ 3 ] [ 2 ].AfterReference =
+    "\njust before : testna4.nodes [ 3 ] [ 2 ] 32 dump" ps 
+    testna4.nodes [ 3 ] [ 2 ] 32 dump
+    "testna4 = " ps testna4 hp
+;
+' testna5 find wdiss
+
+testna5 //pause
+
+"\ntestna4 = " ps testna4 hp
+testna4.nodes [ 3 ] [ 2 ].BeforeReference @ testna4.nodes [ 3 ] [ 2 ].AfterReference _assert
+//pause
+
+DLLNodeAlloc "testnarr2" new 
+: tna
+    testnarr2.nodes [ 1 ] 32 dump 
+    testnarr2.nodes [ 1 ].AfterReference 1 = 
+    testnarr2.nodes [ 1 ]. BeforeReference 2 = 
+    testnarr2.nodes [ 1 ] 32 dump 
+;
+' tna find wdiss
+tna
+testnarr2.nodes[1].AfterReference @ 1 _assert
+testnarr2.nodes[1].BeforeReference @ 2 _assert
+sp
+//vb (3 ) logOn
+DLLNodeAlloc 
+: tnarr2 ( this ) 
+        "tnarr2" ps nl
+        this nl hp nl
+        this . nodes [ 2 ].AfterReference 1 =
+	this . nodes [ 2 ].BeforeReference 2 =
+	this.size @ dump
+;
+sp
+DLLNodeAlloc 
+: tnarr2a ( this ) 
+        "tnarr2a" ps nl
+	this . nodes [ 2 ].AfterReference 1 =
+	this . nodes [ 2 ].BeforeReference 2 =
+	this this.size @ dump
+;
+' tnarr2a find wdiss //pause
+DLLNodeAlloc "testn4" new sp
+DLLNodeAlloc 
+testn4 tnarr2a 
+testn4.nodes[2].AfterReference @ 1 _assert
+testn4.nodes[2].BeforeReference @ 2 _assert
+DLLNodeAlloc 
+: tna3 ( this )
+        "tna3" ps
+	this.nodes [ 2 ].AfterReference 1 =
+	this.nodes [ 2 ].BeforeReference 2 =
+	this this.size @ dump
+;
+// : sp stack pause ; 
+DLLNodeAlloc 
+"testn5" new
+sp
+pwi tna3
+testn5 tna3 
+sp
+testn5 hp
+testn5 tnarr2
+sp
+: tnax1 ( this ) // "tnax1 pushed" ps nl
+         this nl hp nl
+	this.nodes[3].AfterReference 1 =
+	this.nodes[4].BeforeReference 2 =
+	this.nodes[3] hp 
+	this.nodes[3].AfterReference dup hp 16 dump
+	this.nodes[4] hp 
+	this.nodes[4].BeforeReference dup hp 16 dump
+;
+' tnax1 find wdiss sp
+DLLNodeAlloc "testnx" new 
+//vb (1 ) logOff rdi pause
+sp
+testnx tnax1
+sp
+decimal
+#if 0
+"Ar1" class :{ int64 ar [4] ; };
+: arr2 ( Ar1 a ) 
+    a.ar[1] a.ar[3] @ = 
+    a.ar[2] a.ar[3] @ = 
+    a.ar[1] @ dup decimal p 0x89 _assert 
+;
+#elif 0 // problem with local variables in yada (below) finding this 'b' and 'c'
+"Ar1" class :{ byte b ; int16 c ; int64 ar [4] ; };
+: arr2 ( Ar1 a ) 
+    a.b 0x23 = 
+    a.c 0x456 =
+    a.ar[1] a.ar[3] @ = 
+    a.ar[2] a.ar[3] @ = 
+    a.ar[1] @ dup decimal p 0x89 _assert 
+;
+#else
+"Ar1" class :{ byte b1 ; int16 c1 ; int64 ar [4] ; };
+: arr2 ( Ar1 a ) 
+    a.b1 0x23 = 
+    a.c1 0x4567 =
+    a.ar[1] a.ar[3] @ = 
+    a.ar[2] a.ar[3] @ = 
+    a.ar[1] @ dup decimal p 0x89 _assert 
+;
+#endif
+sp
+' arr2 find wdiss
+Ar1 'arr1 new
+"arr1 : " ps location arr1 size @ dump // should be all zeroes
+arr1.ar [ 3 ] 0x89 =
+arr1.ar[0] arr1.ar[3] @ = 
+arr1.ar[0] @ 0x89 _assert
+sp
+"arr1 : " ps location arr1 size @ dump // should show 0x89 = 0x59 in first and last postion
+arr1 arr2 // should print 137
+"\narr1 : " ps location arr1 size @ dump 
+sp
+//pause
+sp
+: arr2 ( Ar1 a ) 
+    //a.b 0x23 = 
+    //a.c 0x456 =
+    a.ar[1] a.ar[3] @ = 
+    a.ar[2] a.ar[3] @ = 
+    a.ar[1] @ dup decimal p 0x89 _assert 
+;
+sp
+' arr2 find wdiss
+arr1 arr2 // should print 137
+"\narr1 : " ps location arr1 size @ dump 
+s //pause
+: a3 ( n Ar1 a ) 
+    a.ar [n @ 1 +] a.ar[n @ 2 +] @ = 
+    a.ar[ n @ 1 +] @ dup hp 0x89 _assert decimal
+    a.ar[2] @ dup hp 0x89 _assert decimal
+;
+' a3 find wdiss sp
+1 arr1 a3
+arr1.ar[2] @ 0x89 _assert
+sp
+"Ar2" class :{ int64 ar [4][4] ; };
+Ar2 "a4" new
+"a4 : " ps location a4 size @ dump
+a4.ar[3][2]  0x89 =
+"a4 : " ps location a4 size @ dump
+: a5 ( n m Ar2 a ) 
+    a.ar[n @ 1 +][m @] a.ar[n @ 2 +][m @] @ = 
+    nl "a4 : " ps location a a.size @ dump
+    a.ar[n @ 1 +][m @] @ dup hp 0x89 _assert 
+;
+' a5 find wdiss
+a4.ar[3][2] @ 0x89 _assert 
+1 2 a4 a5 s
+"a4 : " ps location a4 128 dump //pause
+"Ar3" class :{ int64 ar [3][3][2] ; };
+Ar3 "a6" s new sp
+//"a6 : " ps location a6.size @ dump
+'a6x var sp
+a6x a6.ar[2][2][1] =
+a6.ar[2][2][1] dup hp 0x89 =
+a6x @ dup hp @ dup hp 0x89 _assert
+sp
+a6.ar[2][2][1] dup hp @ dup hp 0x89 _assert 
+"a6 : " ps location a6 a6.size @ dump sp
+nl a6x @ hp 
+sp
+a6.ar[2][2][1] dup hp @ dup hp 0x89 _assert  
+nl a6.ar[1][2][1] dup hp a6.ar[2][2][1] s @ = sp
+a6x @ hp sp
+a6.ar[2][2][1] dup hp @ dup hp 0x89 _assert sp
+nl "a6 : " ps location a6 size @ dump
+a6.ar[1][2][1] @ dup p 0x89 _assert 
+sp
+a6.ar[2][2][1] dup hp @ dup hp 0x89 _assert
+a6.ar[1][2][1] dup hp @ dup hp 0x89 _assert
+a6.ar[1][2][1] dup hp dup @ hp 0 = 
+sp
+a6.ar[1][2][1] dup hp @ dup hp 0 sp _assert 
+nl "a6 : " ps location a6.ar[1][2] 16 dump
+sp
+: a8 ( Ar3 a ) 
+    a.ar[1][2][1] a.ar[2][2][1] @ = 
+    nl "a8.a : " ps location a size @ dump
+#if 1 // this should work !?
+    a.ar[1][2][1] dup hp @ dup hp 0x89 _assert 
+    a.ar[2][2][1] dup hp @ dup hp 0x89 _assert 
+#else
+    a.ar[1][2][1] @ 0x89 _assert 
+    a.ar[2][2][1] @ 0x89 _assert 
+#endif
+;
+' a8 find wdiss
+sp
+a6.ar[2][2][1] dup hp @ dup p 0x89 _assert 
+"a6 : " ps location a6.ar[2][2][1] 16 dump //pause
+a6 a8
+"a6 : " ps location a6.ar[2][2][1] 16 dump //pause
+: a7 ( n, m, o, Ar3 a ) 
+    a.ar[n @ 1 +][m @][o @] a.ar[n @ 2 +][m @][o @] @ = 
+    nl "a7.a : " ps location a.ar[n @ 1 +][m @][o @] 16 dump
+    // a.ar[n @ 2 +][m @][o @] @ dup p 0x89 s _assert 
+    a.ar[n @ 1 +][m @][o @] @ dup hp 0x89 s _assert //pause
+;;
+' a7 find wdiss
+a6.ar[2][2][1] @ 0x89 _assert //pause
+"a6 : " ps location a6.ar[2][2][1] 16 dump //pause
+//0 2 1 a6 a7 // as not a prefix function
+a7(0,2,1,a6) // as a prefix function : lexer test, note dense lexeme packing is possible here
+"a6 : " ps location a6 a6.size @ dump //pause
+"Ar9" class :{ byte ar [256][256][256] ; };
+sp
+//verbosity 2 =
+: _adump ( addr size )
+    //addr @ size @ <dbg> dump
+    addr @ size @ dump
+;
+
+: adump ( x y z Ar9 a )
+    nl "Ar9 : " ps 
+    location 
+    ": x =" ps x @ p 
+    "y =" ps y @ p 
+    "z =" ps z @ p nl 
+    "a.ar =" ps a.ar hp nl 
+    a.ar [z @][y @ ][x @] 256 _adump 
+;;
+//'adump find wdiss
+//verbosity 3 =
+
+#if 1
+: a9 ( Ar9 a | x y z ) 
+    x 0 = y 0 = z 0 = 
+#else
+: a9 ( Ar9 a ) 
+    byte x 0 = y 0 = z 0 = 
+#endif
+    { z @ 256 < }
+    {
+        { y @ 256 < }
+        {
+            { x @ 256 < }
+            {
+                a.ar [z @][y @][x @ ] x @ =
+                x ++  
+            }
+            while 
+            x 0 =
+            //adump ( x @ y @ z @ a ) 
+            y ++ 
+        }
+        while
+        x 0 =
+        y 0 =
+        z ++
+    }
+    while
+    printf ( "\na.ar[0][246][67] = %lx", a.ar[0][246][67]) 
+    adump ( 0 246 67 a )
+;
+
+//scOff
+' a9 find wdiss s //pause
+#if 1
+Ar9 "arr9" new arr9 a9 sp //pause // Ar9 is 16 mb in size so only for testing
+adump ( 0 123 234 arr9 ) 
+#endif
+sp //pause
+"ct0" class :{ byte ar [3][3][3] ; };
+ct0 "ab" new
+ab.ar [0][0][0] hp
+ab.ar [0][0][1] hp
+ab.ar [1][0][0] hp
+ab.ar [2][2][2] ab.ar [0][0][0] - p
+ab.ar [0][0][0] 254 = 
+ab.ar [0][0][0] @ dup p 254 _assert
+    
+: tct ( y ct0 a )
+    a.ar [0][0][0] 0x77 = 
+    a.ar [0][y @][0] a.ar [0][0][0] @ =
+    a.ar [y @][y @][0] a.ar [0][0][0] @ =
+    a.ar [y @ 1 +][y @][y @] dup nl hp a.ar [0][0][0] @ = // if y == 2 this is an array out of bounds reference :: not checked for yet ??
+    a.ar [y @][y @][y @ 1 +] dup nl hp a.ar [0][0][0] @ =
+    TODO ( "array out of bounds checking with variables?!" )
+    a.ar 32 dump
+    a.ar [1][2][2] 7 =
+    a.ar [1][2][2] @ 7 _assert 
+;
+ct0 "ac" new 
+ct0
+2 ac tct 
+'tct find wdiss
+sp
+"cta" class :{ byte ar [3][3][3] ; };
+cta "aba" new
+scOn
+: tcta ( y cta a )
+    a.ar [0][y @ 1 +][0] dup nl hp 77 =
+    a.ar [y @][y @ 1 +][0] dup nl hp a.ar [0][y @ 1 +][0] dup nl hp @ = 
+    aba.ar 32 dump 
+;
+2 aba tcta //pause
+: cadump ( addr size )
+    //addr @ size @ <dbg> dump
+    addr @ size @ dump
+; prefix
+//verbosity 3 = logOn
+cta "caba" new
+c_syntaxOn
+ 
+void
+ctcta ( y cta a )
+{
+    a.ar [0][y + 1][0] = 'M' ; // a.ar [0][y + 1][0] = 77 ; 
+    a.ar [y ][y + 1][ 0] = a.ar [0][y + 1][ 0 ] ; 
+    a.ar [y ][y + 1][1] = a.ar [y ][y + 1][0] ; 
+    a.ar [y + 1][y + 1][ 0 ] = a.ar [y ][y + 1][1] ; 
+    hp ( a.ar [y ][y + 1][1] ) ; //pause () ;
+    a.ar [y + 1][y + 1][1] = a.ar [y + 1][y + 1][0] ; 
+    a.ar [y + 1][y + 1][ y ] = a.ar [y + 1][y + 1][1] ; 
+    a.ar [y + 1][y + 1][y + 1] = a.ar [y + 1][y + 1][y] ; 
+    hp ( &a.ar ) ;
+    cadump ( &a.ar 27 ) ; 
+} prefix
+
+ctcta ( 1 caba ) ; //pause
+pwi ctcta 
+c_syntaxOff
+//verbosity 1 = logOff pause
+#endif
+
+#if 1
+cOn
+
+sp1
+#define CSL_PARAM
+#undef CSL_PARAM 
+#ifdef CSL_PARAM 
+typedef struct 
+{
+    byte ar [256][256][256] ;   
+    //int64 a10_i_size ;
+} Ar10 ;
+Ar10 'ar10 new
+#else
+typedef struct 
+{
+    byte ar [8][8][8] ;   
+    //int64 a10_i_size ;
+} Ar11 ;
+Ar11 'ar11 new
+#endif
+#ifdef CSL_PARAM 
+void CSL_a10 ( int64 size, Ar10 * a  ) 
+{
+#else
+void CSL_a11 (  int64 size ) 
+{
+    d: Ar11 * a = ar11 ;
+#endif
+    int64 x, y, z ;
+    x = 0, y = 0, z = 0  ;
+    while  ( z < size  )
+    {
+        while ( y < size )
+        {
+            while ( x < size )
+            {
+                <dbg> a->ar [z][y][x] = x ;
+                x ++  ;
+            }
+            x = 0,  y ++ ;
+        }
+        x = 0, y = 0,  z ++ ;
+    }
+#ifndef CSL_PARAM 
+    printf ( "\na->ar[0][6][7] = %lx", a->ar[0][6][7]) ;
+    adump ( 7 6 0 a ) ; 
+    adump ( 1 4 0 a ) ; 
+#else
+    printf ( "\na->ar[0][246][67] = %lx", a->ar[0][246][67]) ;
+    adump ( 67 246 0 a ) ; 
+    adump ( 1 34 0 a ) ; 
+#endif
+}
+//scOff
+
+#ifdef CSL_PARAM
+pwi CSL_a10 CSL_a10 ( 256, arr9 ) ; sp0
+//pwi c_a10 d: c_a10 ( arr10 ) ;
+#else
+pwi CSL_a11 d: CSL_a11 ( 8 ) ; pause
+#endif
+cOff
+//'ct0 d: notUsing
+sp1
+#endif 
+2 + 7 assertStkChk // stack checking
