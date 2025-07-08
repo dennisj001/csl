@@ -682,7 +682,7 @@ cOff
 //mem
 //scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
 ;d
-#if 0 //DEBUG_ON 
+#if DEBUG_ON 
 Forth
 : _fib1cr ( n ) n 2 < if n @ else n  n @ 1 - = _fib1cr n n @ 2 - = _fib1cr + endif ;
 c_syntaxOn
@@ -735,8 +735,8 @@ cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ?
     else if ( ( amount < 0) || ( koc == 0) ) rtrn = 0 ;
     else 
     {
-#if 0
-        rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
+#if 1
+        rtrn = cc1 ( amount, koc - 1) <dbg> + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
 #else // no REGs this works
         one = cc1 ( amount, koc - 1) ;
         two = cc1 (amount - fd (koc), koc) ;
@@ -767,15 +767,15 @@ CountChange ( int64 amount )
 }
 //logOn
 //stack pause
-CountChange (100) ; stack //pause
-countChangec (100 ) ; drop
+CountChange (100) ; stack pause
+countChangec (100 ) ; drop //pause
 ti(4) ; countChangec (1000 ) ; drop time(4) ;
 //ti(4) ; countChangec (10000 ) ; drop time(4) ;
 ti(4) ; CountChange (1000) ; time(4) ; stack
 //ti(4) ; CountChange (10000) ; time(4) ; stack
 //logOff
 cOff
-
+pause
 #endif // ifdef _DEV_H_
 //$gcc --version
 #if 0
@@ -872,13 +872,14 @@ pwi factorial3
 ;
 pwi fibPTC5 
 20 fibPTC5 dup p 6765 _assert                                                                                   
-: factorial4n ( REG n | REG rec ) 
+: factorial5n ( REG n | REG rec ) 
     rec 1 = 
-    n @ 1 > if begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile endif
+    //n @ 1 > if begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile endif
+    begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile
     return rec @ 
 ;
-pwi factorial4n 
-7 factorial4n dup p 5040 _assert 
+pwi factorial5n 
+7 factorial5n dup p 5040 _assert 
 fOff
 #endif
 2 + 7 assertStkChk // stack checking

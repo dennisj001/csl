@@ -559,7 +559,7 @@ pwi Word
 //pause
 #endif    
 c_syntaxOff 
-sp0
+//pause
 
 bnOff
 infixOn

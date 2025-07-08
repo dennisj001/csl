@@ -204,6 +204,14 @@ User
 pwi factorial2 
 7 factorial2 dup p 5040 _assert //pause
 fOn
+: factorial5n ( REG n | REG rec ) 
+    rec 1 = 
+    //n @ 1 > if begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile endif
+    begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile
+    return rec @ 
+;
+pwi factorial5n 
+7 factorial5n dup p 5040 _assert 
 : factorial3 ( REG n | REG rec ) 
     rec 1 = 
     begin rec rec @ n @ * = n --  n @ 1 > doWhile  
@@ -659,15 +667,15 @@ WDISS_ON 1 =
 #if 0 //DEBUG_ON 
         "fibPTC2?" n @ _shootout 
 #else
-        "fibPTC2?" n @ _shootout 
         "cfib2_O3" n @ _shootout
         "fibPTC5"  n @ _shootout
-        "fibPTC2?" n @ _shootout
+        "fibPTC4?"  n @ _shootout      
         "cfib2_O3" n @ _shootout
         "fibPTC5"  n @ _shootout
-        "fibPTC2?" n @ _shootout
+        "fibPTC4?"  n @ _shootout      
         "cfib2_O3" n @ _shootout 
         "fibPTC5"  n @ _shootout
+        "fibPTC4?"  n @ _shootout      
 #endif
     } for
     "\nfib_shootout end ...\n" ps 
@@ -697,14 +705,17 @@ reps1 @ fib_shootout // pause
         "factorial3" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
         "factorial4n" n @ _shootout //pause
+        "factorial5n" n @ _shootout
         "factorial2" n @ _shootout //pause
         "factorial3" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
         "factorial4n" n @ _shootout //pause
+        "factorial5n" n @ _shootout
         "factorial2" n @ _shootout //pause
         "factorial3" n @ _shootout //pause
         "cfactorial3" n @ _shootout
         "factorial4n" n @ _shootout //pause
+        "factorial5n" n @ _shootout
 #endif
     } for
     "\n\nfac_shootout end ...\n" ps
