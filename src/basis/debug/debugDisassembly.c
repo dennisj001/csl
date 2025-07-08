@@ -146,7 +146,8 @@ Debugger_DisassembleTotalAccumulated ( Debugger * debugger )
     SetState ( _CSL_, GLOBAL_SOURCE_CODE_MODE, true ) ;
     SetState ( debugger, DBG_DISASM_ACC, true ) ;
     iPrintf ( "\nDisassembling the current word : \'%s\' : %4d bytes : total accumulated code ...", word ? word->Name : ( byte* ) "", size ) ;
-    Debugger_Disassemble ( debugger, address, size, ! Compiling ) ;
+    //Debugger_Disassemble ( debugger, address, size, ! Compiling ) ;
+    _Debugger_Disassemble ( debugger, debugger->EntryWord, address, size, ! Compiling ) ;
     SetState ( _CSL_, GLOBAL_SOURCE_CODE_MODE, svState ) ;
     SetState ( debugger, DBG_DISASM_ACC, false ) ;
 }

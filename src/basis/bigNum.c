@@ -124,7 +124,7 @@ BigNum_Init ( )
 {
     //int64 w = DataStack_Pop ( ) ;
     _bigNum_Init ( 32 ) ;
-    Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
+    //Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
 }
 
 void
@@ -133,7 +133,7 @@ _BigNum_Init ( )
     //int64 w = DataStack_Pop ( ) ;
     int64 p = DataStack_Pop ( ) ;
     _bigNum_Init ( p ) ;
-    Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
+    //Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
 }
 
 void

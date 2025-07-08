@@ -205,7 +205,6 @@ _CSL_Version ( Boolean flag )
     //if ( flag || ( ( Verbosity () ) && ( _O_->StartedTimes == 1 ) ) && (CSL->InitSessionCoreTimes == 1) )
     if ( flag || ( e->Restarts < 2 ) )
     {
-        //_iPrintf ( "\ncsl %s", _O_->VersionString ) ;
         iPrintf ( "\nversion %s", _O_->VersionString ) ;
     }
 }

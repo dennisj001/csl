@@ -389,7 +389,7 @@ Debugger_ShowChange ( Debugger * debugger, Word * word, Boolean stepFlag )
 }
 
 byte *
-String_HighlightTokenInputLine ( byte * nvw, int64 lef, int64 leftBorder, int64 ts, byte * token, byte * token0, int64 rightBorder, int64 ref )
+String_HighlightTokenInputLine ( byte * nvw, int64 lef, int64 leftBorder, int64 ts, byte * token, int64 rightBorder, int64 ref )
 {
     int64 svState = GetState ( _Debugger_, DEBUG_SHTL_OFF ) ;
     SetState ( _Debugger_, DEBUG_SHTL_OFF, false ) ;
@@ -397,7 +397,7 @@ String_HighlightTokenInputLine ( byte * nvw, int64 lef, int64 leftBorder, int64 
     // |ilw...------ inputLine  -----|lef|pad?|-------------|tp|---token---|---  rightBorder  ---|ref|------ inputLine -----...ilw| -- ilw : inputLine window
     //_String_HighlightTokenInputLine ( byte * nvw, int8 lef, int64 leftBorder, int64 tokenStart, byte *token, int64 rightBorder, int8 ref )
     //cc_line = _String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token, rightBorder, ref ) ; // nts : new token start is a index into b - the nwv buffer
-    byte * cc_line = _String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token, token0, rightBorder, ref ) ; // nts : new token start is a index into b - the nwv buffer
+    byte * cc_line = _String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token, rightBorder, ref ) ; // nts : new token start is a index into b - the nwv buffer
     SetState ( _Debugger_, DEBUG_SHTL_OFF, svState ) ;
     return cc_line ;
 }
@@ -412,7 +412,7 @@ PSCS_Using_WordSC ( byte* scs, byte * token, int64 index, int64 tvw ) // scs : s
     nvw = Buffer_DataCleared ( _CSL_->DebugB3 ) ; //Buffer_New_pbyte ( ( slsc > BUFFER_SIZE ) ? slsc : BUFFER_SIZE ) ;
     slt = Strlen ( token ) ;
     tw = tvw ? tvw : TerminalLineWidth ( ) ;
-    tp = 42 ; // 42 : aligned with disassembler code
+    tp = GetState ( _CSL_, UDIS_ON ) ? 42 : 0 ; // 42 : aligned with disassembler code
     //strncpy ( nvw, il, BUFFER_IX_SIZE) ;
     if ( tvw && ( index > tvw ) )
     {
@@ -441,21 +441,23 @@ PSCS_Using_WordSC ( byte* scs, byte * token, int64 index, int64 tvw ) // scs : s
         rightBorder = tw - ( tp + slt ) - ref ;
         strncat ( nvw, scs, tw - ( lef + pad + ref ) ) ; // must Strncat because we might have done a strcat above based on the 'pad' variable
     }
-    return String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token, 0, rightBorder, ref ) ;
+    return String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token, rightBorder, ref ) ;
 }
 
 byte *
-PSCS_Using_ReadlinerInputString ( byte* il, byte * token1, byte* token0, int64 scswci, int64 tvw ) // scs : source code string ; tvw : text view sliding window 
+PSCS_Using_ReadlinerInputString ( byte* il, byte * token1, int64 scswci, int64 tvw ) // scs : source code string ; tvw : text view sliding window 
 {
     if ( il ) // there is at least one case where we need to test for this!
     {
         byte *nvw ;
+        int64 tw = TerminalLineWidth ( ) ;
+        tvw = tvw < tw ? tvw : tw ; 
         // ts : tokenStart ; tp : text point - where we want to start source code text to align with disassembly ; ref : right ellipsis flag
         int64 slt0, slt1, lef, leftBorder, ts, rightBorder, ref, slil ;
         int64 totalBorder, idealBorder, nws, nts, slNvw, lbm ;
         slil = strlen ( ( char* ) il ) ;
         nvw = Buffer_DataCleared ( _CSL_->DebugB4 ) ; //Buffer_New_pbyte ( ( slil > BUFFER_SIZE ) ? slil : BUFFER_SIZE ) ;
-        slt0 = strlen ( token0 ) ;
+        //slt0 = strlen ( token0 ) ;
         slt1 = Strlen ( token1 ) ;
         totalBorder = ( tvw - slt1 ) ; // the borders allow us to slide token within the window of tvw
         idealBorder = ( totalBorder / 2 ) ;
@@ -506,7 +508,7 @@ PSCS_Using_ReadlinerInputString ( byte* il, byte * token1, byte* token0, int64 s
         }
         else lef = ref = 0 ;
         ts = nts ;
-        return String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token1, token0, rightBorder, ref ) ;
+        return String_HighlightTokenInputLine ( nvw, lef, leftBorder, ts, token1, rightBorder, ref ) ;
     }
     else return "" ;
 }
@@ -555,7 +557,7 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
             // these two functions maybe should be integrated ; the whole series of 'ShowInfo' functions could be reworked
             if ( scs ) cc_line = PSCS_Using_WordSC ( scs, token2, index, tvw ) ; // scs : source code string
                 //else cc_line = PSCS_Using_ReadlinerInputString ( il, token2, token, scswci, tvw ) ; 
-            else cc_line = PSCS_Using_ReadlinerInputString ( il, token2, token, index, tvw ) ;
+            else cc_line = PSCS_Using_ReadlinerInputString ( il, token2, index, tvw ) ;
         }
         else cc_line = ( byte* ) "" ;
     }

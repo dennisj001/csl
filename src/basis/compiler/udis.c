@@ -81,6 +81,7 @@ _Udis_Disassemble ( ud_t *ud, Word * word, byte* iaddress, int64 number, int64 c
         byte * address = 0 ;
         ud_set_input_buffer ( ud, ( byte* ) iaddress, number ? number : 12 ) ;
         ud_set_pc ( ud, ( uint64 ) iaddress ) ;
+        SetState ( _CSL_, UDIS_ON, true ) ;
         do
         {
             isize = ud_disassemble ( ud ) ;
@@ -101,6 +102,7 @@ _Udis_Disassemble ( ud_t *ud, Word * word, byte* iaddress, int64 number, int64 c
         }
         while ( ( isize && ( number > 0 ) ) ) ;
         size = address - iaddress + 1 ; // 1 : include last iaddress 
+        SetState ( _CSL_, UDIS_ON, false ) ;
     }
     return (( size > 0 ) ? size : 0 ) ;
 }

@@ -205,7 +205,7 @@ _CSL_SystemState_Print ( int64 pflag )
     iPrintf ( buf ) ;
     _State_Print () ;
     iPrintf ( " : Lisp Debug : %s", GetState ( _LC_, LC_DEBUG_ON ) ? "on" : "off" ) ;
-    iPrintf ( " : jcc8 %s", GetState ( _CSL_, JCC8_ON ) ? "on" : "off" ) ;
+    //iPrintf ( " : jcc8 %s", GetState ( _CSL_, JCC8_ON ) ? "on" : "off" ) ;
     iPrintf ( "\n%s : at %s", Compiling ? "compiling" : "interpreting", Context_Location ( ) ) ;
     OVT_ExceptionState_Print ( ) ;
     Namespace * ins = _CSL_Namespace_InNamespaceGet ( ) ;

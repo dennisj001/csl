@@ -926,7 +926,7 @@ done:
 // dl : diff in length of token and token with highlighting :: dl = slt1 - slt0 :: not currently used
 
 byte *
-_String_HighlightTokenInputLine ( byte * nvw, Boolean lef, int64 leftBorder, int64 tokenStart, byte *token, byte * token0, int64 rightBorder, Boolean ref )
+_String_HighlightTokenInputLine ( byte * nvw, Boolean lef, int64 leftBorder, int64 tokenStart, byte *token, int64 rightBorder, Boolean ref )
 {
     int32 slt = Strlen ( token ) ;
     String_RemoveFinalNewline ( nvw ) ;

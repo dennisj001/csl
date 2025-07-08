@@ -480,7 +480,7 @@ _Compile_Move_Literal_Immediate_To_Reg ( int64 reg, int64 value, int size )
 void
 _Compile_X_Group1 ( Boolean code, Boolean toRegOrMem, Boolean mod, Boolean reg, Boolean rm, Boolean sib, int64 disp, Boolean operandSize )
 {
-    if ( code == CMP ) SetCompilerField ( CurrentTopBlockInfo, CmpCode, Here ) ;
+    //if ( code == CMP ) SetCompilerField ( CurrentTopBlockInfo, CmpCode, Here ) ;
     int64 opCode = code << 3, controlFlags = DISP_B | MODRM_B ;
     if ( operandSize > BYTE ) opCode |= 1 ;
     if ( toRegOrMem == TO_REG ) opCode |= 2 ;
@@ -536,7 +536,7 @@ _Compile_X_Group1_Immediate ( Boolean code, Boolean mod, Boolean rm, int64 disp,
     // we always sign extend so opCodes 0x80 and 0x82 are not being used
     // 1000 00sw 
     //DBI_ON ;
-    if ( ( code == CMP ) || ( code == XOR ) ) SetCompilerField ( CurrentTopBlockInfo, CmpCode, Here ) ;
+    //if ( ( code == CMP ) || ( code == XOR ) ) SetCompilerField ( CurrentTopBlockInfo, CmpCode, Here ) ;
     byte opCode = 0x80 ;
     int64 controlFlags = ( IMM_B | MODRM_B | ( disp ? DISP_B : 0 ) ) ;
     //if ( ( mod == MEM ) && ( ( iSize > 4 ) || ( imm >= 0x100000000 ) ) )
@@ -726,7 +726,7 @@ _Compile_LEA ( Boolean reg, Boolean rm, Boolean sib, int64 disp )
 void
 _Compile_TEST_Reg_To_Reg ( Boolean dstReg, int64 srcReg, Boolean size )
 {
-    SetCompilerField ( CurrentTopBlockInfo, TestCode, Here ) ;
+    //SetCompilerField ( CurrentTopBlockInfo, TestCode, Here ) ;
     Boolean opCode1 ;
     if ( size == BYTE ) opCode1 = 0x84 ;
 
@@ -747,7 +747,7 @@ _Compile_SETcc ( Boolean setTtn, Boolean setNegFlag, Boolean reg )
 {
     //DBI_ON ;
 
-    SetCompilerField ( CurrentTopBlockInfo, SetccCode, Here ) ;
+    //SetCompilerField ( CurrentTopBlockInfo, SetccCode, Here ) ;
     uint8 opCode0, opCode1, modRm, rex ;
     rex = Calculate_Rex ( 0, reg, 0, 0 ) ; //REX_B ) ; //( immSize == 8 ) || ( controlFlag & REX_B ) ) ;
     opCode0 = ( byte ) 0x0f ;
@@ -763,7 +763,7 @@ _Compile_SETccRm ( Boolean setTtn, Boolean setNegFlag, Boolean rm )
 {
     DBI_ON ;
 
-    SetCompilerField ( CurrentTopBlockInfo, SetccCode, Here ) ;
+    //SetCompilerField ( CurrentTopBlockInfo, SetccCode, Here ) ;
     uint8 opCode0, opCode1, modRm, rex ;
     rex = 0x41 ; //Calculate_Rex ( 0, reg, 0, 0 ) ; //REX_B ) ; //( immSize == 8 ) || ( controlFlag & REX_B ) ) ;
     opCode0 = ( byte ) 0x0f ;
@@ -1056,7 +1056,7 @@ void
 _Compile_MOVZX_BYTE_REG ( Boolean reg, Boolean rm )
 {
 
-    SetCompilerField ( CurrentTopBlockInfo, MovzxCode, Here ) ;
+    //SetCompilerField ( CurrentTopBlockInfo, MovzxCode, Here ) ;
     //Compile_CalculateWrite_Instruction_X64 ( 0x0f, 0xb6, REG, reg, rm, ( REX_W | MODRM_B ), 0, 0, 0, 0, 0 ) ;
     Compile_CalculateWrite_Instruction_X64 ( 0x0f, 0xb6, REG, reg, rm, ( REX_W | MODRM_B ), 0, 0, 0, 0, 0 ) ;
 }
@@ -1067,7 +1067,7 @@ void
 _Compile_MOVZX_WORD_REG ( Boolean reg, Boolean rm )
 {
 
-    SetCompilerField ( CurrentTopBlockInfo, MovzxCode, Here ) ;
+    //SetCompilerField ( CurrentTopBlockInfo, MovzxCode, Here ) ;
     //Compile_CalculateWrite_Instruction_X64 ( 0x0f, 0xb6, REG, reg, rm, ( REX_W | MODRM_B ), 0, 0, 0, 0, 0 ) ;
     Compile_CalculateWrite_Instruction_X64 ( 0x0f, 0xb7, REG, reg, rm, ( REX_W | MODRM_B ), 0, 0, 0, 0, 0 ) ;
 }

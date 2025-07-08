@@ -613,6 +613,7 @@
 //#define TYPECHECK_OFF ( (uint64) 1 << 15 )
 #define DBG_UDIS ( (uint64) 1 << 15 )
 #define DBG_UDIS_ONE ( (uint64) 1 << 16 )
+#define UDIS_ON ( (uint64) 1 << 16 )
 #define JCC8_ON ( (uint64) 1 << 17 ) // Runtime Debug
 
 // State Flags --

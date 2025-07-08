@@ -212,6 +212,13 @@ fOn
 ;
 pwi factorial3 
 7 factorial3 dup p 5040 _assert //pause
+: factorial4n ( REG n | REG rec ) 
+    rec 1 = 
+    n @ 1 > if begin rec rec @ n @ * = n -- n @ 1 > doWhile endif
+    return rec @ 
+;
+pwi factorial4n 
+7 factorial4n dup p 5040 _assert //pause
 fOff
 Combinators
 Root
@@ -442,7 +449,7 @@ fibPTC4? (20) ;
 c_syntaxOff
 "fibPTC4?" ffx 
 dup p 6765 _assert sp0 //pause
-cOff
+cOff scOn
 fOn
 : fibPTC5 ( REG n | REG fn REG fn1 REG fn2 )
     fn 0 = fn1 0 = fn2 1 = 
@@ -689,12 +696,15 @@ reps1 @ fib_shootout // pause
         "factorial2" n @ _shootout //pause
         "factorial3" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
+        "factorial4n" n @ _shootout //pause
         "factorial2" n @ _shootout //pause
         "factorial3" n @ _shootout //pause
         "cfactorial4_O3" n @ _shootout
+        "factorial4n" n @ _shootout //pause
         "factorial2" n @ _shootout //pause
         "factorial3" n @ _shootout //pause
         "cfactorial3" n @ _shootout
+        "factorial4n" n @ _shootout //pause
 #endif
     } for
     "\n\nfac_shootout end ...\n" ps

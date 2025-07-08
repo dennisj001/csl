@@ -59,8 +59,8 @@ void
 CSL_ForthSyntaxOn ( )
 {
     Context * cntx = _Context_ ;
-    CSL_C_Syntax_Off ( ) ;
-    CSL_PostfixModeOn ( ) ;
+    //CSL_C_Syntax_Off ( ) ;
+    //CSL_PostfixModeOn ( ) ;
     SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
     SetState ( cntx, FORTH_SYNTAX, true ) ;
     Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "Combinators" ) ;
@@ -78,8 +78,8 @@ CSL_ForthSyntaxOff ( )
 void
 CSL_BigNum_On ( )
 {
-    //Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
     BigNum_Init ( ) ;
+    Namespace_DoNamespace_Name ( ( byte* ) "BigNum" ) ;
 }
 
 void

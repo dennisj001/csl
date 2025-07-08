@@ -63,17 +63,19 @@ BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi )
         if ( bi->InsnAddress )
         {
             bi->Insn = ( * bi->InsnAddress ) ;
-            bi->Insn16 = ( * ((int16 *) bi->InsnAddress)) ;
+            bi->Uinsn16 = ( * ((uint16 *) bi->InsnAddress)) ;
         }
         else Error ( "\nBI_CalculateOffsetForCallOrJumpOrJcc : No insn or InsnAddress", QUIT ) ;
     }
     if ( ! bi->InsnType )
     {
-        if ( ( (bi->Insn16 & (0x800f)) == JCC32_2 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
+        if ( ( (bi->Uinsn16 & (0x800f)) == JCC32_2 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
+        //if ( ( bi->Uinsn16 == JCC32_2 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
         //if ( ( bi->Insn == JCC32 ) || ( bi->Insn == JCC8 ) ) bi->InsnType = T_JCC ;
         else bi->InsnType = ( T_JMP | T_CALL ) ;
     }
-    bi->InsnSize = ( ( (bi->Insn16 & (0x800f)) == JCC32_2 ) ) ? 2 : 1 ;
+    bi->InsnSize = ( ( (bi->Uinsn16 & (0x800f)) == JCC32_2 ) ) ? 2 : 1 ;
+    //bi->InsnSize = ( ( bi->Uinsn16 == JCC32_2 ) ) ? 2 : 1 ;
     //bi->InsnSize = ( bi->Insn == JCC32 ) ? 2 : 1 ;
     if ( ( bi->InsnType & ( T_JMP | T_CALL ) ) ) //&& ( insnSize == 1 ) ) //offsetSize = 1, insnSize = 1
     {
@@ -96,15 +98,16 @@ BI_CalculateOffsetForCallOrJumpOrJcc ( BlockInfo * bi )
     }
     else if ( bi->InsnType & ( T_JCC ) )
     {
-        if ( ( (bi->Insn16 & (0x800f)) == JCC32_2 ) ) bi->OffsetSize = 4 ;
+        if ( ( (bi->Uinsn16 & (0x800f)) == JCC32_2 ) ) bi->OffsetSize = 4 ;
+        //if ( bi->Uinsn16 == JCC32_2 ) bi->OffsetSize = 4 ;
         //if ( bi->Insn == JCC32 ) bi->OffsetSize = 4 ;
         else bi->OffsetSize = 1 ;
+    //bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
+    //if ( ( bi->Disp >= - 123 ) && ( bi->Disp <= 124 ) ) bi->OffsetSize = 1 ; //, bi->Insn = JMP8 ;
+    //else bi->OffsetSize = 4 ;
     }
     bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
 #if 0      
-    if ( ( bi->Disp >= - 123 ) && ( bi->Disp <= 124 ) ) bi->OffsetSize = 1 ; //, bi->Insn = JMP8 ;
-    else bi->OffsetSize = 4 ;
-    bi->Disp = bi->JmpToAddress - ( bi->InsnAddress + bi->InsnSize + bi->OffsetSize ) ;
     if ( ( bi->Disp >= - 127 ) && ( bi->Disp <= 128 ) && ( bi->OffsetSize == 1 ) ) bi->IiFlags |= COULD_BE_8 ;
     else bi->IiFlags |= SHOULD_BE_32 ;
     //else if ( ( bi->Disp >= ( - ( 65535 ) ) ) && ( bi->Disp <= ( 65536 ) ) ) bi->IiFlags |= COULD_BE_16 ;
@@ -136,7 +139,7 @@ CalculateOffsetForCallOrJump ( byte * insnAddr, byte * jmpToAddr, byte insnType,
     bi->InsnAddress = insnAddr ;
     bi->JmpToAddress = jmpToAddr ;
     bi->Insn = insn ; // correct previous useages
-    bi->Insn16 = ( * ((int16 *) insnAddr)) ;
+    bi->Uinsn16 = ( * ((uint16 *) insnAddr)) ;
     bi->InsnType = insnType ;
     return SetOffsetForCallOrJump ( bi ) ; //nb bi->Disp is set 
 }
@@ -160,10 +163,10 @@ GetDispForCallOrJumpFromInsnAddr ( byte * insnAddr )
 void
 CSL_If_TttN_0Branch_Jcc ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         //DBI_ON ;
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         byte * compiledAtAddress = Compiler_TestJccAdjustN ( _Compiler_, 0, 1 ) ; // whatever logic < > <= >= == this jmps if not true -'AdjustN'
         //DBI_OFF ;
         // N, ZERO : use inline|optimize logic which needs to get flags immediately from a 'cmp', jmp if the zero flag is not set
@@ -208,9 +211,9 @@ CSL_If_TttN_0Branch_Jcc ( )
 void
 CSL_Else ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         byte * compiledAtAddress = Compile_UninitializedJump ( ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ; // if 0 branch to here after the jmp to endif
         Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
@@ -227,9 +230,9 @@ CSL_Else ( )
 void
 CSL_EndIf ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
     }
     //else Compiler_Init ( _Compiler_, 0 ) ;
@@ -240,26 +243,25 @@ CSL_EndIf ( )
 void
 CSL_Begin ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         //Stack_Push_PointerToJmpOffset ( Here ) ;
         //_Compiler_->BeginAddress = Here ;
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         Stack_Push ( _Compiler_->BeginAddressStack, ( int64 ) Here ) ;
     }
 }
 
 //: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
+//: tfor ( n | x ) x n @ =  begin x @ 0 > while x @ p x x @ 1 - = repeat ; pwi tfor 10 tfor        
 void
 CSL_While ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         byte * compiledAtAddress = Compiler_TestJccAdjustN ( _Compiler_, 0, 1 ) ; // whatever logic < > <= >= == this jmps if not true -'AdjustN'
-        //d1 ( Debugger_Dis ( _Debugger_ ) ) ; 
         Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
-        //d1 ( Debugger_Dis ( _Debugger_ ) ) ; 
     }
 }
 
@@ -271,14 +273,21 @@ CSL_While ( )
 ;
 pwi factorial3 
 7 factorial3 dup p 5040 _assert //pause
+: factorial4n ( REG n | REG rec ) 
+    rec 1 = 
+    n @ 1 > if begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile endif
+    return rec @ 
+;
+pwi factorial4n 
+7 factorial4n dup p 5040 _assert //pause
 #endif
 void
 CSL_DoWhile ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 1 ) ;
         byte * compiledAtAddress = Compiler_TestJccAdjustN ( _Compiler_, beginAddress, 0 ) ; // whatever logic < > <= >= == this jmps if not true -'AdjustN'
     }
 }
@@ -287,10 +296,10 @@ CSL_DoWhile ( )
 void
 CSL_Repeat ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         Compile_JumpToAddress ( beginAddress, 0 ) ;
         //d1 ( Debugger_Dis ( _Debugger_ ) ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ;
@@ -301,10 +310,10 @@ CSL_Repeat ( )
 void
 CSL_Until ( )
 {
-    Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
     if ( CompileMode )
     {
         byte * beginAddress = ( byte* ) Stack_Pop ( _Compiler_->BeginAddressStack ) ;
+        Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         Compiler_TestJccAdjustN ( _Compiler_, beginAddress, 1 ) ;
     }
 }
@@ -367,9 +376,17 @@ Compile_Jcc ( int64 ttt, int64 n, byte * jmpToAddr, byte insn )
     if ( jmpToAddr ) //&& (! disp ))
     {
         disp = CalculateOffsetForCallOrJump ( Here, jmpToAddr, T_JCC, insn ) ;
+#if 0       
+        if ( ( disp >= - 127 ) && ( disp <= 128 ) )
+        //if ( ( disp >= - 123 ) && ( disp <= 124 ) )
+        {
+            _Compile_Jcc ( JCC8, ttt, n, disp ) ;
+            return compiledAtAddress ;
+        }
+#endif        
     }
     else disp = 0 ; // allow this function to be used to have a delayed compile of the actual address
-    SetCompilerField ( CurrentTopBlockInfo, JccCode, Here ) ;
+    //SetCompilerField ( CurrentTopBlockInfo, JccCode, Here ) ;
     _Compile_Jcc ( JCC32, ttt, n, disp ) ;
     return compiledAtAddress ;
 }
@@ -381,7 +398,8 @@ Compile_JccGotoInfo ( BlockInfo *bi, int64 type )
     Word * word = CSL_WordList ( 0 ) ;
     if ( type ) bi->BI_Gi = GotoInfo_NewAdd ( bi, word, &( _CSL_->SC_Buffer [ _CSL_->SC_Index - 1 ] ), type, Here ) ;
     bi->JccCode = Here ;
-    compiledAtAddress = Compile_Jcc ( bi->Ttt, bi->N, 0, ( GetState ( _CSL_, JCC8_ON ) ? JCC8 : JCC32 ) ) ;
+    //compiledAtAddress = Compile_Jcc ( bi->Ttt, bi->N, 0, ( GetState ( _CSL_, JCC8_ON ) ? JCC8 : JCC32 ) ) ;
+    compiledAtAddress = Compile_Jcc ( bi->Ttt, bi->N, 0, JCC32 ) ;
     return compiledAtAddress ;
 }
 

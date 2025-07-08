@@ -617,7 +617,7 @@ typedef struct
     byte InsnType ;
     byte InsnSize ;
     byte OffsetSize ;
-    uint16 Insn16 ; // JCC8 JCC32, etc
+    uint16 Uinsn16 ; // JCC8 JCC32, etc
     byte Insn ;
     int32 Disp ; // Displacement 
 } BlockInfo ;
@@ -831,7 +831,7 @@ typedef struct
     Stack * InfixOperatorStack ;
     Stack * BeginAddressStack ;
     dllist * OptimizeInfoList ;
-    BlockInfo * CurrentTopBlockInfo ;
+    //BlockInfo * CurrentTopBlockInfo ;
     LocalsRegParameterOrder Lrpo ;
 } Compiler ;
 typedef struct _Interpreter

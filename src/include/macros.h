@@ -328,6 +328,6 @@
 #define MEM_FREE            0 
 #define MEM_ALLOC           1 
 
-#define SetCompilerField( field, subfield, address ) if ( _Compiler_->field ) { _Compiler_->field->subfield = address ; }
+//#define SetCompilerField( field, subfield, address ) if ( _Compiler_->field ) { _Compiler_->field->subfield = address ; }
 //#define _CurrentTopBlockInfo( code ) SetCompilerField( CurrentTopBlockInfo #code )
 #define M_CheckOffset( offset, bits ) ( ( offset >= (- (pow (2, (bits-1)) - 1)) ) && (offset <= ( (pow (2, (bits-1)) ) ) ) )

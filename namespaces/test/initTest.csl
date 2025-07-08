@@ -91,6 +91,7 @@ endif
 Interpreter
 nl "_TestDone_ =" ps _TestDone_ @ p nl
 { _TestDone_ @ not } { pause } if2 
+7 time 
 2 + 7 assertStkChk // stack checking
 
 

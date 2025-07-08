@@ -74,7 +74,7 @@ _CSL_BeginBlock2 ( BlockInfo * bi )
     _Stack_Push ( compiler->BlockStack, ( int64 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int64 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     //if ( Is_DebugOn ) Stack_Print ( compiler->CombinatorBlockInfoStack, c_d ( "compiler->CombinatorBlockInfoStack" ), 0 ) ;
-    compiler->CurrentTopBlockInfo = bi ;
+    //compiler->CurrentTopBlockInfo = bi ;
 
 }
 
@@ -162,7 +162,7 @@ _CSL_EndBlock2 ( BlockInfo * bi )
     {
         CSL_InstallGotoCallPoints_Keyed ( bi, GI_GOTO | GI_RECURSE, 0, 0 ) ;
         CSL_TurnOffBlockCompiler ( bi ) ;
-        _Compiler_->CurrentTopBlockInfo = 0 ;
+        //_Compiler_->CurrentTopBlockInfo = 0 ;
     }
     else if ( ! GetState ( _Compiler_, C_BLOCK_INTERPRETER ) ) _Namespace_RemoveFromUsingList_ClearFlag ( bi->BI_LocalsNamespace, 1, 0 ) ; // a block namespace
     return first ;

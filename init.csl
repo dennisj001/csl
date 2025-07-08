@@ -531,7 +531,7 @@ Root.atoi ( "7" ) 7 _assert //pause
 stringMacrosOn
 #endif
 : tCSL "namespaces/ninit.csl" include ; // namespaces init
-: tc 2 ti 1 ti lispOff tCSL rtw ;
+: tc 7 ti lispOff tCSL rtw ;
 : x64 "namespaces/compiler/x64.csl" include ; 
 : bx "namespaces/test/bigNum.test.csl" include ;
 : TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbgOnVar @ } { sp } if2 ;; //pause ;;
@@ -848,7 +848,6 @@ Combinators
 #endif
 #if 0
 fOn 
-bnOff
 : tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
 : tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
 : tfor ( n | x ) x n @ =  begin x @ 0 > while x @ p x x @ 1 - = repeat ; pwi tfor 10 tfor        
@@ -872,8 +871,15 @@ pwi factorial3
     return fn @ 
 ;
 pwi fibPTC5 
-20 fibPTC5 dup p 6765 _assert
-fOff                                                                                   
+20 fibPTC5 dup p 6765 _assert                                                                                   
+: factorial4n ( REG n | REG rec ) 
+    rec 1 = 
+    n @ 1 > if begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile endif
+    return rec @ 
+;
+pwi factorial4n 
+7 factorial4n dup p 5040 _assert 
+fOff
 #endif
 2 + 7 assertStkChk // stack checking
 //rdim 

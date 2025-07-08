@@ -5,6 +5,7 @@ Context_PreWordRun_Init ( Context * cntx, Word * word )
 {
     if ( word )
     {
+        Compiler_Word_SCHCPUSCA ( word, 0 ) ;
         word->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
         // keep track in the word itself where the machine code is to go, if this word is compiled or causes compiling code - used for optimization
         if ( ( GetState ( cntx->Compiler0, ( COMPILE_MODE | ASM_MODE ) ) ) ) Word_SetCodingAndSourceCoding ( word, Here ) ; // if we change it later (eg. in lambda calculus) we must change it there because the rest of the compiler depends on this

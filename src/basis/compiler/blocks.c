@@ -134,7 +134,7 @@ BI_Block_Copy ( BlockInfo * bi, byte* dstAddress, byte * srcAddress, int64 bsize
         _CompileN ( srcAddress, isize ) ;
     }
     _Block_RecordCopy ( bi ) ;
-#if 1    
+#if 0   
     //if ( Is_DebugOn || svHere ) //( control == 1 )  
     //    Debugger_Disassemble ( _Debugger_, bi->CopiedToStart, bi->CopiedSize, 1 ) ;
     if ( Is_DebugOn && svHere ) //( control == 1 ) 
