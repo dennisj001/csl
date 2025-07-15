@@ -67,7 +67,9 @@ CSL_Interpret ( )
 void
 CSL_InterpretPromptedLine ( )
 {
-    DoPrompt () ;
+    //_O_->Pbf8[0] = '\n' ;
+    SetPromptNewline ( ) ;
+    _DoPrompt () ;
     Interpret_ToEndOfLine ( _Interpreter_ ) ;
 }
 

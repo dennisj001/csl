@@ -7,7 +7,7 @@ doLisp 1 =
 doDemo 1 =
 //dbgOff
 : demo0 "namespaces/test/initTest.csl" include ;
-doDemo @ { demo0 } if1 //stack pause
+doDemo @ { drop demo0 } if1 //stack pause
 
 Shell
 //if ( _doDemo ) demo endif 

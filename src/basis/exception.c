@@ -100,7 +100,8 @@ OVT_Throw ( ) //, Boolean pausedFlag )
     }
 jump:
     //Exception_Init ( e ) ;
-    _O_->Pbf8[0] = 0 ; // newline prompt control
+    //_O_->Pbf8[0] = 0 ; // newline prompt control
+    SetPromptNewline ( ) ;
     _OVT_SigLongJump ( jb ) ;
 }
 
@@ -188,8 +189,8 @@ OVT_PauseInterpret ( Context * cntx, byte key )
     {
         svPrompt = ReadLine_GetPrompt ( rl ) ;
         ReadLine_SetPrompt ( rl, "=> " ) ;
-        _O_->Pbf8[0] = 0 ; // trigger for Prompt
-        DoPrompt ( ) ;
+        SetPromptNewline ( ) ;
+        _DoPrompt ( ) ;
         _ReadLine_GetLine ( rl, key ) ;
         if ( ReadLine_PeekNextChar ( rl ) < ' ' ) break ; // '\n', <esc>, etc.
         SetState ( _Lexer_, ( END_OF_LINE | END_OF_STRING ), false ) ; // controls Interpret_ToEndOfLine
@@ -362,7 +363,7 @@ OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondi
     Exception *e = _O_->OVT_Exception ;
     e->ExceptionMessage = String_New ( excptMessage, TEMPORARY ) ;
     _O_->Thrown = e->RestartCondition = restartCondition ;
-    e->ExceptionSpecialMessage = String_New ( specialMessage, TEMPORARY ) ; ;
+    e->ExceptionSpecialMessage = String_New ( specialMessage, TEMPORARY ) ;
 #if 1
     //LinuxInit ( ) ; // reset termios
     if ( e->InfoFlag = infoFlag )
@@ -389,7 +390,11 @@ OpenVmTil_SignalAction ( int signal, siginfo_t * si, void * uc ) //nb. void ptr 
         e->SigAddress = si->si_addr ; //( Is_DebugOn && _Debugger_->DebugAddress ) ? _Debugger_->DebugAddress : si->si_addr ;
         //e->Location = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
         e->Location = _Context_ ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
-        if ( ( signal == SIGTTIN ) || ( signal == SIGCHLD ) ) { Exception_Init ( e ) ; return ; }
+        if ( ( signal == SIGTTIN ) || ( signal == SIGCHLD ) )
+        {
+            Exception_Init ( e ) ;
+            return ;
+        }
         if ( ( signal != SIGWINCH ) && ( signal != SIGCHLD ) ) iPrintf ( "\nOpenVmTil_SignalAction :: signal = %d\n", signal ) ; // 28 = SIGWINCH window resizing
         if ( ( signal == SIGTERM ) || ( signal == SIGKILL ) || ( signal == SIGQUIT ) || ( signal == SIGSTOP ) ) OVT_Exit ( ) ;
         OVT_ResetSignals ( e->Signal ) ;
@@ -423,12 +428,13 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
 {
     Exception *e = _O_->OVT_Exception ;
     AlertColors ;
-    e->ExceptionMessage = String_New ( message, TEMPORARY ) ;  ;
+    //e->ExceptionMessage = String_New ( message, TEMPORARY ) ; // prevent reprint in OpenVmTil_Throw
     e->ExceptionCode = exceptionCode ;
     e->RestartCondition = restartCondition ;
     //e->Location = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
     e->Location = _Context_ ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
     iPrintf ( "\n\nCSL_Exception at %s : %s\n", e->Location, message ? message : ( byte* ) "" ) ;
+    oPrintf ( "\nInputLineString : \'%s\'", c_u (String_RemoveEndWhitespace(_ReadLiner_->InputLineString)) ) ;
     switch ( exceptionCode )
     {
         case CASE_NOT_LITERAL_ERROR:
@@ -713,6 +719,7 @@ Exception_New ( )
     return e ;
 }
 #if 0
+
 Exception *
 Exception_New ( )
 {
@@ -720,6 +727,7 @@ Exception_New ( )
     return _O_->OVT_Exception ;
 }
 #endif
+
 void
 Exception_Init ( Exception * e )
 {

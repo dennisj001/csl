@@ -49,7 +49,8 @@ _CSL_Time ( struct timespec * timer, uint64 utimer, char * string )
         if ( utimer ) iPrintf ( "\n%s [ %d ] : elapsed time = %s seconds at %s", string, (utimer & 0xf), buffer, Context_Location ( ) ) ;
         else iPrintf ( "\n%s : elapsed time = %s seconds at %s", string, buffer, Context_Location ( ) ) ;
     }
-    _O_->Pbf8[0] = '\n' ;
+    //_O_->Pbf8[0] = '\n' ;
+    SetPromptNewline ( ) ;
 }
 
 void

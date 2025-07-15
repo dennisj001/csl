@@ -1,16 +1,14 @@
 5
-// see readme.txt for a text description
-// TODO : types, database, garbage collection : integration
-
-d: cOn
+cOn
 C
 'Experimental namespace
 Experimental
 type Pointer ; Pointer.size = 8 ;
-//type block ; block.size = 8 ;
+type block ; block.size = 8 ;
 type Location ; Location.size = 8 ;
 type int64 ; int64.size = 8 ;
-#define BITFIELDS 0
+#define BITFIELDS 1
+#define ENUM 0
 #if 0
 typedef char int8 ;
 typedef unsigned char uint8 ;
@@ -25,19 +23,19 @@ typedef unsigned long int uint64 ;
 typedef uint8 Boolean ;
 typedef byte * Pointer ;
 typedef Pointer Struct ;
-typedef char * CString ;
-typedef byte CharSet ;
 #endif
 
+typedef char * CString ;
+typedef byte CharSet ;
 typedef void (* VoidFunction ) (void) ;
 typedef void (*vFunction_1_Arg ) ( int64 ) ;
 typedef void (*vFunction_1_UArg ) ( uint64 ) ;
 typedef void (*vFunction_2_Arg ) ( int64, int64 ) ;
 typedef int64( *cFunction_0_Arg ) ( ) ;
-typedef int64 ( *cFunction_1_Arg ) ( int64 ) ;
+typedef int64( *cFunction_1_Arg ) ( int64 ) ;
 typedef int64( *cFunction_2_Arg ) ( int64, int64 ) ;
-//typedef VoidFunction block ; // code block
-//typedef int ( *mpf2andOutFunc ) ( mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t ) ;
+typedef VoidFunction block ; // code block
+typedef int ( *mpf2andOutFunc ) ( mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t ) ;
 typedef struct
 {
     int64 StackSize ;
@@ -128,7 +126,7 @@ typedef struct
 } dllist ;
 #define Head l_List.n_Head
 #define Tail l_List.n_Tail
-#if 0
+#if ENUM
 enum types
 {
     BOOL, BYTE, INTEGER, STRING, T_BIGNUM, FLOAT, POINTER, X64CODE, WORD, WORD_LOCATION, ARROW, CARTESIAN_PRODUCT
@@ -250,6 +248,30 @@ typedef struct _Identifier
         struct _Identifier * S_ContainingList ;
         struct _Identifier * S_Prototype ;
     } ;
+#if BITFIELDS
+    union
+    {
+        uint64 S_Value2 ;
+        dlnode * S_Node2 ;
+        byte * S_pb_Data2 ;
+        byte * StringMacroValue ;
+        struct
+        {
+            byte N ;
+            byte Ttt ;
+            union
+            {
+                int16 NotUsed16 ;
+                struct
+                {
+                    int8 BitFieldSize ; //: 8 ;
+                    int8 BitFieldOffset ; //: 8 ;
+                } ;
+            } ;
+            int32 NotUsed32 ;
+        } ;
+    } ;
+#else
     union
     {
         uint64 S_Value2 ;
@@ -264,6 +286,7 @@ typedef struct _Identifier
             int32 NotUsed32 ;
         } ;
     } ;
+#endif
     union
     {
         uint64 S_Value3 ;
@@ -392,8 +415,9 @@ typedef union
 typedef struct _WordData
 {
     uint64 WD_RunType ;
-    Namespace * WD_TypeNamespace ;
-    byte * WD_CodeStart ;
+    Namespace * TypeNamespace ;
+    byte * TypeNamespaceName ;
+    byte * CodeStart ;
     union
     {
         byte * WD_Coding ; // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
@@ -875,6 +899,7 @@ typedef struct
     int64 ExceptionFlag ;
     int64 IncludeFileStackNumber ;
     //struct timespec Timers [ 8 ] ;
+    int64 Timers [ 8 ] ;
 } System ;
 typedef struct
 {
@@ -917,8 +942,8 @@ typedef struct _CombinatorInfo
 #if BITFIELDS
         struct
         {
-            unsigned BlockLevel : 16 ;
-            unsigned ParenLevel : 16 ;
+            int64 BlockLevel : 16 ;
+            int64 ParenLevel : 16 ;
         } ;
 #endif
     } ;
@@ -954,8 +979,8 @@ typedef struct
 #if BITFIELDS
         struct
         {
-            unsigned CharFunctionTableIndex : 16 ;
-            unsigned CharType : 16 ;
+            int64 CharFunctionTableIndex : 16 ;
+            int64 CharType : 16 ;
         } ;
 #endif
         int64 CharInfo ;
@@ -1124,17 +1149,17 @@ typedef struct ppibs
     {
         int64 int64_Ppibs ; // for ease of initializing and conversion
  #if BITFIELDS
-       struct
+        struct
         {
-            //unsigned State : 1 ; // status of whether we should do an ifBlock or not
-            //unsigned Status : 1 ;
-            unsigned AccumStatus : 1 ; // status of whether we should do an ifBlock or not
-            unsigned Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            unsigned IfCond : 1 ; // status of whether we should do an ifBlock or not
-            unsigned ElifCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            unsigned SvIfCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            //unsigned Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
-            //unsigned DoItStatus : 1 ; // controls whether we do nested if block
+            //int64 State : 1 ; // status of whether we should do an ifBlock or not
+            //int64 Status : 1 ;
+            int64 AccumStatus : 1 ; // status of whether we should do an ifBlock or not
+            int64 Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            int64 IfCond : 1 ; // status of whether we should do an ifBlock or not
+            int64 ElifCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            int64 SvIfCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            //int64 Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
+            //int64 DoItStatus : 1 ; // controls whether we do nested if block
          } ;
 #endif
     } ;

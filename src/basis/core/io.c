@@ -28,7 +28,8 @@ GetTerminalWidth ( )
 int
 _kbhit ( int64 key )
 {
-    int64 oldf ; int ch ;
+    int64 oldf ;
+    int ch ;
     oldf = fcntl ( STDIN_FILENO, F_GETFL, 0 ) ;
     fcntl ( STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK ) ;
     //if ( _O_ && _Context_ && _Lexer_ ) ch = _Lexer_->NextChar ( _Lexer_ ) ; 
@@ -170,16 +171,22 @@ Emit ( byte c )
 }
 
 void
+SetPromptNewline ( )
+{
+    _O_->Pbf8[0] = '\n' ;
+}
+
+void
 _DoPrompt ( )
 {
 #if 0    
     byte lc = _ReadLiner_->InputKeyedCharacter ;
-    Boolean lcnl = ( lc == '\n' ), lcbnl = (_O_->Pblc == '\n') ;
-    if ( (( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) || ( ! lcnl ) && ( ! lcbnl ) )  CSL_PrintChar ( '\n' ) ;
+    Boolean lcnl = ( lc == '\n' ), lcbnl = ( _O_->Pblc == '\n' ) ;
+    if ( ( ( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) || ( ! lcnl ) && ( ! lcbnl ) ) CSL_PrintChar ( '\n' ) ;
 #elif 0   
-    if (( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) )  CSL_PrintChar ( '\n' ) ;
+    if ( ( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) CSL_PrintChar ( '\n' ) ;
 #else    
-    if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) )  CSL_PrintChar ( '\n' ) ;
+    if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) CSL_PrintChar ( '\n' ) ;
 #endif    
     iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
     SetState ( _O_, OVT_PROMPT_DONE, true ) ;
@@ -236,7 +243,7 @@ iPrintf ( char *format, ... )
     va_list args ;
     byte * b ;
     if ( kbhit ( ) ) OpenVmTil_Pause ( ) ;
-    if ( Verbosity ( ) ) 
+    if ( Verbosity ( ) )
     {
         va_start ( args, format ) ;
         if ( IS_INCLUDING_FILES ) vprintf ( ( char* ) format, args ) ;

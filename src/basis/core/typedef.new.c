@@ -208,7 +208,7 @@ TD_CheckForPointer ( )
     return rtrn ;
 }
 
-void
+int64
 TD_Type_Id ( int64 t_type )
 {
     Context * cntx = _Context_ ;
@@ -218,18 +218,36 @@ TD_Type_Id ( int64 t_type )
 
     if ( ( token [0] != '*' ) && ( token [0] != '{' ) && ( token [0] != ')' ) && ( token [0] != '(' ) )
     {
-        type0 = _Namespace_Find ( token, 0, 0 ) ;
-        if ( type0 && ( ! ( t_type & TD_POST_STRUCTURE_ID ) ) )
+        if ( ! tdi->Tdi_Field_Type_Namespace )
         {
-            tdi->Tdi_Field_Type_Namespace = type0 ;
-            tdi->Tdi_Field_Size = CSL_Get_Namespace_SizeVar_Value ( type0 ) ;
+            type0 = _Namespace_Find ( token, 0, 0 ) ;
+            if ( type0 && ( ! ( t_type & TD_POST_STRUCTURE_ID ) ) )
+            {
+                tdi->Tdi_Field_Type_Namespace = type0 ;
+                tdi->Tdi_Field_Size = CSL_Get_Namespace_SizeVar_Value ( type0 ) ;
+            }
+            else //... ( t_type & TD_POST_STRUCTURE_ID ) 
+            {
+                TD_Identifier ( t_type ) ;
+            }
         }
-        else //... ( t_type & TD_POST_STRUCTURE_ID ) 
+        token = TDI_PeekToken ( ) ;
+        if ( token && ( token [0] == '[' ) )
         {
-            TD_Identifier ( t_type ) ;
+            TDI_ReadToken ( ) ;
+            TD_Array ( ) ;
+            t_type = TD_ARRAY_FIELD ;
         }
-        TDI_ReadToken ( ) ;
+        else if ( token && ( token [0] == ':' ) )
+        {
+            TD_Identifier ( TD_BIT_FIELD ) ;
+            token = TDI_ReadToken ( ) ;
+            TD_BitField ( ) ;
+            t_type = TD_BIT_FIELD ;
+        }
+        else TDI_ReadToken ( ) ;
     }
+    return t_type ;
 }
 
 int64
@@ -240,33 +258,33 @@ TD_Identifier_Or_Array_Field ( int64 t_type )
     Namespace * ns ;
     if ( token && ( token [0] != ';' ) )
     {
-        TD_Type_Id ( t_type ) ;
-        TD_CheckForPointer ( ) ;
-        if ( tdi->TdiToken [0] != ';' )
+        if ( t_type == TD_Type_Id ( t_type ) )
         {
-            if ( tdi->TdiToken [0] == ',' ) TDI_ReadToken ( ) ;
-#if 1 // ?? not needed - deleted ??          
-            if ( ! ( ( t_type == TD_FUNCTION_ID_FIELD ) && ( ns = _Namespace_Find ( tdi->TdiToken, 0, 0 ) ) ) )
-            //if ( ! ( ns = _Namespace_Find ( tdi->TdiToken, 0, 0 ) ) )
+            TD_CheckForPointer ( ) ;
+            if ( tdi->TdiToken [0] != ';' )
             {
-                if ( ! ( ( tdi->TdiToken [0] == '(' ) || ( tdi->TdiToken [0] == ')' ) ) )
-                    TD_Identifier ( t_type ) ;
-             }
-#endif            
-            token = TDI_PeekToken ( ) ;
-            if ( ( token && ( token [0] == '[' ) ) || ( tdi->TdiToken[0] == '[' ) )
-            {
-                if ( ! ( tdi->TdiToken[0] == '[' ) ) TDI_ReadToken ( ) ; // adhoc
-                TD_Array ( ) ;
+                if ( tdi->TdiToken [0] == ',' ) TDI_ReadToken ( ) ;
+                //if ( ! ( ( t_type == TD_FUNCTION_ID_FIELD ) && ( ns = _Namespace_Find ( tdi->TdiToken, 0, 0 ) ) ) )
+                if ( ! ( ns = _Namespace_Find ( tdi->TdiToken, 0, 0 ) ) )
+                {
+                    if ( ! ( ( tdi->TdiToken [0] == '(' ) || ( tdi->TdiToken [0] == ')' ) ) )
+                        TD_Identifier ( t_type ) ;
+                    //else Pause () ;
+                }
+                token = TDI_PeekToken ( ) ;
+                if ( token && ( token [0] == '[' ) )
+                {
+                    TDI_ReadToken ( ) ;
+                    TD_Array ( ) ;
+                }
+                else if ( token && ( token [0] == ':' ) )
+                {
+                    TD_Identifier ( TD_BIT_FIELD ) ;
+                    token = TDI_ReadToken ( ) ;
+                    TD_BitField ( ) ;
+                }
+                else TDI_ReadToken ( ) ;
             }
-            else if ( ( token && ( token [0] == ':' ) )|| ( tdi->TdiToken[0] == ':' ) )
-            {
-                if ( ! ( tdi->TdiToken[0] == ':' ) ) TDI_ReadToken ( ) ;
-                //TD_Identifier ( TD_BIT_FIELD ) ;
-                //token = TDI_ReadToken ( ) ;
-                TD_BitField ( ) ;
-            }
-            else TDI_ReadToken ( ) ;
         }
         TD_IntraStructFieldAccounting ( ) ;
     }
@@ -280,7 +298,7 @@ TD_Identifier_Fields ( int64 t_type )
     byte * token = tdi->TdiToken ;
     while ( token[0] != ';' )
     {
-        if ( tdi->TdiToken [0] == ',' ) TDI_ReadToken ( ) ;        
+        if ( tdi->TdiToken [0] == ',' ) TDI_ReadToken ( ) ;
         if ( String_Equal ( tdi->TdiToken, "unsigned" ) )
         {
             TDI_ReadToken ( ) ; // register somewhere?
@@ -297,12 +315,7 @@ TD_Identifier_Fields ( int64 t_type )
         token = tdi->TdiToken ;
         if ( token )
         {
-            if ( token[0] == ',' ) 
-            {
-                tdi->Tdi_Field_Size = tdi->Tdi_Field_Type_Namespace ? CSL_Get_Namespace_SizeVar_Value ( tdi->Tdi_Field_Type_Namespace ) : tdi->Tdi_Field_Size ;
-                SetState ( tdi, TDI_POINTER, false ) ;
-                TDI_ReadToken ( ) ;
-            }
+            if ( token[0] == ',' ) TDI_ReadToken ( ) ;
             if ( token[0] == ';' ) break ;
         }
         else break ;
@@ -339,8 +352,9 @@ TD_FunctionId_Field ( int64 t_type )
     TD_Type_Id ( t_type ) ;
     if ( ( tdi->TdiToken [0] == '(' ) || ( tdi->TdiToken [0] == ')' ) )
     {
-        t_type = TD_FUNCTION_ID_FIELD ; 
+        t_type = TD_FUNCTION_ID_FIELD ; //TD_FunctionId_Field
         TD_CheckForPointer ( ) ;
+        //TDI_ReadToken ( ) ;
         if ( ! ( ( t_type == TD_FUNCTION_ID_FIELD ) && ( ns = _Namespace_Find ( tdi->TdiToken, 0, 0 ) ) ) )
         {
             tdi->Tdi_Field_Size = 8 ;
@@ -472,6 +486,7 @@ TD_PreStruct_Accounting ( int64 structOrUnionTypeFlag )
     //int64 depth = Stack_Depth ( _CONTEXT_TDI_STACK ) ;
     ctdi = TDI_GetTop ( ) ; // current -> previous
     ntdi = TDI_Push_New ( ) ; // adding one to the Stack - new current
+    //if ( ns ) ntdi->Tdi_StructureUnion_Namespace = ns ;
     if ( ctdi ) // previous tdi - Tdi_PreStructureUnion_Namespace
     {
         ntdi->Tdi_Offset = ctdi->Tdi_Offset ; //0 ; //ctdi->Tdi_Offset ;
@@ -549,6 +564,7 @@ void
 TD_IntraStructFieldAccounting ( )
 {
     TDI * tdi = TDI_GetTop ( ) ;
+    //A_Parser_Debug ( ) ;
     if ( ! GetState ( tdi, TDI_POST_STRUCT ) )
     {
         if ( GetState ( tdi, TDI_UNION ) )
@@ -567,13 +583,17 @@ TD_IntraStructFieldAccounting ( )
             tdi->Tdi_StructureUnion_Size += tdi->Tdi_Field_Size ;
             tdi->Tdi_Offset += tdi->Tdi_Field_Size ;
         }
+        tdi->Tdi_Field_Size = 0 ;
         SetState ( tdi, TDI_POINTER, false ) ;
+        //tdi->Tdi_Field_Type_Namespace = 0 ;
     }
+    //A_Parser_Debug ( ) ;
 }
 
 void
 TDI_Init ( TypeDefInfo * tdi )
 {
+    //tdi->State = 0 ;
     tdi->Tdi_InNamespace = _CSL_Namespace_InNamespaceGet ( ) ;
 }
 

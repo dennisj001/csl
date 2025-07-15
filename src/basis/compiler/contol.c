@@ -600,7 +600,7 @@ GotoInfo_ResetOffsetAndRemove ( GotoInfo * gi, byte * address, Boolean removeFla
             _Debugger_Disassemble ( _Debugger_, 0, compiledAtAddress, 6, 1 ) ;
             iPrintf ( "\nGotoInfo_ResetOffsetAndRemove : %s", Context_Location ( ) ) ;
         }
-        gi->AddressSet = true ;
+        //gi->AddressSet = true ;
     }
     else rtrn = CalculateOffsetForCallOrJump ( gi->CompiledAtAddress, address, 0, 0 ) ;
 

@@ -219,7 +219,8 @@
         && ( ! ( word->W_LispAttributes & (T_LISP_SYMBOL ) ) ) ) || ( word->W_MorphismAttributes & ( CATEGORY_OP|KEYWORD|ADDRESS_OF_OP|BLOCK ) ) \
         || ( word->W_LispAttributes & ( T_LAMBDA | LISP_C_RTL_ARGS | T_LISP_SPECIAL | LISP_VOID_RETURN ) ) )
 
-#define Is_NamespaceType( w ) ( w ? (( ( Namespace* ) w )->W_ObjectAttributes & (NAMESPACE_TYPE)) && (! ( (w )->W_ObjectAttributes & O_POINTER ) ) : 0 )
+//#define Is_NamespaceType( w ) ( w ? (( ( Namespace* ) w )->W_ObjectAttributes & (NAMESPACE_TYPE)) && (! ( (w )->W_ObjectAttributes & O_POINTER ) ) : 0 )
+#define Is_NamespaceType( w ) ( w ? (( ( Namespace* ) w )->W_ObjectAttributes & (NAMESPACE_TYPE)) : 0 )
 #define Is_ValueType( w ) ( w ? NON_MORPHISM_TYPE (w) : 0 )
 #define IsWordAttribute( word, type, attribute ) word->type & (attribute)
 

@@ -1,8 +1,8 @@
-5
+5 
 #ifndef _PP_H_
 #define _PP_H_ 
-: apause ; //pause ;
-: epause ; // pause ;
+: apause ; //stack pause ;
+: epause ; //stack pause ;
 "ppx" var "ppxe" var
 //#endif
 

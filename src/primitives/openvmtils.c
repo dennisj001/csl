@@ -118,7 +118,15 @@ OpenVmTil_Print_DataSizeofInfo ( int64 flag )
         iPrintf ( "OpenVimTil size : %d bytes, ", sizeof (OpenVmTil ) ) ;
         iPrintf ( "OVT_Static size : %d bytes, ", sizeof (OVT_StaticMemSystem ) ) ;
         iPrintf ( "OVT_MemSystem size : %d bytes, ", sizeof (OVT_MemSystem ) ) ;
-        iPrintf ( "\nStack size : %d bytes", sizeof (Stack ) ) ;
+        iPrintf ( "\nStack size : %d bytes, ", sizeof (Stack ) ) ;
+        iPrintf ( "sigjmp_buf size : %d bytes, ", sizeof (sigjmp_buf ) ) ;
+        iPrintf ( "OVT_StaticMemSystem size : %d bytes, ", sizeof (OVT_StaticMemSystem) ) ;
+        iPrintf ( "TypeStatusInfo size : %d bytes, ", sizeof (TypeStatusInfo ) ) ;
+        iPrintf ( "\nCPrimitive size : %d bytes, ", sizeof (CPrimitive ) ) ;
+        iPrintf ( "MachineCodePrimitive size : %d bytes, ", sizeof (MachineCodePrimitive ) ) ;
+        iPrintf ( "Exception size : %d bytes, ", sizeof (Exception ) ) ;
+        iPrintf ( "struct timespec size : %d bytes, ", sizeof (struct timespec) ) ;
+        iPrintf ( "siginfo_t size : %d bytes", sizeof (siginfo_t) ) ;
     }
 }
 

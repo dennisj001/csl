@@ -62,12 +62,15 @@ DataObject_New ( uint64 type, Word * word, byte * name, uint64 morphismAttribute
             DObject_New ( ) ;
             break ;
         }
+        //case TD_TYPE_FIELD :
+        case TD_FUNCTION_ID_FIELD:
         case CLASS:
         {
             word = Class_New ( name, CLASS, 0 ) ;
             break ;
         }
-        case TD_TYPE_FIELD:
+        //case TD_FIELD_ID:
+        case TD_TYPE_FIELD :
         {
             word = CSL_ClassField_New ( name, addToNs, value, index ) ;
             break ;
@@ -195,7 +198,7 @@ Class_New ( byte * name, uint64 morphismFunctionType, int64 cloneFlag )
     {
         if ( cloneFlag ) size = _Namespace_VariableValueGet ( sns, ( byte* ) "size" ) ;
         else size = 0 ;
-        ns = _DObject_New ( name, 0, IMMEDIATE, CLASS | morphismFunctionType, 0, morphismFunctionType, ( byte* ) _DataObject_Run, -2, 0, sns, DICTIONARY ) ;
+        ns = _DObject_New ( name, 0, IMMEDIATE, CLASS | morphismFunctionType, 0, morphismFunctionType, ( byte* ) _DataObject_Run, - 2, 0, sns, DICTIONARY ) ;
         //ns = _DObject_New ( name, 0, 0, CLASS | morphismFunctionType, 0, morphismFunctionType, ( byte* ) _DataObject_Run, -2, 0, sns, DICTIONARY ) ;
         Namespace_Do_Namespace ( ns ) ; // before "size", "this"
         Word *ws = _CSL_Variable_New ( ( byte* ) "size", size, 0 ) ; // start with size of the prototype for clone
@@ -207,7 +210,7 @@ Class_New ( byte * name, uint64 morphismFunctionType, int64 cloneFlag )
         {
             if ( ! GetState ( _Context_, TDI_PARSING ) )
             {
-                _TypeClassStructDef (ns, cloneFlag) ;
+                _TypeClassStructDef ( ns, cloneFlag ) ;
                 ns->W_ObjectAttributes |= ( C_CLASS | STRUCT ) ; //( OBJECT ) ;
             }
         }

@@ -7,7 +7,6 @@ LogicalAnd ( ) // and
     _DspReg_ [ - 1 ] = _DspReg_ [ - 1 ] && _DspReg_ [ 0 ] ; //TOS ;
     //DataStack_Drop ( ) ;
     _DspReg_ -= 1 ;
-
 }
 
 void
@@ -219,6 +218,6 @@ CSL_CountChange ()
 {
     int64 value0 ;
     value0 = countChangec ( TOS ) ;
-    printf ( "\n%ld", value0 ) ;
-    fflush ( stdout ) ;
+    iPrintf ( "\n%ld", value0 ) ;
+    //fflush ( stdout ) ;
 }

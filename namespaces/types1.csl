@@ -1,6 +1,7 @@
+5
 // see readme.txt for a text description
 // TODO : types, database, garbage collection : integration
-#if 1
+
 cOn
 C
 'Experimental namespace
@@ -11,8 +12,7 @@ type Location ; Location.size = 8 ;
 type int64 ; int64.size = 8 ;
 #define ENUM 0
 #define BITFIELDS 0
-
-#else
+#if 0
 typedef char int8 ;
 typedef unsigned char uint8 ;
 typedef uint8 ubyte ;
@@ -26,7 +26,6 @@ typedef unsigned long int uint64 ;
 typedef uint8 Boolean ;
 typedef byte * Pointer ;
 typedef Pointer Struct ;
-
 typedef char * CString ;
 typedef byte CharSet ;
 #endif
@@ -36,21 +35,20 @@ typedef void (*vFunction_1_Arg ) ( int64 ) ;
 typedef void (*vFunction_1_UArg ) ( uint64 ) ;
 typedef void (*vFunction_2_Arg ) ( int64, int64 ) ;
 typedef int64( *cFunction_0_Arg ) ( ) ;
-typedef int64( *cFunction_1_Arg ) ( int64 ) ;
+typedef int64 ( *cFunction_1_Arg ) ( int64 ) ;
 typedef int64( *cFunction_2_Arg ) ( int64, int64 ) ;
 //typedef VoidFunction block ; // code block
 //typedef int ( *mpf2andOutFunc ) ( mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t ) ;
 typedef struct
 {
-    int64 *InitialTosPointer ;
     int64 StackSize ;
     int64 *StackPointer ;
-    int64 *StackMax ;
     int64 *StackMin ;
-    int64 *StackData ;
-    int64 data [0] ;
+    int64 *StackMax ;
+    int64 *InitialTosPointer ;
+    int64 StackData [0] ;
 } Stack ;
-typedef byte * function, * object, * type, * slot ;
+typedef byte * function, * object, * slot ; // * type ;
 typedef struct
 {
     union
@@ -67,11 +65,7 @@ typedef struct
                     uint64 T_WAllocationType ;
                     uint32 T_WordAttributes ;
                     uint16 T_NumberOfPrefixedArgs ;
-                    union
-                    {
-                        uint16 T_Unused ;
-                        uint16 T_UseCount ;
-                    } ;
+                    uint16 T_Unused ;
                 } ;
                 //AttributeBitField abf ;
                 //class bitset abt[320] ;
@@ -142,6 +136,7 @@ enum types
 } ;
 #endif
 typedef struct
+
 {
     union
     {
@@ -212,12 +207,9 @@ typedef int64( *MapFunction3 ) ( dlnode *, int64, int64, int64 ) ;
 typedef int64( *MapFunction4wReturn ) ( dlnode *, int64, int64, int64, int64 ) ;
 typedef void ( *MapFunction4 ) ( dlnode *, int64, int64, int64, int64 ) ;
 typedef void ( *MapFunction5 ) ( dlnode *, int64, int64, int64, int64, int64 ) ;
-typedef
-Boolean( *BoolMapFunction_1 ) ( dlnode * ) ;
+typedef Boolean( *BoolMapFunction_1 ) ( dlnode * ) ;
 #if 0 // possibly a better use of space 
-typedef struct Namespace
-{
-} ;
+struct Namespace
 typedef struct _Identifier // _Symbol
 {
     union
@@ -236,7 +228,8 @@ typedef struct _Identifier // _Symbol
     } ;
 } Identifier ;
 #endif
-typedef struct _Identifier // _Symbol
+//struct WordData ; // forward reference
+typedef struct _Identifier 
 {
     DLNode S_Node ;
     int64 CodeSize ;
@@ -246,7 +239,6 @@ typedef struct _Identifier // _Symbol
     uint64 S_DObjectValue ; // nb! DynamicObject value can not be a union with S_SymbolList
     uint64 * S_PtrToValue ; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
     block Definition ;
-    //struct _Identifier * ContaingingStructNamespace ;
     union
     {
         uint64 S_Value ;
@@ -270,15 +262,7 @@ typedef struct _Identifier // _Symbol
         {
             byte N ;
             byte Ttt ;
-            union
-            {
-                int16 NotUsed16 ;
-                struct
-                {
-                    int8 BitFieldSize ; //: 8 ;
-                    int8 BitFieldOffset ; //: 8 ;
-                } ;
-            } ;
+            int16 NotUsed16 ;
             int32 NotUsed32 ;
         } ;
     } ;
@@ -290,8 +274,8 @@ typedef struct _Identifier // _Symbol
         byte * TextMacroValue ;
         byte * JccCode ;
     } ;
-    struct _WordData * W_WordData ;
-} Identifier, ID, Word, Combinator, Namespace, Vocabulary, Class, DynamicObject, DObject, ListObject, Object, Symbol, Buffer, CaseNode, MemChunk, HistoryStringNode ;
+    struct WordData * W_WordData ;
+} Identifier, ID, Word, Combinator, Namespace, Vocabulary, Class, DynamicObject, DObject, ListObject, Symbol, Buffer, CaseNode, MemChunk, HistoryStringNode ;
 #define S_Car S_Node.n_DLNode.n_After
 #define S_Cdr S_Node.n_DLNode.n_Before
 #define S_After S_Cdr
@@ -316,7 +300,6 @@ typedef struct _Identifier // _Symbol
 #define S_MacroLength CodeSize 
 
 #define Name S_Name
-#define W_Attributes S_Node.n_Attributes
 #define W_MorphismAttributes S_MorphismAttributes
 #define W_ObjectAttributes S_ObjectAttributes
 #define W_LispAttributes S_LispAttributes
@@ -325,7 +308,6 @@ typedef struct _Identifier // _Symbol
 #define W_AllocType S_WAllocType
 #define W_Filename W_WordData->Filename
 #define W_LineNumber W_WordData->LineNumber
-#define W_UseCount W_Attributes.T_UseCount
 #define CProp S_MorphismAttributes
 #define CProp2 S_ObjectAttributes
 #define LProp S_LispAttributes
@@ -366,7 +348,6 @@ typedef struct _Identifier // _Symbol
 #define B_Size Size //S_Size
 #define B_Data Data //S_pb_Data2
 
-// MemChunk, HistoryStringNode 
 #define mc_Node S_Node
 //#define mc_Size 
 #define mc_Type S_ObjectAttributes
@@ -378,11 +359,11 @@ typedef struct _Identifier // _Symbol
 #define mc_TotalAllocSize 
 
 typedef int64( *cMapFunction_1 ) ( Symbol * ) ;
-//typedef ListObject* ( *ListFunction0 )( ) ;
-//typedef ListObject* ( *ListFunction )( ListObject* ) ;
-//typedef ListObject * ( *ListFunction2 ) ( ListObject*, ListObject* ) ;
-//d: typedef ListObject * ( *ListFunction3 ) ( ListObject*, ListObject*, int64 ) ;
-//typedef ListObject * ( *ListFunction4 ) ( ListObject*, ListObject*, int64, ListObject* ) ;
+typedef ListObject* ( *ListFunction0 )( ) ;
+typedef ListObject* ( *ListFunction )( ListObject* ) ;
+typedef ListObject * ( *ListFunction2 ) ( ListObject*, ListObject* ) ;
+typedef ListObject * ( *ListFunction3 ) ( ListObject*, ListObject*, int64 ) ;
+typedef ListObject * ( *ListFunction4 ) ( ListObject*, ListObject*, int64, ListObject* ) ;
 typedef int64( *MapFunction_Word_PtrInt ) ( ListObject *, Word *, int64 * ) ;
 typedef int64( *MapFunction ) ( Symbol * ) ;
 typedef int64( *MapFunction_1 ) ( Symbol *, int64 ) ;
@@ -390,9 +371,8 @@ typedef int64( *MapFunction_Word ) ( Symbol *, Word * ) ;
 typedef int64( *MapFunction_2 ) ( Symbol *, int64, int64 ) ;
 typedef void ( *MapSymbolFunction ) ( Symbol * ) ;
 typedef void ( *VMapNodeFunction ) ( dlnode * ) ;
-typedef void ( *MapSymbolFunction1 ) ( Symbol *, int64 ) ;
 typedef void ( *MapSymbolFunction2 ) ( Symbol *, int64, int64 ) ;
-//typedef Word ( *MapNodeFunction ) ( dlnode * ) ;
+typedef Word* ( *MapNodeFunction ) ( dlnode * node ) ;
 typedef void ( *VMapSymbol2 ) ( Symbol * symbol, int64, int64 ) ;
 typedef void (*StackMapFunction0 ) ( Word * ) ;
 typedef void (*StackMapFunction1 ) ( Word *, byte * ) ;
@@ -411,11 +391,6 @@ typedef union
     byte TypeSignatureCodes [8] ;
     Word * TypeNamespace ;
 } TypeSignatureInfo ;
-typedef struct _ThisWordNode
-{
-    dlnode WordUseNode ; // used for sorting word use
-    Word * ThisWord ;
-} ThisWordNode ;
 typedef struct _WordData
 {
     uint64 WD_RunType ;
@@ -491,10 +466,9 @@ typedef struct _WordData
     int64 SC_WordIndex ;
     Identifier * CSLWord, * BaseObject ;
 } WordData ; // try to put all compiler related data here so in the future we can maybe delete WordData at runtime
-
 #if 0
 // to keep using existing code without rewriting ...
-#define CodeStart W_WordData->CodeStart // set at Word allocation 
+#define CodeStart W_WordData->WD_CodeStart // set at Word allocation 
 #define Coding W_WordData->WD_Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
 #define LogicCodingAfter W_WordData->WD_LogicCodingAfter // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
 #define SourceCoding Coding //W_WordData->SourceCoding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
@@ -504,14 +478,13 @@ typedef struct _WordData
 #define W_NumberOfVariables W_WordData->NumberOfVariables 
 #define W_InitialRuntimeDsp W_WordData->InitialRuntimeDsp 
 #define TtnReference W_WordData->TtnReference // used by Logic Words
-#define RunType W_WordData->WD_RunType // number of slots in Object
+#define RunType W_WordData->WD_RunType 
 #define PtrObject W_WordData->WD_PtrObject 
 #define AccumulatedOffset W_WordData->AccumulatedOffset // used by Do_Object
 #define Index W_WordData->Index // used by Variable and LocalWord
 #define NestedObjects W_WordData->NestedObjects // used by Variable and LocalWord
 #define ObjectCode W_WordData->Coding // used by objects/class words
 #define W_OurLocation W_WordData->OurLocation
-#define W_ThisWordUseNode W_WordData->ThisWordUseNode
 #define StackPushRegisterCode W_WordData->StackPushRegisterCode // used by CO
 #define W_OriginalCodeText W_WordData->WD_OriginalCodeText 
 //#define W_TokenEnd_ReadLineIndex W_WordData->CursorEndPosition 
@@ -525,8 +498,7 @@ typedef struct _WordData
 #define ArrayDimensions W_WordData->WD_ArrayDimensions
 #define ArrayNumberOfDimensions W_WordData->WD_ArrayNumberOfDimensions
 #define W_AliasOf W_WordData->AliasOf
-#define TypeNamespace W_WordData->TypeNamespace 
-#define TypeNamespaceName W_WordData->TypeNamespaceName 
+#define TypeNamespace W_WordData->WD_TypeNamespace 
 #define Lo_ListProc W_WordData->ListProc
 #define Lo_ListFirst W_WordData->ListFirst
 #define ContainingNamespace S_ContainingNamespace
@@ -539,7 +511,6 @@ typedef struct _WordData
 #define W_SC_MemSpaceRandMarker W_WordData->SourceCodeMemSpaceRandMarker
 #define W_OpInsnCode W_WordData->OpInsnCode 
 #define W_OpInsnGroup W_WordData->OpInsnGroup
-#define W_OpNumOfParams W_WordData->OpNumOfParams
 #define W_TypeSignatureString W_WordData->TypeSignature
 #define W_TypeObjectsNamespaces W_WordData->TypeObjectsNamespaces
 #define NamespaceStack W_WordData->WD_NamespaceStack
@@ -550,11 +521,9 @@ typedef struct _WordData
 #define W_StartCharRlIndex W_WordData->StartCharRlIndex
 #define W_SC_WordIndex W_WordData->SC_WordIndex
 #define W_CSLWord W_WordData->CSLWord
-#define W_NumberOfRegisterVariables W_WordData->NumberOfRegisterVariables
 #define Lo_CSL_Word W_WordData->CSLWord 
 #endif
-
-struct NamedByteArray ;
+//struct NamedByteArray ;
 typedef struct
 {
     MemChunk BA_MemChunk ;
@@ -602,10 +571,10 @@ typedef struct
 #define GI_CAttribute GI_Symbol.S_MorphismAttributes
 typedef struct
 {
-    byte *nc, *ncm, *ncp ;
+    byte *nc, *ncm, *ncp ;    
     byte *Ncul, *Ncll ; //next char upper/lower limit
     Boolean andAfter2rparen, orAfter2rparen, andAfterOr, orAfterAnd ;
-    int64 i, j, rtrn, oparenlvl, mparenlvl, pparenlvl, andOrCount ;
+    int64 i, j, rtrn, oparenlvl, mparenlvl, pparenlvl, la_code, andOrCount ;
     //Stack * opStack ;
 } Rllafl ;
 typedef struct
@@ -614,30 +583,28 @@ typedef struct
     uint64 State ;
     int64 CopiedSize, JccType, ParenLevel ;
     byte *LocalFrameStart, *AfterLocalFrame, *bp_First, *bp_Last, *PtrToJumpOffset, *PtrToJmpInsn, *CompiledAtAddress ;
-    byte *TttnCode, *JccCode, *JccAddedCode, *TestCode, *CmpCode, *AfterCmpCode, *OriginalActualCodeStart ; 
-    byte *CopiedToStart, *BI_StackPushRegisterCode, *SetccCode, * MovzxCode ;
+    byte *TttnCode, *JccCode, *JccAddedCode, *TestCode, *CmpCode, *AfterCmpCode, *OriginalActualCodeStart, *CopiedToStart, *BI_StackPushRegisterCode, *SetccCode, * MovzxCode ;
     byte *CopiedToEnd, *CopiedToLogicJccCode, *ActualCopiedToJccCode, *JmpToAddress ;
-    Boolean SetccTtt, Ttt, SetccNegFlag, N ;
+    Boolean SetccTtt, Ttt, SetccNegFlag, N, ResetFlag ;
     Word * LogicCodeWord, *OurCombinator, *RegisterVariableControlWord ;
     GotoInfo * BI_Gi ;
     Rllafl * BI_Rllafl ;
     Namespace * BI_LocalsNamespace ;
     //IiFlags
-#define PRESERVE_INSN_SIZE      ( (uint64) 1 << 0 )
-#define COULD_BE_8              ( (uint64) 1 << 1 )   
-#define COULD_BE_16             ( (uint64) 1 << 2 )
-#define SHOULD_BE_32            ( (uint64) 1 << 3 )
-#define LOGIC_FLAG              ( (uint64) 1 << 4 )   
     int64 IiFlags ;
     byte * InsnAddress ; // compiledAtAddress
     //byte *JmpToAddress ;
     byte InsnType ;
+    byte Insn ; // JCC8 JCC32, etc
     byte InsnSize ;
     byte OffsetSize ;
-    uint16 Uinsn16 ; // JCC8 JCC32, etc
-    byte Insn ;
     int32 Disp ; // Displacement 
 } BlockInfo ;
+#define PRESERVE_INSN_SIZE      ( (uint64) 1 << 0 )
+#define COULD_BE_8              ( (uint64) 1 << 1 )
+#define COULD_BE_16             ( (uint64) 1 << 2 )
+#define SHOULD_BE_32            ( (uint64) 1 << 3 )
+#define LOGIC_FLAG              ( (uint64) 1 << 4 )
 typedef struct
 {
     int64 State ;
@@ -670,22 +637,23 @@ typedef struct
 typedef struct TCI
 {
     uint64 State ;
-    int64 TokenFirstChar, TokenLastChar, StringFirstChar, EndDottedPos, DotSeparator, TokenLength, FoundCount, MaxFoundCount ;
-    int64 FoundWrapCount, ComparedWordCount, WordWrapCount, LastWordWrapCount, FoundMarker, StartFlag, ShownWrap ;
+    int64 TokenFirstChar, TokenLastChar, EndDottedPos, DotSeparator, TokenLength, FoundCount, MaxFoundCount ;
+    int64 FoundWrapCount, WordCount, WordWrapCount, LastWordWrapCount, FoundMarker, StartFlag, ShownWrap ;
     byte *SearchToken, * PreviousIdentifier, *Identifier ;
     Word * TrialWord, * OriginalWord, *RunWord, *OriginalRunWord, *NextWord, *ObjectExtWord, * LastFoundWord ;
     Namespace * OriginalContainingNamespace, * MarkNamespace ;
 } TabCompletionInfo, TCI ;
 
-struct ReadLiner ;
-typedef byte( *ReadLiner_KeyFunction ) (struct ReadLiner *) ;
+//struct ReadLiner ;
+typedef
+byte( *ReadLiner_KeyFunction ) (struct ReadLiner *) ;
 typedef struct ReadLiner
 {
     uint64 State, svState ;
     int64 InputKeyedCharacter ;
     int64 FileCharacterNumber, LineNumber, OutputLineCharacterNumber ; // set by _CSL_Key
     int64 ReadIndex, svReadIndex, EndPosition ; // index where the next input character is put
-    int64 MaxEndPosition ;
+    int64 MaxEndPosition ; // index where the next input character is put
     int64 CursorPosition, EscapeModeFlag, InputStringIndex, InputStringLength, LineStartFileIndex ;
     byte *Filename, LastCheckedInputKeyedCharacter, * DebugPrompt, * DebugAltPrompt, * NormalPrompt, * AltPrompt, * Prompt ;
     byte InputLine [BUFFER_SIZE], * InputLineString, * InputStringOriginal, * InputStringCurrent, *svLine ;
@@ -708,7 +676,7 @@ typedef struct SourceCodeInfo
 {
     int64 SciIndex, SciQuoteMode, SciFileIndexScStart, SciFileIndexScEnd ;
     Word * SciWord ;
-    byte * SciBuffer, *SciSourceCode_AllocatedString ;
+    byte * SciBuffer ;
 } SourceCodeInfo ;
 typedef struct _Lexer
 {
@@ -718,7 +686,7 @@ typedef struct _Lexer
     int64 CurrentReadIndex, TokenWriteIndex, LineNumber ;
     byte *OriginalToken, *ParsedToken, TokenInputByte, LastLexedChar, CurrentTokenDelimiter ;
     byte * TokenDelimiters, * DelimiterCharSet, * DelimiterOrDotCharSet, *Filename, *LastToken ;
-    byte( *NextChar ) ( lexer ), * TokenBuffer, CurrentChar ;
+    byte( *NextChar ) (struct _Lexer * lexer ), * TokenBuffer, CurrentChar ;
     union
     {
         uint64 Literal ;
@@ -762,58 +730,84 @@ typedef struct
         } ;
         Word * COIW [8] ; // CompileOptimizeInfo Word array
     } ;
-
+#if NEW_CPU_PIPELINE_STATE    
+    CpuPipelineState CPState ;
+#endif   
+    // ArgXLocation    
     int64 rtrn, NumberOfArgs ;
     uint16 ControlFlags ;
     Word *rparenPrevOp, *opWord, *wordn, *wordm, *wordArg1, *wordArg2, *xBetweenArg1AndArg2, *wordArg0_ForOpEqual, *lparen1, *lparen2 ;
     dlnode * node, *nodem, *wordNode, *nextNode, *wordArg2Node, *wordArg1Node ;
     Boolean rvalue, wordArg1_rvalue, wordArg2_rvalue, wordArg1_literal, wordArg2_literal ;
     Boolean wordArg1_Op, wordArg2_Op ;
+    // CompileOptimizeInfo State values
 } CompileOptimizeInfo, COI ;
+#define ASSUMED_LOC_LITERAL     ( (uint64) 1 << 0 )
+#define ASSUMED_STACK_0         ( (uint64) 1 << 1 )
+#define ASSUMED_STACK_1         ( (uint64) 1 << 2 )
+#define ASSUMED_STACK_2         ( (uint64) 1 << 3 )
+#define ASSUMED_STACK_3         ( (uint64) 1 << 4 )
+#define ASSUMED_LOC_ACC         ( (uint64) 1 << 5 )
+#define ASSUMED_LOC_OREG        ( (uint64) 1 << 6 )
+#define ASSUMED_LOC_OREG2       ( (uint64) 1 << 7 )
+#define IDEAL_LOC_LITERAL       ( (uint64) 1 << 8 )
+#define IDEAL_STACK_0           ( (uint64) 1 << 9 )
+#define IDEAL_STACK_1           ( (uint64) 1 << 10 )
+#define IDEAL_STACK_2           ( (uint64) 1 << 11 )
+#define IDEAL_STACK_3           ( (uint64) 1 << 12 )
+#define IDEAL_LOC_ACC           ( (uint64) 1 << 13 )
+#define IDEAL_LOC_OREG          ( (uint64) 1 << 14 )
+#define IDEAL_LOC_OREG2         ( (uint64) 1 << 15 )
+#define LOC_STACK_0             ( 1 << 4 )
+#define LOC_STACK_1             ( 1 << 5 )
+#define LOC_ACC                 ( 1 << 6 )
+#define LOC_OREG                ( 1 << 7 )
 #define REG_LOCK_BIT              ( 0x10 ) // decimal 16, beyond the 15 regs
+#define ACC_1L                   ( (uint64) 1 << 1 )
+#define ACC_1R                   ( (uint64) 1 << 2 )
+#define ACC_2L                   ( (uint64) 1 << 3 )
+#define ACC_2R                   ( (uint64) 1 << 4 )
+#define OREG_1L                  ( (uint64) 1 << 5 )
+#define OREG_1R                  ( (uint64) 1 << 6 )
+#define OREG_2L                  ( (uint64) 1 << 7 )
+#define OREG_2R                  ( (uint64) 1 << 8 )
+#define OREG2_1L                 ( (uint64) 1 << 9 )
+#define OREG2_1R                 ( (uint64) 1 << 10 )
+#define OREG2_2L                 ( (uint64) 1 << 11 )
+#define OREG2_2R                 ( (uint64) 1 << 12 )
+#define OP_RESULT_ACC            ( (uint64) 1 << 13 )
+#define OP_RESULT_OREG           ( (uint64) 1 << 14 )
+#define OP_RESULT_OREG2          ( (uint64) 1 << 15 )
 #define STACK_ARGS_TO_STANDARD_REGS  ( (uint64) 1 << 16 )
-typedef struct TypeDefInfo
+    // CompileOptimizeInfo StateRegValues ;
+#define ARG1_L                   ( 1 << 0 )
+#define ARG1_R                   ( 1 << 1 )
+#define ARG2_L                   ( 1 << 2 )
+#define ARG2_R                   ( 1 << 3 )
+#define OP_RESULT                ( 1 << 4 )
+typedef struct TypeDefStructCompileInfo
 {
-    int64 State, Tdi_Offset, Tdi_StructureUnion_Size, Tdi_Structure_Size, Tdi_Union_Size, Tdi_Field_Size, T_Type ;
-    int64 LineNumber, Token_EndIndex, Token_StartIndex, *Tdi_ArrayDimensions, Tdi_ArrayNumberOfDimensions ;
-    int64 Tdi_BitFieldOffset, Tdi_BitFieldSize ; //, T_Type ;
-    Namespace *Tdi_InNamespace, * Tdi_StructureUnion_Namespace, * Tdi_Field_Type_Namespace, *FunctionId ;
-    Word * Tdi_Field_Object ;
-    byte *NextChar, *DataPtr, * TdiToken, *FieldName, *StructureUnionName ;
-} TypeDefInfo, TDI ;
+    int64 State, Tdsci_Offset, Tdsci_StructureUnion_Size, Tdsci_Structure_Size, Tdsci_Union_Size, Tdsci_Field_Size ;
+    int64 LineNumber, Token_EndIndex, Token_StartIndex, *Tdsci_ArrayDimensions, Tdsci_ArrayNumberOfDimensions ;
+    Namespace *Tdsci_InNamespace, * Tdsci_StructureUnion_Namespace, * Tdsci_Field_Type_Namespace ;
+    Word * Tdsci_Field_Object ;
+    byte *NextChar, *DataPtr, * TdsciToken, *FieldName, *StructureUnionName ;
+} TypeDefStructCompileInfo, TDSCI ;
 //TypeDefStructCompileInfo State flags
-#define TDI_CLONE_FLAG                      ( (uint64) 1 << 0 ) 
-#define TDI_STRUCT                          ( (uint64) 1 << 1 ) 
-#define TDI_UNION                           ( (uint64) 1 << 2 ) 
-#define TDI_BITFIELD                        ( (uint64) 1 << 3 ) 
-#define TDI_PRINT                           ( (uint64) 1 << 4 ) 
-#define TDI_POINTER                         ( (uint64) 1 << 5 ) 
-#define TDI_UNION_PRINTED                   ( (uint64) 1 << 6 ) 
-#define TDI_POST_STRUCT                     ( (uint64) 1 << 7 ) 
-#define TDI_STRUCT_OR_UNION_FLAG            ( (uint64) 1 << 8 ) 
-#define TDI_STRUCT_OR_UNION_FIELD           ( (uint64) 1 << 9 ) 
-// typedef/parse defines
-#define TD_PRE_STRUCTURE_ID                 ( (uint64) 1 << 10 )
-#define TD_POST_STRUCTURE_ID                ( (uint64) 1 << 11 )
-#define TD_TYPE_FIELD                       ( (uint64) 1 << 12 )
-#define TD_STRUCT_ID                        ( (uint64) 1 << 13 )
-#define TD_ARRAY_FIELD                      ( (uint64) 1 << 14 )
-#define TD_FUNCTION_TYPE                    ( (uint64) 1 << 15 )
-#define TD_FUNCTION_PARAMETER_TYPES         ( (uint64) 1 << 16 )
-#define TD_TYPENAMESPACE_DONE               ( (uint64) 1 << 17 )
-#define TD_FUNCTION_ID_FIELD                ( (uint64) 1 << 18 )
-#define TD_FORWARD_REF                      ( (uint64) 1 << 19 )
-#define TD_FIELD_ID                         ( (uint64) 1 << 20 )
-#define TD_BIT_FIELD                        ( (uint64) 1 << 21 )
-#define TD_TYPE_ID                          ( (uint64) 1 << 22 )
+#define TDI_CLONE_FLAG                    ( (uint64) 1 << 0 ) 
+#define TDI_STRUCT                        ( (uint64) 1 << 1 ) 
+#define TDI_UNION                         ( (uint64) 1 << 2 ) 
+//#define TDI_STRUCTURE_COMPLETED           ( (uint64) 1 << 3 ) 
+#define TDI_PRINT                         ( (uint64) 1 << 4 ) 
+#define TDI_POINTER                       ( (uint64) 1 << 5 ) 
+#define TDI_UNION_PRINTED                 ( (uint64) 1 << 6 ) 
+#define TDI_POST_STRUCT                   ( (uint64) 1 << 7 ) 
 typedef struct
 {
     dlnode * JON_Node ;
     byte * JmpToAddress ; // address pointed to by offset
     byte * OffsetPointer ; // pointer to actual code with the offset 
 } JccOffsetNode, JON ;
-typedef
-Boolean( *LocalsRegParameterOrder ) ( Boolean ) ;
 typedef struct
 {
     uint64 State ;
@@ -831,25 +825,25 @@ typedef struct
     Boolean InLParenBlock, SemicolonEndsThisBlock, TakesLParenAsBlock, BeginBlockFlag ;
     int32 * AccumulatedOffsetPointer ;
     int64 * FrameSizeCellOffset, BlocksBegun ;
-    byte * BeginAddress ; //, * RspSaveOffset, * RspRestoreOffset ;
-    Word *ReturnWord, * ReturnVariableWord, * ReturnLParenOperandWord, * Current_Word_New, *Current_Word_Create, *PrefixWord ;
+    byte * RspSaveOffset ;
+    byte * RspRestoreOffset ;
+    Word *ReturnWord, * ReturnVariableWord, * ReturnLParenOperandWord, * Current_Word_New, *Current_Word_Create, * LHS_Word, *PrefixWord ;
     Namespace *C_BackgroundNamespace, *C_FunctionBackgroundNamespace, *Qid_BackgroundNamespace, *LocalsNamespace, *NonCompilingNs ; //, ** FunctionTypesArray ;
     dllist * GotoList, *SetccMovedList ;
     dllist * CurrentMatchList ;
     dllist * RegisterParameterList, *JccAdressOffsetList ;
     CompileOptimizeInfo * OptInfo ;
     dllist *PostfixLists ;
-    Stack * LHS_Word ;
     Stack * PointerToJmpInsnStack ;
     Stack * LocalsCompilingNamespacesStack ;
     Stack * CombinatorBlockInfoStack ;
-    Stack * BlockStack ; //, *CombinatorStack ;
+    Stack * BlockStack, *CombinatorStack ;
     Stack * InternalNamespacesStack ;
     Stack * InfixOperatorStack ;
-    Stack * BeginAddressStack ;
     dllist * OptimizeInfoList ;
-    //BlockInfo * CurrentTopBlockInfo ;
-    LocalsRegParameterOrder Lrpo ;
+    BlockInfo * CurrentTopBlockInfo ;
+    //TypeDefStructCompileInfo * C_Tdsci ;
+    Stack * TDI_StructUnionStack ;
 } Compiler ;
 typedef struct _Interpreter
 {
@@ -870,22 +864,21 @@ typedef void (* DebuggerFunction ) (struct _Debugger *) ;
 typedef struct _Debugger
 {
     uint64 State ;
-    int64 * SaveDsp, * InitDsp, *RaDsp, *AddressModeSaveDsp, *SaveEdi, *SaveRsp, * WordDsp, * DebugRSP, *DebugRBP ;
-    int64 *DebugRSI, *DebugRDI, * LastRsp, LevelBitNamespaceMap, Insn ;
+    uint64 * SaveDsp, * InitDsp, *RaDsp, *AddressModeSaveDsp, *SaveEdi, *SaveRsp, * WordDsp, * DebugRSP, *DebugRBP,
+    *DebugRSI, *DebugRDI, * LastRsp, LevelBitNamespaceMap, Insn ;
     int64 RL_ReadIndex, SaveTOS, SaveStackDepth, Key, SaveKey, LastScwi, Esi, Edi, InsnSize ;
     Word * w_Word, *w_Alias, *w_AliasOf, *EntryWord, *LastShowInfoWord, *LastShowEffectsWord, *NextEvalWord ;
-    Word *LocalsNamespace, *LastPreSetupWord, *SteppedWord, *CurrentlyRunningWord, *LastSourceCodeWord, *SubstitutedWord ; //, *OutWord ;
+    Word *LocalsNamespace, *LastPreSetupWord, *SteppedWord, *CurrentlyRunningWord, *LastSourceCodeWord, *SubstitutedWord ;
     byte *Menu, * Token, *DebugAddress, *ReturnAddress, *CopyRSP, *CopyRBP, *LastSourceCodeAddress ;
-    byte * PreHere, *SpecialPreHere, *StartHere, *LastDisAddress, *ShowLine, * Filename ;
+    byte * PreHere, *SpecialPreHere, *StartHere, *LastDisStart, *ShowLine, * Filename ;
     block SaveCpuState, RestoreCpuState ;
     Stack *ReturnStack, *BreakReturnStack, *LocalsCompilingNamespacesStack ;
     Cpu * cs_Cpu ;
     ByteArray * StepInstructionBA ;
     byte CharacterTable [ 128 ] ;
-    DebuggerFunction CharacterFunctionTable [ 48 ] ;
+    DebuggerFunction CharacterFunctionTable [ 44 ] ;
     ud_t * Udis ;
     dllist * DebugWordList ;
-    Word * OutWord ; //for some compiler error (gcc 13/14) reason this has to be here else it breaks the debug <dbg> code!!??
 } Debugger ;
 typedef struct
 {
@@ -894,8 +887,9 @@ typedef struct
     long BigNum_Printf_Precision ;
     long BigNum_Printf_Width ;
     int64 ExceptionFlag ;
+    int64 IncludeFileStackNumber ;
     //struct timespec Timers [ 8 ] ;
-    int64 Timers [ 16 ] ;
+    byte Timers[64] ;
 } System ;
 typedef struct
 {
@@ -923,7 +917,6 @@ typedef struct
     block CurrentlyRunningWordDefinition ;
     dllist * PreprocessorStackList ;
     NBA * ContextNba ;
-    Stack * TDI_StructUnionStack ;
     //sigjmp_buf JmpBuf0 ;
     byte JmpBuf0[200] ;
 } Context ;
@@ -940,7 +933,7 @@ typedef struct _CombinatorInfo
 #if BITFIELDS
         struct
         {
-            d: unsigned BlockLevel : 16 ;
+            unsigned BlockLevel : 16 ;
             unsigned ParenLevel : 16 ;
         } ;
 #endif
@@ -951,9 +944,9 @@ typedef struct _CombinatorInfo
 typedef struct _LambdaCalculus
 {
     uint64 State, DebuggerState, DebuggerSetupFlag ;
-    int64 DontCopyFlag, Loop, ParenLevel, EvalListDepth, EvalDepth ;
+    int64 DontCopyFlag, Loop, ParenLevel ;
     Namespace *LispNamespace, *LispDefinesNamespace, *LispTempNamespace, *BackgroundNamespace ;
-    ListObject *Lread, *L0, *L1, *Lfirst, *LWord, *Lfunction0, *Lfunction, *Lvalue, *Locals, *Largs0, *Largs, *Largs1, * Nil, *True, *FunctionParameters, *FunctionArgs ;
+    ListObject *Lread, *L0, *L1, *Lfirst, *Lfunction0, *Lfunction, *Lvalue, *Locals, *Largs0, *Largs, *Largs1, * Nil, *True, *FunctionParameters, *FunctionArgs ;
     ListObject *LastInterpretedWord ;
     ByteArray * SavedCodeSpace ;
     uint64 ItemQuoteState, QuoteState ;
@@ -969,9 +962,7 @@ typedef struct _LambdaCalculus
     Boolean ApplyFlag, LetFlag, SavedTypeCheckState, IndentDbgPrint ;
     struct _CSL * OurCSL ;
     //sigjmp_buf LC_JmpBuf ;
-    byte LC_JmpBuf[200] ;
-    //Cpu EvalList_CpuState ;
-    block LC_SaveCpuState, LC_RestoreCpuState ;
+    byte JmpBuf0[200] ;
 } LambdaCalculus ;
 typedef struct
 {
@@ -999,8 +990,8 @@ typedef struct _StringTokenInfo
 typedef struct _CSL
 {
     uint64 State, SavedState, * SaveDsp ;
-    int64 InitSessionCoreTimes, WordsAdded, FindWordCount, FindWordMaxCount, TerminalLineWidth, IncludeFileStackNumber ;
-    int64 WordCreateCount, DObjectCreateCount, DebugLevel ; // SC_Index == SC_Buffer Index ;
+    int64 InitSessionCoreTimes, WordsAdded, FindWordCount, FindWordMaxCount, TerminalLineWidth,
+    WordCreateCount, DObjectCreateCount, DebugLevel ; // SC_Index == SC_Buffer Index ;
     Stack *ReturnStack, * DataStack ;
     Namespace * Namespaces, * InNamespace, *BigNumNamespace, *IntegerNamespace, *StringNamespace, *RawStringNamespace,
     *C_Preprocessor_IncludeDirectory_SearchList, *C_Preprocessor_IncludedList ;
@@ -1008,6 +999,7 @@ typedef struct _CSL
     Stack * ContextStack, * TypeWordStack ;
     Debugger * Debugger0 ;
     LambdaCalculus * LC ;
+    FILE * LogFILE ;
     Cpu * cs_Cpu, * cs_Cpu2 ;
     block CurrentBlock, WordRun, SaveCpuState, SaveCpu2State, RestoreCpuState, RestoreCpu2State, Set_DspReg_FromDataStackPointer, Set_DataStackPointer_FromDspReg ; //, PeekReg, PokeReg ;
     block PopDspToR8AndCall, CallReg_TestRSP, Call_ToAddressThruSREG_TestAlignRSP ; //adjustRSPAndCall, adjustRSP ;
@@ -1017,13 +1009,11 @@ typedef struct _CSL
     byte ReadLine_CharacterTable [ 256 ], * OriginalInputLine, * TokenBuffer ; // nb : keep this here -- if we add this field to Lexer it just makes the lexer bigger and we want the smallest lexer possible
     ReadLineFunction ReadLine_FunctionTable [ 24 ] ;
     CharacterType LexerCharacterTypeTable [ 256 ] ;
-    LexerFunction LexerCharacterFunctionTable [ 28 ] ;
+    LexerFunction LexerCharacterFunctionTable [ 24 ] ;
     Buffer *StringB, * TokenB, *OriginalInputLineB, *InputLineB, *svLineB, *SourceCodeBuffer, *StringInsertB, *StringInsertB2,
     *StringInsertB3, *StringInsertB4, *StringInsertB5, *StringInsertB6, *StringInsertB7, *StrCatBuffer, *InputLine ;
     Buffer *TabCompletionBuf, *LC_OutB, * LC_PrintB, * LC_DefineB, *DebugB, *DebugB1, *DebugB2, *DebugB3, *DebugB4, *ScratchB1, *ScratchB2,
     *ScratchB3, *ScratchB4, *ScratchB5, *StringMacroB, *TabCompletion, *DebuggerEscape, *Preprocessor, *FormatRemoval ; // token buffer, tab completion backup, source code scratch pad, 
-    byte * LogFilename ;
-    FILE * LogFILE ;
     StrTokInfo Sti ;
     dllist * CSL_N_M_Node_WordList ;
     SourceCodeInfo SCI ;
@@ -1032,7 +1022,6 @@ typedef struct _CSL
 } CSL, ContextSensitiveLanguage ;
 #define SC_Word SCI.SciWord
 #define SC_Buffer SCI.SciBuffer
-#define SC_String SCI.SciSourceCode_AllocatedString
 #define SC_QuoteMode SCI.SciQuoteMode
 #define SC_Index SCI.SciIndex
 typedef struct
@@ -1040,7 +1029,7 @@ typedef struct
     MemChunk MS_MemChunk ;
     NamedByteArray * SessionObjectsSpace, * TempObjectSpace, * CompilerTempObjectSpace,
     * ContextSpace, * WordRecylingSpace, * LispTempSpace, * LispCopySpace,
-    * BufferSpace, * CodeSpace, * ObjectSpace, * LispSpace, * DictionarySpace, * StringSpace, *ForthSpace, * ExceptionSpace ;
+    * BufferSpace, * CodeSpace, * ObjectSpace, * LispSpace, * DictionarySpace, * StringSpace ;
 
     dllist *NBAs ;
     int64 RecycledWordCount, WordsInRecycling, WordsAllocated ;
@@ -1068,22 +1057,6 @@ typedef struct
         IntColors ics_IntColors ;
     } ;
 } Colors ;
-
-typedef struct
-{
-    int64 State ; 
-    int64 PauseFlag, InfoFlag, Signal, ExceptionCode, RestartCondition, SignalExceptionsHandled ;
-    int64 LastRestartCondition, Console, Thrown, SigSegvs, Restarts, StartedTimes, StartIncludeTries ;
-    byte * Message ;
-    //struct siginfo_t SignalInfo ;
-    byte SignalInfo [128] ;
-    Context * Context ;
-    byte * Prompt, *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken, *Location, *ErrorCommandLine ;
-    Word * ExceptionWord ;
-    void * SigAddress ;
-    //byte Key ;
-} Exception ;
-
 typedef struct
 {
     MemChunk OVT_MemChunk ;
@@ -1093,22 +1066,19 @@ typedef struct
     Interpreter * OVT_Interpreter ;
     LambdaCalculus * OVT_LC ;
     ByteArray * CodeByteArray ; // a variable
-    int64 LogFlag, DebugOutputFlag ;
+    Boolean LogFlag, DebugOutputFlag ;
 
-    //int64 SignalExceptionsHandled, LastRestartCondition, RestartCondition, Signal, ExceptionCode, Console ;
-    int64 Console ;
+    int64 SignalExceptionsHandled, LastRestartCondition, RestartCondition, Signal, ExceptionCode, Console ;
 
-    byte *InitString, *StartupString, *StartupFilename, *ErrorFilename, *VersionString ; 
-    //        *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken ;
-    //Word * ExceptionWord ;
+    byte *InitString, *StartupString, *StartupFilename, *ErrorFilename, *VersionString, *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken ;
+    Word * ExceptionWord ;
 
     int64 Argc ;
     char ** Argv ;
-    //void * SigAddress ;
-    //byte * SigLocation ;
+    void * SigAddress ;
+    byte * SigLocation ;
     Colors *Current, Default, Alert, Debug, Notice, User ;
 
-    //dlnode PML_HeadNode, PML_TailNode ;
     int64 TotalRemainingAccounted, TotalNbaAccountedMemRemaining, TotalNbaAccountedMemAllocated, TotalMemSizeTarget ;
     //int64 Mmap_RemainingMemoryAllocated, OVT_InitialStaticMemory, TotalMemFreed, TotalMemAllocated, NumberOfByteArrays ;
 
@@ -1126,20 +1096,17 @@ typedef struct
     NamedByteArray * CSL_InternalSpace ;
 
     // variables accessible from csl
-    //int64 Verbosity, StartIncludeTries, StartedTimes, Restarts, SigSegvs, ReAllocations, Dbi ;
-    //int64 StartIncludeTries, RestartCondition ;
-    int64 Verbosity, ReAllocations, Dbi ;
+    int64 Verbosity, StartIncludeTries, StartedTimes, Restarts, SigSegvs, ReAllocations, Dbi ;
     int64 DictionarySize, LispCopySize, LispTempSize, MachineCodeSize, ObjectSpaceSize, InternalObjectsSize, LispSpaceSize, ContextSize ;
-    int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize, ForthSize ; 
-    int64 CSLSize, BufferSpaceSize, ExceptionSpaceSize, StringSpaceSize, Thrown ;
-    Buffer *ExceptionBuffer, *PrintBuffer, *PrintBufferCopy, *PrintBufferConcatCopy ;
+    int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize ;
+    int64 CSLSize, BufferSpaceSize, StringSpaceSize, Thrown ;
+    Buffer *PrintBuffer, *PrintBufferCopy, *PrintBufferConcatCopy ;
     //sigjmp_buf JmpBuf0 ;
-    byte JmpBuf0 [200] ;
+    byte JmpBuf0[200] ;
     //struct timespec Timer ;
-    int64 Timer[2] ;
+    byte Timer[8] ;
     byte Pblc, Pbf8 [8] ; // Print Buffer last char/first 8 char 
-    Exception * OVT_Exception ;
-} OpenVmTil, OVT ;
+} OpenVmTil ;
 
 // note : this puts these namespaces on the search list such that last, in the above list, will be searched first
 typedef struct
@@ -1151,18 +1118,14 @@ typedef struct
         char TypeSignature [8] ;
         uint64 uint64_TypeSignature ;
     } ;
-    union
-    {
-        uint64 OpInsnCodeGroup ;
-        uint64 OpNumOfParams ;
-    } ;
+    uint64 OpInsnCodeGroup ;
     uint8 OpInsnCode ;
     block blk_Definition ;
     uint64 ui64_MorphismAttributes ;
     uint64 ui64_ObjectAttributes ;
     uint64 ui64_LispAttributes ;
-    char *NameSpace ;
-    char * SuperNamespace ;
+    const char *NameSpace ;
+    const char * SuperNamespace ;
 } CPrimitive ;
 typedef struct
 {
@@ -1180,8 +1143,8 @@ typedef struct ppibs
     union
     {
         int64 int64_Ppibs ; // for ease of initializing and conversion
-#if BITFIELDS
-        struct
+ #if BITFIELDS
+       struct
         {
             //unsigned State : 1 ; // status of whether we should do an ifBlock or not
             //unsigned Status : 1 ;
@@ -1192,7 +1155,7 @@ typedef struct ppibs
             unsigned SvIfCond : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
             //unsigned Status : 1 ; // remembers when we have done an elif in a block; only one can be done in a block in the C syntax definition whick we emulate
             //unsigned DoItStatus : 1 ; // controls whether we do nested if block
-        } ;
+         } ;
 #endif
     } ;
     byte * Filename ;
@@ -1201,8 +1164,6 @@ typedef struct ppibs
 PreProcessorIfBlockStatus, Ppibs ;
 typedef struct typeStatusInfo
 {
-#define TSE_ERROR         ( 1 << 0 ) 
-#define TSE_SIZE_MISMATCH ( 1 << 1 )   
     Stack * TypeWordStack ;
     Word * OpWord, *WordBeingCompiled, *StackWord0, *StackWord1 ;
     int64 TypeStackDepth, OpWordFunctionTypeSignatureLength ;
@@ -1210,14 +1171,14 @@ typedef struct typeStatusInfo
     Boolean TypeErrorStatus, OpWord_ReturnsACodedValue_Flag ;
     byte OpWordReturnSignatureLetterCode ;
 } TypeStatusInfo, TSI ;
+#define TSE_ERROR         ( 1 << 0 )
+#define TSE_SIZE_MISMATCH ( 1 << 1 )
 typedef struct
 {
     MemChunk OS_MemChunk ;
     NBA * StaticMemSpace ;
     dllist * OVT_StaticMemList, * HistorySpace_MemChunkStringList ;
     int64 Allocated, Freed, RemainingAllocated ;
-    //sigjmp_buf JmpBuf0 ;
-    byte JmpBuf0[200] ;
 } OVT_StaticMemSystem, OSMS ;
 typedef struct
 {
@@ -1225,3 +1186,7 @@ typedef struct
     dllist * OvtMemChunkList ;
     int64 Allocated, Freed, RemainingAllocated ;
 } OVT_MemSystem, OMS ;
+d: cOff
+//'Experimental notUsing
+Root User
+2 + 7 assertStkChk // stack checking

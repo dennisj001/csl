@@ -572,7 +572,7 @@ strToLower ( byte * dest, byte * str )
 byte *
 String_RemoveEndWhitespace ( byte * string )
 {
-    byte * ptr = string + Strlen ( ( char* ) string ) ;
+    byte * ptr = string + Strlen ( ( char* ) string ) - 1 ;
     for ( ; ( ( *ptr ) && ( *ptr <= ' ' ) ) ; ptr -- ) ;
     //*++ ptr = '\n' ;
     *++ ptr = ' ' ;

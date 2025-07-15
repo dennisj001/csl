@@ -138,8 +138,9 @@ endPrompt:
     rl->InputLine [0] = 0 ;
     ReadLine_SetPrompt ( rl, svPrompt ) ;
     Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
-    iPrintf ( " leaving shell ...\n" ) ;
-    _O_->Pbf8[0] = _ReadLiner_->NormalPrompt[0] ;
+    iPrintf ( " leaving shell ..." ) ;
+    //_O_->Pbf8[0] = '\n' ; //_ReadLiner_->NormalPrompt[0] ;
+    SetPromptNewline ( ) ;
     _DoPrompt ( ) ;
     //SetState ( cntx->System0, ADD_READLINE_TO_HISTORY, true ) ;
 }

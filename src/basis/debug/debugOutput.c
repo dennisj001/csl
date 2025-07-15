@@ -453,11 +453,10 @@ PSCS_Using_ReadlinerInputString ( byte* il, byte * token1, int64 scswci, int64 t
         int64 tw = TerminalLineWidth ( ) ;
         tvw = tvw < tw ? tvw : tw ; 
         // ts : tokenStart ; tp : text point - where we want to start source code text to align with disassembly ; ref : right ellipsis flag
-        int64 slt0, slt1, lef, leftBorder, ts, rightBorder, ref, slil ;
+        int64 slt1, lef, leftBorder, ts, rightBorder, ref, slil ;
         int64 totalBorder, idealBorder, nws, nts, slNvw, lbm ;
         slil = strlen ( ( char* ) il ) ;
         nvw = Buffer_DataCleared ( _CSL_->DebugB4 ) ; //Buffer_New_pbyte ( ( slil > BUFFER_SIZE ) ? slil : BUFFER_SIZE ) ;
-        //slt0 = strlen ( token0 ) ;
         slt1 = Strlen ( token1 ) ;
         totalBorder = ( tvw - slt1 ) ; // the borders allow us to slide token within the window of tvw
         idealBorder = ( totalBorder / 2 ) ;
@@ -492,7 +491,7 @@ PSCS_Using_ReadlinerInputString ( byte* il, byte * token1, int64 scswci, int64 t
             Strncpy ( nvw, &il[nws], leftBorder ) ; //scswci ) ; // tvw ) ; // copy the the new view window to buffer nvw
             Strncat ( nvw, token1, slt1 ) ; // tvw ) ; // copy the the new view window to buffer nvw
             //Strncat ( nvw, &il[nws + slt0], tvw ) ; // tvw ) ; // copy the the new view window to buffer nvw
-            Strncat ( nvw, &il[nws + leftBorder + slt0], rightBorder ) ; // - slt1 ) ; // tvw ) ; // copy the the new view window to buffer nvw
+            Strncat ( nvw, &il[nws + leftBorder + slt1], rightBorder ) ; // - slt1 ) ; // tvw ) ; // copy the the new view window to buffer nvw
         }
         else Strncpy ( nvw, &il[nws], tvw ) ; // copy the the new view window to buffer nvw
         slNvw = Strlen ( nvw ) ;
@@ -544,7 +543,7 @@ DBG_PrepareShowInfoString ( Word * scWord, Word * word, byte* token0, byte* il, 
         else token1 = token0 ;
         token2 = String_ConvertToBackSlash ( token1, 0 ) ;
         slt = Strlen ( token2 ) ;
-        index0 = scs ? word->W_SC_Index : rlIndex ;
+        index0 = scs && word ? word->W_SC_Index : rlIndex ;
         if ( debugger->w_AliasOf )
         {
             token2 = word->Name ;

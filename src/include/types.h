@@ -363,10 +363,10 @@ typedef struct _Identifier // _Symbol
 
 typedef int64( *cMapFunction_1 ) ( Symbol * ) ;
 typedef ListObject* ( *ListFunction0 )( ) ;
-typedef ListObject* ( *ListFunction )( ListObject* ) ;
-typedef ListObject * ( *ListFunction2 ) ( ListObject*, ListObject* ) ;
-typedef ListObject * ( *ListFunction3 ) ( ListObject*, ListObject*, int64 ) ;
-typedef ListObject * ( *ListFunction4 ) ( ListObject*, ListObject*, int64, ListObject* ) ;
+//typedef ListObject* ( *ListFunction )( ListObject* ) ;
+//typedef ListObject * ( *ListFunction2 ) ( ListObject*, ListObject* ) ;
+//typedef ListObject * ( *ListFunction3 ) ( ListObject*, ListObject*, int64 ) ;
+//typedef ListObject * ( *ListFunction4 ) ( ListObject*, ListObject*, int64, ListObject* ) ;
 typedef int64( *MapFunction_Word_PtrInt ) ( ListObject *, Word *, int64 * ) ;
 typedef int64( *MapFunction ) ( Symbol * ) ;
 typedef int64( *MapFunction_1 ) ( Symbol *, int64 ) ;
@@ -377,8 +377,8 @@ typedef void ( *MapSymbolFunction ) ( Symbol * ) ;
 typedef void ( *VMapNodeFunction ) ( dlnode * ) ;
 typedef void ( *MapSymbolFunction1 ) ( Symbol *, int64 ) ;
 typedef void ( *MapSymbolFunction2 ) ( Symbol *, int64, int64 ) ;
-typedef Word* ( *MapNodeFunction ) ( dlnode * node ) ;
-typedef void ( *VMapSymbol2 ) ( Symbol * symbol, int64, int64 ) ;
+typedef Word ( *MapNodeFunction ) ( dlnode * ) ;
+typedef void ( *VMapSymbol2 ) ( Symbol *, int64, int64 ) ;
 typedef void (*StackMapFunction0 ) ( Word * ) ;
 typedef void (*StackMapFunction1 ) ( Word *, byte * ) ;
 typedef void (*StackMapFunction2 ) ( Word *, int64, int64 ) ;
@@ -576,7 +576,7 @@ typedef struct NamedByteArray
 typedef struct
 {
     Symbol GI_Symbol ; // the node
-    Boolean AddressSet ;
+    //Boolean AddressSet ;
     Word * GI_Word, * Combinator ;
     int64 BlockLevel, CombinatorLevel ;
     byte * GI_BlockInfo ;
@@ -766,29 +766,30 @@ typedef struct TypeDefInfo
     byte *NextChar, *DataPtr, * TdiToken, *FieldName, *StructureUnionName ;
 } TypeDefInfo, TDI ;
 //TypeDefStructCompileInfo State flags
-#define TDI_CLONE_FLAG                    ( (uint64) 1 << 0 ) 
-#define TDI_STRUCT                        ( (uint64) 1 << 1 ) 
-#define TDI_UNION                         ( (uint64) 1 << 2 ) 
+#define TDI_CLONE_FLAG                      ( (uint64) 1 << 0 ) 
+#define TDI_STRUCT                          ( (uint64) 1 << 1 ) 
+#define TDI_UNION                           ( (uint64) 1 << 2 ) 
 #define TDI_BITFIELD                        ( (uint64) 1 << 3 ) 
-#define TDI_PRINT                         ( (uint64) 1 << 4 ) 
-#define TDI_POINTER                       ( (uint64) 1 << 5 ) 
-#define TDI_UNION_PRINTED                 ( (uint64) 1 << 6 ) 
-#define TDI_POST_STRUCT                   ( (uint64) 1 << 7 ) 
-#define TDI_STRUCT_OR_UNION_FLAG          ( (uint64) 1 << 8 ) 
-#define TDI_STRUCT_OR_UNION_FIELD         ( (uint64) 1 << 9 ) 
+#define TDI_PRINT                           ( (uint64) 1 << 4 ) 
+#define TDI_POINTER                         ( (uint64) 1 << 5 ) 
+#define TDI_UNION_PRINTED                   ( (uint64) 1 << 6 ) 
+#define TDI_POST_STRUCT                     ( (uint64) 1 << 7 ) 
+#define TDI_STRUCT_OR_UNION_FLAG            ( (uint64) 1 << 8 ) 
+#define TDI_STRUCT_OR_UNION_FIELD           ( (uint64) 1 << 9 ) 
 // typedef/parse defines
-#define TD_PRE_STRUCTURE_ID            ( (uint8) 1 << 0 )
-#define TD_POST_STRUCTURE_ID           ( (uint8) 1 << 1 )
-#define TD_TYPE_FIELD                  ( (uint8) 1 << 2 )
-#define TD_STRUCT_ID                   ( (uint8) 1 << 3 )
-#define TD_ARRAY_FIELD              ( (uint8) 1 << 4 )
-#define TD_FUNCTION_TYPE            ( (uint8) 1 << 5 )
-#define TD_FUNCTION_PARAMETER_TYPES ( (uint8) 1 << 6 )
-#define TD_TYPENAMESPACE_DONE       ( (uint8) 1 << 7 )
-#define TD_FUNCTION_ID_FIELD        ( (uint8) 1 << 8 )
-#define TD_FORWARD_REF              ( (uint8) 1 << 9 )
-#define TD_FIELD_ID                 ( (uint8) 1 << 10 )
-#define TD_BIT_FIELD                        ( (uint64) 1 << 11 )
+#define TD_PRE_STRUCTURE_ID                 ( (uint64) 1 << 10 )
+#define TD_POST_STRUCTURE_ID                ( (uint64) 1 << 11 )
+#define TD_TYPE_FIELD                       ( (uint64) 1 << 12 )
+#define TD_STRUCT_ID                        ( (uint64) 1 << 13 )
+#define TD_ARRAY_FIELD                      ( (uint64) 1 << 14 )
+#define TD_FUNCTION_TYPE                    ( (uint64) 1 << 15 )
+#define TD_FUNCTION_PARAMETER_TYPES         ( (uint64) 1 << 16 )
+#define TD_TYPENAMESPACE_DONE               ( (uint64) 1 << 17 )
+#define TD_FUNCTION_ID_FIELD                ( (uint64) 1 << 18 )
+#define TD_FORWARD_REF                      ( (uint64) 1 << 19 )
+#define TD_FIELD_ID                         ( (uint64) 1 << 20 )
+#define TD_BIT_FIELD                        ( (uint64) 1 << 21 )
+#define TD_TYPE_ID                          ( (uint64) 1 << 22 )
 typedef struct
 {
     dlnode * JON_Node ;
