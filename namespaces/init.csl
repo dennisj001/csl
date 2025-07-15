@@ -883,6 +883,72 @@ pwi factorial5n
 7 factorial5n dup p 5040 _assert 
 fOff
 #endif
+
+#if 0
+cOn
+//typecheckOn
+C
+'Experimental3 namespace
+C.Experimental3 
+typedef struct _byteTest 
+{
+    byte a8_123 ; 
+    int64 a64_123 ;
+    byte b8_123 ;
+    byte c8_123 ; // test comment
+    union // offset 11
+    {
+        int64 u64_123 ;
+        int32 u32_123 ;
+        int8 u8_123 ;
+    } ; //size = 8 
+    int32 a32_123 ; // offset 19
+    byte d8_123 ;
+    int16 a16_123 ; 
+} byteTest, abyteTest ; // size = 26 + (26 % 4) = 28 
+byteTest 'bt new ;
+//byteTest new ('bt )
+pwi byteTest 
+ps ( "\nbt.size =" ) ; p ( bt.size ) ;
+void 
+bttt ( byteTest * xbt | btt byte bbtt) 
+{ 
+    oPrintf ( "\nbtt" ) ;
+    dump ( &xbt, xbt.size ) ; 
+    //wordStructPrint ( xbt find ('byteTest) ;
+    //d: xbt.a8_123 = 598 ; // check typechecking
+    xbt.a8_123 = 'a' ; 
+    bbtt = xbt.a8_123 ; 
+    oPrintf ( "\nbtt = %c", bbtt ) ; 
+    xbt.a64_123 = 0x123456789abcdef ; 
+    xbt.b8_123 = 'b' ; 
+    xbt.c8_123 = 'c' ; 
+    xbt.a16_123 = 0x1234 ; 
+    xbt.a32_123 = 0x12345678 ; //pause
+    xbt.u32_123 = 0x1234567, btt = 0xedcba0987654321 ;
+    xbt.d8_123 = 'd' ;
+    oPrintf ( "\nbt.a16_123 = 0x%x ", xbt.a16_123 ) ; 
+    oPrintf ( "\nbt.a32_123 = 0x%lx ", xbt.a32_123 ) ; 
+    oPrintf ( "\nbt.a64_123 = 0x%lx ", xbt.a64_123 ) ; 
+    oPrintf ( "\nbt.u32_123 = 0x%lx ", xbt.u32_123 ) ; 
+    oPrintf ( "\nbt.a8_123 = %c ", xbt.a8_123 ) ; 
+    oPrintf ( "\nbt.b8_123 = %c ", xbt.b8_123 ) ; 
+    oPrintf ( "\nbt.c8_123 = %c ", xbt.c8_123 ) ; 
+    oPrintf ( "\nbt.d8_123 = %c ", xbt.d8_123 ) ; 
+    oPrintf ( "\nbtt = %lx", btt ) ; 
+    dump ( &xbt, xbt.size ) ; 
+    hp ( &xbt.a8_123 ) ;
+} 
+byteTest 'bt new ;
+pwi bttt 
+bttt ( bt ) 
+cOff
+nl
+bt 'byteTest find wordStructPrint 
+cOff
+nl bt.a32_123 32@ hp    
+nl bt.u32_123 32@ hp 
+#endif
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff

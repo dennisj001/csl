@@ -54,16 +54,16 @@ int factoriali ( REG n | REG res )
 wdiss ( find ('factoriali)) ; //pause ; 
 factoriali (7) ; dup p 5040 _assert //pause //sp
 
-int 
+int64 
 factorial ( REG n | REG rec )
 {
        rec = 1;
-       while ( n >= 2 ) rec *= (n--) ;
+       while ( n >= 2 ) rec *= n-- ;
        return rec ;
 } 
+pwi factorial
+7 factorial dup p 5040 _assert //pause
 c_syntaxOff
-//pwi factorial
-7 factorial dup p 5040 _assert sp //pause
 Combinators
 : fac ( n  | rec ) 
     rec 1 = 
