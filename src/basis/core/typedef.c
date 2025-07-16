@@ -65,7 +65,7 @@ TD_PostStructUnion_Accounting ( )
     ctdi = TDI_GetTop ( ) ; // now 'current'
     if ( jf_tdi && ( ! GetState ( ctdi, TDI_POST_STRUCT ) ) ) // always should be there but check anyway
     {
-        if ( GetState ( jf_tdi, (TDI_UNION|TDI_STRUCT) ) ) 
+        if ( GetState ( jf_tdi, ( TDI_UNION | TDI_STRUCT ) ) )
         {
             if ( GetState ( ctdi, TDI_UNION ) ) _TD_PostStructUnion_Accounting ( jf_tdi ) ;
             else ctdi->Tdi_StructureUnion_Size += jf_tdi->Tdi_StructureUnion_Size ;
@@ -78,10 +78,10 @@ TD_PostStructUnion_Accounting ( )
         if ( ! ctdi->Tdi_StructureUnion_Namespace ) ctdi->Tdi_StructureUnion_Namespace = jf_tdi->Tdi_StructureUnion_Namespace ;
     }
 #if TD_DEBUG            
-    if ( Is_DebugOn ) 
+    if ( Is_DebugOn )
     {
-        iPrintf ( "\nTypedef : %s size = %d", ctdi->Tdi_StructureUnion_Namespace ? ctdi->Tdi_StructureUnion_Namespace->S_Name : (byte*)"", ctdi->Tdi_StructureUnion_Size ) ;
-        Pause () ;
+        iPrintf ( "\nTypedef : %s size = %d", ctdi->Tdi_StructureUnion_Namespace ? ctdi->Tdi_StructureUnion_Namespace->S_Name : ( byte* ) "", ctdi->Tdi_StructureUnion_Size ) ;
+        Pause ( ) ;
     }
 #endif             
 }
@@ -122,23 +122,28 @@ TD_Type_Id ( int64 t_type )
 
     if ( ( token [0] != '*' ) && ( token [0] != '{' ) && ( token [0] != ')' ) && ( token [0] != '(' ) )
     {
-        type0 = _Namespace_Find ( token, 0, 0 ) ;
-        if ( type0 && ( ! ( t_type & TD_POST_STRUCTURE_ID ) ) )
+        //if ( String_Equal ( tdi->FileName, "namespaces/types.csl" ) ) 
+        //    type0 = Namespace_Find_InOneTree ( tdi->Tdi_InNamespace, token ) ;
+        //else 
+        //if ( ! tdi->Tdi_Field_Type_Namespace )
         {
-            tdi->Tdi_Field_Type_Namespace = type0 ;
-            tdi->Tdi_Field_Size = CSL_Get_Namespace_SizeVar_Value ( type0 ) ;
-        }
-        else //... ( t_type & TD_POST_STRUCTURE_ID ) 
-        {
-            TD_Identifier ( t_type ) ;
-            //TD_IntraStructFieldAccounting ( ) ;
+            type0 = _Namespace_Find ( token, 0, 0 ) ;
+            if ( type0 && ( ! ( t_type & TD_POST_STRUCTURE_ID ) ) )
+            {
+                tdi->Tdi_Field_Type_Namespace = type0 ;
+                tdi->Tdi_Field_Size = CSL_Get_Namespace_SizeVar_Value ( type0 ) ;
+            }
+            else //... ( t_type & TD_POST_STRUCTURE_ID ) 
+            {
+                TD_Identifier ( t_type ) ;
+            }
         }
         TDI_ReadToken ( ) ;
     }
 }
 
 int64
-TD_Identifier_Or_Array_Field ( int64 t_type )
+TD_IdentifierField ( int64 t_type )
 {
     TDI * tdi = TDI_GetTop ( ) ;
     byte *token = tdi->TdiToken ;
@@ -146,24 +151,21 @@ TD_Identifier_Or_Array_Field ( int64 t_type )
     if ( token && ( token [0] != ';' ) )
     {
         TD_Type_Id ( t_type ) ;
-        TD_CheckForPointer ( ) ;
-        if ( tdi->TdiToken [0] != ';' )
+        if ( ( tdi->TdiToken [0] != ';' )&&( tdi->TdiToken [0] != ',' ) )
         {
-            //if ( tdi->TdiToken [0] == ',' ) TDI_ReadToken ( ) ;
-#if 1 // ?? not needed - deleted ??          
-            if ( tdi->TdiToken [0] != ',' )
+            TD_CheckForPointer ( ) ;
+            if ( ( tdi->TdiToken [0] != ',' ) && ( tdi->TdiToken [0] != '[' ) && ( tdi->TdiToken [0] != ':' ) )
             {
                 if ( ! ( ( t_type == TD_FUNCTION_ID_FIELD ) && ( ns = _Namespace_Find ( tdi->TdiToken, 0, 0 ) ) ) )
-                    //if ( ! ( ns = _Namespace_Find ( tdi->TdiToken, 0, 0 ) ) )
                 {
                     if ( ! ( ( tdi->TdiToken [0] == '(' ) || ( tdi->TdiToken [0] == ')' ) ) )
                     {
                         TD_Identifier ( t_type ) ;
-                        //TD_IntraStructFieldAccounting ( ) ;
                     }
                 }
             }
-#endif            
+            //if ( tdi->TdiToken [0] == ',' ) 
+            //    goto done ;
             token = TDI_PeekToken ( ) ;
             if ( ( token && ( token [0] == '[' ) ) || ( tdi->TdiToken[0] == '[' ) )
             {
@@ -181,6 +183,7 @@ TD_Identifier_Or_Array_Field ( int64 t_type )
         }
         TD_IntraStructFieldAccounting ( ) ;
     }
+    //done :
     return t_type ;
 }
 
@@ -189,9 +192,8 @@ TD_Identifier_Fields ( int64 t_type )
 {
     TDI * tdi = TDI_GetTop ( ) ;
     byte * token = tdi->TdiToken ;
-    while ( token[0] != ';' )
+    while ( tdi->TdiToken[0] != ';' )
     {
-        //if ( tdi->TdiToken [0] == ',' ) TDI_ReadToken ( ) ;        
         if ( String_Equal ( tdi->TdiToken, "unsigned" ) )
         {
             TDI_ReadToken ( ) ; // register somewhere?
@@ -204,17 +206,17 @@ TD_Identifier_Fields ( int64 t_type )
             token = tdi->TdiToken ;
             continue ;
         }
-        t_type = TD_Identifier_Or_Array_Field ( t_type ) ;
-        token = tdi->TdiToken ;
-        if ( token )
+        t_type = TD_IdentifierField ( t_type ) ;
+        if ( tdi->TdiToken )
         {
-            if ( token[0] == ',' )
+            if ( tdi->TdiToken[0] == ',' )
             {
                 tdi->Tdi_Field_Size = tdi->Tdi_Field_Type_Namespace ? CSL_Get_Namespace_SizeVar_Value ( tdi->Tdi_Field_Type_Namespace ) : tdi->Tdi_Field_Size ;
                 SetState ( tdi, TDI_POINTER, false ) ;
                 TDI_ReadToken ( ) ;
+                continue ;
             }
-            if ( token[0] == ';' ) break ;
+            if ( tdi->TdiToken[0] == ';' ) break ;
         }
         else break ;
     }
@@ -238,8 +240,6 @@ TD_Identifier ( int64 t_type )
     byte *identifier = tdi->TdiToken ;
     Word * id, *addToNs ;
 
-    //if ( String_Equal ( identifier, "(" ) || String_Equal ( identifier, ")" ) ) return ; // better syntax detection wouldn't need this??
-    //Pause ( ) ;
     tdi->FieldName = identifier ;
     if ( GetState ( tdi, TDI_PRINT ) )
     {
@@ -251,8 +251,6 @@ TD_Identifier ( int64 t_type )
     }
     else if ( t_type & ( TD_TYPE_FIELD | TD_FIELD_ID | TD_FUNCTION_ID_FIELD | TD_BIT_FIELD ) )
     {
-        //if ( ( t_type == TD_FUNCTION_ID_FIELD ) && ( _Namespace_Find ( identifier, 0, 0 ) ) ) return ; // better syntax detection wouldn't need this??
-
         // with a nameless struct or union identifier are added to the background namespace
         addToNs = ( tdi->Tdi_StructureUnion_Namespace && tdi->Tdi_StructureUnion_Namespace->Name ) ?
             tdi->Tdi_StructureUnion_Namespace : ( ( t_type == TD_FIELD_ID ) && tdi->Tdi_Field_Type_Namespace ) ? tdi->Tdi_Field_Type_Namespace : tdi->Tdi_InNamespace ;
@@ -266,8 +264,6 @@ TD_Identifier ( int64 t_type )
         }
         Object_Size_Set ( id, tdi->Tdi_Field_Size ) ; //+=  ( tdi->Tdi_Field_Size % 8 ) ) ;
         id->WD_Offset = tdi->Tdi_Offset ;
-        //id->ContaingingStructNamespace = tdi->Tdi_StructureUnion_Namespace ;
-        //TD_IntraStructFieldAccounting ( ) ;
     }
     else if ( t_type & TD_PRE_STRUCTURE_ID )
     {
@@ -388,7 +384,6 @@ TD_CheckForPointer ( )
     Boolean rtrn ; //= false ;
     if ( Check_ForAndRemove_Stars ( ) ) //( token [0] == '*' ) || ( token1 = TDI_PeekToken ( ), ( token1 [0] == '*' ) ) )
     {
-        //token = TDI_ReadToken ( ) ; // the '*' 
         tdi->Tdi_Field_Size = CELL_SIZE ;
         SetState ( tdi, TDI_POINTER, true ) ;
         token = TDI_ReadToken ( ) ; // the '*' 
@@ -462,7 +457,7 @@ void
 _TD_Struct_Fields ( ) // 'struct' or 'union'
 {
     TDI * tdi = TDI_GetTop ( ) ;
-    byte * token = tdi->TdiToken ;
+    //byte * token = tdi->TdiToken ;
     do
     {
         TD_Field ( 0 ) ;
@@ -564,8 +559,7 @@ TD_PreStruct_Accounting ( int64 structOrUnionTypeFlag )
     {
         ntdi->Tdi_Offset = ctdi->Tdi_Offset ; //0 ; //ctdi->Tdi_Offset ;
         ntdi->TdiToken = ctdi->TdiToken ;
-        //ntdi->State = ctdi->State & ( ~ ( TDI_UNION | TDI_STRUCT ) ) ; // transfer the non - struct/union state only
-        //ntdi->State |= structOrUnionTypeFlag ;
+        ntdi->State = ctdi->State & ( ~ ( TDI_UNION | TDI_STRUCT ) ) ; // transfer the non - struct/union state only
         ntdi->DataPtr = ctdi->DataPtr ;
         ntdi->Tdi_InNamespace = ctdi->Tdi_StructureUnion_Namespace ? ctdi->Tdi_StructureUnion_Namespace : ctdi->Tdi_InNamespace ; //_CSL_Namespace_InNamespaceGet ( ) ;
         if ( ! ntdi->Tdi_StructureUnion_Namespace ) ntdi->Tdi_StructureUnion_Namespace = ctdi->Tdi_StructureUnion_Namespace ;
@@ -579,6 +573,8 @@ void
 TDI_Init ( TypeDefInfo * tdi )
 {
     tdi->Tdi_InNamespace = _CSL_Namespace_InNamespaceGet ( ) ;
+    tdi->FileName = _ReadLiner_->Filename ;
+    ;
 }
 
 TypeDefInfo *
@@ -604,6 +600,7 @@ TDI_Start ( Namespace * ns, byte* objectBitData, int64 stateFlags )
     TDI * tdi ;
     TDI_STACK_INIT ( ) ;
     tdi = TDI_Push_New ( ) ;
+    //tdi->FileName = _ReadLiner_->Filename ;
     if ( ns && ( ns->W_ObjectAttributes & NAMESPACE ) )
         tdi->Tdi_StructureUnion_Namespace = ns ;
     if ( stateFlags & TDI_CLONE_FLAG )
@@ -645,10 +642,10 @@ TDI_Finalize ( )
     if ( ! GetState ( tdi, TDI_PRINT ) ) Object_Size_Set ( rns = ns ? ns : tdi->Tdi_InNamespace, tdi->Tdi_StructureUnion_Size ) ;
     SetState ( _Context_, TDI_PARSING, false ) ;
 #if TD_DEBUG            
-    if ( Is_DebugOn ) 
+    if ( Is_DebugOn )
     {
         iPrintf ( "\nTypedef : %s size = %d", rns->S_Name, rns->ObjectByteSize ) ;
-        Pause () ;
+        Pause ( ) ;
     }
 #endif             
     return 0 ; //tdi ; // should return the initial tdi from TDI_Start with the final fields filled in

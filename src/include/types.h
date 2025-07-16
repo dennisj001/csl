@@ -605,12 +605,6 @@ typedef struct
     GotoInfo * BI_Gi ;
     Rllafl * BI_Rllafl ;
     Namespace * BI_LocalsNamespace ;
-    //IiFlags
-#define PRESERVE_INSN_SIZE      ( (uint64) 1 << 0 )
-#define COULD_BE_8              ( (uint64) 1 << 1 )   
-#define COULD_BE_16             ( (uint64) 1 << 2 )
-#define SHOULD_BE_32            ( (uint64) 1 << 3 )
-#define LOGIC_FLAG              ( (uint64) 1 << 4 )   
     int64 IiFlags ;
     byte * InsnAddress ; // compiledAtAddress
     //byte *JmpToAddress ;
@@ -621,6 +615,12 @@ typedef struct
     byte Insn ;
     int32 Disp ; // Displacement 
 } BlockInfo ;
+    //IiFlags
+#define PRESERVE_INSN_SIZE      ( (uint64) 1 << 0 )
+#define COULD_BE_8              ( (uint64) 1 << 1 )   
+#define COULD_BE_16             ( (uint64) 1 << 2 )
+#define SHOULD_BE_32            ( (uint64) 1 << 3 )
+#define LOGIC_FLAG              ( (uint64) 1 << 4 )   
 typedef struct
 {
     int64 State ;
@@ -753,9 +753,10 @@ typedef struct
     dlnode * node, *nodem, *wordNode, *nextNode, *wordArg2Node, *wordArg1Node ;
     Boolean rvalue, wordArg1_rvalue, wordArg2_rvalue, wordArg1_literal, wordArg2_literal ;
     Boolean wordArg1_Op, wordArg2_Op ;
+} CompileOptimizeInfo, COI ;
 #define REG_LOCK_BIT              ( 0x10 ) // decimal 16, beyond the 15 regs
 #define STACK_ARGS_TO_STANDARD_REGS  ( (uint64) 1 << 16 )
-} CompileOptimizeInfo, COI ;
+
 typedef struct TypeDefInfo
 {
     int64 State, Tdi_Offset, Tdi_StructureUnion_Size, Tdi_Structure_Size, Tdi_Union_Size, Tdi_Field_Size, T_Type ;
@@ -763,8 +764,9 @@ typedef struct TypeDefInfo
     int64 Tdi_BitFieldOffset, Tdi_BitFieldSize ; //, T_Type ;
     Namespace *Tdi_InNamespace, * Tdi_StructureUnion_Namespace, * Tdi_Field_Type_Namespace, *FunctionId ;
     Word * Tdi_Field_Object ;
-    byte *NextChar, *DataPtr, * TdiToken, *FieldName, *StructureUnionName ;
+    byte *NextChar, *DataPtr, * TdiToken, *FieldName, *StructureUnionName, * FileName ;
 } TypeDefInfo, TDI ;
+
 //TypeDefStructCompileInfo State flags
 #define TDI_CLONE_FLAG                      ( (uint64) 1 << 0 ) 
 #define TDI_STRUCT                          ( (uint64) 1 << 1 ) 
@@ -790,6 +792,7 @@ typedef struct TypeDefInfo
 #define TD_FIELD_ID                         ( (uint64) 1 << 20 )
 #define TD_BIT_FIELD                        ( (uint64) 1 << 21 )
 #define TD_TYPE_ID                          ( (uint64) 1 << 22 )
+
 typedef struct
 {
     dlnode * JON_Node ;
@@ -832,7 +835,6 @@ typedef struct
     Stack * InfixOperatorStack ;
     Stack * BeginAddressStack ;
     dllist * OptimizeInfoList ;
-    //BlockInfo * CurrentTopBlockInfo ;
     LocalsRegParameterOrder Lrpo ;
 } Compiler ;
 typedef struct _Interpreter
@@ -1056,7 +1058,6 @@ typedef struct
     byte * Prompt, *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken, *Location, *ErrorCommandLine ;
     Word * ExceptionWord ;
     void * SigAddress ;
-    //byte Key ;
 } Exception ;
 
 typedef struct
@@ -1069,26 +1070,13 @@ typedef struct
     LambdaCalculus * OVT_LC ;
     ByteArray * CodeByteArray ; // a variable
     int64 LogFlag, DebugOutputFlag ;
-
-    //int64 SignalExceptionsHandled, LastRestartCondition, RestartCondition, Signal, ExceptionCode, Console ;
     int64 Console ;
-
     byte *InitString, *StartupString, *StartupFilename, *ErrorFilename, *VersionString ; 
-    //        *ExceptionMessage, *ExceptionSpecialMessage, * ExceptionToken ;
-    //Word * ExceptionWord ;
-
     int64 Argc ;
     char ** Argv ;
-    //void * SigAddress ;
-    //byte * SigLocation ;
-    Colors *Current, Default, Alert, Debug, Notice, User ;
-
-    //dlnode PML_HeadNode, PML_TailNode ;
+    Colors *Current, Default, Alert, DebugColor, Notice, UserColor ;
     int64 TotalRemainingAccounted, TotalNbaAccountedMemRemaining, TotalNbaAccountedMemAllocated, TotalMemSizeTarget ;
-    //int64 Mmap_RemainingMemoryAllocated, OVT_InitialStaticMemory, TotalMemFreed, TotalMemAllocated, NumberOfByteArrays ;
-
     MemorySpace * MemorySpace0 ;
-    //dllist * OvtMemChunkList ;
     dllist * MemorySpaceList ;
     dllist * NBAs ;
     dllist * BufferList ;
@@ -1099,10 +1087,7 @@ typedef struct
     NamedByteArray * InternalObjectSpace ;
     NamedByteArray * OpenVmTilSpace ;
     NamedByteArray * CSL_InternalSpace ;
-
     // variables accessible from csl
-    //int64 Verbosity, StartIncludeTries, StartedTimes, Restarts, SigSegvs, ReAllocations, Dbi ;
-    //int64 StartIncludeTries, RestartCondition ;
     int64 Verbosity, ReAllocations, Dbi ;
     int64 DictionarySize, LispCopySize, LispTempSize, MachineCodeSize, ObjectSpaceSize, InternalObjectsSize, LispSpaceSize, ContextSize ;
     int64 TempObjectsSize, CompilerTempObjectsSize, WordRecylingSize, SessionObjectsSize, DataStackSize, OpenVmTilSize, ForthSize ; 

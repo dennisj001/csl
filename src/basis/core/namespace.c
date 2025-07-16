@@ -523,6 +523,16 @@ _Namespace_Find ( byte * name, Namespace * superNamespace, int64 exceptionFlag )
     return 0 ;
 }
 
+Namespace *
+Namespace_Find_InOneTree ( Namespace * topTreeNamespace, byte * name  )
+{
+    if ( name )
+    {
+        return _Tree_Map_State_OneArg ( topTreeNamespace, ANY, ( MapFunction_1 ) Symbol_CompareName, (int64) name ) ;
+    }
+    return 0 ;
+}
+
 // a namespaces internal finder, a wrapper for Symbol_Find - prefer Symbol_Find directly
 
 Namespace *

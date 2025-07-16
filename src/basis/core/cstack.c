@@ -307,7 +307,7 @@ Stack_Print_AValue ( uint64 * stackPointer, int64 i, byte * stackName, byte * bu
             //,( tsl ? "signature " : "" ), c_gd ( ts ) ) ;
         }
     }
-    else string = String_CheckForAtAdddress ( ( byte* ) stackPointer[i], &_O_->Debug, &_O_->User ) ;
+    else string = String_CheckForAtAdddress ( ( byte* ) stackPointer[i], &_O_->DebugColor, &_O_->UserColor ) ;
     iPrintf ( "\n  %s   [ %3ld ] < " UINT_FRMT " > = " UINT_FRMT "\t%s",
         stackName, i, ( uint64 ) & stackPointer [ i ], stackPointer [ i ], word ? buffer : string ? string : ( byte* ) "" ) ;
 }

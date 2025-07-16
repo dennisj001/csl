@@ -42,7 +42,7 @@ sp0
 
 libc C
 sp0
-typedef struct
+typedef struct _CObj
 {
     int64 hi ;
     char chars [ 32 ] ;
@@ -410,7 +410,6 @@ sp0
 
 cOff
 'fw var
-//: wtdInclude "namespaces/wordTypeDef.csl" include ;
 : wtdInclude "namespaces/types.csl" include ;
 wtdInclude
 stateAll
@@ -422,17 +421,21 @@ pwi wtdInclude
 fw @ hp fw @ ->Definition hp fw @ ->S_Name @ ps sp0 
 //pause
 cOn
-///#define W_Filename W_WordData->Filename 
+//#define W_Filename W_WordData->Filename 
 //#define Name S_Name
+
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
 oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d", TypeInfo.size, DLNode.size, dllist.size, dlnode.size ) ; 
+#if 0 // some words are namespaces ?? 
 oPrintf ( "\nCSL.size = %d, OpenVmTil.size = %d, OMS.size = %d, TypeStatusInfo.size = %d", CSL.size, OpenVmTil.size, OMS.size, TypeStatusInfo.size ) ; 
-oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d, ReadLiner.size = %d, Finder.size = %d", Compiler.size, Interpreter.size, Readliner.size, Finder.size ) ; 
+oPrintf ( "\nReadLiner.size = %d, Finder.size = %d", Readliner.size, Finder.size ) ; 
 oPrintf ( "\nLexer.size = %d, MachineCodePrimitive.size = %d, CPrimitive.size = %d, OVT_StaticMemSystem.size = %d, Exception.size = %d", 
     Lexer.size, MachineCodePrimitive.size, CPrimitive.size, OVT_StaticMemSystem.size, Exception.size ) ; 
-stateAll
-//pause
+oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d", Compiler.size, Interpreter.size ) ; 
+#endif
+C.Experimental 
+
 void tfw ( Word * w ) { hp ( w->Definition ) ; ps ( w->S_Name ) ; } 
 void tfw1 ( Word * w ) 
 { 
@@ -442,6 +445,8 @@ void tfw1 ( Word * w )
 pwi tfw1
 //wdiss ( 'tfw1 find ) 
 tfw ('tfw1 find) ; tfw1 ( 'tfw1 find ) ; sp0 
+stateAll
+//pause
 'C_Syntax.tfw find wdiss 
 fw @ C_Syntax.tfw
 cOff
@@ -454,17 +459,21 @@ fw @ ->W_Filename ps sp0
 fw @ W_Filename ps sp0 
 fw @ ftfw1
 sp0
-'wtdInclude find dup hex p 'C.Experimental.Word find wordStructPrint 
+'wtdInclude find dup hex p 'C.Experimental.Word find wordStructPrint
 //pause
 cOn
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
 oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d", TypeInfo.size, DLNode.size, dllist.size, dlnode.size ) ; 
+#if 0 // some words are namespaces ?? 
 oPrintf ( "\nCSL.size = %d, OpenVmTil.size = %d, OMS.size = %d, TypeStatusInfo.size = %d", CSL.size, OpenVmTil.size, OMS.size, TypeStatusInfo.size ) ; 
 oPrintf ( "\nReadLiner.size = %d, Finder.size = %d", Readliner.size, Finder.size ) ; 
 oPrintf ( "\nLexer.size = %d, MachineCodePrimitive.size = %d, CPrimitive.size = %d, OVT_StaticMemSystem.size = %d, Exception.size = %d", 
     Lexer.size, MachineCodePrimitive.size, CPrimitive.size, OVT_StaticMemSystem.size, Exception.size ) ; 
 oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d", Compiler.size, Interpreter.size ) ; 
+#endif
+C.Experimental 
+
 cOff
 stateAll sp0
 //pause

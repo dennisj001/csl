@@ -189,7 +189,7 @@ GetPostfix ( byte * address, byte* postfix, byte * buffer )
     }
     else
     {
-        str = String_CheckForAtAdddress ( *( ( byte ** ) ( address + 2 ) ), &_O_->Default, &_O_->User ) ;
+        str = String_CheckForAtAdddress ( *( ( byte ** ) ( address + 2 ) ), &_O_->Default, &_O_->UserColor ) ;
         if ( str )
         {
             snprintf ( ( char* ) buffer, 128, "%s%s", prePostfix, str ) ;

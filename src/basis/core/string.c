@@ -264,7 +264,7 @@ _String_Insert_AtIndexWithColors ( byte * token, int64 ndx, Colors * color )
 byte *
 String_ReadLineToken_HighLight ( byte * token )
 {
-    return _String_Insert_AtIndexWithColors ( token, _Context_->ReadLiner0->ReadIndex - 1, &_O_->User ) ;
+    return _String_Insert_AtIndexWithColors ( token, _Context_->ReadLiner0->ReadIndex - 1, &_O_->UserColor ) ;
 }
 
 void
@@ -955,7 +955,7 @@ _String_HighlightTokenInputLine ( byte * nvw, Boolean lef, int64 leftBorder, int
         }
         else strncpy ( ( char* ) b3, ( char* ) nvw, leftBorder ) ;
 
-        strcpy ( ( char* ) b2, ( char* ) cc ( b3, &_O_->Debug ) ) ;
+        strcpy ( ( char* ) b2, ( char* ) cc ( b3, &_O_->DebugColor ) ) ;
         char * ccToken = ( char* ) cc ( token, &_O_->Notice ) ; //&_O_->Default ) ;
         strcat ( ( char* ) b2, ccToken ) ;
 
@@ -965,7 +965,7 @@ _String_HighlightTokenInputLine ( byte * nvw, Boolean lef, int64 leftBorder, int
             strcat ( ( char* ) b3, " .. " ) ;
         }
         else strcpy ( ( char* ) b3, ( char* ) &nvw [ tokenStart + slt ] ) ; //, BUFFER_SIZE ) ; // 3 : [0 1 2 3]  0 indexed array
-        char * ccR = ( char* ) cc ( b3, &_O_->Debug ) ;
+        char * ccR = ( char* ) cc ( b3, &_O_->DebugColor ) ;
         strcat ( ( char* ) b2, ccR ) ;
 
         nvw = b2 ;

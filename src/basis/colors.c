@@ -6,16 +6,16 @@ void
 OpenVmTil_ColorsInit ( OpenVmTil * ovt )
 {
     Colors_Init6 ( &_O_->Alert, 0, 0, 0, 255, 0, 0 ) ;
-    Colors_Init6 ( &_O_->Debug, 255, 255, 255, 0, 0, 255 ) ;
+    Colors_Init6 ( &_O_->DebugColor, 255, 255, 255, 0, 0, 255 ) ;
     Colors_Init6 ( &_O_->Default, 0, 0, 0, 64, 64, 64 ) ;
     Colors_Init6 ( &_O_->Notice, 255, 255, 255, 0, 255, 0 ) ; // grey, cyan
-    Colors_Init6 ( &_O_->User, 0, 0, 0, 255, 255, 255 ) ; // grey, cyan
+    Colors_Init6 ( &_O_->UserColor, 0, 0, 0, 255, 255, 255 ) ; // grey, cyan
 
     _Colors_Init2 ( &_O_->Alert, Color_Black, Color_Red ) ;
-    _Colors_Init2 ( &_O_->Debug, Color_Black, Color_Blue ) ;
+    _Colors_Init2 ( &_O_->DebugColor, Color_Black, Color_Blue ) ;
     _Colors_Init2 ( &_O_->Default, Color_Default, Color_Default ) ;
     _Colors_Init2 ( &_O_->Notice, Color_Green, Color_Black ) ;
-    _Colors_Init2 ( &_O_->User, Color_Black, Color_White ) ;
+    _Colors_Init2 ( &_O_->UserColor, Color_Black, Color_White ) ;
 }
 #else
 
@@ -23,16 +23,16 @@ void
 OpenVmTil_ColorsInit ( OpenVmTil * ovt )
 {
     Colors_Init6 ( &ovt->Alert, 255, 0, 0, 0, 0, 0 ) ;
-    Colors_Init6 ( &ovt->Debug, 0, 0, 255, 0, 0, 0 ) ;
+    Colors_Init6 ( &ovt->DebugColor, 0, 0, 255, 0, 0, 0 ) ;
     Colors_Init6 ( &ovt->Default, 0, 255, 0, 0, 0, 0 ) ;
     Colors_Init6 ( &ovt->Notice, 127, 127, 0, 255, 255, 255 ) ;
-    Colors_Init6 ( &ovt->User, 0, 255, 0, 255, 255, 255 ) ;
+    Colors_Init6 ( &ovt->UserColor, 0, 255, 0, 255, 255, 255 ) ;
 
     _Colors_Init2 ( &ovt->Alert, Color_Magenta, Color_Black ) ; //Color_Red, Color_Default ) ;
-    _Colors_Init2 ( &ovt->Debug, Color_Blue, Color_Default ) ;
+    _Colors_Init2 ( &ovt->DebugColor, Color_Blue, Color_Default ) ;
     _Colors_Init2 ( &ovt->Default, Color_Default, Color_Default ) ;
     _Colors_Init2 ( &ovt->Notice, Color_Yellow, Color_Black ) ;
-    _Colors_Init2 ( &ovt->User, Color_Green, Color_Default ) ;
+    _Colors_Init2 ( &ovt->UserColor, Color_Green, Color_Default ) ;
     ovt->Current = & ovt->Default ;
 }
 #endif
@@ -124,7 +124,7 @@ _CSL_SetColors ( Colors * c )
 void
 Ovt_UserColors ( )
 {
-    ShowColors ( &_O_->User ) ;
+    ShowColors ( &_O_->UserColor ) ;
 }
 
 void
@@ -142,7 +142,7 @@ Ovt_DefaultColors ( )
 void
 Ovt_DebugColors ( )
 {
-    ShowColors ( &_O_->Debug ) ;
+    ShowColors ( &_O_->DebugColor ) ;
 }
 
 void
@@ -166,13 +166,13 @@ CSL_SetAlertColors ( )
 void
 CSL_SetDebugColors ( )
 {
-    _CSL_SetColors ( &_O_->Debug ) ;
+    _CSL_SetColors ( &_O_->DebugColor ) ;
 }
 
 void
 CSL_SetUserColors ( )
 {
-    _CSL_SetColors ( &_O_->User ) ;
+    _CSL_SetColors ( &_O_->UserColor ) ;
 }
 
 void
@@ -190,7 +190,7 @@ CSL_SetDefaultRGB ( )
 void
 CSL_SetUserRGB ( )
 {
-    _CSL_SetRGBColor ( &_O_->User ) ;
+    _CSL_SetRGBColor ( &_O_->UserColor ) ;
 }
 
 void
@@ -202,7 +202,7 @@ CSL_SetAlertRGB ( )
 void
 CSL_SetDebugRGB ( )
 {
-    _CSL_SetRGBColor ( &_O_->Debug ) ;
+    _CSL_SetRGBColor ( &_O_->DebugColor ) ;
 }
 
 void

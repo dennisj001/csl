@@ -38,7 +38,7 @@ _Debugger_Locals_ShowALocal ( Cpu * cpu, Word * localsWord, Word * scWord ) // u
         int64 varOffset = _LocalOrParameterVar_Offset ( localsWord, scWord->W_NumberOfNonRegisterArgs, Word_IsFrameNecessary ( scWord ) ) ;
         byte * address = ( byte* ) ( uint64 ) ( fp ? fp [ varOffset ] : 0 ) ;
 
-        byte * stringValue = String_CheckForAtAdddress ( address, &_O_->Default, &_O_->User ) ;
+        byte * stringValue = String_CheckForAtAdddress ( address, &_O_->Default, &_O_->UserColor ) ;
         if ( address && ( ! stringValue ) ) word2 = Word_GetFromCodeAddress ( ( byte* ) ( address ) ) ;
         if ( word2 ) sprintf ( ( char* ) buffer, "< %s.%s %s", word2->ContainingNamespace->Name, c_u ( word2->Name ), c_g ( ">" ) ) ;
 
@@ -619,7 +619,7 @@ CSL_Show_SourceCode_TokenLine ( Word * word, byte * prompt, int64 signal, byte *
     byte * obuffer = Buffer_DataCleared ( _CSL_->DebugB1 ) ;
     byte * token1 = String_ConvertToBackSlash ( token0, 0 ) ;
     char * cc_Token = ( char* ) cc ( token1, &_O_->Notice ) ;
-    char * cc_location = ( char* ) cc ( Context_Location ( ), &_O_->Debug ) ;
+    char * cc_location = ( char* ) cc ( Context_Location ( ), &_O_->DebugColor ) ;
 
     prompt = prompt ? prompt : ( byte* ) "" ;
     strncpy ( buffer, prompt, BUFFER_IX_SIZE ) ;
