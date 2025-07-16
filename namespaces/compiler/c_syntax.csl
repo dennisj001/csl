@@ -461,9 +461,10 @@ C.Experimental
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
 oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d", TypeInfo.size, DLNode.size, dllist.size, dlnode.size ) ; 
 oPrintf ( "\nCSL.size = %d, OpenVmTil.size = %d, OMS.size = %d, TypeStatusInfo.size = %d", CSL.size, OpenVmTil.size, OMS.size, TypeStatusInfo.size ) ; 
-oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d, ReadLiner.size = %d, Finder.size = %d", Compiler.size, Interpreter.size, Readliner.size, Finder.size ) ; 
+oPrintf ( "\nReadLiner.size = %d, Finder.size = %d", Readliner.size, Finder.size ) ; 
 oPrintf ( "\nLexer.size = %d, MachineCodePrimitive.size = %d, CPrimitive.size = %d, OVT_StaticMemSystem.size = %d, Exception.size = %d", 
     Lexer.size, MachineCodePrimitive.size, CPrimitive.size, OVT_StaticMemSystem.size, Exception.size ) ; 
+oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d", Compiler.size, Interpreter.size ) ; 
 cOff
 stateAll sp0
 //pause

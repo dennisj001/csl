@@ -271,13 +271,13 @@ OVT_Pause ( byte * prompt )
                     CSL_PrintDataStack ( ) ;
                     break ;
                 }
-                case '\\':
                 case 'd':
                 {
                     _CSL_DebugOn ( ) ;
                     goto done ;
                     //fall thru to interpret
                 }
+                case '\\':
                 case 'i':
                 {
                     if ( _O_->OVT_Exception->RestartCondition < RESET_ALL )

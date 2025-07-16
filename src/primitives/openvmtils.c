@@ -124,8 +124,9 @@ OpenVmTil_Print_DataSizeofInfo ( int64 flag )
         iPrintf ( "TypeStatusInfo size : %d bytes, ", sizeof (TypeStatusInfo ) ) ;
         iPrintf ( "\nCPrimitive size : %d bytes, ", sizeof (CPrimitive ) ) ;
         iPrintf ( "MachineCodePrimitive size : %d bytes, ", sizeof (MachineCodePrimitive ) ) ;
+        iPrintf ( "LambdaCalculus size : %d bytes, ", sizeof ( LambdaCalculus ) ) ;
         iPrintf ( "Exception size : %d bytes, ", sizeof (Exception ) ) ;
-        iPrintf ( "struct timespec size : %d bytes, ", sizeof (struct timespec) ) ;
+        iPrintf ( "\nstruct timespec size : %d bytes, ", sizeof (struct timespec) ) ;
         iPrintf ( "siginfo_t size : %d bytes", sizeof (siginfo_t) ) ;
     }
 }
