@@ -529,7 +529,7 @@ stringMacrosOn
 #endif
 : tCSL "namespaces/ninit.csl" include ; // namespaces init
 : tc 2 ti 1 ti lispOff tCSL rtw ;
-: x64 "namespaces/compiler/x64.csl" include ; 
+: x64 "namespaces/test/compiler/x64.csl" include ; 
 : bx "namespaces/test/bigNum.test.csl" include ;
 : TODO ( str ) nl nl pdl nl str @ adps location nl pdl nl nl { dbgOnVar @ } { sp } if2 ;; //pause ;;
 lispOff
@@ -538,9 +538,9 @@ lispOff
 //: typesInclude "namespaces/types.csl" include ;
 //: minc vb2 _c_syntaxOn "/home/dennisj/csl-code/archive/maru-2.4/eval.c" include ;
 //: minc2 vb2 cOn includesOnlyOn minc cOff includesOnlyOff ;
-//: mci "namespaces/compiler/machineCode.c" include ;
+//: mci "namespaces/test/compiler/machineCode.c" include ;
 : loT "namespaces/test/logic.csl" include ;
-: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
+: preprocessorTest "namespaces/test/compiler/preprocessor.csl" include ;
 : ppT preprocessorTest ;
 : bigNumTest "namespaces/test/bigNum.csl" include ;
 : bT bigNumTest ;
@@ -567,9 +567,9 @@ Root
     List Stack Memory Colors File Asm Bits Logic Array MemorySpace Locals Forth Experimental L9 block Pointer 
     Boolean quad long int char uint64 uint32 int32 uint16 int16 uint8 int8 PrefixCombinators Infix C_Syntax 
     Lisp LispTemp LispDefines BigNum ;
-: lispInitNamespace "namespaces/compiler/lcinit.csl" ;
+: lispInitNamespace "namespaces/test/compiler/lcinit.csl" ;
 : lisp lispInitNamespace _lisp ;  // demo of another way 
-//: lisp "namespaces/compiler/lcinit.csl" _lisp ;  
+//: lisp "namespaces/test/compiler/lcinit.csl" _lisp ;  
 
 //lisp
 //scOn
@@ -614,7 +614,7 @@ mem //pause
 //stringMacrosOff
 
 #else // !Is_DebugOn : of course you can trim this file to your needs and put your extra init code maybe here if you like
-: mct "namespaces/compiler/machineCode.csl" include ;
+: mct "namespaces/test/compiler/machineCode.csl" include ;
 
 #endif // Is_DebugOn
 bnOff

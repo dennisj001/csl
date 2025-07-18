@@ -302,7 +302,8 @@ CPrimitive CPrimitives [] = {
     { "stricmp", 0, 0, 0, CSL_Stricmp, PREFIXABLE, 0, 0, "String", "Root" },
 
     { "\"", 0, 0, 0, CSL_DoubleQuoteMacro, IMMEDIATE | KEYWORD | CATEGORY_OP_STACK, 0, T_LISP_TERMINATING_MACRO, "Lexer", "Root" },
-    { "%", 0, 0, 0, MultipleEscape, IMMEDIATE, 0, 0, "Lexer", "Root" },
+    { "!%", 0, 0, 0, MultipleEscape, IMMEDIATE, 0, 0, "Lexer", "Root" }, // multiple escape token initiator
+    { "%!", 0, 0, 0, CSL_NoOp, IMMEDIATE, 0, 0, "Lexer", "Root" }, // multiple escape token terminator
 
     { "printString", "S.V", 0, 0, CSL_PrintString, 0, 0, 0, "Io", "Root" },
     { "emit", 0, 0, 0, CSL_Emit, 0, 0, 0, "Io", "Root" },

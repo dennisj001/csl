@@ -654,16 +654,25 @@ BackSlash ( Lexer * lexer )
     _BackSlash ( lexer, 1 ) ;
 }
 
+// !% ... %!
 void
 _MultipleEscape ( Lexer * lexer )
 {
-    byte multipleEscapeChar = lexer->TokenInputByte ;
-    while ( 1 )
+    byte multipleEscapeChar = lexer->OriginalToken[1]; 
+    int64 i ;
+    byte ic, * b = Buffer_DataCleared ( _CSL_->ScratchB5 ) ;
+    for ( i = 0 ; ; i++ )
     {
-        lexer->TokenInputByte = ReadLine_NextChar ( lexer->ReadLiner0 ) ;
-        if ( lexer->TokenInputByte == multipleEscapeChar ) break ;
-        Lexer_AppendInputedToTokenBuffer ( lexer ) ;
+        ic = ReadLine_NextChar ( lexer->ReadLiner0 ) ;
+        if ( multipleEscapeChar == ic ) 
+        {
+            ReadLine_NextChar ( lexer->ReadLiner0 ) ;
+            break ;
+        }
+        b[i] = ic ;
     }
+    byte * str = String_New ( b, SESSION ) ;
+    DataStack_Push ( (int64) str ) ;
     SetState ( lexer, LEXER_DONE, true ) ;
 }
 

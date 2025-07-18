@@ -80,16 +80,30 @@ File_ReadNtoString ( )
 }
 
 void
-File_Open ( )
+_File_Open ( byte * filename, byte * mode )
 {
-    byte * filename = ( byte* ) DataStack_Pop ( ) ;
-    FILE * file = fopen ( ( char* ) filename, "r" ) ;
+    FILE * file = fopen ( ( char* ) filename, mode ) ;
     if ( file == NULL )
     {
         perror ( "\nFile_Open error : " ) ;
         CSL_Quit () ;
     }
     else DataStack_Push (( int64 ) file) ;
+}
+
+void
+File_OpenModal ( )
+{
+    byte * filename = ( byte* ) DataStack_Pop ( ) ;
+    byte * mode = ( byte* ) DataStack_Pop ( ) ;
+    _File_Open ( filename, mode ) ;
+}
+
+void
+File_Open ( )
+{
+    byte * filename = ( byte* ) DataStack_Pop ( ) ;
+    _File_Open ( filename, "wb") ;
 }
 
 void

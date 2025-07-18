@@ -64,7 +64,7 @@ Compiler Compiling C Asm
 //' ;; find wdiss // sp
 'X64 namespace
 X64
-"namespaces/compiler/asmConstants.csl" include
+"namespaces/test/compiler/asmConstants.csl" include
 
 hex
 Logic Bits Combinators X64 

@@ -8,7 +8,7 @@ Int User Combinators
 sp
 #ifndef INCLUDES 
 : iinc "./init.csl" include ;
-: interpT "namespaces/compiler/interpreter.csl" include ;
+: interpT "namespaces/test/compiler/interpreter.csl" include ;
 : itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
 : classTest "namespaces/test/classTest.csl" include ;
 : arrayTest "namespaces/test/arrayTest.csl" include ;
@@ -17,9 +17,9 @@ sp
 : stackTest "namespaces/test/stack.csl" include ;
 : controlTest "namespaces/test/control.csl" include ;
 : objectTest "namespaces/test/dobject.csl" include ;
-: c_SyntaxTest "namespaces/compiler/c_syntax.csl" include ;
-: syntaxTest "namespaces/compiler/syntax.csl" include ;
-: preprocessorTest "namespaces/compiler/preprocessor.csl" include ;
+: c_SyntaxTest "namespaces/test/compiler/c_syntax.csl" include ;
+: syntaxTest "namespaces/test/compiler/syntax.csl" include ;
+: preprocessorTest "namespaces/test/compiler/preprocessor.csl" include ;
 : test "namespaces/test/test.csl" include ;
 : dT0 "namespaces/test/dev0.csl" include ;
 : dT2 "namespaces/test/dev2.csl" include ;
@@ -29,7 +29,7 @@ sp
 : dT2 "namespaces/test/dev2.csl" include ;
 : mT "namespaces/test/math.csl" include ;
 : fT "namespaces/test/file.csl" include ;
-: sT "namespaces/compiler/syntax.csl" include ;
+: sT "namespaces/test/compiler/syntax.csl" include ;
 : nT "namespaces/test/namespace.csl" include ;
 : sysT "namespaces/test/system.csl" include ;
 : lispTest "namespaces/test/lisp.csl" include ;

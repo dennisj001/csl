@@ -1,0 +1,53 @@
+
+Lib
+'Html namespace
+Html
+Array
+File
+cOff
+#define HOME /home/dennisj/csl
+
+'tHtml var 
+tHtml
+!% 
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>My First Heading</h1>
+<p>My first paragraph.</p>
+
+</body>
+</html> 
+%! =
+'fHtml var
+fHtml "/home/dennisj/csl/namespaces/lib/web/html.html" =
+
+: htmlOpen "xdg-open /home/dennisj/csl/namespaces/lib/web/html.html" _sh ;
+: html2 "/home/dennisj/csl/namespaces/lib/web/html.html" tHtml @ fwriteTxtToFname htmlOpen ;
+
+cOn
+void 
+htmlOpen2 ( fhtml | buffer, Buffer buffer0 )
+{
+    buffer = &buffer0.buf ;
+    memset ( buffer, 0, Buffer.size ) ; 
+    sprintf ( buffer, "xdg-open %s", fhtml ) ;
+    printf ( "%s", buffer ) ;
+    _sh ( buffer ) ;
+}
+//pwi htmlOpen2
+void
+html4 ( fhtml, thtml ) // | buffer, Buffer buffer0 )
+{
+    fwriteTxtToFname ( fhtml, thtml ) ;
+    htmlOpen2 ( fhtml ) ;
+}
+//pwi html4
+//html4 ( fHtml, tHtml ) ;
+cOff
+
+: testHtml fHtml @ tHtml @ _C_.html4 i;
+//pwi testHtml
+//testHtml
+

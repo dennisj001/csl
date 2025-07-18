@@ -1,0 +1,14 @@
+Lib
+'File namespace
+File
+
+: fwriteTxtToFname ( fnameToOpen, textToWrite | file ) 
+    file fnameToOpen @ fopen =
+    file @ textToWrite @ Strlen ( textToWrite @ ) fwrite 
+    file @ fclose
+
+;;
+//pwi fwriteTxtToFname
+
+fwriteTxtToFname ( "/home/dennisj/csl/namespaces/lib/hey1.txt" "hey1" )
+

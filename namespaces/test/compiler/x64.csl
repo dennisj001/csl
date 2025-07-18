@@ -89,7 +89,7 @@ Compiler Compiling C Asm
 'asm: 'asmBegin find alias
 ';asm 'asmEnd find alias
 'X64 namespace
-"namespaces/compiler/asmConstants.csl" include
+"namespaces/test/compiler/asmConstants.csl" include
 hex
 Logic Combinators Bits C X64
 'x64_dbg var

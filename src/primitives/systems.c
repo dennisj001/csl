@@ -71,7 +71,7 @@ ShellEscape ( byte * str )
     status = system ( str ) ;
     if ( Verbosity ( ) > 1 ) printf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
     Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
-    _O_->Pbf8[0] = _ReadLiner_->NormalPrompt[0] ;
+    _O_->Pbf8[0] = '\n' ; //_ReadLiner_->NormalPrompt[0] ;
     _DoPrompt ( ) ;
 }
 
