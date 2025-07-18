@@ -202,6 +202,7 @@ CSL_DoReturnWord ( Word * word )
 {
     Compiler * compiler = _Compiler_ ;
     //compiler->ReturnVariableWord = word ;
+    //DBI_ON ;
     Word * word1 = CSL_Parse_Interpret_KeywordOperand ( word, 1 ) ;
     if ( word1 )
     {
@@ -228,6 +229,7 @@ CSL_DoReturnWord ( Word * word )
         }
     }
     else if ( ! _Readline_Is_AtEndOfBlock ( _Context_->ReadLiner0 ) ) _CSL_CompileCallJmpGoto ( 0, GI_RETURN ) ;
+    //DBI_OFF ;
 }
 
 // Compiler_RemoveLocalFrame : the logic definitely needs to be simplified???
@@ -254,6 +256,7 @@ Compiler_IsFrameNecessary ( Compiler * compiler )
 void
 Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
 {
+    //if ( Is_DebugOn ) DBI_ON ;
     Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
     if ( ! GetState ( _Context_, LISP_MODE ) ) Compiler_WordStack_SCHCPUSCA ( 0, 0 ) ;
     int64 parameterVarsSubAmount = 0 ;
@@ -262,8 +265,8 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
     if ( compiler->NumberOfArgs ) parameterVarsSubAmount = ( compiler->NumberOfArgs - returnValueFlag ) * CELL_SIZE ;
     if ( compiler->NumberOfNonRegisterVariables )
     {
-        if ( returnValueFlag && ( ! IsWordRecursive ) ) //if ( ( returnValueFlag ) && ! ( _LC_ ) )
-            Optimize_Remove_add_r14_0x8__mov_r14_rax ( ) ; // remove the incoming parameters -- like in C
+        //if ( returnValueFlag && ( ! IsWordRecursive ) ) //this can destroy a jmp target with Forth if else endif at end of return
+        //    Optimize_Remove_add_r14_0x8__mov_r14_rax ( ) ; 
         _Compile_LEA ( DSP, FP, 0, - CELL_SIZE ) ; // restore sp - release locals stack frame
         _Compile_Move_StackN_To_Reg ( FP, DSP, 1, 0 ) ; // restore the saved pre fp - cf AddLocalsFrame
     }
@@ -286,9 +289,9 @@ Compiler_RemoveLocalFrame ( BlockInfo * bi, Compiler * compiler )
         //_Debugger_Disassemble ( _Debugger_, 0, ( byte* ) Here - 3, 3, 1 ) ;
         int64 test = memcmp ( mov_rax_r14, Here - 3, 3 ) ; //remember : memcmp returns a diff => returns 0 when there is no difference
         //if ( ( IsWordRecursive ) && ( ! test ) ) 
-        if ( ! test ) return ;
-        Compile_Move_ACC_To_TOS ( DSP ) ;
+        if ( test ) Compile_Move_ACC_To_TOS ( DSP ) ;
     }
+    //DBI_OFF ;
 }
 
 void

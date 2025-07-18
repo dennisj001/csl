@@ -129,7 +129,7 @@ CSL_Word_ClassStructure_PrintData ( )
 {
     Word * typedefWord = ( Word* ) DataStack_Pop ( ) ;
     byte * data = ( byte* ) DataStack_Pop ( ) ;
-    iPrintf ( "\nwordStructPrint was called at %s : data = \'%0flx\' : typedef = \'%s\'", Context_Location ( ), data, typedefWord->Name ) ;
+    iPrintf ( "\nwordStructPrint was called at %s : data = \'0f%lx\' : typedef = \'%s\'", Context_Location ( ), (uint64) data, (byte*) typedefWord->S_Name ) ;
     _CSL_Word_ClassStructure_PrintData ( typedefWord, data ) ;
 }
 

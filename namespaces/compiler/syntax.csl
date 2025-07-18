@@ -165,6 +165,10 @@ fOn
 : tfor ( n | x ) x n @ =  begin x @ 0 > while x @ p x x @ 1 - = repeat ; 10 tfor        
 fOff                                                                                   
 #endif
+Forth
+//: 8mod ( n ) 8 n @ 8 mod - dup 8 < if n @ + p else drop n @ p endif ; 
+: 8mod ( n ) return ( 8 n @ 8 mod - dup 8 < if n @ + else drop n @ endif ) ; 
+fOff
 2 + 7 assertStkChk // stack checking
 sp0
 //pause

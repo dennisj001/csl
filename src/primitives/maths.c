@@ -171,6 +171,27 @@ CSL_Mod ( ) // *
 }
 
 #if 0
+void
+CSL_Remainder ( ) // *
+{
+#if 0    
+    if ( CompileMode )
+    {
+        Compile_Rem ( _Context_->Compiler0 ) ;
+    }
+    else
+#endif        
+    {
+
+        int64 a, b ;
+        a = DataStack_Pop ( ) ;
+        b = _DataStack_GetTop ( ) ;
+        _DataStack_SetTop ( ( int64 ) ( b % a ) ) ;
+    }
+}
+#endif
+
+#if 0
 #if 0
 "Ar3" class : { int64 ar [3][3][2] } ;
 : a7 ( n m o Ar3 a )

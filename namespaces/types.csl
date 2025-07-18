@@ -11,6 +11,7 @@ type Location ; Location.size = 8 ;
 type int64 ; int64.size = 8 ;
 #define ENUM 0
 #define BITFIELDS 0
+#define BUFFER_SIZE 2048
 
 #else
 typedef char int8 ;
@@ -695,7 +696,9 @@ typedef struct ReadLiner
     TabCompletionInfo * TabCompletionInfo0 ;
     Stack * TciNamespaceStack ;
 } ReadLiner ;
+
 typedef void ( * ReadLineFunction ) ( ReadLiner * ) ;
+
 typedef struct
 {
     uint64 State ;

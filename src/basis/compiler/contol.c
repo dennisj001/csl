@@ -216,8 +216,8 @@ CSL_Else ( )
         Compiler_Word_SCHCPUSCA ( _Context_->CurrentEvalWord, 0 ) ;
         byte * compiledAtAddress = Compile_UninitializedJump ( ) ;
         CSL_CalculateAndSetPreviousJmpOffset_ToHere ( ) ; // if 0 branch to here after the jmp to endif
-        Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
         CSL_InstallGotoCallPoints_Keyed ( 0, GI_JCC_TO_FALSE, Here, 1 ) ;
+        Stack_Push_PointerToJmpOffset ( compiledAtAddress ) ;
     }
     else
     {

@@ -179,15 +179,8 @@ SetPromptNewline ( )
 void
 _DoPrompt ( )
 {
-#if 0    
-    byte lc = _ReadLiner_->InputKeyedCharacter ;
-    Boolean lcnl = ( lc == '\n' ), lcbnl = ( _O_->Pblc == '\n' ) ;
-    if ( ( ( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) || ( ! lcnl ) && ( ! lcbnl ) ) CSL_PrintChar ( '\n' ) ;
-#elif 0   
-    if ( ( _O_->Pbf8[0] != '\r' ) && ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) CSL_PrintChar ( '\n' ) ;
-#else    
-    if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) ) CSL_PrintChar ( '\n' ) ;
-#endif    
+    //( _ReadLiner_->InputKeyedCharacter != '\n' ) &&
+    if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) && ( _O_->Pblc != '\n' ) ) CSL_PrintChar ( '\n' ) ;
     iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
     SetState ( _O_, OVT_PROMPT_DONE, true ) ;
 }
@@ -250,10 +243,11 @@ iPrintf ( char *format, ... )
         else
         {
             vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBuffer ), ( char* ) format, args ) ;
-            b = Buffer_Data ( _O_->PrintBuffer ) ;
+            b = _Buffer_Data ( _O_->PrintBuffer ) ;
             printf ( "%s", b ) ;
             _O_->Pblc = String_LastChar ( _Buffer_Data ( _O_->PrintBuffer ) ) ;
-            strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
+            //strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
+            _O_->Pbf8[0] = b [0] ;
         }
         va_end ( args ) ;
         fflush ( stdout ) ;
@@ -282,10 +276,11 @@ oPrintf ( char *format, ... )
         else
         {
             vsprintf ( ( char* ) Buffer_DataCleared ( _O_->PrintBuffer ), ( char* ) format, args ) ;
-            b = Buffer_Data ( _O_->PrintBuffer ) ;
+            b = _Buffer_Data ( _O_->PrintBuffer ) ;
             printf ( "%s", b ) ;
             _O_->Pblc = String_LastChar ( _Buffer_Data ( _O_->PrintBuffer ) ) ;
-            strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
+            //strncpy ( ( char* ) &_O_->Pbf8[0], ( char* ) Buffer_Data ( _O_->PrintBuffer ), 7 ) ;
+            _O_->Pbf8[0] = b [0] ;
         }
         va_end ( args ) ;
         fflush ( stdout ) ;

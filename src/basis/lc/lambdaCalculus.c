@@ -317,11 +317,9 @@ void
 _LO_Repl0 ( Context * cntx, byte * initFilename )
 {
     SetState ( _Context_, LISP_MODE, true ) ;
-    iPrintf ( "\ncsl lisp : type '..', 'exit', 'quit to exit lisp interpreter\n including init file :: './namespaces/compiler/lcinit.csl'\n" ) ;
+    iPrintf ( "csl lisp : type '..', 'exit', 'quit', 'bye' to exit lisp interpreter" ) ;
     //if ( ! initFilename ) initFilename = ( byte* ) "namespaces/compiler/lcinit.csl" ; //
     LC_ReadInitFile ( initFilename ) ;
-    //iPrintf ( "\ncsl lisp : (type 'exit' or 'bye' to exit)\n including init file :: './namespaces/compiler/lcinit.0.csl'\n" ) ;
-    //LC_ReadInitFile ( ( byte* ) "./namespaces/lcinit.0.csl" ) ;
     SetState ( _Context_, AT_COMMAND_LINE, true ) ;
     _Repl ( cntx, ( block ) LC_ReadEvalPrint_ListObject ) ;
     SetState ( _Context_, LISP_MODE, false ) ;
@@ -335,16 +333,6 @@ LO_Repl0 ( Context * cntx, byte * initFilename )
     if ( ! initFilename ) initFilename = ( byte* ) "namespaces/compiler/lcinit.csl" ; //
     _LO_Repl0 ( cntx, initFilename ) ;
 }
-
-#if 0
-void
-LO_Repl0 ( )
-{
-    int64 * svDsp = _DspReg_ ;
-    _CSL_Contex_NewRun_Block ( _CSL_, ( block ) _LO_Repl ) ;
-    _Set_DataStackPointers ( svDsp ) ;
-}
-#endif
 
 void
 LO_Repl ( )

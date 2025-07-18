@@ -364,7 +364,7 @@ OpenVmTil_Throw ( byte * excptMessage, byte * specialMessage, int64 restartCondi
     e->ExceptionMessage = String_New ( excptMessage, TEMPORARY ) ;
     _O_->Thrown = e->RestartCondition = restartCondition ;
     e->ExceptionSpecialMessage = String_New ( specialMessage, TEMPORARY ) ;
-#if 1
+#if 0
     //LinuxInit ( ) ; // reset termios
     if ( e->InfoFlag = infoFlag )
     {
@@ -428,10 +428,8 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
 {
     Exception *e = _O_->OVT_Exception ;
     AlertColors ;
-    //e->ExceptionMessage = String_New ( message, TEMPORARY ) ; // prevent reprint in OpenVmTil_Throw
     e->ExceptionCode = exceptionCode ;
     e->RestartCondition = restartCondition ;
-    //e->Location = ( ( ! ( signal & ( SIGSEGV | SIGBUS ) ) ) && _Context_ ) ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
     e->Location = _Context_ ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
     iPrintf ( "\n\nCSL_Exception at %s : %s\n", e->Location, message ? message : ( byte* ) "" ) ;
     oPrintf ( "\nInputLineString : \'%s\'", c_u (String_RemoveEndWhitespace(_ReadLiner_->InputLineString)) ) ;

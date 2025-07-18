@@ -600,11 +600,10 @@ doLisp 0 =
 // ========controls===========
 
 Root
-: startupNamespaces Shell C void Class libc OpenVmTil Lexer Int Compiler Interpreter Debug User int64 byte 
-    Dlsym Io System Word Macro String Defines StartupMacros Combinators Compiling Reserved DObject PreProcessor 
-    List Stack Memory Colors File Asm Bits Logic Array MemorySpace Locals Forth Experimental L9 block Pointer 
-    Boolean quad long int char uint64 uint32 int32 uint16 int16 uint8 int8 PrefixCombinators Infix C_Syntax 
-    Lisp LispTemp LispDefines BigNum ;
+: startupNamespaces setAllStateNotUsing lbforth Root PreProcessor Experimental Locals MemorySpace Array Logic Bits Asm File System Colors Memory 
+    OpenVmTil Stack List DObject Reserved Compiler Compiling StartupMacros User String Forth Namespace Combinators Macro Word 
+    Io byte C int64 Debug Interpreter Int Lexer Class void Dlsym Defines libc Shell int X64 uint64 uint8 Ar1 DLLNodeAlloc 
+    DLLNode Buffer ;
 : lispInitNamespace "namespaces/compiler/lcinit.csl" ;
 : lisp lispInitNamespace _lisp ;  // demo of another way 
 //: lisp "namespaces/compiler/lcinit.csl" _lisp ;  

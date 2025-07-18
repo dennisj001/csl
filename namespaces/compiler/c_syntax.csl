@@ -7,6 +7,9 @@ tx1 ( a b | c ) { c a @ b @ + = c @ p } =
 : txtest2 tx1 @ _run ; 1 2 txtest2
 "\nline above should show 3 3" ps //pause
 pwi txtest2 //pause
+bnOff Forth
+: 8mod ( n ) return ( 8 n @ 8 mod - dup 8 < if n @ + else drop n @ endif ) ; 
+Combinators
 User
 C
 Root
@@ -409,17 +412,23 @@ sp0
 #if 1
 
 cOff
+fOn
 'fw var
 : wtdInclude "namespaces/types.csl" include ;
 wtdInclude
+using 
 stateAll
+Forth
+"\nOpenVmTil.size =" ps OpenVmTil.size @ dup p 8mod 
+"\CSL.size =" ps CSL.size @ dup p 8mod 
+//pause
 
 nl CSL size @ p OpenVmTil size @ p //pause
 pwi wtdInclude
 'wtdInclude find dup hex p 'C.Experimental.Word find wordStructPrint //pause
 'wtdInclude find dup dup fw store hp Word size @ dump fw hp fw @ hp
 fw @ hp fw @ ->Definition hp fw @ ->S_Name @ ps sp0 
-//pause
+
 cOn
 //#define W_Filename W_WordData->Filename 
 //#define Name S_Name
@@ -427,7 +436,7 @@ cOn
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
 oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d", TypeInfo.size, DLNode.size, dllist.size, dlnode.size ) ; 
-#if 0 // some words are namespaces ?? 
+#if 1 // some words are namespaces ?? 
 oPrintf ( "\nCSL.size = %d, OpenVmTil.size = %d, OMS.size = %d, TypeStatusInfo.size = %d", CSL.size, OpenVmTil.size, OMS.size, TypeStatusInfo.size ) ; 
 oPrintf ( "\nReadLiner.size = %d, Finder.size = %d", Readliner.size, Finder.size ) ; 
 oPrintf ( "\nLexer.size = %d, MachineCodePrimitive.size = %d, CPrimitive.size = %d, OVT_StaticMemSystem.size = %d, Exception.size = %d", 
@@ -464,17 +473,23 @@ sp0
 cOn
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
-oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d", TypeInfo.size, DLNode.size, dllist.size, dlnode.size ) ; 
-#if 0 // some words are namespaces ?? 
+oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d, NamedByteArray.size = %d", 
+    TypeInfo.size, DLNode.size, dllist.size, dlnode.size, NamedByteArray.size ) ; 
+#if 1 // some words are namespaces ?? 
 oPrintf ( "\nCSL.size = %d, OpenVmTil.size = %d, OMS.size = %d, TypeStatusInfo.size = %d", CSL.size, OpenVmTil.size, OMS.size, TypeStatusInfo.size ) ; 
-oPrintf ( "\nReadLiner.size = %d, Finder.size = %d", Readliner.size, Finder.size ) ; 
+oPrintf ( "\nReadLiner.size = %d, Finder.size = %d, LambdaCalculus.size = %d, ByteArray.size = %d", 
+    Readliner.size, Finder.size, LambdaCalculus.size, ByteArray.size ) ; 
 oPrintf ( "\nLexer.size = %d, MachineCodePrimitive.size = %d, CPrimitive.size = %d, OVT_StaticMemSystem.size = %d, Exception.size = %d", 
-    Lexer.size, MachineCodePrimitive.size, CPrimitive.size, OVT_StaticMemSystem.size, Exception.size ) ; 
+    Lexer.size, MachineCodePrimitive.size, CPrimitive.size, OVT_StaticMemSystem.size, Exception.size, NamedByteArray.size ) ; 
 oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d", Compiler.size, Interpreter.size ) ; 
 #endif
 C.Experimental 
+cOff Forth decimal
+"\nCSL.size = " ps CSL.size @ dup p 8mod p
+"\nOpenVmTil.size = " ps OpenVmTil.size @ dup p 8mod p
+"\nLambdaCalculus.size = " ps LambdaCalculus.size @ dup p 8mod p
+"\nReadLiner.size = " ps ReadLiner.size @ dup p 8mod p
 
-cOff
 stateAll sp0
 //pause
 infixOn

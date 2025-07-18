@@ -164,8 +164,6 @@ TD_IdentifierField ( int64 t_type )
                     }
                 }
             }
-            //if ( tdi->TdiToken [0] == ',' ) 
-            //    goto done ;
             token = TDI_PeekToken ( ) ;
             if ( ( token && ( token [0] == '[' ) ) || ( tdi->TdiToken[0] == '[' ) )
             {
@@ -175,9 +173,8 @@ TD_IdentifierField ( int64 t_type )
             else if ( ( token && ( token [0] == ':' ) ) || ( tdi->TdiToken[0] == ':' ) )
             {
                 if ( ! ( tdi->TdiToken[0] == ':' ) ) TDI_ReadToken ( ) ;
-                //TD_Identifier ( TD_BIT_FIELD ) ;
-                //token = TDI_ReadToken ( ) ;
                 TD_BitField ( ) ;
+                TDI_ReadToken ( ) ;
             }
             else TDI_ReadToken ( ) ;
         }
@@ -260,7 +257,8 @@ TD_Identifier ( int64 t_type )
         TypeNamespace_Set ( id, tdi->Tdi_Field_Type_Namespace ) ;
         if ( GetState ( tdi, TDI_POINTER ) )
         {
-            id->W_ObjectAttributes |= ( tdi->Tdi_Field_Type_Namespace && ( tdi->Tdi_Field_Type_Namespace->W_ObjectAttributes & ( STRUCT ) ) ) ? ( O_POINTER | OBJECT | STRUCT ) : O_POINTER ;
+            id->W_ObjectAttributes |= ( tdi->Tdi_Field_Type_Namespace && 
+                ( tdi->Tdi_Field_Type_Namespace->W_ObjectAttributes & ( STRUCT ) ) ) ? ( O_POINTER | OBJECT | STRUCT ) : O_POINTER ;
         }
         Object_Size_Set ( id, tdi->Tdi_Field_Size ) ; //+=  ( tdi->Tdi_Field_Size % 8 ) ) ;
         id->WD_Offset = tdi->Tdi_Offset ;
@@ -559,7 +557,7 @@ TD_PreStruct_Accounting ( int64 structOrUnionTypeFlag )
     {
         ntdi->Tdi_Offset = ctdi->Tdi_Offset ; //0 ; //ctdi->Tdi_Offset ;
         ntdi->TdiToken = ctdi->TdiToken ;
-        ntdi->State = ctdi->State & ( ~ ( TDI_UNION | TDI_STRUCT ) ) ; // transfer the non - struct/union state only
+        ntdi->State = ctdi->State & ( ~ ( TDI_UNION | TDI_STRUCT ) ) ; // transfer the non - struct/union state only - preserve TDI_PRINT
         ntdi->DataPtr = ctdi->DataPtr ;
         ntdi->Tdi_InNamespace = ctdi->Tdi_StructureUnion_Namespace ? ctdi->Tdi_StructureUnion_Namespace : ctdi->Tdi_InNamespace ; //_CSL_Namespace_InNamespaceGet ( ) ;
         if ( ! ntdi->Tdi_StructureUnion_Namespace ) ntdi->Tdi_StructureUnion_Namespace = ctdi->Tdi_StructureUnion_Namespace ;

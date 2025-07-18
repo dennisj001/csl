@@ -43,7 +43,7 @@ start:
             uint64 * svDsp = _DspReg_ ;
             if ( ! GetState ( cntx, RETRO_MODE|LBFORTH_MODE ) ) 
             {
-                DoPrompt ( ) ;
+                _DoPrompt ( ) ;
                 ReadLine_GetLine ( ) ;
                 if ( strstr ( ( char* ) rl->InputLineString, "..\n" ) || strstr ( ( char* ) rl->InputLineString, "exit" ) || strstr ( ( char* ) rl->InputLineString, "quit" ) || strstr ( ( char* ) rl->InputLineString, "bye" ) )
                 {
