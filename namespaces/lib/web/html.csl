@@ -5,7 +5,6 @@ Html
 Array
 File
 cOff
-#define HOME /home/dennisj/csl
 
 'tHtml var 
 tHtml
@@ -21,7 +20,7 @@ tHtml
 </html> 
 %! =
 'fHtml var
-fHtml "/home/dennisj/csl/namespaces/lib/web/html.html" =
+fHtml "./namespaces/lib/web/html.html" =
 
 cOn
 void 
