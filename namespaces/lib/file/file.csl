@@ -2,12 +2,24 @@ Lib
 'File namespace
 File
 
+#if 0
 : fwriteTxtToFname ( fnameToOpen, textToWrite | file ) 
     file fnameToOpen @ fopen =
     file @ textToWrite @ Strlen ( textToWrite @ ) fwrite 
     file @ fclose
 
 ;;
+#else
+cOn
+void
+fwriteTxtToFname ( fnameToOpen, textToWrite | file ) 
+{
+    file = fopen ( fnameToOpen ) ;
+    fwrite ( file, textToWrite, Strlen (textToWrite) ) 
+    fclose ( file ) ;
+}
+cOff
+#endif
 //pwi fwriteTxtToFname
 
 fwriteTxtToFname ( "/home/dennisj/csl/namespaces/lib/hey1.txt" "hey1" )

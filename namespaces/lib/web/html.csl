@@ -23,12 +23,9 @@ tHtml
 'fHtml var
 fHtml "/home/dennisj/csl/namespaces/lib/web/html.html" =
 
-: htmlOpen "xdg-open /home/dennisj/csl/namespaces/lib/web/html.html" _sh ;
-: html2 "/home/dennisj/csl/namespaces/lib/web/html.html" tHtml @ fwriteTxtToFname htmlOpen ;
-
 cOn
 void 
-htmlOpen2 ( fhtml | buffer, Buffer buffer0 )
+htmlOpen ( fhtml | buffer, Buffer buffer0 )
 {
     buffer = &buffer0.buf ;
     memset ( buffer, 0, Buffer.size ) ; 
@@ -36,18 +33,21 @@ htmlOpen2 ( fhtml | buffer, Buffer buffer0 )
     printf ( "%s", buffer ) ;
     _sh ( buffer ) ;
 }
-//pwi htmlOpen2
+//pwi htmlOpen
 void
-html4 ( fhtml, thtml ) // | buffer, Buffer buffer0 )
+_testHtml ( fhtml, thtml ) // | buffer, Buffer buffer0 )
 {
     fwriteTxtToFname ( fhtml, thtml ) ;
-    htmlOpen2 ( fhtml ) ;
+    htmlOpen ( fhtml ) ;
 }
-//pwi html4
-//html4 ( fHtml, tHtml ) ;
+//pwi _testHtml
+//_testHtml ( fHtml, tHtml ) ;
 cOff
-
-: testHtml fHtml @ tHtml @ _C_.html4 i;
+fOn
+: testHtml fHtml @ tHtml @ _C_._testHtml ;
 //pwi testHtml
+: htmlOpen "xdg-open /home/dennisj/csl/namespaces/lib/web/html.html" _sh ;
+: html2 "/home/dennisj/csl/namespaces/lib/web/html.html" tHtml @ fwriteTxtToFname htmlOpen ;
+cOff
 //testHtml
 

@@ -7,7 +7,6 @@ Lib
     OpenVmTil Stack List DObject Reserved Compiler Compiling StartupMacros User String Forth Namespace Combinators Macro 
     Word Io byte C int64 Debug Interpreter Int Lexer Class void Dlsym Defines libc Shell Lib ;
 libNamespaces
-//using pause
 
 : fileInc "namespaces/lib/file/file.csl" include ;
 : arrayInc "namespaces/lib/array/array.csl" include ;

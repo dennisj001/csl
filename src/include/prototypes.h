@@ -2235,6 +2235,8 @@ byte *_File_ReadToString_(FILE *file);
 byte *_File_ReadToString(byte *name);
 void File_ReadToString(void);
 void File_ReadNtoString(void);
+void _File_Open(byte *filename, byte *mode);
+void File_OpenModal(void);
 void File_Open(void);
 void File_Close(void);
 void File_Read(void);

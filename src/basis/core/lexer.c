@@ -28,7 +28,7 @@ _Lexer_ParseToken_ToWord ( Lexer * lexer, byte * token, int64 tsrli, int64 scwi 
     Lexer_ParseObject ( lexer, token ) ;
 #if 1 // this is still problematic??
     //if ( ( _O_->Verbosity > 1 )&&( lexer->L_ObjectAttributes & ( T_RAW_STRING ) ) )
-    if ( ( lexer->L_ObjectAttributes & ( T_RAW_STRING ) ) && ( ! C_SyntaxOn ) && (! GetState ( _Interpreter_, PREPROCESSOR_MODE ) ) )
+    if ( ( lexer->L_ObjectAttributes & ( T_RAW_STRING ) ) && ( ! C_SyntaxOn ) && ( ! GetState ( _Interpreter_, PREPROCESSOR_MODE ) ) )
     {
         if ( GetState ( _O_, OVT_UNKNOWN_STRING_IS_ERROR ) )
         {
@@ -128,6 +128,7 @@ start:
         if ( ( lot0 == '(' ) || ( ( lot0 == '{' ) && ( ! C_SyntaxOn ) ) )_Compiler_->ParenLevel ++ ;
         else if ( ( lot0 == ')' ) || ( ( lot0 == '}' ) && ( ! C_SyntaxOn ) ) )_Compiler_->ParenLevel -- ;
     }
+    //if ( ! lexer->OriginalToken ) CSL_Exception ( NO_TOKEN, "Exception : No token", QUIT ) ;
     return lexer->OriginalToken ;
 }
 
@@ -655,24 +656,29 @@ BackSlash ( Lexer * lexer )
 }
 
 // !% ... %!
+
 void
 _MultipleEscape ( Lexer * lexer )
 {
-    byte multipleEscapeChar = lexer->OriginalToken[1]; 
+    byte multipleEscapeChar = lexer->OriginalToken[1] ;
     int64 i ;
     byte ic, * b = Buffer_DataCleared ( _CSL_->ScratchB5 ) ;
-    for ( i = 0 ; ; i++ )
+    for ( i = 0 ; ; i ++ )
     {
         ic = ReadLine_NextChar ( lexer->ReadLiner0 ) ;
-        if ( multipleEscapeChar == ic ) 
+        if ( multipleEscapeChar == ic )
         {
-            ReadLine_NextChar ( lexer->ReadLiner0 ) ;
-            break ;
+            ic = ReadLine_PeekNextChar ( lexer->ReadLiner0 ) ;
+            if ( ic == '!' )
+            {
+                ReadLine_NextChar ( lexer->ReadLiner0 ) ;
+                break ;
+            }
         }
         b[i] = ic ;
     }
     byte * str = String_New ( b, SESSION ) ;
-    DataStack_Push ( (int64) str ) ;
+    DataStack_Push ( ( int64 ) str ) ;
     SetState ( lexer, LEXER_DONE, true ) ;
 }
 

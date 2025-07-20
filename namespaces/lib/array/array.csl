@@ -1,8 +1,6 @@
 //allocate create new init set get copy delete : json
 
 Lib
-'Array namespace
-Array
 
 typedef struct { byte buf [ 2048 ] ; } Buffer ;
 /*

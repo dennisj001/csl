@@ -170,6 +170,7 @@
 #define OUT_OF_CODE_MEMORY ( (uint64) 1 << 24 )
 #define USEAGE_ERROR ( (uint64) 1 << 25 )
 #define SYNTAX_ERROR ( (uint64) 1 << 26 )
+#define NO_TOKEN ( (uint64) 1 << 27 )
 
 #define KB 1024
 #define MB ( KB * KB )

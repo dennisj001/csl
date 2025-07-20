@@ -59,11 +59,12 @@ void
 CSL_ForthSyntaxOn ( )
 {
     Context * cntx = _Context_ ;
-    //CSL_C_Syntax_Off ( ) ;
-    //CSL_PostfixModeOn ( ) ;
+    CSL_C_Syntax_Off ( ) ;
+    CSL_PostfixModeOn ( ) ;
     SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
     SetState ( cntx, FORTH_SYNTAX, true ) ;
-    Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "Combinators" ) ;
+    //Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "C_Syntax" ) ;
+    //Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "Combinators" ) ;
     Namespace_DoNamespace_Name ( ( byte* ) "Forth" ) ;
 }
 
