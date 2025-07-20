@@ -344,6 +344,7 @@ void CSL_ArrayBegin(void);
 int64 CSL_ArrayEnd(Word *word, Word *arrayBaseObject, int64 objSize, Boolean *variableFlag);
 void CSL_ArrayModeOff_OptimizeOn(void);
 void _CSL_ArrayEnd(void);
+void CSL_ArrayNew(void);
 /* src/basis/core/io.c */
 int64 GetTerminalWidth(void);
 int _kbhit(int64 key);
@@ -1507,6 +1508,7 @@ byte *Buffer_Data_QuickReset(Buffer *b);
 byte *Buffer_DataCleared(Buffer *b);
 void Buffer_Init(Buffer *b, int64 flag);
 void Buffer_Add(Buffer *b, int64 flag);
+Buffer *_Buffer_Create(int64 size, int64 allocType);
 Buffer *Buffer_Create(int64 size);
 Buffer *_Buffer_New(int64 size, int64 flag);
 int64 Buffer_SetAsFree(Buffer *b, int64 force);
@@ -1517,6 +1519,8 @@ Buffer *Buffer_NewLocked(int64 size);
 Buffer *_Buffer_NewPermanent(int64 size);
 byte *_Buffer_New_pbyte(int64 size, int64 flag);
 byte *Buffer_New_pbyte(int64 size);
+byte *_Buffer_New_Sized_AllocTyped_pbyte(int64 size, int64 allocType);
+byte *Buffer_pbyte(int64 size);
 void _MemCpy(byte *dst, byte *src, int64 size);
 /* src/basis/core/dobject.c */
 byte *_object_Allocate(int64 size, int64 allocType);

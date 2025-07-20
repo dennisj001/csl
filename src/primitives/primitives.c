@@ -210,6 +210,8 @@ CPrimitive CPrimitives [] = {
 
     { "]", 0, 0, 0, _CSL_ArrayEnd, ( IMMEDIATE | OBJECT_OPERATOR ), RIGHT_BRACKET, 0, "Array", "Root" },
     { "[", 0, 0, 0, CSL_ArrayBegin, ( IMMEDIATE | OBJECT_OPERATOR ), COMPILER_LEFT_BRACKET, 0, "Array", "Root" },
+    { "bufferNew", 0, 0, 0, CSL_ArrayNew, 0, 0, 0, "Array", "Root" },
+    { "arrayNew", 0, 0, 0, CSL_ArrayNew, 0, 0, 0, "Array", "Root" },
 
 
     { "+", "NN.N", 0, 0, BigNum_Add, BIGNUM | CATEGORY_OP | INFIXABLE, 0, 0, "BigNum", "Class" },

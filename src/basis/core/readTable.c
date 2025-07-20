@@ -119,10 +119,10 @@ ReadTable_Newline ( ReadLiner * rl ) // '\n'
     {
         _OpenVmTil_AddStringToHistoryList ( rl->InputLine ) ;
     }
-    rl->LineNumber ++ ;
-    //if ( ! GetState ( _Debugger_, DBG_COMMAND_LINE ) )
+    _ReadLine_AppendCharacter_Actual ( rl ) ;
+    if ( ( _O_->Pblc != '\n' ) && ( _O_->Pblc != ' ' ) )
     {
-        _ReadLine_AppendCharacter_Actual ( rl ) ;
+        rl->LineNumber ++ ;
         ReadLine_ShowCharacter ( rl ) ;
     }
     ReadLiner_Done ( rl ) ;

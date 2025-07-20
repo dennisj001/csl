@@ -4,6 +4,20 @@
 // these functions are part of the C vm and can't be compiled
 // ! they are should only be called in C functions !
 
+#if 0 // macros
+uint64
+_DataStack_GetTop ( )
+{
+    return _DspReg_[0] ;
+}
+
+void
+_DataStack_SetTop ( int64 value )
+{
+    _DspReg_[0] = value ;
+}
+#endif
+
 uint64
 DataStack_Pop ( )
 {

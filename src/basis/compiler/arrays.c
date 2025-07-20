@@ -316,4 +316,10 @@ _CSL_ArrayEnd ( void )
     CSL_ArrayModeOff_OptimizeOn ( ) ;
 }
 
-
+void
+CSL_ArrayNew ()
+{
+    int64 size = _DataStack_GetTop () ;
+    byte * b = Buffer_pbyte ( size ) ;
+    _DataStack_SetTop ( (int64) b ) ;
+}

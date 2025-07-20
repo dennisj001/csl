@@ -114,9 +114,9 @@ Root
 : dbgOn dbgOnVar 1 = ; immediate
 : dbgOff dbgOnVar 0 = ; immediate
 : Is_DebugOn dbgOnVar @ ;
-'C_ 'C_Syntax find alias
+//'C_ 'C_Syntax find alias
 '_C_ 'C_Syntax find alias
-'_C 'C_Syntax find alias
+//'_C 'C_Syntax find alias
 
 // === controls ===
 Root 

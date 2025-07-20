@@ -6,6 +6,9 @@ Array
 File
 cOff
 
+'tTxt var
+tTxt !% "It's a beautiful day! Don't let it get away!" %! =
+
 'tHtml var 
 tHtml
 !% 
@@ -19,34 +22,40 @@ tHtml
 </body>
 </html> 
 %! =
-'fHtml var
-fHtml "./namespaces/lib/web/html.html" =
+
+'fHtml var 
+'fTxt var
+
+fHtml "./namespaces/lib/web/temp.html" =
+fTxt "./namespaces/lib/web/temp.txt" =
 
 cOn
+// xdg-open can open txt files a well as html files and other os files according to extension, selected by user in os
 void 
-htmlOpen ( fhtml | buffer, Buffer buffer0 )
+_xdgOpenFile ( file | buffer ) 
+//_xdgOpenFile ( file | buffer, Buffer buffer0 )
 {
-    buffer = &buffer0.buf ;
-    memset ( buffer, 0, Buffer.size ) ; 
-    sprintf ( buffer, "xdg-open %s", fhtml ) ;
-    printf ( "%s", buffer ) ;
+    //buffer = &buffer0.buf ;
+    //memset ( buffer, 0, Buffer.size ) ; 
+    buffer = bufferNew ( 4000 ) ; 
+    sprintf ( buffer, "xdg-open %s", file ) ;
+    printf ( "\n%s", buffer ) ;
     _sh ( buffer ) ;
 }
-//pwi htmlOpen
+//pwi _xdgOpenFile
 void
-_testHtml ( fhtml, thtml ) // | buffer, Buffer buffer0 )
+xdgOpenFile ( fname, fileText ) 
 {
-    fwriteTxtToFname ( fhtml, thtml ) ;
-    htmlOpen ( fhtml ) ;
+    fwriteTxtToFname ( fname, fileText ) ;
+    _xdgOpenFile ( fname ) ;
 }
-//pwi _testHtml
-//_testHtml ( fHtml, tHtml ) ;
+//pwi xdgOpenFile
 cOff
-fOn
-: testHtml fHtml @ tHtml @ _C_._testHtml ;
-//pwi testHtml
-: htmlOpen "xdg-open /home/dennisj/csl/namespaces/lib/web/html.html" _sh ;
-: html2 "/home/dennisj/csl/namespaces/lib/web/html.html" tHtml @ fwriteTxtToFname htmlOpen ;
-cOff
-//testHtml
 
+: xo ( fname ftxt ) fname @ ftxt @ _C_.xdgOpenFile ;
+
+//fHtml @ tHtml @ xo
+//fTxt @ tTxt @ xo
+
+: xoT fHtml @ tHtml @ xo fTxt @ tTxt @ xo ;
+xoT

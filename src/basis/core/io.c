@@ -180,8 +180,8 @@ void
 _DoPrompt ( )
 {
     //&&  (_ReadLiner_->InputKeyedCharacter != '\n' ) 
-    if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) && ( _O_->Pblc != '\n' ) ) CSL_PrintChar ( '\n' ) ;
-    //if ( ( _O_->Pbf8[0] != '\n' ) && ( _O_->Pblc != '\n' ) ) CSL_PrintChar ( '\n' ) ;
+    //if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) && ( _O_->Pblc != '\n' ) ) CSL_PrintChar ( '\n' ) ;
+    if ( _O_->Pblc != '\n' ) CSL_PrintChar ( '\n' ) ;
     iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
     SetState ( _O_, OVT_PROMPT_DONE, true ) ;
 }

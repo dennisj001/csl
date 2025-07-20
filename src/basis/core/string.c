@@ -1123,14 +1123,20 @@ Buffer_Add ( Buffer * b, int64 flag )
 }
 
 Buffer *
-Buffer_Create ( int64 size )
+_Buffer_Create ( int64 size, int64 allocType )
 {
-    Buffer * b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, BUFFER ) ;
-    b->B_CAttribute = BUFFER ;
+    Buffer * b = ( Buffer * ) Mem_Allocate ( sizeof ( Buffer ) + size + 1, allocType ) ;
+    b->B_CAttribute = allocType ;
     b->B_Size = size ;
     b->B_Data = ( byte* ) b + sizeof (Buffer ) ;
 
     return b ;
+}
+
+Buffer *
+Buffer_Create ( int64 size )
+{
+    return _Buffer_Create ( size, BUFFER ) ;
 }
 
 Buffer *
@@ -1248,7 +1254,22 @@ _Buffer_New_pbyte ( int64 size, int64 flag )
 byte *
 Buffer_New_pbyte ( int64 size )
 {
-    Buffer *b = _Buffer_New ( size, N_LOCKED ) ;
+    //Buffer *b = _Buffer_New ( size, N_UNLOCKED ) ; //N_LOCKED ) ;
+    //return Buffer_Data ( b ) ;
+    return _Buffer_New_pbyte ( size, N_UNLOCKED ) ;
+}
+
+byte *
+_Buffer_New_Sized_AllocTyped_pbyte ( int64 size, int64 allocType )
+{
+    Buffer *b = _Buffer_Create ( size, allocType ) ;
+    return Buffer_Data ( b ) ;
+}
+
+byte *
+Buffer_pbyte ( int64 size )
+{
+    Buffer *b = _Buffer_Create ( size, TEMPORARY ) ;
     return Buffer_Data ( b ) ;
 }
 

@@ -6,15 +6,15 @@ typedef struct { byte buf [ 2048 ] ; } Buffer ;
 /*
 cOn
 void 
-htmlOpenX ( thtml | buffer, Buffer buffer0 )
+xdgOpenFile ( txt | buffer ) 
 {
-    buffer = &buffer0.buf ;
-    memset ( buffer, 0, Buffer.size ) ; 
-    sprintf ( buffer, "xdg-open %s", thtml ) ;
-    printf ( "\n%s\n", buffer ) ;
-    //_sh ( buffer ) ;
+    buffer = bufferNew ( 4000 ) ; 
+    //memset ( buffer, 0, Buffer.size ) ; 
+    sprintf ( buffer, "xdg-open %s", txt ) ;
+    //printf ( "\n%s\n", buffer ) ;
+    _sh ( buffer ) ;
 }
-htmlOpenX ( "hi" ) ;
+xdgOpenFile ( "hi" ) ;
 pause
 cOff
 */
