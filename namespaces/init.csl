@@ -955,6 +955,15 @@ cOff
 nl bt.a32_123 32@ hp    
 nl bt.u32_123 32@ hp 
 #endif
+cOn
+void
+fwriteTxtToFname ( fnameToOpen, textToWrite | file ) 
+{
+    file = fopen ( fnameToOpen ) ;
+    fwrite ( file, textToWrite, Strlen (textToWrite) ) 
+    fclose ( file ) ;
+}
+cOff
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff

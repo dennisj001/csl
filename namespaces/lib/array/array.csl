@@ -1,9 +1,11 @@
 //allocate create new init set get copy delete : json
-
+#ifndef _ARRAY_CSL_
+#define _ARRAY_CSL_
 Lib
 
 typedef struct { byte buf [ 2048 ] ; } Buffer ;
-/*
+
+#if 0
 cOn
 void 
 xdgOpenFile ( txt | buffer ) 
@@ -17,4 +19,5 @@ xdgOpenFile ( txt | buffer )
 xdgOpenFile ( "hi" ) ;
 pause
 cOff
-*/
+#endif
+#endif

@@ -1,9 +1,12 @@
+5
+//#ifndef _HTML_CSL_
+//#define _HTML_CSL_
 
 Lib
-'Html namespace
-Html
 Array
 File
+'Html namespace
+Html
 cOff
 
 'tTxt var
@@ -29,33 +32,32 @@ tHtml
 fHtml "./namespaces/lib/web/temp.html" =
 fTxt "./namespaces/lib/web/temp.txt" =
 
-cOn
+cOn scOn
 // xdg-open can open txt files a well as html files and other os files according to extension, selected by user in os
 void 
-_xdgOpenFile ( file | buffer ) 
-//_xdgOpenFile ( file | buffer, Buffer buffer0 )
+_xdgOpenFile ( file | abuffer ) 
 {
-    //buffer = &buffer0.buf ;
-    //memset ( buffer, 0, Buffer.size ) ; 
-    buffer = bufferNew ( 4000 ) ; 
-    sprintf ( buffer, "xdg-open %s", file ) ;
-    printf ( "\n%s", buffer ) ;
-    _sh ( buffer ) ;
+    abuffer = bufferNew ( 4000 ) ; 
+    sprintf ( abuffer, "xdg-open %s", file ) ;
+    printf ( "\n%s", abuffer ) ;
+    _sh ( abuffer ) ;
 }
-//pwi _xdgOpenFile
+pwi _xdgOpenFile
 void
 xdgOpenFile ( fname, fileText ) 
 {
     fwriteTxtToFname ( fname, fileText ) ;
     _xdgOpenFile ( fname ) ;
 }
-//pwi xdgOpenFile
+pwi xdgOpenFile
 cOff
-
+fOn
 : xo ( fname ftxt ) fname @ ftxt @ _C_.xdgOpenFile ;
-
+//: xoT fHtml @ tHtml @ xo fTxt @ tTxt @ xo ;
+: xoT "./temp.html" tHtml @ xo "./temp.txt" tTxt @ xo ;
+xoT
 //fHtml @ tHtml @ xo
 //fTxt @ tTxt @ xo
-
-: xoT fHtml @ tHtml @ xo fTxt @ tTxt @ xo ;
-xoT
+fOff
+2 + 7 assertStkChk // stack checking
+//#endif

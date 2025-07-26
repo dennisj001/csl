@@ -62,15 +62,15 @@ DataObject_New ( uint64 type, Word * word, byte * name, uint64 morphismAttribute
             DObject_New ( ) ;
             break ;
         }
-        //case TD_TYPE_FIELD :
+            //case TD_TYPE_FIELD :
         case TD_FUNCTION_ID_FIELD:
         case CLASS:
         {
             word = Class_New ( name, CLASS, 0 ) ;
             break ;
         }
-        //case TD_FIELD_ID:
-        case TD_TYPE_FIELD :
+            //case TD_FIELD_ID:
+        case TD_TYPE_FIELD:
         {
             word = CSL_ClassField_New ( name, addToNs, value, index ) ;
             break ;
@@ -87,10 +87,14 @@ DataObject_New ( uint64 type, Word * word, byte * name, uint64 morphismAttribute
         }
         case C_TYPE:
         {
-            Compiler_Save_C_BackgroundNamespace ( cntx->Compiler0 ) ;
-            word = Class_New ( name, C_TYPE, 0 ) ;
-            Type_Create ( ) ;
-            Compiler_SetAs_InNamespace_C_BackgroundNamespace ( cntx->Compiler0 ) ;
+            if ( ! Compiling )
+            {
+                Compiler_Save_C_BackgroundNamespace ( cntx->Compiler0 ) ;
+                word = Class_New ( name, C_TYPE, 0 ) ;
+                Type_Create ( ) ;
+                Compiler_SetAs_InNamespace_C_BackgroundNamespace ( cntx->Compiler0 ) ;
+            }
+            else Error ( "\nError : trying to do a C_TYPE while already compiling", QUIT ) ;
             break ;
         }
         case C_TYPEDEF:

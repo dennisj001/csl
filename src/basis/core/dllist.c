@@ -812,18 +812,20 @@ List_N_M_Node_PrintWords ( dllist * alist )
 dobject *
 _dllist_PushNew_M_Slot_Node ( dllist* list, int64 allocType, int64 typeCode, int64 m_slots, ... )
 {
+#if 1    
     int64 i, value ;
     va_list args ;
-    va_start ( args, m_slots ) ;
     dobject * dobj = dobject_Allocate ( typeCode, m_slots, allocType ) ;
+    va_start ( args, m_slots ) ;
     for ( i = 0 ; i < m_slots ; i ++ )
     {
         value = va_arg ( args, int64 ) ;
         dobj->do_iData[i] = value ;
     }
     va_end ( args ) ;
-    //dobject * dobj = dobject_New_M_Slot ( allocType, typeCode, m_slots, ... )
-
+#else    
+    dobject * dobj = dobject_New_M_Slot ( allocType, typeCode, m_slots, ... ) ;
+#endif    
     _dllist_PushNode ( list, ( dlnode* ) dobj ) ;
 
     return dobj ;

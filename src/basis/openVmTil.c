@@ -1,6 +1,6 @@
 
 #include "../include/csl.h"
-#define VERSION ((byte*) "0.944.030" )
+#define VERSION ((byte*) "0.944.092" )
 
 // inspired by :: Foundations of Mathematical Logic [Foml] by Haskell Curry,
 // Category Theory, Object Oriented Programming, Type Theory 
@@ -12,7 +12,7 @@
 // csl : context sensitive language; C shell (extension) language, cx
 // cfr : C, Forth, reason or compiler foundations research (and development)
 // cflr : C, Forth, Lisp, reason
-// til : a toolkit for implementing languages (maybe even a compiler compiler) based on these ideas,
+// til : a toolkit for implementing languagebyes (maybe even a compiler compiler) based on these ideas,
 // (cf. the book Threaded Interpretive Languages, by R.G. Loeliger)
 // cfrtil : an old name for csl
 // !! this is a prototype : it is still rough in spots; it needs to be extended, improved, and rewritten (at least in some places) !!

@@ -1,1 +1,466 @@
-//dllist
+#ifndef _LIST_CSL_
+#define _LIST_CSL_
+5
+
+cOff
+#if 1 
+
+: listNamespaces PreProcessor Root Locals MemorySpace Array Asm File System Colors Memory OpenVmTil Stack Reserved Compiler Compiling 
+    StartupMacros User Namespace Macro Word Io Lexer List Pointer C DObject Debug Shell Interpreter String Dlsym libc Experimental 
+    Defines Forth void byte Bits Logic int64 Combinators Class int Int Lib ;
+listNamespaces 
+//using
+//d: pause
+'List namespace
+cOn
+C
+List
+
+#if 0
+#define TEMPORARY ( (uint64) 1 << 3 )
+#define SESSION ( (uint64) 1 << 5 )
+#define DICTIONARY ( (uint64) 1 << 6 )
+#endif
+
+typedef struct _node
+{
+    struct
+    {
+        union
+        {
+            struct _node * n_After ;
+            struct _node * n_Head ;
+        } ;
+        union
+        {
+            struct _node * n_Before ;
+            struct _node * n_Tail ;
+        } ;
+    } ;
+} dlnode, node, _dllist ;
+
+typedef struct
+{
+    _dllist l_List ;
+    node * l_CurrentNode ;
+} dllist ;
+
+//#define Head l_List.n_Head
+//#define Tail l_List.n_Tail
+
+void
+_dlnode_Init ( anode )
+{
+    anode->n_After = 0 ;
+    anode->n_Before = 0 ;
+}
+
+#if 0
+dlnode *
+_dlnode_New ( uint64 allocType )
+{
+    dlnode * anode = dlnodeNew ( allocType ) ; //Mem_Allocate ( sizeof (dlnode ), allocType ) ;
+    return anode ;
+}
+#endif
+
+// toward the TailNode
+
+dlnode *
+dlnode_Next ( anode )
+{
+    // don't return TailNode, return 0
+    if ( anode )
+    {
+        dlnode * nextNode = naode->n_After ;
+        if ( nextNode && nextNode->n_After ) return nextNode ;
+    }
+    return 0 ;
+}
+
+// toward the HeadNode
+
+dlnode *
+dlnode_Previous ( anode )
+{
+    // don't return HeadNode return 0
+    if ( anode )
+    {
+        dlnode * prevNode = anode->n_Before ;
+        if ( prevNode && prevNode->n_Before ) return prevNode ;
+    }
+    return 0 ;
+}
+
+void
+dlnode_Remove ( anode )
+{
+    if ( Is_NotHeadOrTailNode ( anode ) )
+    {
+        anode->n_Before->n_After = anode->n_After ;
+        anode->n_After->n_Before = anode->n_Before ;
+        anode->n_After = 0 ;
+        anode->n_Before = 0 ;
+    }
+}
+
+void
+_dllist_Init ( list )
+{
+    if ( list && list->n_Head && list->n_Tail )
+    {
+        list->n_Head->n_After = list->n_Tail ;
+        list->n_Head->n_Before = 0 ;
+        list->n_Tail->n_After = 0 ;
+        list->n_Tail->n_Before = list->n_Head ;
+        list->l_CurrentNode = 0 ;
+    }
+}
+
+void
+dllist_Init ( list, ahead, atail )
+{
+    list->n_Head = ahead ;
+    list->n_Tail = atail ;
+    _dllist_Init ( list ) ;
+}
+
+#if 0
+dllist *
+_dllist_New ( allocType )
+{
+    list = ( dllist* ) Mem_Allocate ( sizeof ( dllist ), allocType ) ;
+    list->n_Head = _dlnode_New ( allocType ) ;
+    list->n_Tail = _dlnode_New ( allocType ) ;
+    _dllist_Init ( list ) ;
+    return list ;
+}
+
+dllist *
+dllist_New ( )
+{
+    dllist* dllist = dllistNew ( 1 << 6 ) ; //_dllist_New ( 1 << 6 ) ; //DICTIONARY ) ;
+}
+#endif
+
+dlnode *
+_dlnode_Before ( anode )
+{
+    return anode->n_Before ;
+}
+
+dlnode *
+_dlnode_After ( anode )
+{
+    return anode->n_After ;
+}
+
+dlnode *
+Is_NotAHeadNode ( anode )
+{
+    if ( anode && _dlnode_Before ( anode ) ) return anode ;
+    else return 0 ;
+}
+
+// with error checking anode
+
+dlnode *
+Is_NotATailNode ( anode )
+{
+    if ( anode && _dlnode_After ( anode ) ) return anode ;
+    return 0 ;
+}
+
+void
+dlnode_InsertThisAfterANode ( thisNode, aNode ) // Insert thisNode After aNode : toward the tail of the list - "after" the Head
+{
+    if ( thisNode && Is_NotATailNode ( aNode ) )
+    {
+        //if ( aNode->afterNode ) 
+        aNode->n_After->n_Before = thisNode ; // don't overwrite a Head or Tail node 
+        thisNode->n_After = aNode->n_After ;
+        aNode->n_After = thisNode ; // necessarily after the above statement ! 
+        thisNode->n_Before = aNode ;
+    }
+}
+
+void
+dlnode_InsertThisBeforeANode ( thisNode, aNode ) // Insert thisNode Before aNode : toward the head of the list - "before" the Tail
+{
+    if ( thisNode && Is_NotAHeadNode ( aNode ) )
+    {
+        //if ( aNode->beforeNode ) 
+        aNode->n_Before->n_After = thisNode ; // don't overwrite a Head or Tail node
+        thisNode->n_Before = aNode->n_Before ;
+        aNode->n_Before = thisNode ; // necessarily after the above statement ! 
+        thisNode->n_After = aNode ;
+    }
+}
+
+void
+_dllist_AddNodeToHead ( list, anode )
+{
+    if ( list && anode ) dlnode_InsertThisAfterANode ( anode, list->n_Head ) ; // after Head toward Tail
+}
+
+void
+dllist_AddNodeToHead ( list, anode )
+{
+    if ( list && anode )
+    {
+        dlnode_Remove ( anode ) ; // if the node is already on a list it will be first removed
+        _dllist_AddNodeToHead ( list, anode ) ;
+        list->l_CurrentNode = 0 ;
+    }
+}
+
+void
+_dllist_AddNodeToTail ( list, anode )
+{
+    if ( list && anode ) dlnode_InsertThisBeforeANode ( anode, list->n_Tail ) ; // before Tail toward Head
+}
+
+void
+dllist_AddNodeToTail ( list, anode )
+{
+    if ( list && anode )
+    {
+        dlnode_Remove ( anode ) ;
+        _dllist_AddNodeToTail ( list, anode ) ;
+        list->l_CurrentNode = anode ;
+    }
+}
+
+dlnode *
+_dllist_Head ( list )
+{
+    return list->n_Head ;
+}
+
+dlnode *
+_dllist_Tail ( list )
+{
+    return list->n_Tail ;
+}
+
+dlnode *
+dllist_Head ( list )
+{
+    //if ( ! list ) return 0 ;
+    //return ( dlnode * ) list->head ;
+    dlnode * ahead = 0 ;
+    if ( list ) ahead = _dllist_Head ( list ) ;
+    return ahead ;
+}
+
+dlnode *
+dllist_Tail ( list )
+{
+    dlnode * atail ;
+    if ( list ) atail = _dllist_Tail ( list ) ;
+    else return 0 ;
+    return atail ;
+}
+
+#if 1
+
+dlnode *
+Is_NotHeadOrTailNode ( anode )
+{
+    if ( anode && _dlnode_After ( anode ) && _dlnode_Before ( anode ) ) return anode ;
+    else return 0 ;
+}
+// with error checking anode
+
+void
+dlnode_ReplaceNodeWithANode ( xnode, anode )
+{
+    if ( xnode && anode )
+    {
+        dlnode * after = xnode->n_After ;
+        dlnode_Remove ( xnode ) ;
+        dlnode_InsertThisBeforeANode ( anode, after ) ;
+    }
+}
+
+void
+dlnode_Replace ( replacedNode, replacingNode )
+{
+    if ( replacedNode && replacingNode )
+    {
+        if ( replacedNode->n_Before ) replacedNode->n_Before->n_After = replacingNode ;
+        if ( replacedNode->n_After ) replacedNode->n_After->n_Before = replacingNode ;
+    }
+}
+
+Boolean
+Is_NotTheHeadNode ( anode )
+{
+    if ( anode->n_Before ) return true ;
+    else return 0 ;
+}
+
+Boolean
+Is_NotTheTailNode ( anode )
+{
+    if ( anode->n_After ) return true ;
+    else return 0 ;
+}
+
+// 'after' is toward the tail
+
+dlnode *
+_dllist_First ( list )
+{
+    dlnode * head = _dllist_Head ( list ), * headAfter ;
+    if ( head && ( headAfter = _dlnode_After ( head ) ) )
+        if ( headAfter->n_After ) return headAfter ; //Is_NotTheTailNode
+    return 0 ;
+}
+
+// 'before' is toward the head
+
+dlnode *
+_dllist_Last ( list )
+{
+    dlnode *tail = _dllist_Tail ( list ), * tailBefore ;
+    if ( tail && ( tailBefore = _dlnode_Before ( tail ) ) )
+        if ( tailBefore->n_Before ) return tailBefore ; // Is_NotTheHeadNode
+    return 0 ;
+}
+
+dlnode *
+dllist_First ( list )
+{
+    dlnode * first ;
+    if ( list && ( first = _dllist_First ( list ) ) ) return first ;
+    else return 0 ;
+}
+
+dlnode *
+dllist_Last ( list )
+{
+    dlnode * last ;
+    if ( list && ( last = _dllist_Last ( list ) ) ) return last ;
+    else return 0 ;
+}
+
+dlnode *
+dllist_NodePrevious ( list, anode )
+{
+    if ( anode )
+    {
+        anode = _dlnode_Before ( anode ) ;
+    }
+    if ( ! anode ) anode = dllist_Head ( list ) ;
+    return anode ;
+}
+
+// toward the HeadNode
+
+dlnode *
+_dllist_Before ( list )
+{
+    return dlnode_Previous ( list->l_CurrentNode ) ;
+}
+
+dlnode *
+dllist_SetCurrentNode_Before ( list )
+{
+    list->l_CurrentNode = _dllist_Before ( list ) ;
+    if ( list->l_CurrentNode == 0 )
+    {
+        list->l_CurrentNode = dllist_Head ( list ) ;
+        return 0 ;
+    }
+    return list->l_CurrentNode ;
+}
+// toward the TailNode
+
+dlnode *
+_dllist_CurrentNodeAfter ( list )
+{
+    return dlnode_Next ( list->l_CurrentNode ) ;
+}
+// toward the TailNode
+
+dlnode *
+dllist_SetCurrentNode_After ( list )
+{
+    list->l_CurrentNode = _dllist_CurrentNodeAfter ( list ) ;
+    if ( list->l_CurrentNode == 0 )
+    {
+        list->l_CurrentNode = dllist_Tail ( list ) ;
+        return 0 ;
+    }
+    return list->l_CurrentNode ;
+}
+
+void
+_dllist_AddNamedValue ( list, byte * name, int64 value, uint64 allocType )
+{
+    Symbol * sym = _Symbol_New ( name, allocType ) ;
+    sym->W_Value = value ;
+    _dllist_AddNodeToHead ( list, sym ) ;
+}
+
+void
+_dllist_PushNode ( dllist* list, anode )
+{
+    _dllist_AddNodeToHead ( list, anode ) ;
+}
+
+// use list like a endless stack
+
+dlnode *
+_dllist_PopNode ( list )
+{
+    dlnode *anode = dllist_First ( ( dllist* ) list ) ;
+    if ( anode )
+    {
+        dlnode_Remove ( anode ) ;
+        return anode ;
+    }
+    else return 0 ; // LIST_EMPTY
+}
+
+void
+_dllist_DropN ( list, int64 n )
+{
+    dlnode * anode, *nextNode ;
+    for ( anode = dllist_First ( ( dllist* ) list ) ; anode && ( -- n >= 0 ) ; anode = nextNode )
+    {
+        nextNode = dlnode_Next ( anode ) ; // before Remove
+        dlnode_Remove ( anode ) ;
+    }
+}
+
+int64
+dllist_Depth ( list )
+{
+    int64 length ;
+    dlnode * anode, * nextNode ;
+    for ( length = 0, anode = dllist_First ( list ) ; anode ; anode = nextNode )
+    {
+        nextNode = dlnode_Next ( anode ) ;
+        length ++ ;
+    }
+    return length ;
+}
+//_dllist_RemoveNodes including 'last'
+
+void
+_dllist_RemoveNodes ( dlnode *first, last )
+{
+    dlnode * anode, *nextNode ;
+    for ( anode = first ; anode ; anode = nextNode )
+    {
+        nextNode = dlnode_Next ( anode ) ; // before Remove
+        dlnode_Remove ( anode ) ;
+        if ( anode == last ) break ;
+    }
+}
+
+#endif
+2 + 7 assertStkChk // stack checking
+#endif

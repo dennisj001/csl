@@ -454,3 +454,19 @@ TerminalLineWidth ( )
     _CSL_TerminalLineWidth ( _CSL_ ) ;
 }
 
+void
+CSL_dlnode_New ()
+{
+    uint64 allocType = _DataStack_GetTop () ;
+    dlnode * node = _dlnode_New ( allocType ) ;
+    _DataStack_SetTop ( (int64) node ) ;
+}
+
+void
+CSL_dllist_New ()
+{
+    uint64 allocType = _DataStack_GetTop () ;
+    dllist * list =_dllist_New ( allocType ) ;
+    _DataStack_SetTop ( (int64) list ) ;
+}
+

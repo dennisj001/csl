@@ -8,12 +8,13 @@ Lib
     Word Io byte C int64 Debug Interpreter Int Lexer Class void Dlsym Defines libc Shell Lib ;
 libNamespaces
 
+: listInc "namespaces/lib/list/list.csl" include ;
 : fileInc "namespaces/lib/file/file.csl" include ;
 : arrayInc "namespaces/lib/array/array.csl" include ;
 : webInc "namespaces/lib/web/html.csl" include ;
 
-verbosity 0 =
-fileInc arrayInc webInc
-verbosity 1 =
+//verbosity 0 =
+listInc fileInc arrayInc webInc
+//verbosity 1 =
 //html2
 

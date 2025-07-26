@@ -450,6 +450,8 @@ void CSL_LC_DebugOn(void);
 void CSL_LC_DebugOff(void);
 int64 _CSL_TerminalLineWidth(CSL *csl);
 int64 TerminalLineWidth(void);
+void CSL_dlnode_New(void);
+void CSL_dllist_New(void);
 /* src/basis/core/parse.c */
 void Lexer_ParseAsAString(Lexer *lexer);
 void _Lexer_ParseBinary(Lexer *lexer, int64 offset);

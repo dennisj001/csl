@@ -73,9 +73,6 @@ _CSL_BeginBlock2 ( BlockInfo * bi )
     compiler->BlockLevel ++ ;
     _Stack_Push ( compiler->BlockStack, ( int64 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
     _Stack_Push ( compiler->CombinatorBlockInfoStack, ( int64 ) bi ) ; // _Context->CompileSpace->IndexStart before set frame size after turn on
-    //if ( Is_DebugOn ) Stack_Print ( compiler->CombinatorBlockInfoStack, c_d ( "compiler->CombinatorBlockInfoStack" ), 0 ) ;
-    //compiler->CurrentTopBlockInfo = bi ;
-
 }
 
 BlockInfo *
@@ -143,7 +140,6 @@ CSL_FinalizeBlocks ( BlockInfo * bi )
 void
 _CSL_EndBlock1 ( BlockInfo * bi )
 {
-    //Compiler * compiler = _Context_->Compiler0 ;
     if ( ! Compiler_BlockLevel ( _Compiler_ ) ) CSL_FinalizeBlocks ( bi ) ;
     Compiler_WordStack_SCHCPUSCA ( 0, 1 ) ;
     _Compile_Return ( ) ;
@@ -171,8 +167,6 @@ _CSL_EndBlock2 ( BlockInfo * bi )
 void
 CSL_EndBlock ( )
 {
-    //Context * cntx = _Context_ ;
-    //Compiler * compiler = cntx->Compiler0 ;
     BlockInfo * bi = ( BlockInfo * ) Stack_Pop_WithExceptionOnEmpty ( _Compiler_->BlockStack ) ;
     _Compiler_->BlockLevel -- ;
     bi->LogicCodeWord = CSL_WordList ( 1 ) ;
@@ -184,7 +178,6 @@ CSL_EndBlock ( )
 BlockInfo *
 BlockInfo_Allocate ( )
 {
-    //Context * cntx = _Context_ ;
     BlockInfo *bi = ( BlockInfo * ) Mem_Allocate ( sizeof (BlockInfo ), COMPILER_TEMP ) ;
     return bi ;
 }
@@ -192,7 +185,6 @@ BlockInfo_Allocate ( )
 BlockInfo *
 BlockInfo_New ( )
 {
-    //Context * cntx = _Context_ ;
     BlockInfo *bi = BlockInfo_Allocate ( ) ;
     bi->BI_Symbol.Name = & ( _CSL_->SC_Buffer [ _CSL_->SC_Index - 1 ] ) ;
     bi->OurCombinator = _Context_->CurrentCombinator ;

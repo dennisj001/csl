@@ -32,12 +32,12 @@ void
 CSL_C_Syntax_Off ( )
 {
     Context * cntx = _Context_ ;
-    SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
     CSL_SetInNamespaceFromBackground ( ) ; // before below Namespace_SetAsNotUsing_MoveToTail in case one of them is the background namespace
     Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "PrefixCombinators" ) ;
     Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "Infix" ) ;
     Namespace_SetAsNotUsing_MoveToTail ( ( byte* ) "C_Syntax" ) ;
     Context_SetSpecialTokenDelimiters ( cntx, 0, CONTEXT ) ;
+    SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, false ) ;
 }
 
 void
@@ -45,12 +45,12 @@ CSL_C_Syntax_On ( )
 {
     Context * cntx = _Context_ ;
     Compiler_Save_C_BackgroundNamespace ( cntx->Compiler0 ) ;
-    SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, true ) ;
     Namespace_DoNamespace_Name ( ( byte* ) "C" ) ;
     Namespace_DoNamespace_Name ( ( byte* ) "PrefixCombinators" ) ;
     Namespace_DoNamespace_Name ( ( byte* ) "Infix" ) ;
     Namespace_DoNamespace_Name ( ( byte* ) "C_Syntax" ) ;
     Compiler_SetAs_InNamespace_C_BackgroundNamespace ( cntx->Compiler0 ) ;
+    SetState ( cntx, C_SYNTAX | PREFIX_MODE | INFIX_MODE, true ) ;
     //Context_SetSpecialTokenDelimiters ( cntx, ( byte* ) " ,\n\r\t", CONTEXT ) ;
     //CSL_TypeCheckOn ( ) ;
 }
@@ -135,11 +135,12 @@ CSL_End_C_Block ( )
     {
         CSL_WordInitFinal ( ) ;
         CSL_Prefixable ( ) ;
+    if ( Is_DebugOn ) 
+        Pause () ;
     }
     else
     {
         // we're still compiling so ... ??
-
         Word * word = _Context_CurrentWord ( cntx ) ;
         word->W_NumberOfNonRegisterArgs = compiler->NumberOfArgs ;
         word->W_NumberOfNonRegisterLocals = compiler->NumberOfLocals ;

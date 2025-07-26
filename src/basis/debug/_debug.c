@@ -6,8 +6,35 @@
 void
 _dbg ( ) //int64 index, int64 one, int64 two )
 {
-    if ( ! GetState ( _CSL_, CO_ON ) ) iPrintf ( "\nOptimize is now off\n" ), Pause () ;
-    //SetState (_CSL_, CO_ON, false ) ;
+    if ( Is_DebugOn )
+    {
+        //if ( ! GetState ( _CSL_, CO_ON ) ) iPrintf ( "\nOptimize is now off\n" ), Pause () ;
+        //SetState (_CSL_, CO_ON, false ) ;
+        Finder * finder = _Finder_ ;
+        //Namespace * ins = Finder_Word_Find ( finder, "Infix", ANY, 1 ) ;
+        //Namespace * qns = Finder_GetQualifyingNamespace ( finder ) ;
+        //Finder_SetQualifyingNamespace ( finder, ins ) ;
+        //if ( ! Finder_Word_Find ( finder, "Infix", ANY, 1 ) ) Pause ( ) ;
+        //if ( ! Finder_QID_Find ( finder, "Infix.=" ) ) Pause () ;
+        //Finder_SetQualifyingNamespace ( finder, qns ) ;
+        ReadLiner * rl = _ReadLiner_ ;
+        Word * rword = Finder_Word_Find ( finder, "=", ANY, 1 ) ;
+        TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
+        while ( 1 )
+        {
+            TabCompletionInfo * tci = rl->TabCompletionInfo0 ;
+            tci->StartFlag = 0 ;
+            if ( ! tci->NextWord ) tci->NextWord = TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ; // new
+            if ( tci->NextWord )
+            {
+                byte * fqn = ReadLiner_GenerateFullNamespaceQualifiedName ( rl, tci->NextWord ) ;
+                //RL_TC_StringInsert_AtCursor ( rl, fqn ) ;
+                if ( (strstr (fqn, "Infix.="))) Pause () ;
+                //rword = tci->NextWord ; //TC_Tree_Map ( tci, ( MapFunction ) _TabCompletion_Compare, rword ) ;  //nextWord ; // wrap around
+            }
+            else tci->NextWord = ( Word * ) dllist_First ( rword->S_ContainingNamespace->S_SymbolList ) ;
+        }
+    }
 }
 
 #endif
@@ -115,6 +142,7 @@ register. (Here, the EIP register contains the address of the instruction follow
 relative offsets, the opcode (for short vs. near jumps) and the operand-size attribute (for near relative jumps)
 determines the size of the target operand (8, 16, or 32 bits).
  */
+
 /* from Intel Instruction set reference : JMP insn
 A relative offset (rel8, rel16, or rel32) is generally specified as a label in assembly code, but at the machine code
 level, it is encoded as a signed 8-, 16-, or 32-bit immediate value. This value is added to the value in the EIP
@@ -144,7 +172,7 @@ Calculate_Address_FromOffset_ForCallOrJump ( byte * address )
     }
     else if ( ( ( * ( uint16* ) address ) == 0xff49 ) && ( ( *( address + 2 ) == 0xd2 ) || ( *( address + 2 ) == 0xd3 ) ) ) // call r10/r11
     {
-        if ( ( ( * ( uint16* ) ( address - 10 ) ) == 0xbb49 ) ) 
+        if ( ( ( * ( uint16* ) ( address - 10 ) ) == 0xbb49 ) )
         {
             if ( ( ( * ( uint16* ) ( address - 20 ) ) == 0xba49 ) ) iaddress = ( byte* ) ( * ( ( uint64* ) ( address - 18 ) ) ) ; //mov r11, 0xxx in Compile_Call_TestRSP  
             else iaddress = ( byte* ) ( * ( ( uint64* ) ( address - 8 ) ) ) ; //mov r11, 0xxx in Compile_Call_TestRSP  

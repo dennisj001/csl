@@ -537,6 +537,8 @@ CPrimitive CPrimitives [] = {
     { "printList", 0, 0, 0, ( block ) List_PrintWithValue, 0, 0, 0, "List", "Root" },
     { "dupList", 0, 0, 0, ( block ) List_DupList, 0, 0, 0, "List", "Root" },
     { "lcRestoreStack", 0, 0, 0, ( block ) LC_RestoreStack, 0, 0, 0, "List", "Root" },
+    { "dlnodeNew", 0, 0, 0, ( block ) CSL_dlnode_New, 0, 0, 0, "List", "Root" },
+    { "dllistNew", 0, 0, 0, ( block ) CSL_dllist_New, 0, 0, 0, "List", "Root" },
 
     { "compileMode", 0, 0, 0, CSL_CompileMode, 0, 0, 0, "Interpreter", "Root" },
     { "finishDebugInfo", 0, 0, 0, CSL_FinishWordDebugInfo, 0, 0, 0, "Interpreter", "Root" },

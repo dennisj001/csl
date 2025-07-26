@@ -414,7 +414,7 @@ sp0
 cOff
 fOn
 'fw var
-: wtdInclude "namespaces/types.csl" include ;
+: wtdInclude "namespaces/test/compiler/types.csl" include ;
 wtdInclude
 using 
 stateAll

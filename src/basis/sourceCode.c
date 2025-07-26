@@ -726,9 +726,13 @@ Get_SourceCodeWord ( Word * word )
             if ( GetState ( debugger, DBG_STEPPING ) ) scWord = debugger->w_Word ;
             if ( ! scWord )
             {
+#if 0                
                 scWord = ( GetState ( _Compiler_, ( COMPILE_MODE | ASM_MODE ) ) ?
                     _Context_->CurrentWordBeingCompiled : _CSL_->LastFinished_Word ?
                     _CSL_->LastFinished_Word : _CSL_->SC_Word ? _CSL_->SC_Word : _Compiler_->Current_Word_Create ) ;
+#endif            
+                // allow DBG_PrepareShowInfoString to show PSCS_Using_ReadlinerInputString
+                scWord = GetState ( _Compiler_, ( COMPILE_MODE | ASM_MODE ) ) ? _Context_->CurrentWordBeingCompiled : 0 ;
             }
             if ( ! scWord )
             {

@@ -54,7 +54,7 @@ void
 CSL_Time ( )
 {
     int64 timer = DataStack_Pop ( ) ;
-    System_Time (_Context_->System0, timer, ( char* ) "Timer") ;
+    System_Time ( _Context_->System0, timer, ( char* ) "Timer" ) ;
 }
 
 void
@@ -69,9 +69,15 @@ ShellEscape ( byte * str )
 {
     int status ;
     status = system ( str ) ;
+    if ( status == - 1 )
+    {
+        perror ( "\nsystem\n" ) ;
+        iPrintf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
+        CSL_Quit () ;
+    }
     if ( Verbosity ( ) > 1 ) printf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
     Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
-    CSL_NewLine () ;
+    //CSL_NewLine ( ) ;
     //_O_->Pblc = '\n' ;
     _DoPrompt ( ) ;
 }
@@ -154,7 +160,7 @@ shell ( )
 void
 CSL_ChangeDirectory ( )
 {
-    byte * filename = _Lexer_LexNextToken_WithDelimiters ( _Lexer_, 0, 1, 0, 1, LEXER_ALLOW_DOT ) ; 
+    byte * filename = _Lexer_LexNextToken_WithDelimiters ( _Lexer_, 0, 1, 0, 1, LEXER_ALLOW_DOT ) ;
     if ( String_Equal ( filename, ".." ) )
     {
         byte * b = Buffer_New_pbyte ( BUFFER_SIZE ) ;

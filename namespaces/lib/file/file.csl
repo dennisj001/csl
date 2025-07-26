@@ -1,3 +1,8 @@
+
+#ifndef _FILE_CSL_
+#define _FILE_CSL_
+5
+
 Lib
 'File namespace
 File
@@ -22,5 +27,7 @@ cOff
 #endif
 //pwi fwriteTxtToFname
 
-fwriteTxtToFname ( "/home/dennisj/csl/namespaces/lib/hey1.txt" "hey1" )
+//fwriteTxtToFname ( "/home/dennisj/csl/namespaces/lib/hey1.txt" "hey1" )
 
+2 + 7 assertStkChk // stack checking
+#endif

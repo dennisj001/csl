@@ -403,7 +403,7 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
                 CSL_Exception ( SYNTAX_ERROR, "\nLocal variables syntax error : no closing parenthesis ')' found", 1 ) ;
                 break ;
             }
-            if ( ! lispMode )
+            if (( ! lispMode ) && ( ! objectTypeNamespace ))
             {
                 word = Finder_Word_FindUsing ( finder, token, 1 ) ; // 1: saveQns ?? find after Literal - eliminate making strings or numbers words ??
                 if ( word && ( word->W_ObjectAttributes & ( NAMESPACE | CLASS | STRUCTURE ) ) ) //&& ( CharTable_IsCharType ( ReadLine_PeekNextChar ( lexer->ReadLiner0 ), CHAR_ALPHA ) ) )
@@ -434,9 +434,10 @@ _CSL_Parse_LocalsAndStackVariables ( int64 svf, int64 lispMode, ListObject * arg
                 numberOfRegisterVariables ++ ;
                 numberOfVariables -- ;
             }
-            ///if ( ! objectTypeNamespace )
-            word = DataObject_New ( LOCAL_VARIABLE, 0, token, 0, objectAttributes, lispAttributes, 0, 0, 0, DICTIONARY, - 1, - 1 ) ;
-            //if ( lispMode ) 
+            Namespace * svQns = finder->QualifyingNamespace ;
+            Finder_SetQualifyingNamespace ( finder, localsNs ) ;
+            word = DataObject_New ( LOCAL_VARIABLE, 0, token, 0, objectAttributes, lispAttributes, 0, 0, localsNs, DICTIONARY, - 1, - 1 ) ;
+            Finder_SetQualifyingNamespace ( finder, svQns ) ; 
             dllist_AddNodeToTail ( localsNs->W_List, ( dlnode* ) word ) ;
             if ( _Context_->CurrentWordBeingCompiled ) _Context_->CurrentWordBeingCompiled->W_TypeSignatureString [numberOfVariables ++] = '_' ;
             if ( ( regFlag == true ) && ( regToUseIndex < NUM_CSL_REGS ) )
