@@ -68,6 +68,7 @@ void
 ShellEscape ( byte * str )
 {
     int status ;
+    //CSL_NewLine ( ) ;
     status = system ( str ) ;
     if ( status == - 1 )
     {
@@ -79,7 +80,7 @@ ShellEscape ( byte * str )
     Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
     //CSL_NewLine ( ) ;
     //_O_->Pblc = '\n' ;
-    _DoPrompt ( ) ;
+    //_DoPrompt ( ) ;
 }
 
 #if 0

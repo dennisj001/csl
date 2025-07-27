@@ -38,8 +38,8 @@ void
 _xdgOpenFile ( file | abuffer ) 
 {
     abuffer = bufferNew ( 4000 ) ; 
-    sprintf ( abuffer, "xdg-open %s", file ) ;
-    printf ( "\n%s", abuffer ) ;
+    sprintf ( abuffer, "\nxdg-open %s", file ) ;
+    printf ( "%s", abuffer ) ;
     _sh ( abuffer ) ;
 }
 pwi _xdgOpenFile
@@ -54,7 +54,7 @@ cOff
 fOn
 : xo ( fname ftxt ) fname @ ftxt @ _C_.xdgOpenFile ;
 //: xoT fHtml @ tHtml @ xo fTxt @ tTxt @ xo ;
-: xoT "./temp.html" tHtml @ xo "./temp.txt" tTxt @ xo ;
+: xoT "./temp.html" tHtml @ xo ; //"./temp.txt" tTxt @ xo ;
 xoT
 //fHtml @ tHtml @ xo
 //fTxt @ tTxt @ xo

@@ -181,7 +181,8 @@ _DoPrompt ( )
 {
     //&&  (_ReadLiner_->InputKeyedCharacter != '\n' ) 
     //if ( ( _O_->Pbf8[0] != _ReadLiner_->NormalPrompt[0] ) && ( _O_->Pblc != '\n' ) ) CSL_PrintChar ( '\n' ) ;
-    if ( _O_->Pblc != '\n' ) CSL_PrintChar ( '\n' ) ;
+    //if ( ( ! _O_->Pbf8[0] ) || ( _O_->Pblc != '\n' ) ) CSL_PrintChar ( '\n' ) ;
+    if ( ( _O_->Pblc != '\n' ) ) CSL_PrintChar ( '\n' ) ;
     iPrintf ( "%s", ( char* ) _ReadLiner_->NormalPrompt ) ;
     SetState ( _O_, OVT_PROMPT_DONE, true ) ;
 }
@@ -190,7 +191,7 @@ void
 DoPrompt ( )
 {
     //if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || (_O_->Pblc == '\n') || GetState ( _Lexer_, END_OF_LINE ) )   
-    if ( ( ! _O_->Pbf8[0] ) || ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) || GetState ( _Debugger_, DBG_COMMAND_LINE ) )
+    if ( ( ! GetState ( _O_, OVT_PROMPT_DONE ) ) || GetState ( _Lexer_, END_OF_LINE ) || GetState ( _Debugger_, DBG_COMMAND_LINE ) )
         //if ( GetState ( _Lexer_, END_OF_LINE ) )   
     {
         _DoPrompt ( ) ;
