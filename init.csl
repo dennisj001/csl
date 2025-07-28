@@ -487,13 +487,9 @@ Interpreter
 '_defined '_findUsing find alias 
 //' defined '_findUsing find alias immediate 
 C Compiler Int Lexer
-
-: orpfile ( name | file input result )
-    input 0 =
-    "open/read/print :: " ps name @ ps nl
-    file name @ fopen =
-    nl { result file @ input 1 fread = input @ emit } { result @ 1 == } doWhile 
-    file @ fclose
+: orpfile ( name ) //| file input result )
+    name @ freadToString
+    ps
 ; prefix
 //'orpfile find wdiss sp0
 Root

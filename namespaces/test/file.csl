@@ -1,0 +1,17 @@
+5
+#if 1 // already added to .init.csl
+C Compiler Int Lexer
+: orpfile ( name ) 
+    name @ freadToString
+    ps
+; prefix
+#endif 
+' orpfile find wdiss //pause
+orpfile ( "namespaces/test/file.csl" )
+//pause
+: hi 1 2 + p ;
+: hey hi hi ;
+: heey hey hey ;
+heey
+2 + 7 assertStkChk // stack checking
+

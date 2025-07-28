@@ -117,6 +117,7 @@ void
 File_Read ( )
 {
     int64 size = DataStack_Pop ( ) ;
+    //int64 size = _File_Size ( file ) ;
     byte * ptr = ( byte * ) DataStack_Pop ( ) ;
     FILE * file = ( FILE * ) DataStack_Pop ( ) ;
     int64 result = fread ( ptr, size, 1, file ) ;

@@ -77,22 +77,8 @@ ShellEscape ( byte * str )
         CSL_Quit () ;
     }
     if ( Verbosity ( ) > 1 ) printf ( ( char* ) c_gd ( "\n_ShellEscape : command = \"%s\" : returned %d.\n" ), str, status ) ;
-    Lexer_Init ( _Lexer_, 0, 0, CONTEXT ) ;
-    //CSL_NewLine ( ) ;
-    //_O_->Pblc = '\n' ;
-    //_DoPrompt ( ) ;
+    SetState ( _Lexer_, END_OF_LINE, true ) ; // get a prompt
 }
-
-#if 0
-
-void
-ShellEscape ( byte * str )
-{
-    ShellEscape ( ( char* ) str ) ;
-    //SetState ( _Context_->Lexer0, LEXER_DONE, true ) ;
-    //_OVT_Ok ( true ) ;
-}
-#endif
 
 void
 ShellEscape_Postfix ( )
