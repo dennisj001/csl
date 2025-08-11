@@ -1,0 +1,25 @@
+5
+//#ifndef _JS_CSL_
+//#define _JS_CSL_
+
+Lib
+Array
+File
+
+cOn
+Lexer
+void node-p ( txt, poftxt | abuffer )
+{
+    abuffer = bufferNew ( 4000 ) ;
+    sprintf ( abuffer, "node -p \" %s \" > %s", txt, poftxt ) ;
+    _sh ( abuffer ) ;
+    freadToString ( poftxt ) ;
+    nl ; space ; ps ;
+}
+node-p ( "6.7 * 8.345 / 2.1309", "./node.txt") ;
+bnOn
+6.7 * 8.345 / 2.1309 p
+bnOff
+cOff
+
+//#endif

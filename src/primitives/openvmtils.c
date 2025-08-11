@@ -134,7 +134,7 @@ OpenVmTil_Print_DataSizeofInfo ( int64 flag )
 void
 OVT_Exit ( )
 {
-    if ( Verbosity () > 0 ) iPrintf ( "bye\n" ) ;
+    if ( Verbosity () > 0 ) iPrintf ( "\nbye\n" ) ;
     //LinuxInit ( ) ; // reset termios
 
     exit ( 0 ) ;

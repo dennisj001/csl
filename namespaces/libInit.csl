@@ -3,7 +3,7 @@ Root
 'Lib namespace
 Lib
 //using pause
-: libNamespaces lbforth Root PreProcessor Experimental Locals MemorySpace Array Logic Bits Asm File System Colors Memory 
+: libNamespaces Root PreProcessor Experimental Locals MemorySpace Array Logic Bits Asm File System Colors Memory 
     OpenVmTil Stack List DObject Reserved Compiler Compiling StartupMacros User String Forth Namespace Combinators Macro 
     Word Io byte C int64 Debug Interpreter Int Lexer Class void Dlsym Defines libc Shell Lib ;
 libNamespaces
@@ -12,9 +12,9 @@ libNamespaces
 : fileInc "namespaces/lib/file/file.csl" include ;
 : arrayInc "namespaces/lib/array/array.csl" include ;
 : webInc "namespaces/lib/web/html.csl" include ;
+: jsInc "namespaces/lib/web/js.csl" include ;
 
 //verbosity 0 =
-listInc fileInc arrayInc webInc
+listInc fileInc arrayInc webInc jsInc
 //verbosity 1 =
-//html2
 

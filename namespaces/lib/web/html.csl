@@ -34,10 +34,11 @@ fTxt "./namespaces/lib/web/temp.txt" =
 
 cOn scOn
 // xdg-open can open txt files a well as html files and other os files according to extension, selected by user in os
+#define K 1000
 void 
 _xdgOpenFile ( file | abuffer ) 
 {
-    abuffer = bufferNew ( 4000 ) ; 
+    abuffer = bufferNew ( 4 * K ) ; 
     sprintf ( abuffer, "\nxdg-open %s", file ) ;
     printf ( "%s", abuffer ) ;
     _sh ( abuffer ) ;
@@ -56,23 +57,6 @@ fOn
 //: xoT fHtml @ tHtml @ xo fTxt @ tTxt @ xo ;
 : xoT "./temp.html" tHtml @ xo ; //"./temp.txt" tTxt @ xo ;
 xoT
-//fHtml @ tHtml @ xo
-//fTxt @ tTxt @ xo
 fOff
-cOn
-Lexer
-void node-p ( txt, poftxt | abuffer ) 
-{
-    abuffer = bufferNew ( 4000 ) ; 
-    sprintf ( abuffer, "node -p \" %s \" > %s", txt, poftxt ) ;
-    _sh ( abuffer ) ;
-    freadToString ( poftxt ) ;
-    nl ; space ; ps ;
-}
-node-p ( "6.7 * 8.345 / 2.1309", "./node.txt") ;
-bnOn
-6.7 * 8.345 / 2.1309 p
-bnOff
-cOff
 2 + 7 assertStkChk // stack checking
 //#endif

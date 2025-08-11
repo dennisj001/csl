@@ -20,11 +20,11 @@
 #define _O_CodeSpace _O_->MemorySpace0->CodeSpace
 #define _LC_ _O_->OVT_LC 
 
-#define _Compile_Int8( value ) ByteArray_AppendCopyInteger ( _O_CodeByteArray, 1, value )
-#define _Compile_Int16( value ) ByteArray_AppendCopyInteger ( _O_CodeByteArray, 2, value )
-#define _Compile_Int32( value ) ByteArray_AppendCopyInteger ( _O_CodeByteArray, 4, value )
-#define _Compile_Int64( value ) ByteArray_AppendCopyInteger ( _O_CodeByteArray, 8, value )
-#define _Compile_Cell( value ) ByteArray_AppendCopyInteger ( _O_CodeByteArray, sizeof(int64), value )
+#define _Compile_Int8( value ) ByteArray_AppendInteger ( _O_CodeByteArray, 1, value )
+#define _Compile_Int16( value ) ByteArray_AppendInteger ( _O_CodeByteArray, 2, value )
+#define _Compile_Int32( value ) ByteArray_AppendInteger ( _O_CodeByteArray, 4, value )
+#define _Compile_Int64( value ) ByteArray_AppendInteger ( _O_CodeByteArray, 8, value )
+#define _Compile_Cell( value ) ByteArray_AppendInteger ( _O_CodeByteArray, sizeof(int64), value )
 #define Here ( _ByteArray_Here ( _O_CodeByteArray ) )
 #define _SetHere( address )  _ByteArray_SetHere ( _O_CodeByteArray, address ) 
 #define SetDebuggerPreHere( address ) _Debugger_->PreHere = (address) 

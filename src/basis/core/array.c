@@ -119,13 +119,93 @@ _ByteArray_SetStartIndex ( ByteArray * ba, byte * address )
     ba->StartIndex = address ;
 }
 
+void
+Array_Set ( byte * address, int64 size, int64 data )
+{
+    if ( address )
+    {
+        switch ( size )
+        {
+            case 1:
+            {
+                *( ( int8* ) address ) = ( byte ) data ;
+                break ;
+            }
+            case 2:
+            {
+                *( ( int16* ) address ) = ( int16 ) data ;
+                break ;
+            }
+            case 4:
+            {
+                *( ( int32* ) address ) = ( int32 ) data ;
+                break ;
+            }
+            case 8:
+            {
+                *( ( int64* ) address ) = ( int64 ) data ;
+                break ;
+            }
+            default:
+            {
+                memcpy ( address, (byte*) data, size ) ;
+                break ;
+            }
+        }
+    }
+    else Error ( "Array_Set : Out of memory", ABORT ) ;
+}
+
+int8
+Array_Get_1_byte ( byte * address, int64 size )
+//Array_Get_8bits ( byte * address, int64 size )
+{
+    if ( address )
+    {
+        return *( ( int8* ) address ) ;
+    }
+}
+
+int16
+Array_Get_2_bytes ( byte * address, int64 size )
+//Array_Get_16bits ( byte * address, int64 size )
+{
+    if ( address )
+    {
+        return *( ( int16* ) address ) ;
+    }
+}
+
+int32
+Array_Get_4_bytes ( byte * address, int64 size )
+//Array_Get_32bits ( byte * address, int64 size )
+{
+    if ( address )
+    {
+        return *( ( int32* ) address ) ;
+    }
+}
+
+int64
+Array_Get_8_bytes ( byte * address, int64 size )
+//Array_Get_64bits ( byte * address, int64 size )
+{
+    if ( address )
+    {
+        return *( ( int64* ) address ) ;
+    }
+}
+
 // ! TODO : should be macros here !
 
 void
-ByteArray_AppendCopyInteger ( ByteArray * ba, int64 size, int64 data ) // size in bytes
+ByteArray_AppendInteger ( ByteArray * ba, int64 size, int64 data ) // size in bytes
 {
     _ByteArray_AppendSpace ( ba, size ) ; // size in bytes
     byte * address = ba->StartIndex ;
+#if 1
+    Array_Set ( address, size, data ) ;
+#else    
     if ( address )
     {
         switch ( size )
@@ -153,6 +233,7 @@ ByteArray_AppendCopyInteger ( ByteArray * ba, int64 size, int64 data ) // size i
         }
     }
     else Error ( "ByteArray_AppendCopyItem : Out of memory", ABORT ) ;
+#endif
 }
 
 void

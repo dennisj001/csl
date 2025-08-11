@@ -3,9 +3,9 @@
 #define _ARRAY_CSL_
 Lib
 
-typedef struct { byte buf [ 2048 ] ; } Buffer ;
 
 #if 0
+//typedef struct { byte buf [ 2048 ] ; } Buffer ;
 cOn
 void 
 xdgOpenFile ( txt | buffer ) 
@@ -20,4 +20,5 @@ xdgOpenFile ( "hi" ) ;
 pause
 cOff
 #endif
+
 #endif
