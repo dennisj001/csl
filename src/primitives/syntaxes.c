@@ -135,8 +135,6 @@ CSL_End_C_Block ( )
     {
         CSL_WordInitFinal ( ) ;
         CSL_Prefixable ( ) ;
-    if ( Is_DebugOn ) 
-        Pause () ;
     }
     else
     {

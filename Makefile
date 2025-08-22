@@ -155,8 +155,8 @@ optimize :
 	#-rm bin/csl*
 	#make optimize1
 	#make optimize2
-	#make -j 20 optimize3
-	make -j 20 
+	make -j 20 optimize3
+	#make -j 20 
 	#make optimize1
 	#make optimize2
 	#make -j 20 optimize3

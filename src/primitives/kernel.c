@@ -70,7 +70,7 @@ _lbforth ( void )
 }
 
 void
-lbforth ( ) //Context * cntx , byte * initFilename )
+lbforth ( ) 
 {
     SetState ( _Context_, LBFORTH_MODE, true ) ;
     iPrintf ( "\ncsl lbforth : type 'bye' to exit lbforth : Lars Brinkhoff\n" ) ;

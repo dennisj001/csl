@@ -725,7 +725,7 @@ CO_X_OpEqual ( Compiler * compiler, block op )
     Word * zero = CSL_WordList ( 0 ) ;
     uint8 valueReg = ACC, mdFlag = 0, shFlag = 0, mod, rm ;
     int64 disp ;
-    if ( Is_DebugOn ) _CSL_SC_WordList_Show ( 0, 0, 0 ) ;
+    //if ( Is_DebugOn ) _CSL_SC_WordList_Show ( 0, 0, 0 ) ;
 
     CO_GetWordStackState ( compiler, zero ) ;
     CompileOptimizeInfo * optInfo = compiler->OptInfo ; // nb. after _Compiler_GetOptimizeState
@@ -905,7 +905,7 @@ void
 CO_X_Equal ( Compiler * compiler, int64 op, int lvalueSize )
 {
     Word * zero = CSL_WordList ( 0 ) ;
-    if ( Is_DebugOn ) _CSL_SC_WordList_Show ( 0, 0, 1 ) ;
+    //if ( Is_DebugOn ) _CSL_SC_WordList_Show ( 0, 0, 1 ) ;
     CompileOptimizeInfo * optInfo = CO_GetWordStackState ( compiler, zero ) ; //compiler->OptInfo ; // nb. after _Compiler_GetOptimizeState
     CO_SetStandardPreHere_ForDebugDisassembly ( compiler ) ;
     CO_SetupArgsToStandardLocations ( compiler ) ;
