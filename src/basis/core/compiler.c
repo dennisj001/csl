@@ -5,29 +5,24 @@
 // this information is used by the compiler, optimizer and the debugger
 
 Word *
-_CopyDuplicateWord ( Word * word0, Boolean complete )
+_CopyDuplicateWord ( Word * word0 )
 {
     Word * wordc ;
     wordc = Word_Copy ( word0, DICTIONARY ) ; // use DICTIONARY since we are recycling these anyway
     _dlnode_Init ( ( dlnode * ) wordc ) ; // necessary!
     wordc->W_ObjectAttributes |= ( uint64 ) RECYCLABLE_COPY ;
     wordc->StackPushRegisterCode = 0 ; // nb. used! by the rewriting optInfo
-    if ( complete )
-    {
-        wordc->WL_OriginalWord = Word_GetOriginalWord ( word0 ) ;
-        Word_SetLocation ( wordc ) ;
-    }
+    wordc->WL_OriginalWord = Word_GetOriginalWord ( word0 ) ;
+    Word_SetLocation ( wordc ) ;
     return wordc ;
 }
 
 Word *
-CopyDuplicateWord ( dlnode * anode, Word * word0 )
+CheckForAndCopyDuplicateWord ( dlnode * anode, Word * word0 )
 {
     Word *cpdword = 0, * wordn = ( Word* ) dobject_Get_M_Slot ( ( dobject* ) anode, SCN_T_WORD ) ;
     int64 iuoFlag = dobject_Get_M_Slot ( ( dobject* ) anode, SCN_IN_USE_FLAG ) ;
-    if ( iuoFlag && ( word0 == wordn ) ) cpdword = _CopyDuplicateWord ( word0, 1 ) ;
-    //else 
-    //if ( word0 == wordn ) cpdword = _CopyDuplicateWord ( word0, 1 ) ;
+    if ( iuoFlag && ( word0 == wordn ) ) cpdword = _CopyDuplicateWord ( word0 ) ;
     return cpdword ;
 }
 
@@ -35,14 +30,9 @@ Word *
 _CSL_CopyDuplicates ( Word * word0 )
 {
     Word * word1, *wordToBePushed ;
-    //if (( word0->W_MorphismAttributes & ( KEYWORD | CSL_WORD | T_LISP_SYMBOL ) ) ||  ( word0->W_ObjectAttributes & ( LITERAL ) ) ) word1 = _CopyDuplicateWord ( word0, 1 ) ;
-#if 1
     if ( ( word0->W_MorphismAttributes & ( KEYWORD | CSL_WORD | T_LISP_SYMBOL ) ) ||
-        ( word0->W_AllocType & ( OBJECT_MEM | INTERNAL_OBJECT_MEM | LISP_TEMP | TEMPORARY | COMPILER_TEMP ) ) ) word1 = _CopyDuplicateWord ( word0, 1 ) ;
-    else word1 = ( Word * ) dllist_Map1_WReturn ( _CSL_->CSL_N_M_Node_WordList, ( MapFunction1 ) CopyDuplicateWord, ( int64 ) word0 ) ;
-#else    
-    word1 = _CopyDuplicateWord ( word0, 1 ) ;
-#endif    
+        ( word0->W_AllocType & ( OBJECT_MEM | INTERNAL_OBJECT_MEM | LISP_TEMP | TEMPORARY | COMPILER_TEMP ) ) ) word1 = _CopyDuplicateWord ( word0 ) ;
+    else word1 = ( Word * ) dllist_Map1_WReturn ( _CSL_->CSL_N_M_Node_WordList, ( MapFunction1 ) CheckForAndCopyDuplicateWord, ( int64 ) word0 ) ;
     if ( word1 ) wordToBePushed = word1 ;
     else wordToBePushed = word0 ;
     return wordToBePushed ;
@@ -54,10 +44,7 @@ Compiler_CopyDuplicatesAndPush ( Word * word0, int64 tsrli, int64 scwi )
     Word *wordp = 0 ;
     if ( word0 )
     {
-        if ( GetState ( _Compiler_, ( COMPILE_MODE | ASM_MODE | ARRAY_MODE ) ) ) // don't we want to copy in non-compile mode too ??
-        {
-            wordp = _CSL_CopyDuplicates ( word0 ) ;
-        }
+        if ( GetState ( _Compiler_, ( COMPILE_MODE | ASM_MODE | ARRAY_MODE ) ) ) wordp = _CSL_CopyDuplicates ( word0 ) ;
         else wordp = word0 ;
         if ( ( word0->W_MorphismAttributes & ( DEBUG_WORD | INTERPRET_DBG ) ) || (
             word0->W_TypeAttributes & ( W_COMMENT | W_PREPROCESSOR ) ) || GetState ( _Context_, CONTEXT_PREPROCESSOR_MODE ) ) return word0 ;
@@ -123,7 +110,7 @@ _Compiler_GetCodeSpaceHere ( )
 void
 Compiler_Push_LHS ( Word * word )
 {
-    Stack_Push ( _Compiler_->LHS_Word, (int64) word ) ;
+    Stack_Push ( _Compiler_->LHS_Word, ( int64 ) word ) ;
     int64 depth = Stack_Depth ( _Compiler_->LHS_Word ) ;
     if ( depth == 1 ) CSL_TypeStackReset ( ) ;
     //else oPrintf ( " stack depth = %d", depth ) ;
@@ -154,7 +141,7 @@ Compiler_PreviousNonDebugWord ( int64 startIndex )
 {
     Word * word ;
     int64 i = startIndex ;
-    if ( Verbosity () > 2 ) CSL_SC_WordList_Show ( ) ;
+    if ( Verbosity ( ) > 2 ) CSL_SC_WordList_Show ( ) ;
     for ( ; ( word = ( Word* ) CSL_WordList ( i ) ) ; i ++ )
     {
         if ( ( Symbol* ) word && ( ! ( word->W_MorphismAttributes & DEBUG_WORD ) ) ) break ;
@@ -343,23 +330,23 @@ void
 CSL_CompileAndRecord_Word0_PushReg ( Boolean reg, Boolean recordFlag )
 {
 
-    Word * word = CSL_WordList ( 0 );
-    _Word_CompileAndRecord_PushReg (word, reg, recordFlag , 0) ;
+    Word * word = CSL_WordList ( 0 ) ;
+    _Word_CompileAndRecord_PushReg ( word, reg, recordFlag, 0 ) ;
 }
 
 void
 CSL_CompileAndRecord_Word0_PushRegToUse ( )
 {
 
-    Word * word = CSL_WordList ( 0 );
-    _Word_CompileAndRecord_PushReg (word, word->RegToUse, true , 0) ;
+    Word * word = CSL_WordList ( 0 ) ;
+    _Word_CompileAndRecord_PushReg ( word, word->RegToUse, true, 0 ) ;
 }
 
 void
 CSL_CompileAndRecord_PushAccum ( )
 {
-    Word * word = CSL_WordList ( 0 );
-    _Word_CompileAndRecord_PushReg (word, ACC, true , 0) ;
+    Word * word = CSL_WordList ( 0 ) ;
+    _Word_CompileAndRecord_PushReg ( word, ACC, true, 0 ) ;
 }
 
 

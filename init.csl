@@ -293,7 +293,7 @@ Debug Macro
 : _s stack ; 
 : s stack ; immediate
 'rdi 'recycleDebugInfo find alias
-: rdim rdi mem ;
+: rdim mem rdi mem ;
 Word 
 : code definition ;
 C

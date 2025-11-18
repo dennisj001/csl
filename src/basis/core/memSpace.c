@@ -333,7 +333,7 @@ NBA_FreeChunkType ( Symbol * s, uint64 allocType, int64 exactFlag )
 MemorySpace *
 MemorySpace_Find ( byte * name )
 {
-    MemorySpace * ms = ( MemorySpace* ) _DLList_FindName_InOneNamespaceList ( _O_->MemorySpaceList, name ) ;
+    MemorySpace * ms = ( MemorySpace* ) DLList_FindName_InOneNamespaceList ( _O_->MemorySpaceList, name ) ;
     return ms ;
 }
 

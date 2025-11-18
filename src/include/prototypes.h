@@ -1207,8 +1207,8 @@ NamedByteArray *_OVT_Find_NBA(byte *name);
 void _OVT_MemList_FreeNBAMemory(NamedByteArray *nba, uint64 moreThan, int64 always);
 void NamedByteArray_Delete(NamedByteArray *nba, Boolean reinitFlag);
 /* src/basis/core/compiler.c */
-Word *_CopyDuplicateWord(Word *word0, Boolean complete);
-Word *CopyDuplicateWord(dlnode *anode, Word *word0);
+Word *_CopyDuplicateWord(Word *word0);
+Word *CheckForAndCopyDuplicateWord(dlnode *anode, Word *word0);
 Word *_CSL_CopyDuplicates(Word *word0);
 Word *Compiler_CopyDuplicatesAndPush(Word *word0, int64 tsrli, int64 scwi);
 byte *Compiler_IncrementCurrentAccumulatedOffset(Compiler *compiler, int64 increment);
@@ -1242,7 +1242,6 @@ void CSL_CompileAndRecord_Word0_PushRegToUse(void);
 void CSL_CompileAndRecord_PushAccum(void);
 /* src/basis/core/finder.c */
 Symbol *DLList_FindName_InOneNamespaceList(dllist *list, byte *name);
-Symbol *_DLList_FindName_InOneNamespaceList(dllist *list, byte *name);
 Symbol *DLList_FindName_InOneNamespace(Namespace *ns, byte *name);
 Symbol *_Finder_CompareDefinitionAddress(Symbol *symbol, byte *address);
 Symbol *_Finder_CompareDefinitionAddress_NoAlias(Symbol *symbol, byte *address);

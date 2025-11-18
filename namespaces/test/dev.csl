@@ -846,6 +846,7 @@ int64 te1 ( c | a, b ) { b = c ; a = b ; p ( b ) ; p ( a ) ; }
 te1 ( 3 ) ; //pause
 cOff
 #endif
+//mem pause
 rdim 
 namespaces
 //"\n gcc version info \n" ps

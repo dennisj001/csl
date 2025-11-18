@@ -9,7 +9,7 @@ Word *
 Context_DoTypeCast ( Context * cntx, Word * word )
 {
     CSL_WordLists_PopWord ( ) ;
-    word = _CopyDuplicateWord ( word, 1 ) ;
+    word = _CopyDuplicateWord (word) ;
     word->TypeNamespace = _Context_->TypeCastNamespace ;
     CSL_WordList_PushWord ( word ) ;
     cntx->TypeCastNamespace = 0 ;

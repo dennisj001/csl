@@ -567,7 +567,8 @@ dllist_Map1_WReturn ( dllist * list, MapFunction1 mf, int64 one )
     for ( node = dllist_First ( ( dllist* ) list ) ; node ; node = nextNode )
     {
         nextNode = dlnode_Next ( node ) ;
-        if ( rtrn = mf ( node, one ) ) break ;
+        if ( rtrn = mf ( node, one ) ) 
+            break ;
     }
     return rtrn ;
 }

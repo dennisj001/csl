@@ -9,12 +9,22 @@ DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
     return s ;
 }
 
+#if 0
 Symbol *
-_DLList_FindName_InOneNamespaceList ( dllist * list, byte * name )
+CheckWordAddress ( Node * node, Word * word ) //byte * address )
 {
-    Symbol * s = ( Symbol* ) Tree_Map_OneNamespace_OneArg ( ( Word* ) dllist_First ( list ), ( MapFunction_1 ) Symbol_CompareName, ( int64 ) name ) ;
+    Word *w = ( Word* ) dobject_Get_M_Slot ( ( dobject* ) node, SCN_T_WORD ) ;
+    if ( w == word ) return w  ; 
+    else return 0 ;
+}
+
+Symbol *
+_DLList_FindWord_InList ( dllist * list, Word * word )
+{
+    Symbol * s = ( Symbol* ) dllist_Map1_WReturn ( list, (MapFunction1) CheckWordAddress, (int64) word ) ;
     return s ;
 }
+#endif
 
 Symbol *
 DLList_FindName_InOneNamespace ( Namespace * ns, byte * name )
