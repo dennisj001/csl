@@ -165,12 +165,7 @@ CO_GetWordStackState ( Compiler * compiler, Word * word )
             if ( optInfo->wordArg2 )
             {
                 optInfo->xBetweenArg1AndArg2 = optInfo->wordn ;
-#if 0               
-                if ( ( optInfo->wordn->W_TypeAttributes & WT_C_SYNTAX ) && ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_EQUAL | CATEGORY_OP_STORE ) ) )
-                    optInfo->wordArg1 = optInfo->wordn ;
-#endif                
             }
-                //if ( optInfo->wordArg2 ) optInfo->xBetweenArg1AndArg2 = optInfo->wordn ;
             else optInfo->wordArg2 = optInfo->wordn ;
             break ; // if C_SyntaxOn assume value is in RAX else TOS //no optimization possible if ( ( ! optInfo->wordArg2 ) && ( IS_MORPHISM_TYPE ( optInfo->wordn ) ) )
         }
@@ -444,38 +439,21 @@ CO_WordArg2Op_Or_xBetweenArg1AndArg2 ( Compiler * compiler )
                 SetHere ( optInfo->wordArg2->Coding ) ;
                 optInfo->OptimizeFlag |= CO_IMM ;
                 optInfo->CO_Rm = DSP ;
-                //optInfo->CO_Reg = DSP ; // nb : cmp  reg must be RAX
                 optInfo->CO_Mod = MEM ;
                 optInfo->rtrn = 1 ;
             }
-#if 1           
             else if ( ! ( ( optInfo->opWord->W_MorphismAttributes & ( CATEGORY_OP_EQUAL ) ) && CO_EqualCheck ( compiler ) ) )
             {
                 Compiler_Word_SCHCPUSCA ( optInfo->wordArg2, 1 ) ;
-#if 1                
-                //if ( ( ! optInfo->xBetweenArg1AndArg2 ) && 
-                //    ( optInfo->xBetweenArg1AndArg2 && ( optInfo->xBetweenArg1AndArg2->StackPushRegisterCode) ) ) 
-                //if ( ( optInfo->wordArg2_Op && optInfo->wordArg2->StackPushRegisterCode ) || 
-                //    ( optInfo->xBetweenArg1AndArg2 && optInfo->xBetweenArg1AndArg2->StackPushRegisterCode ) || (! C_SyntaxOn ) )
-                // assume arg is on the stack - dsp[0]
-                //if ( ! (optInfo->xBetweenArg1AndArg2 && (optInfo->xBetweenArg1AndArg2->W_TypeAttributes & WT_C_SYNTAX) ))
                 {
                     //assume arg1 is ACC
                     Word_SetCoding ( optInfo->wordn, Here ) ;
                     Compile_Move_Reg_To_Reg ( OREG, ( optInfo->wordArg2 && ( optInfo->wordArg2->W_ObjectAttributes & REGISTER_VARIABLE ) ) ? optInfo->wordArg2->RegToUse : ACC, 0 ) ;
                     _Compile_Stack_PopToReg ( DSP, ACC ) ;
-                    //Debugger_ShowState ( _Debugger_, "optDbg" ) ;
-                    //_Debugger_ShowInfo ( _Debugger_, "optDbg", 0, 1 ) ;
-                    //Debugger_DoState ( _Debugger_ ) ;
-                    //DEBUG_SHOW ( optInfo->wordn, 0, 0 ) ;
                 }
-                //else assume arg is in RAX
-#endif                
                 optInfo->CO_Reg = ACC | REG_LOCK_BIT ; // REG_LOCK_BIT : let Setup_MachineCodeInsnParameters know we have a parameter for it in case of ACC == 0
                 optInfo->CO_Rm = OREG ;
-                //optInfo->rtrn = CO_DONE ; // new testing
             }
-#endif            
             else Word_Check_ReSet_To_Here_StackPushRegisterCode ( optInfo->wordArg2 ) ; // the rest of the code will be handled in CO_Equal
         }
     }
@@ -781,7 +759,7 @@ CO_X_OpEqual ( Compiler * compiler, block op )
             }
         }
         else CO_StandardArg ( srcWord, OREG, 0, 1, 0, true ) ; //nb! rvalue
-        CO_StandardArg ( lhsWord, OREG2, 0, 0, 0, true ) ; //nb! lvalue
+        //CO_StandardArg ( lhsWord, OREG2, 0, 0, 0, true ) ; //nb! lvalue
         CO_StandardArg ( lhsWord, ACC, 0, 1, 0, false ) ; //nb! rvalue
         if ( ! optInfo->lparen2 ) CO_StandardArg ( srcWord, OREG, 0, 1, 0, true ) ; //nb! rvalue
         valueReg = ACC ;

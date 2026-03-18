@@ -20,7 +20,7 @@ cc ( int amount int kinds-of-coins)
     else 
     { 
 #if 0    // hello : compiler needs work here?!
-        rtrn = cc ( amount, kinds-of-coins - 1) + 
+        d1: rtrn = cc ( amount, kinds-of-coins - 1) + 
                 cc (amount - first-denomination (kinds-of-coins), kinds-of-coins) ;
 #else        
         int rc1 = cc ( amount, kinds-of-coins - 1) ;

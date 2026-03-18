@@ -171,17 +171,6 @@ CFactorial3 ( void )
 }
 
 
-int64
-fd ( int koc)
-{
-   int64 rtrn  = 0 ;
-   if ( koc == 1) rtrn = 1 ;
-   else if ( koc == 2) rtrn = 5 ;
-   else if ( koc == 3) rtrn = 10 ;
-   else if ( koc == 4) rtrn = 25 ;
-   else if ( koc == 5) rtrn = 50 ;
-   return rtrn ;
-}
 //pwi fd sp0
 /*
 (define (cc amount kinds-of-coins)                                                                                                                        
@@ -193,6 +182,17 @@ fd ( int koc)
                      kinds-of-coins)
 ))))
 */
+int64
+fd ( int koc)
+{
+   int64 rtrn  = 0 ;
+   if ( koc == 1) rtrn = 1 ;
+   else if ( koc == 2) rtrn = 5 ;
+   else if ( koc == 3) rtrn = 10 ;
+   else if ( koc == 4) rtrn = 25 ;
+   else if ( koc == 5) rtrn = 50 ;
+   return rtrn ;
+}
 
 int64
 cc1 ( int64 amount, int64 koc)
@@ -212,6 +212,7 @@ countChangec ( int64 amount)
   int64 rtrn = cc1 ( amount, 5)  ;
   return rtrn ;
 }
+
 //pwi countchange
 void
 CSL_CountChange ()

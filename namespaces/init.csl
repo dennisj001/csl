@@ -521,7 +521,7 @@ sp0
 
 Root
 // rtw : recycle some test/debug words 
-: rtw "test" purgeAll "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
+: rtw "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
 #if OptimizeOn @
 : atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable 
 //pwi atoi 
@@ -609,8 +609,9 @@ Root
     DLLNode Buffer ;
 : lispInitNamespace "namespaces/test/compiler/lcinit.csl" ;
 : lisp lispInitNamespace _lisp ;  // demo of another way 
-//: lisp "namespaces/test/compiler/lcinit.csl" _lisp ;  
-
+//: lisp "namespaces/test/compiler/lcinit.csl" _lisp ; 
+: test2cT "namespaces/test/archive/test2c.csl" include ;
+ 
 //lisp
 //scOn
 #if DEBUG_ON 

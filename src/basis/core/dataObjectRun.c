@@ -127,41 +127,15 @@ _Do_Compile_Variable ( Word * word )
         if ( GetState ( cntx, IS_RVALUE ) ) Compile_GetVarLitObj_RValue_To_Reg ( word, ACC, 0 ) ;
         else
         {
-            //Compiler_Word_SCHCPUSCA ( word, 1 ) ;
             if ( ( word->W_ObjectAttributes & ( OBJECT | THIS | QID ) ) || GetState ( word, QID ) ) _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
-            else return ; //// this compilation is delayed to _CSL_C_Infix_Equal/Op
+            else return ; // this compilation is delayed to _CSL_C_Infix_Equal/Op
         }
     }
-#if 0
-    else _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
-
-    if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
-        _Word_CompileAndRecord_PushReg ( word, ( word->W_ObjectAttributes & REGISTER_VARIABLE ) ? word->RegToUse : ACC, true, 0 ) ;
-#elif 1    
     else if ( ! ( word->W_ObjectAttributes & REGISTER_VARIABLE ) ) _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
     if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
     {
         _Word_CompileAndRecord_PushReg ( word, ( word->W_ObjectAttributes & REGISTER_VARIABLE ) ? word->RegToUse : ACC, true, 0 ) ;
     }
-        //else if ( word->W_ObjectAttributes & REGISTER_VARIABLE ) _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
-#else    
-    else if ( word->W_ObjectAttributes & REGISTER_VARIABLE )
-    {
-        //_Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
-        if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
-        {
-            _Word_CompileAndRecord_PushReg ( word, word->RegToUse, true, 0 ) ;
-        }
-    }
-    else
-    {
-        _Compile_GetVarLitObj_LValue_To_Reg ( word, ACC, 0 ) ;
-        if ( ! Compiler_Var_Compile_LogicTest ( compiler ) )
-        {
-            _Word_CompileAndRecord_PushReg ( word, ACC, true, 0 ) ;
-        }
-    }
-#endif    
 }
 
 void
@@ -189,7 +163,6 @@ Do_Variable ( Word * word )
                 value = ( int64 ) word->W_PtrToValue ;
             }
             else value = ( int64 ) word->W_Value ;
-            //if ( ( ! Stack_Top (compiler->LHS_Word ) ) ) 
             Compiler_Push_LHS ( word ) ;
         }
         else
@@ -199,7 +172,6 @@ Do_Variable ( Word * word )
                 if ( GetState ( cntx, IS_RVALUE ) ) value = ( int64 ) * word->W_PtrToValue ;
                 else
                 {
-                    //if ( ! Stack_Top (compiler->LHS_Word ) ) 
                     Compiler_Push_LHS ( word ) ;
                     value = ( int64 ) word->W_PtrToValue ;
                 }
@@ -210,15 +182,8 @@ Do_Variable ( Word * word )
         if ( GetState ( cntx, IS_REVERSE_DOTTED ) && ( cntx->BaseObject && ( cntx->BaseObject != word ) ) ) TOS = value ;
         else DataStack_Push ( value ) ;
     }
-#if 0
-    if ( ( word->W_ObjectAttributes & ( C_TYPE | C_CLASS | STRUCT ) ) || GetState ( cntx, IS_FORWARD_DOTTED ) )
-        //Finder_SetQualifyingNamespace ( cntx->Finder0, word->TypeNamespace ) ;
-        Finder_SetQualifyingNamespace ( cntx->Finder0, word->TypeNamespace ? word->TypeNamespace : word ) ; //word->TypeNamespace ) ;
-#else    
-    //if ( ( word->W_ObjectAttributes & ( CLASS_TYPE ) ) || GetState ( cntx, IS_FORWARD_DOTTED ) ) Finder_SetQualifyingNamespace ( cntx->Finder0, word->TypeNamespace ) ;
     if ( ( word->W_ObjectAttributes & ( STRUCT | OBJECT | O_POINTER ) ) || GetState ( cntx, IS_FORWARD_DOTTED ) )
         Finder_SetQualifyingNamespace ( cntx->Finder0, word->TypeNamespace ? word->TypeNamespace : word ) ; //word->TypeNamespace ) ;
-#endif    
 }
 
 void

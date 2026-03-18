@@ -214,22 +214,22 @@
 #define CSL_REG_ORDER { RDI, RSI, R8D, R9D } 
 #define NUM_CSL_REGS 4      
 #define THRU_REG                R11D //(RegOrder(7)) 
-#define CALL_THRU_REG           THRU_REG                // R11D
+#define CALL_THRU_REG           R11D                // R11D
 #define SCRATCH_REG             R10D //(RegOrder(6)) 
-#define SREG                    SCRATCH_REG             // R10D
+#define SREG                    R10D             // R10D
 #define ACCUMULATOR_REG         RAX                     // rax
-#define ACC                     ACCUMULATOR_REG
+#define ACC                     RAX
 #define CPU_ACCUM               RAX
-#define ACCUM                   ACCUMULATOR_REG
+#define ACCUM                   RAX
 #define RETURN_REG              ACC
-#define RETURN_REG_2            RDX                     // rdx
 #define OPERAND_REG             RCX                     // rcx
-#define OP_REG                  OPERAND_REG
-#define OREG                    OPERAND_REG
 #define CPU_OREG                RCX
+#define OP_REG                  RCX
+#define OREG                    RCX
+#define RETURN_REG_2            RBX                     // rbx
 #define OPERAND_2_REG           RBX                     // rbx
-#define OREG2                   OPERAND_2_REG 
-#define TEMP_REG                OPERAND_2_REG 
+#define OREG2                   RBX
+#define TEMP_REG                RBX
 #define CPU_OREG2               RBX
 #define DIV_MUL_REG_2           RDX                     // rdx
 #if DSP_IS_GLOBAL_REGISTER 

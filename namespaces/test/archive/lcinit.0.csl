@@ -1,5 +1,5 @@
 (set verbosity 1)
-#if 0
+#if 1
 (( lambda ( x y ) ( + x y ) ) 3 4 ) 
 (define yfac (lambda (yy n) (if (< n 2) 1 (* n (yy yy (- n 1)))))) 
 (yfac yfac 10) nl
@@ -59,6 +59,7 @@ bnOff
       (fib-iter (+ a b) a (- count 1))))
 (fib 30)     
 //pause
+#if 1
 (define (count-change amount)                                                                                                                         
   (cc amount 5)) 
 (define (cc amount kinds-of-coins)                                                                                                                        
@@ -66,9 +67,9 @@ bnOff
         ((or (< amount 0) (= kinds-of-coins 0)) 0)                                                                                                        
         (else (+ (cc amount                                                                                                                               
                      (- kinds-of-coins 1))                                                                                                                
-                 (cc (- amount (first-denomination kinds-of-coins))
-                     kinds-of-coins)
-))))
+                 (cc (- amount                                                                                                                            
+                        (first-denomination kinds-of-coins))
+                     kinds-of-coins)))))
  
 (define (first-denomination kinds-of-coins)
   (cond ((= kinds-of-coins 1) 1)
@@ -76,8 +77,10 @@ bnOff
         ((= kinds-of-coins 3) 10)
         ((= kinds-of-coins 4) 25)
         ((= kinds-of-coins 5) 50))) 
-(count-change 100) // not compiled -- slow!!     
-//(count-change 1000) // impossible currently without TCO : tail call optimization    
+(count-change 100)     
+//(count-change 1000)     
+#endif
+
 (define ( A x y) 
     (cond 
         (( = y 0 ) 0 )

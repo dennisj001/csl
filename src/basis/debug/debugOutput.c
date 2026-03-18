@@ -648,8 +648,6 @@ CSL_Show_SourceCode_TokenLine ( Word * word, byte * prompt, int64 signal, byte *
             prompt, signal ? signalAscii : ( byte* ) " ", cc_location,
             "<literal>", cc_Token ) ; //, _O_->StartedTimes, _O_->SignalExceptionsHandled ) ;
     }
-    //int columns = atoi(getenv("COLUMNS"));
-    CSL_Show_ErrorCommandLine ( ) ;
     byte *cc_line = ( char* ) CSL_PrepareDbgShowInfoString ( word, token1, ( int64 ) Strlen ( obuffer ) ) ;
     if ( cc_line ) strncat ( obuffer, cc_line, BUFFER_IX_SIZE ) ;
     _Printf ( "%s", obuffer ) ;

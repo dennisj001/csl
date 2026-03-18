@@ -100,6 +100,7 @@ OperandSize ( int64 operand )
     else size = 8 ;
     return size ;
 }
+
 Boolean
 LispRegParameterOrder ( Boolean n )
 {
@@ -110,6 +111,7 @@ LispRegParameterOrder ( Boolean n )
 }
 
 // no difference at this point 
+
 Boolean
 LocalsRegParameterOrder_Init ( Boolean n )
 {
@@ -576,7 +578,7 @@ _Compile_optInfo_X_Group1 ( Compiler * compiler, int64 op )
     if ( ( optInfo->OptimizeFlag & CO_IMM ) && optInfo->CO_Imm )
     {
         //int64 imm = optInfo->CO_Imm ;
-        Compiler_Word_SCHCPUSCA ( optInfo->opWord, 1 ) ;
+        //Compiler_Word_SCHCPUSCA ( optInfo->opWord, 1 ) ;
         _Compile_X_Group1_Immediate ( op, optInfo->CO_Mod,
             optInfo->CO_Rm, optInfo->CO_Disp,
             optInfo->CO_Imm, OperandSize ( optInfo->CO_Imm ) ) ; //( imm >= 0x100000000 ) ? CELL : ( ( imm >= 0x100 ) ? 4 : 1 ) ) ;
@@ -591,6 +593,7 @@ _Compile_optInfo_X_Group1 ( Compiler * compiler, int64 op )
     }
 }
 
+#if 1
 void
 Compile_X_Group1 ( Compiler * compiler, int64 op )
 {
@@ -622,7 +625,46 @@ Compile_X_Group1 ( Compiler * compiler, int64 op )
         //DBI_OFF ;
     }
 }
+#elif 1 
+// won't a use of rbx with complex operands instead dsp
+void
+Compile_X_Group1 ( Compiler * compiler, int64 op )
+{
+    int64 optSetupFlag = CO_CheckOptimize ( compiler, 0 ) ;
+    CompileOptimizeInfo * optInfo = compiler->OptInfo ; //Compiler_CheckOptimize may change the optInfo
+    if ( optSetupFlag == CO_DONE ) return ;
+    else if ( optSetupFlag )
+    {
+        //DBI ;
+        if ( optInfo->CO_Rm == DSP ) // if the result is to a reg and not tos
+        {
+            if ( optInfo->xBetweenArg1AndArg2 ) _Compile_Move_StackN_To_Reg ( RETURN_REG_2, DSP, 0, CELL_SIZE ) ;
+            //if ( optInfo->CO_Dest_RegOrMem == MEM ) return ; //_Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->CO_Reg ) ; //return ;
+            //else if ( ( optInfo->CO_Dest_RegOrMem == REG ) && ( ! optInfo->xBetweenArg1AndArg2 ) ) _Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->CO_Reg, 0 ) ;
+        }
+        _Compile_optInfo_X_Group1 ( compiler, op ) ;
+#if 1        
+        Compiler_SetBiTttN ( _Context_->Compiler0, TTT_ZERO, N_0, GI_JCC_TO_FALSE ) ;
+        if ( optInfo->CO_Rm == DSP ) // if the result is to a reg and not tos
+        {
+            if ( optInfo->CO_Dest_RegOrMem == MEM ) return ; //_Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->CO_Reg ) ; //return ;
+            else if ( ( optInfo->CO_Dest_RegOrMem == REG ) && ( ! optInfo->xBetweenArg1AndArg2 ) ) _Compile_Move_Reg_To_StackN ( DSP, 0, optInfo->CO_Reg, 0 ) ;
+        }
+            //else if (( optInfo->wordArg1 ) && ( ! ( optInfo->wordArg1->W_ObjectAttributes & REGISTER_VARIABLE ) ) ) _Word_CompileAndRecord_PushReg ( optInfo->COIW[0], optInfo->CO_Reg, true ) ; // 0 : ?!? should be the exact variable 
+        else _Word_CompileAndRecord_PushReg ( optInfo->COIW[0], optInfo->CO_Reg, true, 0 ) ; // 0 : ?!? should be the exact variable 
+        //DBI_OFF ;
+#endif
+    }
+    else // this works on unoptimized code and should be example for other functions !?
+    {
+        //DBI_ON ;
 
+        _Compile_Stack_PopToReg ( DSP, RAX ) ;
+        _Compile_X_Group1 ( op, MEM, MEM, RAX, DSP, 0, 0, CELL_SIZE ) ; // result is on TOS
+        //DBI_OFF ;
+    }
+}
+#endif
 // Group2 : 0pcodes C0-C3/D0-D3
 // ROL RLR RCL RCR SHL SHR SAL SAR
 // mod := REG | MEM
@@ -882,7 +924,7 @@ _Compile_JumpToDisp ( int32 disp, byte insn )
 void
 Compile_JumpToAddress ( byte * jmpToAddr, byte insn ) // runtime
 {
-    int32 disp = CalculateOffsetForCallOrJump (Here, jmpToAddr, T_JMP , 0) ;
+    int32 disp = CalculateOffsetForCallOrJump ( Here, jmpToAddr, T_JMP, 0 ) ;
     _Compile_JumpToDisp ( disp, insn ) ;
 }
 
