@@ -1,6 +1,7 @@
 //logOn
 //_dbgOn 
-//ukseOn
+uksOn // UnknowStringIsErrorFlag
+ukspOn // UnknowStringPushedFlag
 //optimizeOff
 5 // stack checking marker
 #define DEBUG_ON 0
@@ -420,7 +421,12 @@ dscOn
 #else
 : assertStkChk _assertStkChk ; //"\n_assertStkChk : " ps stack pause ; 
 #endif
-Root Io
+Lisp OpenVmTil
+: lispOff "Lisp" notUsing "LispTemp" notUsing "LispDefines" notUsing ; //lcReset ;
+Root
+// rtw : recycle some test/debug words 
+: rtw "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
+Io
 : Error "\nerror :" ps location pause ;
 : tCSL "namespaces/ninit.csl" include ; // namespaces init
 : tc 2 ti 1 ti lispOff tCSL rtw ;
@@ -520,8 +526,6 @@ sp0
 //================================================================================
 
 Root
-// rtw : recycle some test/debug words 
-: rtw "hi" purge "hey" purge "heey" purgeAll "hey1" purge "hey2" purge "heey1" purge "heey2" purge "sp" purge "moe" purge ;
 #if OptimizeOn @
 : atoi ( s | i ) i libc.atoi (s) = return ( i @ ) ; prefixable 
 //pwi atoi 
@@ -964,3 +968,4 @@ cOff
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff
+//test2cT

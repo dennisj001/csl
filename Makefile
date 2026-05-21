@@ -216,7 +216,7 @@ cproto :
 	sudo apt-get install cproto
 
 TAR_OUT = -f ../csl.tar.xz *
-EXCLUDE = --exclude=nbproject --exclude=.vscode --exclude=misc --exclude=objects --exclude=build --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=*-gdb --exclude=*.png --exclude=*.o --exclude=*.kdev* --exclude=*.log --exclude=.csl.* --exclude=bin/cs*
+EXCLUDE = --exclude=nbproject --exclude=.vscode --exclude=misc --exclude=objects --exclude=build --exclude=mpfr* --exclude=.git --exclude=*.png --exclude=*-gdb --exclude=*.png --exclude=*.o --exclude=*.kdev* --exclude=*.log --exclude=.csl.* ##--exclude=bin/cs*
 tar.xz :	
 	tar -c --xz --exclude=archive $(EXCLUDE) $(TAR_OUT) 
 

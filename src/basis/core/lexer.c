@@ -32,11 +32,18 @@ _Lexer_ParseToken_ToWord ( Lexer * lexer, byte * token, int64 tsrli, int64 scwi 
     {
         if ( GetState ( _O_, OVT_UNKNOWN_STRING_IS_ERROR ) )
         {
-            Error ( "\nUnknown String Error", QUIT ) ;
-        }
-        else if ( ( _O_->Verbosity > 1 ) && GetState ( _O_, OVT_UNKNOWN_STRING_PUSHED ) ) // default - not needing to be set
-        {
-            iPrintf ( "\nNotice : \'%s\' at %s not a known word. Pushing it as string <literal> onto the stack. [ukspOn]", token, Context_Location ( ) ) ;
+            //if ( ( _O_->Verbosity > 1 ) && GetState ( _O_, OVT_UNKNOWN_STRING_PUSHED ) ) // default - not needing to be set
+#if 1            
+            if ( GetState ( _O_, OVT_UNKNOWN_STRING_PUSHED ) ) // default - not needing to be set
+            {
+                if ( _O_->Verbosity > 1 ) 
+                    iPrintf ( "\nNotice : \'%s\' at %s not a known word. Pushing it as string <literal> onto the stack. [ukspOn]", token, Context_Location ( ) ) ;
+            }
+            else
+#endif                
+            {
+                Error ( "\nUnknown String Error", QUIT ) ;
+            }
         }
     }
 #endif    

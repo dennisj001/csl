@@ -499,7 +499,7 @@ CPrimitive CPrimitives [] = {
     { "includesOnlyOff", 0, 0, 0, CSL_PP_IncludeFileOnly_Off, 0, 0, 0, "OpenVmTil", "Root" },
     //{ "showAllocated", 0, 0, 0, OVT_Mem_ShowAllocated, 0, 0, 0, "OpenVmTil", "Root" },
     { "ukspOn", 0, 0, 0, OVT_Set_UnknowStringPushedFlag, 0, 0, 0, "OpenVmTil", "Root" },
-    { "ukseOn", 0, 0, 0, OVT_Set_UnknowStringIsErrorFlag, 0, 0, 0, "OpenVmTil", "Root" },
+    { "uksOn", 0, 0, 0, OVT_Set_UnknowStringIsErrorFlag, 0, 0, 0, "OpenVmTil", "Root" },
     { "uksOff", 0, 0, 0, OVT_UnSet_UnknowStringFlag, 0, 0, 0, "OpenVmTil", "Root" },
     { "_openvmtil", 0, 0, 0, _OVT_openvmtil, 0, 0, 0, "OpenVmTil", "Root" },
     { "openvmtil", 0, 0, 0, OVT_openvmtil, 0, 0, 0, "OpenVmTil", "Root" },
