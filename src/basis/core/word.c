@@ -31,7 +31,7 @@ Word_Morphism_Run ( Word * word )
         //word->W_UseCount ++ ;
         _O_->DebugOutputFlag &= ~ 1 ;
         if ( GetState ( _LC_, LC_DEBUG_ON ) || Is_DebugModeOn ) DEBUG_SETUP ( word, 0 ) ;
-#if DEBUG
+#if 0 //DEBUG
         _dbg ( ) ; // DEBUG
 #endif        
         Block_Eval ( word->Definition ) ;

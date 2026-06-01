@@ -942,12 +942,12 @@ Debugger_TableSetup ( Debugger * debugger )
     debugger->CharacterFunctionTable [ 40 ] = _Debugger_ShowOff ;
     debugger->CharacterFunctionTable [ 41 ] = _Debugger_ShowOn ;
     debugger->CharacterFunctionTable [ 42 ] = Debugger_UdisToggle ;
-#if DEBUG    
+#if 0 //DEBUG    
     debugger->CharacterFunctionTable [ 43 ] = Debugger_Dbg ;
 #endif    
 }
 
-#if DEBUG
+#if 0 //DEBUG
 
 void
 Debugger_Dbg ( Debugger * debugger )

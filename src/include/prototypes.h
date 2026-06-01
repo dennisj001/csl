@@ -968,7 +968,7 @@ int64 DataStack_Overflow(void);
 int64 DataStack_Underflow(void);
 void DataStack_Check(void);
 int64 DataStack_Depth(void);
-void _CSL_PrintDataStack(void);
+void _CSL_PrintDataStack(byte *description);
 void CSL_PrintDataStack(void);
 void CSL_PrintStackDepth(void);
 void Set_DebuggerDspReg_FromDspReg(void);
@@ -1745,6 +1745,7 @@ void CSL_LocalVariablesBegin(void);
 Boolean ScanParametersForREGvars(void);
 Namespace *_CSL_Parse_LocalsAndStackVariables(int64 svf, int64 lispMode, ListObject *args, Stack *nsStack, Namespace *localsNs);
 /* src/basis/debug/_debug.c */
+void _dbg(int64 index, int64 one);
 byte *JccInstructionAddress_2Byte(byte *address);
 byte *JccInstructionAddress_1Byte(byte *address);
 byte *JumpCallInstructionAddress(byte *address);
@@ -1839,6 +1840,7 @@ void Debugger_ShowTypeWordStack(Debugger *debugger);
 void Debugger_Exit(Debugger *debugger);
 void Debugger_Wdiss(Debugger *debugger);
 void Debugger_TableSetup(Debugger *debugger);
+void Debugger_Dbg(Debugger *debugger);
 /* src/basis/interpreter.c */
 void Interpreter_Init(Interpreter *interp);
 Interpreter *Interpreter_New(uint64 allocType);

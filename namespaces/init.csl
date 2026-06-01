@@ -687,20 +687,8 @@ cOff
 
 //stringMacrosOff
 //mem
-//scOn d: : hipt ( a b | c ) a @ b @ + c ! c @ p return ( c @ ) ; pwi hipt 2 3 hipt 5 _assert 
-;d
 #if 0 //DEBUG_ON 
-Forth
-: _fib1cr ( n ) n 2 < if n @ else n  n @ 1 - = _fib1cr n n @ 2 - = _fib1cr + endif ;
-c_syntaxOn
-int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; }  }
-pwi _fib1c
-pwi _fib1cr
-_fib1c (20) ; dup p 6765 _assert
-pwi _fib1cr 
-//_fib1cr (20) ; dup p 6765 _assert // not working
-c_syntaxOff
-//#endif
+
 C
 scOn
 cOn 
@@ -785,187 +773,18 @@ ti(4) ; CountChange (1000) ; time(4) ; stack
 cOff
 pause
 #endif // ifdef _DEV_H_
-//$gcc --version
-#if 0
-: qexp dup 1 <= if else dup -- qexp * endif ; 'qexp find wdiss 7 qexp dup p 5040 _assert 
-: qexp2 dup 1 <= if else dup -- qexp2 * endif ; 7 qexp2 dup p 5040 _assert
-: bexp ( n ) n @ 1 > if n @ dup -- bexp * else 1 endif ; 7 bexp dup p 5040 _assert
-: qexp5 dup 1 <= if  else dup -- qexp5 * endif ; 'qexp5 find wdiss 7 qexp5 dup p 5040 _assert 
-: qexp3 dup 1 <= if else dup -- qexp3 * endif ; 7 qexp3 dup p 5040 _assert
-: bexp4 ( n ) n @ 1 > if n @ dup -- bexp4 * else 1 endif ; 7 bexp4 dup p 5040 _assert
-: bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ; 7 bexp2 dup p 5040 _assert
-: bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;
-7 bexp3 dup nl p 5040 _assert sp0
-: t if 1 p else 0 p then ; 0 t 1 t nl //pause
-: t1 dup dup dup if 1 p t t t else 0 p t t t then ; 0 t1 nl 1 t1 //pause
-pwi t1 pwi t
-#endif
-#if 0
-Forth 
-: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
-: tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
-cOn
-int
-fibPTC4? ( REG n | REG fn, REG fn1, REG fn2 )
-{
-    fn = 0, fn1 = 0, fn2 = 1 ; 
-    do 
-    {   
-        fn1 = fn2 ;
-        fn2 = fn ;
-        fn = fn1 + fn2 ; 
-        n -- ;
-    }
-    while ( n > 0 ) ;
-    return fn ;
-}
-pwi fibPTC4? 
-fibPTC4? (20) ; 
-c_syntaxOff
-dup p 6765 _assert sp0 //pause
-cOff
-Forth
-: fibPTC5 ( REG n | REG fn REG fn1 REG fn2 )
-    fn 0 = fn1 0 = fn2 1 = 
-    begin 
-        fn1 fn2 @ =
-        fn2 fn @ =
-        fn fn1 @ fn2 @ + = 
-        n n @ 1 - = 
-        n @ 0 > 
-    while
-    repeat
-    return fn @ 
-;
-pwi fibPTC5 
-20 fibPTC5 dup p 6765 _assert
-Combinators
-: factorial2 ( REG n | REG rec ) rec 1 = { rec @ n @ * rec store n -- } { n @ 1 > } doWhile return rec ;
-pwi factorial2 
-7 factorial2 dup p 5040 _assert //pause
-fOn scOn
-: factorial3 ( REG n | REG rec ) 
-    rec 1 = 
-    begin rec rec @ n @ * = n n @ 1 - =  n @ 1 > doWhile  
-    return rec @ 
-;
-pwi factorial3 
-7 factorial3 dup p 5040 _assert //pause
-fOff
-Combinators
-#endif
-#if 0
-fOn 
-: tr ( x ) begin x @ 10 < while x x @ 1 + = x @ p repeat ; pwi tr 0 tr 
-: tu ( x ) begin x @ p x x @ 1 + = x @ 10 > until ;  pwi tu 0 tu
-: tfor ( n | x ) x n @ =  begin x @ 0 > while x @ p x x @ 1 - = repeat ; pwi tfor 10 tfor        
-: factorial3 ( REG n | REG rec ) 
-    rec 1 = 
-    begin rec rec @ n @ * = n --  n @ 1 > doWhile  
-    //begin rec rec @ n @ * = n n @ 1 - =  n @ 1 > doWhile  
-    return rec @ 
-;
-pwi factorial3 
-7 factorial3 dup p 5040 _assert //pause
-: fibPTC5 ( REG n | REG fn REG fn1 REG fn2 )
-    fn 0 = fn1 0 = fn2 1 = 
-    begin 
-        fn1 fn2 @ =
-        fn2 fn @ =
-        fn fn1 @ fn2 @ + = 
-        n n @ 1 - = 
-        n @ 0 > 
-    doWhile
-    return fn @ 
-;
-pwi fibPTC5 
-20 fibPTC5 dup p 6765 _assert                                                                                   
-: factorial5n ( REG n | REG rec ) 
-    rec 1 = 
-    //n @ 1 > if begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile endif
-    begin rec rec @ n @ * = n n @ 1 - = n @ 1 > doWhile
-    return rec @ 
-;
-pwi factorial5n 
-7 factorial5n dup p 5040 _assert 
-fOff
-#endif
 
 #if 0
 cOn
-//typecheckOn
-C
-'Experimental3 namespace
-C.Experimental3 
-typedef struct _byteTest 
-{
-    byte a8_123 ; 
-    int64 a64_123 ;
-    byte b8_123 ;
-    byte c8_123 ; // test comment
-    union // offset 11
-    {
-        int64 u64_123 ;
-        int32 u32_123 ;
-        int8 u8_123 ;
-    } ; //size = 8 
-    int32 a32_123 ; // offset 19
-    byte d8_123 ;
-    int16 a16_123 ; 
-} byteTest, abyteTest ; // size = 26 + (26 % 4) = 28 
-byteTest 'bt new ;
-//byteTest new ('bt )
-pwi byteTest 
-ps ( "\nbt.size =" ) ; p ( bt.size ) ;
-void 
-bttt ( byteTest * xbt | btt byte bbtt) 
-{ 
-    oPrintf ( "\nbtt" ) ;
-    dump ( &xbt, xbt.size ) ; 
-    //wordStructPrint ( xbt find ('byteTest) ;
-    //d: xbt.a8_123 = 598 ; // check typechecking
-    xbt.a8_123 = 'a' ; 
-    bbtt = xbt.a8_123 ; 
-    oPrintf ( "\nbtt = %c", bbtt ) ; 
-    xbt.a64_123 = 0x123456789abcdef ; 
-    xbt.b8_123 = 'b' ; 
-    xbt.c8_123 = 'c' ; 
-    xbt.a16_123 = 0x1234 ; 
-    xbt.a32_123 = 0x12345678 ; //pause
-    xbt.u32_123 = 0x1234567, btt = 0xedcba0987654321 ;
-    xbt.d8_123 = 'd' ;
-    oPrintf ( "\nbt.a16_123 = 0x%x ", xbt.a16_123 ) ; 
-    oPrintf ( "\nbt.a32_123 = 0x%lx ", xbt.a32_123 ) ; 
-    oPrintf ( "\nbt.a64_123 = 0x%lx ", xbt.a64_123 ) ; 
-    oPrintf ( "\nbt.u32_123 = 0x%lx ", xbt.u32_123 ) ; 
-    oPrintf ( "\nbt.a8_123 = %c ", xbt.a8_123 ) ; 
-    oPrintf ( "\nbt.b8_123 = %c ", xbt.b8_123 ) ; 
-    oPrintf ( "\nbt.c8_123 = %c ", xbt.c8_123 ) ; 
-    oPrintf ( "\nbt.d8_123 = %c ", xbt.d8_123 ) ; 
-    oPrintf ( "\nbtt = %lx", btt ) ; 
-    dump ( &xbt, xbt.size ) ; 
-    hp ( &xbt.a8_123 ) ;
-} 
-byteTest 'bt new ;
-pwi bttt 
-bttt ( bt ) 
+int64 ntest ( n0 ) { return n0 + 1 ; }
+int64 mtest ( m0 ) { return m0 + 1 ; }
+int64 otest ( o0 ) { return o0 + 1 ; }
+void nmotest ( n m o | q ) { q = ntest ( n ) + mtest ( m ) + otest ( o ) ; p ( q ) ; } 
+nmotest ( 1 2 3 ) ;
 cOff
-nl
-bt 'byteTest find wordStructPrint 
-cOff
-nl bt.a32_123 32@ hp    
-nl bt.u32_123 32@ hp 
 #endif
-cOn
-void
-fwriteTxtToFname ( fnameToOpen, textToWrite | file ) 
-{
-    file = fopen ( fnameToOpen ) ;
-    fwrite ( file, textToWrite, Strlen (textToWrite) ) 
-    fclose ( file ) ;
-}
-cOff
+
+//$gcc --version
 2 + 7 assertStkChk // stack checking
 //rdim 
 //logOff
-//test2cT

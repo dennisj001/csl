@@ -4,8 +4,18 @@
 #if DEBUG
 
 void
-_dbg ( ) //int64 index, int64 one, int64 two )
+_dbg ( int64 index, int64 one ) //, int64 two )
 {
+    switch ( index )
+    {
+        case ( 1 ) :    
+        {
+            iPrintf ( "\n%s\n", (byte *) one ) ;
+            break ;
+        } 
+        default : return ;
+    }
+#if 0    
     if ( Is_DebugOn )
     {
         //if ( ! GetState ( _CSL_, CO_ON ) ) iPrintf ( "\nOptimize is now off\n" ), Pause () ;
@@ -35,6 +45,7 @@ _dbg ( ) //int64 index, int64 one, int64 two )
             else tci->NextWord = ( Word * ) dllist_First ( rword->S_ContainingNamespace->S_SymbolList ) ;
         }
     }
+#endif        
 }
 
 #endif

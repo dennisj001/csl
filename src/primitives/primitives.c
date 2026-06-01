@@ -336,6 +336,7 @@ CPrimitive CPrimitives [] = {
     { "sourceDontAdd", 0, 0, 0, CSL_Source_DontAddToHistory, 0, 0, 0, "Debug", "Root" },
     { "setSourceCodeWord", 0, 0, 0, CSL_SetSourceCodeWord, 0, 0, 0, "Debug", "Root" },
     { "stack", 0, 0, 0, CSL_PrintDataStack, 0, 0, 0, "Debug", "Root" },
+    //{ "stackWithDescript", 0, 0, 0, CSL_PrintDataStackWithDescript, 0, 0, 0, "Debug", "Root" },
     { "stackDepthPrint", 0, 0, 0, CSL_PrintStackDepth, 0, 0, 0, "Debug", "Root" },
     { "rstack", 0, 0, 0, CSL_PrintReturnStack, 0, 0, 0, "Debug", "Root" },
     { "nrstack", 0, 0, 0, CSL_PrintNReturnStack, 0, 0, 0, "Debug", "Root" },
@@ -366,7 +367,8 @@ CPrimitive CPrimitives [] = {
     { "udis1", 0, 0, 0, Udis1Insn, PREFIXABLE, 0, 0, "Debug", "Root" },
     { "udis1x", 0, 0, 0, Udis1InsnX, PREFIXABLE, 0, 0, "Debug", "Root" },
 #if DEBUG    
-    { "dbg", 0, 0, 0, (block) _dbg, IMMEDIATE, 0, 0, "Debug", "Root" },
+    { "_dbg", 0, 0, 0, (block) _dbg, IMMEDIATE, 0, 0, "Debug", "Root" },
+    { "dbg", 0, 0, 0, (block) _dbg, 0, 0, 0, "System", "Root" },
 #endif
     
     { "_include", 0, 0, 0, CSL_IncludeFile, 0, 0, 0, "System", "Root" },

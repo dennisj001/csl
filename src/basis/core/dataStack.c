@@ -100,17 +100,26 @@ DataStack_Depth ( )
 // safe form with stack checking
 
 void
-_CSL_PrintDataStack ( )
+_CSL_PrintDataStack ( byte * description )
 {
-    Stack_Print ( _DataStack_, ( byte* ) "DataStack", 0 ) ;
+    Stack_Print ( _DataStack_, description, 0 ) ;
 }
 
 void
 CSL_PrintDataStack ( )
 {
     Set_DataStackPointer_FromDspReg ( ) ;
+    _CSL_PrintDataStack ( "DataStack" ) ;
+}
+
+#if 0
+void
+CSL_PrintDataStackWithDescript ( )
+{
+    Set_DataStackPointer_FromDspReg ( ) ;
     _CSL_PrintDataStack ( ) ;
 }
+#endif
 
 void
 CSL_PrintStackDepth ( )
