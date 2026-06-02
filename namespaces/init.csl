@@ -510,6 +510,7 @@ postfixOn
 Root
  
 #if 1 // this works
+// temperature
 bnOn cOn 
 void ctof ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
 void ctof ( c ) { c *= 1.8 ; c += 32 ; nl ; p (c) ; } //ctof1 ( 11.41) ;
@@ -687,14 +688,15 @@ cOff
 
 //stringMacrosOff
 //mem
-#if 0 //DEBUG_ON 
 
+#if 0 //DEBUG_ON 
 C
 scOn
 cOn 
-int64
-fd ( int64 koc | int64 rtrn )
-//fd ( REG int64 koc | REG int64 rtrn )
+//void stackd ( str ) { ps ( str ) ; stack () ; } 
+void debug ( str, r ) { if (r > 10 ) { ps (str) ; p ( r ) ; } } //stack () ; } //pause () ; }
+int64 fd ( int64 koc | int64 rtrn )
+//int64 fd ( REG int64 koc | REG int64 rtrn )
 {
    //int64 rtrn ;
    if ( koc == 1) rtrn = 1 ;
@@ -702,6 +704,7 @@ fd ( int64 koc | int64 rtrn )
    else if ( koc == 3) rtrn = 10 ;
    else if ( koc == 4) rtrn = 25 ;
    else if ( koc == 5) rtrn = 50 ;
+   //debug ( "\nfd", rtrn ) ;
    return rtrn ;
 }
 pwi fd sp0
@@ -721,6 +724,7 @@ pwi fd sp0
 #if 1
 int64
 cc1 ( int64 amount, int64 koc | rtrn, one, two )
+//cc1 ( int64 amount, int64 koc | rtrn )
 #else
 int64
 cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ??
@@ -731,6 +735,8 @@ cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ?
     else 
     {
 #if 0
+        //rtrn = cc1 ( amount, koc - 1) + stack () ; cc1 (amount - fd (koc), koc) ; //stack () ; // compiles with REGs but gives wrong result
+        //rtrn = cc1 ( amount, koc - 1) + stack () ; pause () ; cc1 (amount - fd (koc), koc) ; //stack () ; // compiles with REGs but gives wrong result
         rtrn = cc1 ( amount, koc - 1) + cc1 (amount - fd (koc), koc) ; //stack () ;// compiles with REGs but gives wrong result
 #else // no REGs this works
         one = cc1 ( amount, koc - 1) ;
@@ -738,8 +744,10 @@ cc1 ( REG amount, REG koc | REG rtrn, REG one, REG two ) // gives wrong result ?
         rtrn = one + two ;
 #endif
     }
-    //oPrintf ( "\nId %ld :: amount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", callerId, amount, koc, one, two, rtrn ) ;
-    //oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
+    //if ( rtrn > 10 ) oPrintf ( "\namount = %ld : koc = %ld :: rtrn = %ld", amount, koc, rtrn ) ;
+    //if ( koc > 2 ) oPrintf ( "\namount = %ld : koc = %ld :: rtrn = %ld", amount, koc, rtrn ) ; 
+    //if ( rtrn > 10 ) oPrintf ( "\namount = %ld : koc = %ld :: one = %ld : two = %ld : rtrn = %ld", amount, koc, one, two, rtrn ) ;
+    //debug ( "\ncc1 ", rtrn ) ;
     return rtrn ;
 }
 
@@ -762,16 +770,16 @@ CountChange ( int64 amount )
 }
 //logOn
 //stack pause
-CountChange (100) ; stack //pause
-countChangec (100 ) ; drop //pause
-pwi countChangec pause
-ti(4) ; countChangec (1000 ) ; drop time(4) ;
+ti(4); CountChange (100) ; time(4); //stack //pause
+//countChangec (100 ) ; drop //pause
+//cpwi countChangec pause
+//ti(4) ; countChangec (1000 ) ; drop time(4) ;
 //ti(4) ; countChangec (10000 ) ; drop time(4) ;
-ti(4) ; CountChange (1000) ; time(4) ; stack
+//ti(4) ; CountChange (1000) ; time(4) ; stack
 //ti(4) ; CountChange (10000) ; time(4) ; stack
 //logOff
 cOff
-pause
+//pause
 #endif // ifdef _DEV_H_
 
 #if 0
@@ -780,7 +788,8 @@ int64 ntest ( n0 ) { return n0 + 1 ; }
 int64 mtest ( m0 ) { return m0 + 1 ; }
 int64 otest ( o0 ) { return o0 + 1 ; }
 void nmotest ( n m o | q ) { q = ntest ( n ) + mtest ( m ) + otest ( o ) ; p ( q ) ; } 
-nmotest ( 1 2 3 ) ;
+nmotest ( 1 2 3 ) ; nl
+pwi nmotest
 cOff
 #endif
 

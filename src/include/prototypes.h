@@ -1840,7 +1840,6 @@ void Debugger_ShowTypeWordStack(Debugger *debugger);
 void Debugger_Exit(Debugger *debugger);
 void Debugger_Wdiss(Debugger *debugger);
 void Debugger_TableSetup(Debugger *debugger);
-void Debugger_Dbg(Debugger *debugger);
 /* src/basis/interpreter.c */
 void Interpreter_Init(Interpreter *interp);
 Interpreter *Interpreter_New(uint64 allocType);
