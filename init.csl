@@ -5,6 +5,7 @@
 #define DEBUG_ON 0
 //logOn
 
+// core words 
 Compiler 
 // nb :: .'"[] :: these five characters - dot, tick, quote left bracket, right bracket - .'"[] - are character macros including the brackets they work at the char level in readline
 // set up some traditional Forth words from internal primitives
@@ -22,20 +23,27 @@ Compiler
 'ndrop '_ndrop find alias immediate 
 "compilable" 'immediateOff find alias
 
-Interpreter 
 // core words 
-//'begin '_begin find alias immediate // begin is not an immediate word
-"{" ' begin find alias immediate keyword
-"end" ' _end find alias immediate
-"}" ' end find alias keyword
+Combinators
+"ix" ' call find alias immediate
+"qEval" ' call find alias immediate
+"ifte" ' tf3 find alias
+"ifElse" ' tf3 find alias
+
+// core words 
+Interpreter 
+"{" ' beginBlock find alias immediate keyword
+"endBlock" ' _endBlock find alias immediate
+"}" ' endBlock find alias keyword
 "xt@" { xt @ } word immediate // ' definition alias immediate
 "_semi" wordNew { xt= wordFinish } xt= wordFinish 
-"semi" wordNew { _end _semi } _semi 
+"semi" wordNew { _endBlock _semi } _semi 
 ";" ' semi find alias immediate syntactic
 : word swap wordNew swap _semi ;  //'word wordDisassemble pause
-: word ( name block ) name @ wordNew block @ _semi ;  // works but it is 10 bytes more code
-":" { compileModeOn sourceCodeInit token wordNew begin } word // immediate // begin is not an immediate word
+//: word ( name block ) name @ wordNew block @ _semi ;  // works but it is 10 bytes more code
+":" { compileModeOn sourceCodeInit token wordNew beginBlock } word // immediate // begin is not an immediate word
 : ;; ' ; find compileWord ' _prefix find compileWord ; immediate
+
 C
 : ;; semi _prefix ; immediate syntactic
 
@@ -145,11 +153,6 @@ User
 : p space intPrint ;
 'streol 'getStringToEndOfLine find alias
 sp
-Combinators
-"ix" ' call find alias immediate
-"qEval" ' call find alias immediate
-"ifte" ' tf3 find alias
-"ifElse" ' tf3 find alias
 Root
 'startupMacros 1 constant
 User
@@ -249,7 +252,6 @@ Forth
 var: DebugFlag classTestRead doInit1 doDemo doTest doLisp testing testLisp x ;var sp0 // _TestDone_ ; 
 "mod" 'modulo find alias
 
-Namespace
 Combinators
 : using: { token dup ";" strcmp } { usingFirst } while drop ; // eg - "using: User Lisp ;"
 : notUsing: { token dup ";" strcmp } { notUsing } while drop ; 
@@ -423,11 +425,13 @@ Io
 cOn Root
 #if OptimizeOn
 int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } //remember : strcmp returns a diff => returns 0 when there is no difference
+#if DEBUG_ON
 StringEqual ( "hi" "hi" ) != 0 ? noop : abort // remember : so StringEqual returns true (1) when strings are equal
 StringEqual ( "hi" "hi" ) == 0 ? abort : noop
 StringEqual ( "hi" "hi" ) ? noop : abort
 StringEqual ("hi" "hey") != 0 ? abort : noop
 StringEqual ("hi" "hey") == 0 ? noop : abort
+#endif
 #endif
 cOn Dlsym libc 
 void pbAssert ( argin ) 

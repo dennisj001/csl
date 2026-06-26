@@ -81,10 +81,10 @@ sp0
 Compiler Compiling C Asm
 #if 1 // stack adjust
 'svDsp var
-: asmBegin compileModeOn asmModeOn sourceCodeInit sourceCodeOn token wordNew svDsp dsp = begin ' {| find compileWord ; immediate  // nb : asm mode is interpreted
+: asmBegin compileModeOn asmModeOn sourceCodeInit sourceCodeOn token wordNew svDsp dsp = beginBlock ' {| find compileWord ; immediate  // nb : asm mode is interpreted
 : asmEnd ' {| find compileWord svDsp @ setDsp semi asmModeOff ; immediate
 #else
-: asmBegin compileModeOn asmModeOn sourceCodeInit sourceCodeOn token wordNew begin ' {| find compileWord ; immediate  // nb : asm mode is interpreted
+: asmBegin compileModeOn asmModeOn sourceCodeInit sourceCodeOn token wordNew beginBlock ' {| find compileWord ; immediate  // nb : asm mode is interpreted
 : asmEnd ' {| find compileWord semi asmModeOff ; immediate
 #endif
 'asm: 'asmBegin find alias
