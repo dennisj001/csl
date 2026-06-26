@@ -624,7 +624,13 @@ CPrimitive CPrimitives [] = {
     { "literal", 0, 0, 0, CSL_Literal, IMMEDIATE, 0, 0, "Compiler", "Root" },
     { "_literal", 0, 0, 0, CSL_Literal, 0, 0, 0, "Compiler", "Root" },
     { "_end", 0, 0, 0, CSL_EndBlock, BLOCK_DELIMITER, 0, 0, "Compiler", "Root" },
+    { "end", 0, 0, 0, CSL_EndBlock, IMMEDIATE | BLOCK_DELIMITER | KEYWORD, 0, 0, "Compiler", "Root" },
+    //{ "_begin", 0, 0, 0, ( block ) CSL_BeginBlock, BLOCK_DELIMITER, 0, 0, "Compiler", "Root" },
     { "begin", 0, 0, 0, ( block ) CSL_BeginBlock, BLOCK_DELIMITER, 0, 0, "Compiler", "Root" },
+    //{ "_immediate", 0, 0, 0, CSL_Immediate, 0, 0, 0, "Compiler", "Root" },
+    { "immediate", 0, 0, 0, CSL_Immediate, IMMEDIATE | KEYWORD, 0, 0, "Compiler", "Root" },
+    { "immediateOff", 0, 0, 0, CSL_ImmediateOff, KEYWORD, 0, 0, "Compiler", "Root" },
+    { "?immediate", 0, 0, 0, CSL_IsImmediate, INFIXABLE, 0, 0, "Compiler", "Root" },
     { "Here", "V.I", 0, 0, CSL_Here, CATEGORY_OP_STACK, T_INT, 0, "Compiler", "Root" }, //anything that pushes it result onto the stack should be CATEGORY_OP !?
     { "code", 0, 0, 0, CSL_Code, 0, 0, 0, "Compiler", "Root" },
     { "inline", 0, 0, 0, CSL_Inline, 0, 0, 0, "Compiler", "Root" },
@@ -669,20 +675,20 @@ CPrimitive CPrimitives [] = {
     { "optRegs", 0, 0, 0, Compiler_OptimizeRegisters, 0, 0, 0, "Compiler", "Root" },
     { "initRegs", 0, 0, 0, Compiler_InitRegisters, 0, 0, 0, "Compiler", "Root" },
 
-    // this section can be implemented by lower level calls - internally
+    // this section can be implemented by lower level calls - internally and other different
     { "word", 0, 0, 0, CSL_Word, 0, 0, 0, "Reserved", "Compiler" },
     { ":", 0, 0, 0, CSL_Colon, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
     { "semi", 0, 0, 0, CSL_SemiColon, KEYWORD, 0, 0, "Reserved", "Compiler" },
     { ";", 0, 0, 0, CSL_SemiColon, IMMEDIATE | SYNTACTIC | KEYWORD, 0, 0, "Reserved", "Compiler" },
     { "}", 0, 0, 0, ( block ) CSL_EndBlock, IMMEDIATE | BLOCK_DELIMITER | KEYWORD, 0, 0, "Reserved", "Compiler" }, // moved to init.csl and renamed below
     { "{", 0, 0, 0, ( block ) CSL_BeginBlock, IMMEDIATE | BLOCK_DELIMITER | KEYWORD, 0, 0, "Reserved", "Compiler" }, // moved to init.csl and renamed below
-    { "end", 0, 0, 0, CSL_EndBlock, IMMEDIATE | BLOCK_DELIMITER | KEYWORD, 0, 0, "Reserved", "Compiler" },
-    //{ "_immediate", 0, 0, 0, CSL_Immediate, 0, 0, 0, "Reserved", "Compiler" },
-    { "immediate", 0, 0, 0, CSL_Immediate, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
-    { "immediateOff", 0, 0, 0, CSL_ImmediateOff, KEYWORD, 0, 0, "Reserved", "Compiler" },
-    { "?immediate", 0, 0, 0, CSL_IsImmediate, INFIXABLE, 0, 0, "Reserved", "Compiler" },
     //{ "stackVariable", 0, 0, 0, CSL_StackVariable, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
     { "syntactic", 0, 0, 0, CSL_Syntactic, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
+    { "dlsym:", 0, 0, 0, CSL_Dlsym, 0, 0, 0, "Reserved", "Compiler" },
+    { "keyword", 0, 0, 0, CSL_Keyword, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
+    { "swap", 0, 0, 0, CSL_Swap, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
+    { "|}", 0, 0, 0, _CSL_RightBracket, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
+    { "{|", 0, 0, 0, CSL_LeftBracket, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
 
     { "_sh", 0, 0, 0, ShellEscape_Postfix, 0, 0, 0, "Shell", "Root" },
     { "$", 0, 0, 0, _shell, 0, 0, 0, "Shell", "Root" },
@@ -707,12 +713,6 @@ CPrimitive CPrimitives [] = {
     { "repeat", 0, 0, 0, CSL_Repeat, IMMEDIATE, 0, 0, "Forth", "Root" },
     { "until", 0, 0, 0, CSL_Until, IMMEDIATE, 0, 0, "Forth", "Root" },
     //{ ".", 0, 0, 0, CSL_PrintInt, 0, 0, 0, "Forth", "Root" },
-
-    { "dlsym:", 0, 0, 0, CSL_Dlsym, 0, 0, 0, "Reserved", "Compiler" },
-    { "keyword", 0, 0, 0, CSL_Keyword, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
-    { "swap", 0, 0, 0, CSL_Swap, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
-    { "|}", 0, 0, 0, _CSL_RightBracket, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
-    { "{|", 0, 0, 0, CSL_LeftBracket, IMMEDIATE, 0, 0, "Reserved", "Compiler" },
 
     { "compileByte", 0, 0, 0, Compile_Int8, 0, 0, 0, "Compiling", "Compiler" },
     { "compileInt16", 0, 0, 0, Compile_Int16, 0, 0, 0, "Compiling", "Compiler" },

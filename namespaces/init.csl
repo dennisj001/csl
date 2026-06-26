@@ -10,7 +10,8 @@ Compiler
 // set up some traditional Forth words from internal primitives
 // core internal c defined words : begin _end token _tick quote _swap immediate definition compile constant variable alias compileModeOn wordNew wordFinish _findUsing _findAny
 //"immediate" ' _immediate find alias _immediate
-'find '_findUsing _findUsing alias immediate 
+'find '_find _find alias immediate 
+'findUsing '_findUsing _findUsing alias immediate 
 : findAny _findAny ; immediate 
 'tick ' _tick find alias immediate
 : ' _tick ; immediate
@@ -23,6 +24,7 @@ Compiler
 
 Interpreter 
 // core words 
+//'begin '_begin find alias immediate // begin is not an immediate word
 "{" ' begin find alias immediate keyword
 "end" ' _end find alias immediate
 "}" ' end find alias keyword
