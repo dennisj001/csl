@@ -627,8 +627,6 @@ CPrimitive CPrimitives [] = {
     { "begin", 0, 0, 0, ( block ) CSL_BeginBlock, BLOCK_DELIMITER, 0, 0, "Compiler", "Root" },
     { "Here", "V.I", 0, 0, CSL_Here, CATEGORY_OP_STACK, T_INT, 0, "Compiler", "Root" }, //anything that pushes it result onto the stack should be CATEGORY_OP !?
     { "code", 0, 0, 0, CSL_Code, 0, 0, 0, "Compiler", "Root" },
-    { "_immediate", 0, 0, 0, CSL_Immediate, 0, 0, 0, "Compiler", "Root" },
-    { "?immediate", 0, 0, 0, CSL_IsImmediate, INFIXABLE, 0, 0, "Compiler", "Root" },
     { "inline", 0, 0, 0, CSL_Inline, 0, 0, 0, "Compiler", "Root" },
     { "typeSignature", "S", 0, 0, CSL_Set_TypeSignature, IMMEDIATE, 0, 0, "Compiler", "Root" },
     { "_prefix", 0, 0, 0, CSL_Prefix, 0, 0, 0, "Compiler", "Root" },
@@ -679,8 +677,10 @@ CPrimitive CPrimitives [] = {
     { "}", 0, 0, 0, ( block ) CSL_EndBlock, IMMEDIATE | BLOCK_DELIMITER | KEYWORD, 0, 0, "Reserved", "Compiler" }, // moved to init.csl and renamed below
     { "{", 0, 0, 0, ( block ) CSL_BeginBlock, IMMEDIATE | BLOCK_DELIMITER | KEYWORD, 0, 0, "Reserved", "Compiler" }, // moved to init.csl and renamed below
     { "end", 0, 0, 0, CSL_EndBlock, IMMEDIATE | BLOCK_DELIMITER | KEYWORD, 0, 0, "Reserved", "Compiler" },
+    //{ "_immediate", 0, 0, 0, CSL_Immediate, 0, 0, 0, "Reserved", "Compiler" },
     { "immediate", 0, 0, 0, CSL_Immediate, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
     { "immediateOff", 0, 0, 0, CSL_ImmediateOff, KEYWORD, 0, 0, "Reserved", "Compiler" },
+    { "?immediate", 0, 0, 0, CSL_IsImmediate, INFIXABLE, 0, 0, "Reserved", "Compiler" },
     //{ "stackVariable", 0, 0, 0, CSL_StackVariable, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
     { "syntactic", 0, 0, 0, CSL_Syntactic, IMMEDIATE | KEYWORD, 0, 0, "Reserved", "Compiler" },
 

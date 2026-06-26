@@ -1,21 +1,46 @@
-//logOn
+
 //_dbgOn 
+//namespaceTreeWithWords pause
+5 // stack checking marker
+#define DEBUG_ON 0
+//logOn
+
+Compiler 
+// nb :: .'"[] :: these five characters - dot, tick, quote left bracket, right bracket - .'"[] - are character macros including the brackets they work at the char level in readline
+// set up some traditional Forth words from internal primitives
+// core internal c defined words : begin _end token _tick quote _swap immediate definition compile constant variable alias compileModeOn wordNew wordFinish _findUsing _findAny
+//"immediate" ' _immediate find alias _immediate
+'find '_findUsing _findUsing alias immediate 
+: findAny _findAny ; immediate 
+'tick ' _tick find alias immediate
+: ' _tick ; immediate
+"'" quote quote find alias immediate
+"compileWord" ' _compileWord find alias immediate
+"compileCall" ' _compileCall find alias immediate
+"swap" ' _swap find alias immediate
+'ndrop '_ndrop find alias immediate 
+"compilable" 'immediateOff find alias
+
+Interpreter 
+// core words 
+"{" ' begin find alias immediate keyword
+"end" ' _end find alias immediate
+"}" ' end find alias keyword
+"xt@" { xt @ } word immediate // ' definition alias immediate
+"_semi" wordNew { xt= wordFinish } xt= wordFinish 
+"semi" wordNew { _end _semi } _semi 
+";" ' semi find alias immediate syntactic
+: word swap wordNew swap _semi ;  //'word wordDisassemble pause
+: word ( name block ) name @ wordNew block @ _semi ;  // works but it is 10 bytes more code
+":" { compileModeOn sourceCodeInit token wordNew begin } word // immediate // begin is not an immediate word
+: ;; ' ; find compileWord ' _prefix find compileWord ; immediate
+C
+: ;; semi _prefix ; immediate syntactic
+
+Root 
 uksOn // UnknowStringIsErrorFlag
 ukspOn // UnknowStringPushedFlag
 //optimizeOff
-5 // stack checking marker
-#define DEBUG_ON 0
-scOn 
-Debug
-// higher debugLevel turns on more debugging
-: d0 debugLevel 0 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
-: d1 debugLevel 1 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
-: d2 debugLevel 2 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
-: d: _dbgOn d0 dbgSourceCodeOn ; immediate debugWord // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
-: d1: _dbgOn d1 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
-: d2: _dbgOn d2 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
-
-Root 
 "OptimizeOn" variable
 OptimizeOn 1 = 
 #if OptimizeOn @
@@ -35,13 +60,8 @@ typecheckOn dbgTypecheckOn
 : include _include ; //dup "\tincluding ..." printString printString stack pause _include ;
 #endif
 verbosity 1 = 
-sp
+
 Root 
-'find '_findUsing _findUsing alias immediate 
-: findAny _findAny ; immediate 
-'tick ' _tick find alias immediate
-: ' _tick ; immediate
-'ndrop '_ndrop find alias immediate 
 'forth 'postfixOn find alias
 'c_syntaxOn '_c_syntaxOn find alias immediate
 'C_On 'c_syntaxOn find alias
@@ -53,8 +73,26 @@ Root
 'fOff 'forthSyntaxOff find alias
 "log" variable 
 'n- 'namespaces find alias
-Root
-"User" namespace 
+"const" ' constant find alias
+"_const" ' _constant find alias
+'cd ' changeDirectory find alias
+#define ll $ls -al 
+"var" ' variable find alias
+"_var" ' _variable find alias
+'dbgOnVar var 
+'dbOn 'dbgOnVar find alias
+: dbgOn dbgOnVar 1 = ; immediate
+: dbgOff dbgOnVar 0 = ; immediate
+: Is_DebugOn dbgOnVar @ ; 
+'tcOnv var 
+tcOnv 1 =
+#if tcOnv
+tcOn
+#endif
+
+: v4 verbosity 4 = ; 
+: v1 verbosity 1 = ;
+
 Io Int
 : _ps printString ; inline
 : ps space _ps ; "S.V" typeSignature
@@ -70,15 +108,16 @@ Io Int
 : _logWrite "csl.log" logWrite ;
 : _logAppend "csl.log" logAppend ;
 sp
-// aliases 
-User
-"const" ' constant find alias
-"_const" ' _constant find alias
-"var" ' variable find alias
-"_var" ' _variable find alias
-'cd ' changeDirectory find alias
-#define ll $ls -al 
+
+//scOn
 Debug
+// higher debugLevel turns on more debugging
+: d0 debugLevel 0 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d1 debugLevel 1 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d2 debugLevel 2 = ;  // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d: _dbgOn d0 dbgSourceCodeOn ; immediate debugWord // use a possibly user set level : a debugWord has special behavior : doesn't interfere with optimization
+: d1: _dbgOn d1 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
+: d2: _dbgOn d2 dbgSourceCodeOn ; immediate debugWord // a debugWord has special behavior : doesn't interfere with optimization
 //"dbg" '_dbg find alias immediate debugWord
 "dbrk" ' <dbg> find alias debugWord
 "locals" 'localsShow find alias
@@ -94,35 +133,15 @@ Debug
 'scOff 'dscOff find alias
 scOn 
 
-'tcOnv var 
-tcOnv 1 =
-#if tcOnv
-tcOn
-#endif
+// === controls ===
 
-: v4 verbosity 4 = ; 
-: v1 verbosity 1 = ;
-
+"User" namespace 
 User
 "wdis" ' wordDisassemble find alias
 'ts 'showTypeWordStack find alias
 's 'stack find alias
 : p space intPrint ;
 'streol 'getStringToEndOfLine find alias
-Root 
-'dbgOnVar var 
-'dbOn 'dbgOnVar find alias
-: dbgOn dbgOnVar 1 = ; immediate
-: dbgOff dbgOnVar 0 = ; immediate
-: Is_DebugOn dbgOnVar @ ;
-//'C_ 'C_Syntax find alias
-'_C_ 'C_Syntax find alias
-//'_C 'C_Syntax find alias
-
-// === controls ===
-Root 
-
-User
 sp
 Combinators
 "ix" ' call find alias immediate
@@ -160,36 +179,7 @@ DebugFlag 0 =
 : DbiOn dbi 2 = ;
 : dbiOff dbi 0 = ;
 sp
-Compiler 
-// nb :: .'"[] :: these five characters - dot, tick, quote left bracket, right bracket - .'"[] - are character macros including the brackets they work at the char level in readline
-// set up some traditional Forth words from internal primitives
-// core internal c defined words : begin _end token _tick _immediate definition compile constant variable alias compileModeOn wordInit wordAdd wordFinish
-//quote ' quote quote find alias _immediate
-"'" quote quote find alias _immediate
-"immediate" ' _immediate find alias _immediate
-"compileWord" ' _compileWord find alias immediate
-"compileCall" ' _compileCall find alias immediate
-"swap" ' _swap find alias immediate
-"compilable" 'immediateOff find alias
-
-Interpreter 
-// core words 
-"{" ' begin find alias immediate keyword
-"end" ' _end find alias immediate
-"}" ' end find alias keyword
-"xt@" { xt @ } word immediate // ' definition alias immediate
-"_semi" wordNew { xt= wordFinish } xt= wordFinish 
-"semi" wordNew { _end _semi } _semi 
-";" ' semi find alias immediate syntactic
-'i; '; find alias
-';i '; find alias
-: word swap wordNew swap _semi ;  //'word wordDisassemble pause
-: word ( name block ) name @ wordNew block @ _semi ;  // works but it is 10 bytes more code
-":" { compileModeOn sourceCodeInit token wordNew begin } word // immediate // begin is not an immediate word
-: ;; ' ; find compileWord ' _prefix find compileWord ; immediate
-
 C
-: ;; semi _prefix ; immediate syntactic
 c_syntaxOn 
 type int8 ; int8.size = 1 ;
 type uint8 ; uint8.size = 1 ;
@@ -209,6 +199,7 @@ type Boolean ; Boolean.size = 1 ;
 type Pointer ; Pointer.size = 8 ;
 type block ; block.size = 8 ;
 C
+//d2: //testing
 "Dlsym" namespace 
 Dlsym 
 #define LIBC "/lib/libc.so.6"
@@ -224,13 +215,10 @@ dlsym: sscanf LIBC ; void_return
 dlsym: atoi LIBC ; rax_return
 //int _strlen ( s ) { return strlen ( s ); }
 c_syntaxOff
+//;d
 Root  
 sp0
 System
-//: bnInit1 ( width ) width @ bnInit ; 
-//: bigNumOff "BigNum" notUsing ;
-//: bigNumOn BigNum 32 bnInit ;
-//d: : bigNumOn do> 32 BigNum.bnInit does> BigNum <does ;
 
 'bnOn 'bigNumOn find alias
 'bnOff 'bigNumOff find alias
@@ -796,4 +784,4 @@ cOff
 //$gcc --version
 2 + 7 assertStkChk // stack checking
 //rdim 
-//logOff
+logOff

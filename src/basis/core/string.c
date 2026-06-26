@@ -835,6 +835,7 @@ StringMacros_Do ( byte * buffer, byte * namespace, byte * ostr, int64 startIndex
     byte * nstr = _StringMacro_Run ( namespace, ostr ) ;
     if ( nstr )
     {
+        DEBUG_SETUP_TOKEN ( nstr, 2 ) ;
         //nstr = String_RemoveFinalNewline ( nstr ) ;
         String_InsertStringIntoStringSlot ( buffer, startIndex, endIndex, nstr, BUFFER_SIZE ) ; // use the original buffer for the total result of the macro
     }
