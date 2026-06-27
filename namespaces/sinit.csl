@@ -81,6 +81,7 @@ Root
 'cOff 'c_syntaxOff find alias
 'fOn 'forthSyntaxOn find alias
 'fOff 'forthSyntaxOff find alias
+
 "log" variable 
 'n- 'namespaces find alias
 "const" ' constant find alias
@@ -425,11 +426,13 @@ Io
 cOn Root
 #if OptimizeOn
 int64 StringEqual ( a b ) { return ( ! strcmp ( a, b ) ) ; } //remember : strcmp returns a diff => returns 0 when there is no difference
+#if DEBUG_ON
 StringEqual ( "hi" "hi" ) != 0 ? noop : abort // remember : so StringEqual returns true (1) when strings are equal
 StringEqual ( "hi" "hi" ) == 0 ? abort : noop
 StringEqual ( "hi" "hi" ) ? noop : abort
 StringEqual ("hi" "hey") != 0 ? abort : noop
 StringEqual ("hi" "hey") == 0 ? noop : abort
+#endif
 #endif
 cOn Dlsym libc 
 void pbAssert ( argin ) 
@@ -536,50 +539,6 @@ stringMacrosOn
 lispOff
 : mrm mem rdi mem ; 
 : mem2 verbosity 2 = mem verbosity 1 = ; 
-#ifndef INCLUDES 
-#define INCLUDES
-//: typesInclude "namespaces/types.csl" include ;
-//: minc vb2 _c_syntaxOn "/home/dennisj/csl-code/archive/maru-2.4/eval.c" include ;
-//: minc2 vb2 cOn includesOnlyOn minc cOff includesOnlyOff ;
-//: mci "namespaces/test/compiler/machineCode.c" include ;
-: iinc "./init.csl" include ;
-: interpT "namespaces/test/compiler/interpreter.csl" include ;
-: itest _TestDone_ @ { "namespaces/test/initTest.csl" include } if1 ;
-: classTest "namespaces/test/classTest.csl" include ;
-: arrayTest "namespaces/test/arrayTest.csl" include ;
-: localsTest "namespaces/test/localsTest.csl" include ;
-: bigNumTest "namespaces/test/bigNum.csl" include ;
-: stackTest "namespaces/test/stack.csl" include ;
-: controlTest "namespaces/test/control.csl" include ;
-: objectTest "namespaces/test/dobject.csl" include ;
-: c_SyntaxTest "namespaces/test/compiler/c_syntax.csl" include ;
-: syntaxTest "namespaces/test/compiler/syntax.csl" include ;
-: preprocessorTest "namespaces/test/compiler/preprocessor.csl" include ;
-: test "namespaces/test/test.csl" include ;
-: dT0 "namespaces/test/dev0.csl" include ;
-: dT2 "namespaces/test/dev2.csl" include ;
-: dT3 "namespaces/test/dev3.csl" include ;
-: loT "namespaces/test/logic.csl" include ;
-: dT "namespaces/test/dev.csl" include ; inline
-: dT2 "namespaces/test/dev2.csl" include ;
-: mT "namespaces/test/math.csl" include ;
-: fT "namespaces/test/file.csl" include ;
-: sT "namespaces/test/compiler/syntax.csl" include ;
-: nT "namespaces/test/namespace.csl" include ;
-: sysT "namespaces/test/system.csl" include ;
-: lispTest "namespaces/test/lisp.csl" include ;
-: oldL "namespaces/test/oldLisp.csl" include ;
-: stT stackTest ;
-: bT bigNumTest ;
-: locT localsTest ;
-: aT arrayTest ;
-: cT classTest ;
-: cntT controlTest ;
-: oT objectTest ;
-: cST c_SyntaxTest ;
-: ppT preprocessorTest ;
-: lT lispTest ;
-#endif
 : libInit "namespaces/libInit.csl" include ;
 'li 'libInit find alias
 

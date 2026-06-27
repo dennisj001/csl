@@ -3,12 +3,12 @@ C Compiler Logic User
 
 : caseSwitchExample ( n ) 
     nl
-    { 1 p } 1 case
-    { 2 p } 2 case
-    { 3 p } 3 case
+    case ( 1 ) { 1 p } 
+    case ( 2 ) { 2 p } 
+    case ( 3 ) { 3 p } 
     n @ switch
 ;
-2 caseSwitchExample 
+3 caseSwitchExample 2 caseSwitchExample 1 caseSwitchExample //pause
 Compiler
 : attx 8 4 stk / p ;
 ' attx wdiss
@@ -80,5 +80,5 @@ attx3 1 == { nl "math optimization ok" ps nl } if1
 #endif
 : atx (| n ) n 1 = n 3 <<= n @ p ; ' atx find wdiss atx 
 : atx (| n ) n 1 = n 1 <<= n @ p ; ' atx find wdiss atx 
-: atx (| n ) n 1 = n 5 <<= n @ 3 >> p ; ' atx find wdiss d: atx 
-d: s
+: atx (| n ) n 1 = n 5 <<= n @ 3 >> p ; ' atx find wdiss atx 
+s

@@ -246,6 +246,7 @@ small :
 _install : 
 	-cp ./init.csl ./namespaces/
 	-cp ./init.csl ./namespaces/sinit.csl
+	-cp ./init.csl ./namespaces/test/sinit.csl
 	-sudo rm csl.log
 	-sudo rm /usr/local/bin/cx
 	-sudo rm -rf /usr/local/lib/csl/
