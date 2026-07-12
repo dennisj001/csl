@@ -2,19 +2,26 @@
 
 Root User 
 cOff 
-: sp ; //stack pause ;    
+#if DEBUG_ON
+: sp stack pause ; 
+#else
+: sp ; //stack pause ; 
+#endif
+
 sp
 doLisp 1 =
 doDemo 1 =
+sp
 //dbgOff
 : demo0 "namespaces/test/initTest.csl" include ;
-doDemo @ { drop demo0 } if1  //stack pause
-
+doDemo @ { drop demo0 } if1  drop //stack pause
+sp
 Shell
 //if ( _doDemo drop ) demo0 endif 
 shellOff
 lispOff
 bnOff
 cOff 
+sp
 //mrm
 2 + 7 assertStkChk // stack checking

@@ -2,7 +2,12 @@
 // nb. some of the testing code is attempting to see if it can cause an error it is not necessarily meant to be exemplary 
 verbosity 1 = 
 Root     
-: sp ; //stack pause ; sp
+#if DEBUG_ON
+: sp stack pause ; 
+#else
+: sp ; //stack pause ; 
+#endif
+
 Int User Combinators
 { "_TestDone_" _defined not } { "_TestDone_" _var } if2 
 sp
@@ -86,12 +91,15 @@ System Combinators
 "\ntest nested elif 1 - correct \n" ps //pause
 : shellOff "Shell" notUsing ;
 Shell
-if ( doTest _TestDone_ @ not && ) basicT _TestDone_ ++ 
+sp
+if ( doTest _TestDone_ @ not && ) drop basicT _TestDone_ ++ 
 endif
+sp
 Interpreter
 nl "_TestDone_ =" ps _TestDone_ @ p nl
-{ _TestDone_ @ not } { pause } if2 
-7 time 
+{ _TestDone_ @ not } { drop pause } if2 
+//7 time 
+sp
 2 + 7 assertStkChk // stack checking
 
 

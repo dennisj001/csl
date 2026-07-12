@@ -63,7 +63,7 @@ optimizeOff inlineOff
 typecheckOn dbgTypecheckOn
 : sp1 stack pause ;
 : sp0 ;
-#if 0
+#if DEBUG_ON
 : sp stack pause ; 
 : include dup "\tincluding ..." printString printString sp _include ;
 #else
@@ -96,11 +96,6 @@ Root
 : dbgOn dbgOnVar 1 = ; immediate
 : dbgOff dbgOnVar 0 = ; immediate
 : Is_DebugOn dbgOnVar @ ; 
-'tcOnv var 
-tcOnv 1 =
-#if tcOnv
-tcOn
-#endif
 
 : v4 verbosity 4 = ; 
 : v1 verbosity 1 = ;
@@ -114,6 +109,7 @@ Io Int
 : p space intPrint ;
 '_hp 'hexIntPrint find alias
 : hp space _hp ;
+'dcm 'decimal find alias
 : dp space decimal intPrint ; 
 : print space intPrint ;
 "nl" ' newline find alias keyword
@@ -136,8 +132,13 @@ Debug
 "regs" 'cpuStateShow find alias
 't: 'dbgTypecheckOn find alias 
 ';t 'dbgTypecheckOff find alias
-'tcOn 'typecheckOn find alias 
+'tcOn 'typecheckOn find alias sp
 'tcOff 'typecheckOff find alias
+'tcOnv var 
+tcOnv 1 =
+#if tcOnv
+tcOn
+#endif
 'nt 'namespaceTreeWithWords find alias
 'dscOn 'dbgSourceCodeOn find alias
 'dscOff 'dbgSourceCodeOff find alias
@@ -145,7 +146,7 @@ Debug
 'scOff 'dscOff find alias
 scOn 
 
-/ === controls ===
+// === controls ===
 
 "User" namespace 
 User
@@ -407,6 +408,9 @@ dscOn
             n @ m @ _assert0
         endif 
     endif
+#if DEBUG_ON
+    stack pause
+#endif
 ; 
 #endif
 //' _assertStkChk find wdiss //pause

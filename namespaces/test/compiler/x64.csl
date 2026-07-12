@@ -2,6 +2,11 @@
 //using pause
 #ifndef _X64_CSL_
 #define _X64_CSL_
+#if DEBUG_ON
+: sp stack pause ; 
+#else
+: sp ; //stack pause ; 
+#endif
 // Intel notes - cf. InstructionSet-A-M-253666.pdf - section 2.1; InstructionSet-N-Z-253667.pdf section B.1/B.2 :
 // Intel instructions (insn) can only operate on one memory operand per instruction, i.e. one cannot move mem to mem in one insn, you must move mem to reg and reg to mem
 // the direction is either mem to reg or reg to mem determined in some instructions by a direction bit in the opCode
@@ -77,7 +82,7 @@
 //logOn
 
 cOff
-sp0
+sp
 Compiler Compiling C Asm
 #if 1 // stack adjust
 'svDsp var
@@ -112,7 +117,7 @@ dscOn scOn
 '_Compile_Int64 'compileInt64 fa
 //logOn
 Root 
-: ;; '; find compileWord prefixable ; immediate pwi ;; sp0
+: ;; '; find compileWord prefixable ; immediate pwi ;; sp
 c_syntaxOn
 //vb3 () ;
 #if 1
@@ -148,7 +153,7 @@ Calculate_Rex ( uint8 reg, uint8 rm, uint8 rex_w_flag, uint8 rex_b_flag )
     return rex ;
 }
 
-pwi Calculate_Rex sp0
+pwi Calculate_Rex sp
 
 byte
 Calculate_Mod ( int64 disp )
@@ -175,7 +180,7 @@ CalculateModRegardingDisplacement ( uint8 mod, int64 disp )
     }
     return mod ;
 }
-pwi CalculateModRegardingDisplacement sp0
+pwi CalculateModRegardingDisplacement sp
 
 uint64
 CalculateSib ( int64 scale, int64 indexReg, int64 baseReg )
@@ -244,7 +249,7 @@ CalculateModRmByte ( uint8 mod, uint8 reg, uint8 rm, uint8 sib, int64 disp )
     return modRm ;
 }
 
-pwi CalculateModRmByte sp0
+pwi CalculateModRmByte sp
 
 void
 _Compile_Write_Instruction_X64 ( uint8 rex, uint8 opCode0, uint8 opCode1, uint8 modRm,
@@ -278,7 +283,7 @@ _Compile_Write_Instruction_X64 ( uint8 rex, uint8 opCode0, uint8 opCode1, uint8 
     }
 }
 
-pwi _Compile_Write_Instruction_X64 sp0
+pwi _Compile_Write_Instruction_X64 sp
 #if 0
 Boolean
 RegParameterOrder ( uint8 n )
@@ -325,7 +330,7 @@ Compile_CalculateWrite_Instruction_X64 ( uint8 opCode0, uint8 opCode1, uint8 mod
     _Compile_Write_Instruction_X64 ( rex, opCode0, opCode1, modRm, controlFlags, sib, disp, dispSize, imm, immSize ) ;
 }
 
-pwi Compile_CalculateWrite_Instruction_X64 sp0
+pwi Compile_CalculateWrite_Instruction_X64 sp
 // intel syntax : opcode dst, src
 // mov reg to mem or mem to reg
 // note the order of the operands match intel syntax with dst always before src
@@ -394,7 +399,7 @@ Compile_Move ( uint8 direction, uint8 mod, uint8 reg, uint8 rm, uint8 operandSiz
     Compile_CalculateWrite_Instruction_X64 ( opCode0, opCode, mod, reg, rm, controlFlags, sib, disp, dispSize, imm, immSize ) ;
 }
 
-pwi Compile_Move sp0
+pwi Compile_Move sp
 
 void
 Compile_Move_WithSib ( uint8 direction, uint8 mod, uint8 reg, uint8 rm, uint8 scale, uint8 index, uint8 base )
@@ -448,7 +453,7 @@ Compile_MoveImm ( Boolean mod, Boolean rm, int64 disp, int64 imm, byte immSize )
     else Compile_Move ( TO_REG, mod, 0, rm, 0, 0, disp, 0, imm, immSize ) ; //Operand_Size ( imm ) ) ; // nb. reg == 0 in a move immediate
 }
 
-pwi Compile_MoveImm sp0 //pause
+pwi Compile_MoveImm sp //pause
 
 void
 Compile_MoveImm_To_Reg ( uint8 rm, int64 imm, uint8 immSize )
@@ -585,7 +590,7 @@ _Compile_X_Group1_Immediate ( Boolean code, Boolean mod, Boolean rm, int64 disp,
         Compile_CalculateWrite_Instruction_X64 ( 0, opCode, mod, code, rm, controlFlags, 0, disp, 0, imm, iSize ) ;
     }
 }
-pwi _Compile_X_Group1_Immediate sp0
+pwi _Compile_X_Group1_Immediate sp
 
 void
 _Compile_Group5 ( Boolean code, Boolean mod, Boolean rm, Boolean sib, int64 disp, Boolean size )
@@ -670,7 +675,7 @@ asm: iax
 
                                     //"\nshould show : c3                    ret" ps      
 ;asm
-' iax find wdiss sp0
+' iax find wdiss sp
 
 : _Compile_Test_Imm ( mod, rm, disp, imm )
     _Compile_Test ( mod @, rm @, IMM_B, disp @, imm @ )
@@ -698,12 +703,12 @@ _Compile_X_Group1_Immediate ( ADD, REG, DSP, 0, imm @, 1 ) ; prefixable
     _Compile_MoveReg_To_StackN ( DSP, 0, R8D )
 ; prefixable
 
-pwi Compile_Stack_Push_R8D sp0
+pwi Compile_Stack_Push_R8D sp
 
 Interpreter User
 : qeval s iax ;
 ' qeval find wdiss 
-sp0
+sp
 
 asm: stest
     _Compile_MoveTOS_To_R8D ( )
@@ -711,13 +716,13 @@ asm: stest
     Compile_Stack_Push_R8D ( )
     _Compile_SUBI_DSP ( CELL )
 ;asm
-pwi stest sp0
+pwi stest sp
 //logOff
 "\nthis is some purposefully funky code for testing\n" ps
 
 s stest s
 nl "x64 test" ps "ok" ' dup find xt@ iax ' ps find xt@ iax "ok" "error" assert1s 
-sp0
+sp
 Stack
 asm: ndup
     _Compile_MoveTOS_To_R8D ( )
@@ -733,7 +738,7 @@ asm: ndup
     "end" label // above jcc to Here
 ;asm
 
-    ' ndup find wdiss sp0 
+    ' ndup find wdiss sp 
 s 7 7 'ndup find xt@ iax s 8 ndrop s
 c_syntaxOn
 
@@ -771,7 +776,7 @@ MOVmr ( ptr, disp, reg )
 }
 nprefix ( 3 ) ;
 
-sp0
+sp
 // move reg to reg
 void
 MOVrr ( dstReg, srcReg )
@@ -781,7 +786,7 @@ MOVrr ( dstReg, srcReg )
 }
 nprefix ( 2 ) ;
 c_syntaxOff
-sp0
+sp
 C_Syntax Asm
 asm: testAsm
     MOVrr RDX, RAX
@@ -791,7 +796,7 @@ asm: testAsm
 ;asm
 pwi testAsm
 testAsm
-sp0
+sp
 cOff
 //pause
 #endif //_X64_CSL_

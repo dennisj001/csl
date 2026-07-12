@@ -1,6 +1,13 @@
 5 
 #ifndef _PP_H_
 #define _PP_H_ 
+
+#if DEBUG_ON
+: sp stack pause ; 
+#else
+: sp ; //stack pause ; 
+#endif
+
 : apause ; //stack pause ;
 : epause ; //stack pause ;
 "ppx" var "ppxe" var
@@ -110,7 +117,8 @@ ppxe dup @ 1 + =
 #endif // ifndef _PP_H_
 
 #if 0
-#elif 1
+#elif 1 
+sp
 #if 0
 "\npreprocessor test error 12\n" ps epause
 ppxe dup @ 1 + =
@@ -146,4 +154,4 @@ ppxe @ "\nppxe =" ps p ": should be 0" ps
 sp
 2 + 7 assertStkChk // stack checking 
 //pause
-;d
+

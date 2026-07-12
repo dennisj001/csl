@@ -13,8 +13,16 @@ Combinators
 User
 C
 Root
-: sp0 ; //stack pause ;
+"sp" purge "sp0" purge //pause 
+#if DEBUG_ON
+: sp stack pause ; 
+//User : sp stack pause ; Root
+#else
+: sp ; //stack pause ; 
+#endif
+
 location
+
 //dbgOn 
 //verbosity 4 =
 
@@ -41,10 +49,10 @@ cOn
 #define xtc( a ) a ps //pause
 pwi xtc 
 xtc ( "\n xtc : hi" )
-sp0
+sp
 
 libc C
-sp0
+sp
 typedef struct _CObj
 {
     int64 hi ;
@@ -58,18 +66,18 @@ typedef struct _CObj
 "CObj size =" ps CObj size dup 104 _assert p 
 CObj 'chey new ; 
 chey.hi = 1234 ;
-_assert0 ( chey.hi 1234 ) ; sp0
-dump ( chey, chey.size ) ; sp0
-oPrintf ( "\n\tchey.hi = %d", chey.hi ) ; sp0
+_assert0 ( chey.hi 1234 ) ; sp
+dump ( chey, chey.size ) ; sp
+oPrintf ( "\n\tchey.hi = %d", chey.hi ) ; sp
 chey.chars [2] = 255 ;
 chey.chars [2] @ dup p 255 _assert //pause
-sp0 
+sp 
 chey.heey = #x0123456789abcdef ; 
 dump ( chey, chey.size ) ;
-oPrintf ( "\n\tchey.heey = %lx", chey.heey ) ; sp0
+oPrintf ( "\n\tchey.heey = %lx", chey.heey ) ; sp
 chey.heey #x0123456789abcdef _assert0
 dump ( chey, chey.size ) ;
-sp0
+sp
 chey.heey1 = chey.heey ;
 chey.heey = chey.heey1 ; // #x0123456789abcdef ;
 chey.heey2 = chey.heey1 ; // #x0123456789abcdef ; 
@@ -79,19 +87,19 @@ chey.hey chey.heey1 _assert0
 dump ( chey, chey.size ) ;
 oPrintf ( "\n\tchey.hey = %lx", chey.hey ) ; 
 
-sp0
+sp
 chey.chars [23] = 255 ;
 chey.chars [18] = #b10110 ; // #x16
 //chey.hey = #x12345678 ;
 dump ( &chey, CObj.size ) ; 
-sp0
+sp
 oPrintf ( "\nCObj.size = %d",CObj.size ) ; 
 oPrintf ( "\n%s%lx", "\nchey = ", chey ) ;
-oPrintf ( "\n%s%lx", "\nchey.hey = ", chey.hey ) ; sp0 
-oPrintf ( "\n%s%lx", "\n&chey.hey = ", &chey.hey ) ; sp0
+oPrintf ( "\n%s%lx", "\nchey.hey = ", chey.hey ) ; sp 
+oPrintf ( "\n%s%lx", "\n&chey.hey = ", &chey.hey ) ; sp
 hp ( chey.hey ) ; 
 hp ( &chey.hey ) ;
-sp0
+sp
 C
 decimal
 var ( "x7" ) ;
@@ -125,7 +133,7 @@ dump ( chey, CObj.size ) ; // add '&' within parentheses for lvalue
 //pause
 scOn
 libc
-sp0
+sp
 decimal
 //s pause 
 void
@@ -158,10 +166,10 @@ chi ( CObj * chey0 | a b c d )
 } prefix
 pwi chi
 chi ( chey ) ;
-sp0
+sp
 decimal
 interpret () ; // from interpreter.csl
-sp0
+sp
 #if 1
 void
 interpret2 ( | atoken aword ) 
@@ -171,19 +179,22 @@ interpret2 ( | atoken aword )
     while ( 1 )
     {   
         atoken = token () ; 
-        oPrintf ( "\n\tinterpret2 : token = %s", atoken ) ; 
-        //if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
-        if ( StringEqual ( atoken, "i2halt" ) )
-        { 
-            oPrintf ( "\n\tinterpret2 exiting..." ) ; 
-            //break ; 
-            //goto: done ;
-            return ;
-        }
-        else
+        if ( atoken )
         {
-            aword = tokenToWord ( atoken ) ;
-            doWord ( aword ) ;
+            oPrintf ( "\n\tinterpret2 : token = %s", atoken ) ; 
+            //if ( ! ( strcmp ( atoken, "i2halt" ) ) ) 
+            if ( StringEqual ( atoken, "i2halt" ) )
+            { 
+                oPrintf ( "\n\tinterpret2 exiting..." ) ; 
+                //break ; 
+                //goto: done ;
+                return ;
+            }
+            else
+            {
+                aword = tokenToWord ( atoken ) ;
+                doWord ( aword ) ;
+            }
         }
     }
     //label: done ;
@@ -199,10 +210,6 @@ interpret3 ( | atoken aword )
     while ( 1 )
     {   
         atoken = token () ; 
-        oPrintf ( "\n\tinterpret3 : token = %s", atoken ) ; 
-        //if ( ! ( strcmp ( atoken, "i3halt" ) ) ) 
-        //if ( ! libc.strcmp ( atoken, "i3halt" ) )
-        //<dbg> 
         if ( StringEqual ( atoken, "i3halt" ) )
         { 
             oPrintf ( "\n\tinterpret3 exiting..." ) ; 
@@ -212,6 +219,8 @@ interpret3 ( | atoken aword )
         }
         else 
         {       
+        if ( atoken ) { oPrintf ( "\n\tinterpret3 : token = %s :", atoken ) ; 
+        location () ; }
             aword = tokenToWord ( atoken ) ;
             doWord ( aword ) ;
         }       
@@ -223,12 +232,12 @@ interpret3 ( | atoken aword )
 pwi interpret2
 pwi interpret3 
 C
-sp0
+sp
 
 #if 1
 //verbosity = 3 ;
 interpret2 
-using sp0
+using sp
 #if 1
 int
 fac40 ( n  | facc ) 
@@ -243,16 +252,16 @@ fac40 ( n  | facc )
 } 
 pwi fac40  //pause
 fac40 (7) dup p 5040 _assert  
-i2halt sp0
+i2halt sp
 //pause
 #endif 
 
-interpret3 sp0
+interpret3 sp
 c_syntaxOff
 
 User
+sp 
 words  
-sp0 
 
 : hi1 1 2 + p ;  
 : hey1 hi1 hi1 ; 
@@ -272,7 +281,7 @@ faccs2 ( n | rec )
 } 
 pwi faccs2 // why not in c syntax here and in next line ??
 faccs2 (7) dup p 5040 _assert0 
-sp0 
+sp 
 libc
 void
 interpret4 ( | atoken aword ) 
@@ -299,7 +308,7 @@ interpret4 ( | atoken aword )
 }
 //pause
 i3halt  // code to exit interpret3
-pwi interpret4 sp0
+pwi interpret4 sp
 interpret4
 C
 int
@@ -312,14 +321,14 @@ faccs3 ( n | rec )
     return rec ;
 } 
 ' faccs3 find wdiss
-faccs3 (7) dup p 5040 _assert0 sp0
-i4halt sp0 // code to exit interpret4
+faccs3 (7) dup p 5040 _assert0 sp
+i4halt sp // code to exit interpret4
 c_syntaxOff
 //pause
 #endif 
 //ihalt //interpret from interpreter.csl
 C
-sp0
+sp
 c_syntaxOn
 C String libc
 typedef struct { byte buf [ 256 ] ; } CBuffer ;
@@ -349,7 +358,7 @@ $ ( | atoken, buffer, CBuffer buffer0 )
     }
 } 
 pwi $ //'void.$ find wdiss 
-sp0
+sp
 
 ihalt
 
@@ -361,14 +370,14 @@ $ etc/script ;
 //s pause 
 
 C
-sp0
+sp
 verbosity 1 =
 infixOff
 1 opOn
 : hi ( a b | c ) c a @ b @ + = oPrintf ("\nshould read 3 : %d", c ) ; 1 2 hi 
-sp0
+sp
 c_syntaxOn
-sp0
+sp
 int
 fac5 ( REG n  | REG facc ) 
 { 
@@ -405,7 +414,7 @@ void yadaYada () { int a, b, x ; a = 2, b = 12 ; x = (( a + b ) / 2 ) ; return  
 cOff
 //forStarters 1 =
 #endif
-sp0
+sp
 
 //ihalt
 
@@ -417,20 +426,24 @@ fOn
 : wtdInclude "namespaces/test/compiler/types.csl" include ;
 wtdInclude
 using 
+sp
 stateAll
+sp
 Forth
-"\nOpenVmTil.size =" ps OpenVmTil.size @ dup p 8mod 
-"\CSL.size =" ps CSL.size @ dup p 8mod 
+"\nOpenVmTil.size =" ps OpenVmTil.size @ dup p 8mod p
+"\CSL.size =" ps CSL.size @ dup p 8mod p
+sp
 //pause
 
-nl CSL size @ p OpenVmTil size @ p //pause
+nl CSL size @ p OpenVmTil size @ p sp
 pwi wtdInclude
+sp
 'wtdInclude find dup hex p 'C.Experimental.Word find wordStructPrint //pause
 'wtdInclude find dup dup fw store hp Word size @ dump fw hp fw @ hp
-fw @ hp fw @ ->Definition hp fw @ ->S_Name @ ps sp0 
+fw @ hp fw @ ->Definition hp fw @ ->S_Name @ ps sp 
 
 cOn
-
+sp
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
 oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d", TypeInfo.size, DLNode.size, dllist.size, dlnode.size ) ; 
@@ -444,7 +457,7 @@ oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d", Compiler.size, Interpre
 //stateAll
 //pause
 #endif
-
+sp 
 C.Experimental 
 
 void tfw ( Word * w ) { hp ( w->Definition ) ; ps ( w->S_Name ) ; } 
@@ -455,7 +468,7 @@ void tfw1 ( Word * w )
 } 
 pwi tfw1
 //wdiss ( 'tfw1 find ) 
-tfw ('tfw1 find) ; nl tfw1 ( 'tfw1 find ) ; sp0 
+tfw ('tfw1 find) ; nl tfw1 ( 'tfw1 find ) ; sp 
 //pause
 'C_Syntax.tfw find wdiss 
 fw @ C_Syntax.tfw
@@ -466,13 +479,14 @@ infixOn
 //pwi ftfw1
 : ftfw2 ( Word * w ) nl w . Definition hp w . S_Name ps w . Name ps w . W_Filename ps w . W_Filename ps w . W_WordData . WD_Filename ps ; 
 fw @ ftfw2
-fw @ ->W_Filename ps sp0 
-fw @ W_Filename ps sp0 
+fw @ ->W_Filename ps sp 
+fw @ W_Filename ps sp 
 fw @ ftfw1
-sp0
+sp
 //pause
 'wtdInclude find dup hex p 'C.Experimental.Word find wordStructPrint
 cOn
+sp
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
 oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d, NamedByteArray.size = %d", 
@@ -484,7 +498,9 @@ oPrintf ( "\nReadLiner.size = %d, Finder.size = %d, LambdaCalculus.size = %d, By
 oPrintf ( "\nLexer.size = %d, MachineCodePrimitive.size = %d, CPrimitive.size = %d, OVT_StaticMemSystem.size = %d, Exception.size = %d", 
     Lexer.size, MachineCodePrimitive.size, CPrimitive.size, OVT_StaticMemSystem.size, Exception.size, NamedByteArray.size ) ; 
 oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d", Compiler.size, Interpreter.size ) ; 
+
 #endif
+
 C.Experimental 
 cOff Forth decimal
 "\nCSL.size = " ps CSL.size @ dup p 8mod p
@@ -492,14 +508,15 @@ cOff Forth decimal
 "\nLambdaCalculus.size = " ps LambdaCalculus.size @ dup p 8mod p
 "\nReadLiner.size = " ps ReadLiner.size @ dup p 8mod p
 
-stateAll sp0
+//stateAll 
+sp
 //pause
 infixOn
 : tt ( Word * w ) "\ntt : " ps w @ hp w->Definition hp w->S_Name ps w->Name ps w->W_Filename ps w->W_Filename ps w->W_WordData->Filename ps ;
 pwi tt
-nl 'wtdInclude find dup hp tt sp0 //pause
+nl 'wtdInclude find dup hp tt sp //pause
 : tti ( Word * wrd ) "\ntti" ps wrd->Definition hp wrd->S_Name  ps wrd->Name ps wrd->W_Filename ps wrd->W_Filename ps wrd->W_WordData->Filename ps ;
-nl 'tti find dup hp tti sp0
+nl 'tti find dup hp tti sp
 infixOff
 cOn
 C.Experimental
@@ -520,7 +537,7 @@ pwi ctti
 'ctti find dup hex p ->W_WordData @ dup hp 'C.Experimental.WordData find wordStructPrint 
 //'ctti find dup dup hex p ->W_WordData @ dup hp d: wordStructPrint 
 'C.Experimental notUsing
-sp0
+sp
 
 #endif
 //pause
@@ -589,7 +606,7 @@ cOff
 nl bt.a32_123 32@ hp    
 nl bt.u32_123 32@ hp 
 #endif
-sp0
+sp
 
 #if 1
 C.Experimental
@@ -610,7 +627,7 @@ bnOff
 infixOn
 (1 + 5 + 6) / (3 + 2 + 1) 2 _assert
 infixOff
-sp0
+sp
 
 cOn
 typedef struct { byte buf [ 2048 ] ; } Buffer2048 ;
@@ -688,6 +705,6 @@ $cat node.txt
 //node-p4 ( "1+107" "./node.txt" ) 
 $cat node.txt 
 2 + 7 assertStkChk // stack checking
-sp0
+sp
 //pause
-ihalt2 
+//ihalt2 

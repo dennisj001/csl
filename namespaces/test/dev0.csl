@@ -4,7 +4,7 @@ Int
 bnOff dbgOff 
 scOn
 Root 
-#if 0
+#if DEBUG_ON
 'sp  purge
 : sp stack pause ;
 #else

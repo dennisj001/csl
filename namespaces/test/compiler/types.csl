@@ -420,8 +420,8 @@ typedef struct _ThisWordNode
 typedef struct _WordData
 {
     uint64 WD_RunType ;
-    Namespace * TypeNamespace ;
-    byte * TypeNamespaceName ;
+    Namespace * WD_TypeNamespace ;
+    byte * WD_TypeNamespaceName ;
     byte * CodeStart ;
     union
     {
@@ -495,7 +495,7 @@ typedef struct _WordData
 
 #define W_Filename W_WordData->WD_Filename
 #define W_LineNuber W_WordData->WD_LineNumber
-#if 0
+#if 0 // problematic but individually they could be fixed if needed
 // to keep using existing code without rewriting ...
 #define CodeStart W_WordData->CodeStart // set at Word allocation 
 #define Coding W_WordData->WD_Coding // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
@@ -518,7 +518,7 @@ typedef struct _WordData
 #define StackPushRegisterCode W_WordData->StackPushRegisterCode // used by CO
 #define W_OriginalCodeText W_WordData->WD_OriginalCodeText 
 //#define W_TokenEnd_ReadLineIndex W_WordData->CursorEndPosition 
-#define W_TokenStart_LineIndex W_WordData->TokenStart_LineIndex 
+//#define W_TokenStart_LineIndex W_WordData->TokenStart_LineIndex 
 #define S_FunctionTypesArray W_WordData->FunctionTypesArray
 #define RegToUse W_WordData->RegToUse
 #define Opt_Rm W_WordData->Opt_Rm
@@ -528,8 +528,8 @@ typedef struct _WordData
 #define ArrayDimensions W_WordData->WD_ArrayDimensions
 #define ArrayNumberOfDimensions W_WordData->WD_ArrayNumberOfDimensions
 #define W_AliasOf W_WordData->AliasOf
-#define TypeNamespace W_WordData->TypeNamespace 
-#define TypeNamespaceName W_WordData->TypeNamespaceName 
+#define TypeNamespace W_WordData->WD_TypeNamespace 
+#define TypeNamespaceName W_WordData->WD_TypeNamespaceName 
 #define Lo_ListProc W_WordData->ListProc
 #define Lo_ListFirst W_WordData->ListFirst
 #define ContainingNamespace S_ContainingNamespace

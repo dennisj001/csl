@@ -3,8 +3,11 @@ C
 scOn
 Root
 lispOff
-: sp0 ; //stack pause ;
-sp0
+#if DEBUG_ON
+: sp stack pause ; 
+#else
+: sp ; //stack pause ; 
+#endif
 System Interpreter 
 // these #defines are purposefully unnecessarily complex (and confusing looking) for testing
 // rpn
@@ -29,9 +32,9 @@ c_syntaxOn
 #define xxhi( n ) ps ( "\nxxhi : " ) xhi ( n ) xhii ( n ) 
 #define yhi( n ) ps ("\nyhi : " ) ; p ( 1 + 2 + n ) xxhi ( n )
 #define zhi( n ) ps ("\nzhi : " ) ; yhi(4) ; p ( 1 + 2 + n ) ; xxhi ( n ) ;
-sp0
+sp
 xxhi ( 4 ) ; yhi ( 4 ) ; zhi(4) ;
-sp0
+sp
 
 void
 testc1 () 
@@ -46,9 +49,9 @@ testc1 ()
     ps ( "\ntdbg6 =" ) ; p ( tdbg6 ) ; //_pause () ;
     ps ("\nlast line"); ps ( "\nxhii =" ) ; xhii (4) ; xhi (4) ; xhi0; xhi1  ; xhi( 4 ); xhi01 ; xhi1 ; xhi2(8) ; xhi2a ( "xhi2a =", 8 ) ; 
 } prefix
-'testc1 find wdiss sp0
+'testc1 find wdiss sp
 testc1 () ; 
-sp0
+sp
 #if 1
 C libc 
 void
@@ -87,7 +90,7 @@ interpret ( | atoken aword )
     label: done ;
 }
 
-pwi interpret sp0 //pause
+pwi interpret sp //pause
 interpret 
 c_syntaxOff 
 
@@ -100,7 +103,7 @@ User
 nl heey1 
 
 ihalt //pause
-sp0
+sp
 C
 sp
 "PrefixCombinators" notUsing
@@ -116,4 +119,4 @@ c_syntaxOff
 1 ? "hi" ps : "error" ps 
 //
 Root
-: sp0 ;
+: sp ;

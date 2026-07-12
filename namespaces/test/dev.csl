@@ -3,10 +3,13 @@
 #ifndef _DEV_H_
 #define _DEV_H_
 Interpreter
-: sp0 ; //stack pause ; 
-Root  
-: sp0 ; //stack pause ; 
-sp0
+#if DEBUG_ON
+: sp stack pause ; 
+#else
+: sp ; //stack pause ; 
+#endif
+
+sp
 C 
 optimizeOn inlineOn 
 //typecheckOn 
@@ -72,7 +75,7 @@ int factoriali ( int8 REG n | REG res )
 } prefix
 
 factoriali ( 7 ) ; p () ;
-factoriali (7) ; dup p 5040 _assert sp0
+factoriali (7) ; dup p 5040 _assert sp
 pwi factoriali //pause
 #endif
 //vb (3) ;
@@ -86,9 +89,9 @@ int factoriali2 ( int8 REG n | REG res )
     while ( n >= 2 ) ;
     return res;
 } prefix
-pwi factoriali2 sp0 //pause
+pwi factoriali2 sp //pause
 factoriali2 ( 7 ) ; p () ;
-factoriali2 (7) ; dup p 5040 _assert sp0 
+factoriali2 (7) ; dup p 5040 _assert sp 
 cOff
 : factorial005 ( n  | fac ) 
     fac 1 = 
@@ -109,7 +112,7 @@ cOff
 : bexp4 ( n ) n @ 1 > if n @ dup -- bexp4 * else 1 endif ; 7 bexp4 dup p 5040 _assert
 : bexp2 ( n ) { n @ 1 > } { n @ dup -- bexp2 * } { 1 } ifElse ; 7 bexp2 dup p 5040 _assert
 : bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;
-7 bexp3 dup nl p 5040 _assert sp0
+7 bexp3 dup nl p 5040 _assert sp
 : t if 1 p else 0 p then ; 0 t 1 t nl //pause
 : t1 dup dup dup if 1 p t t t else 0 p t t t then ; 0 t1 nl 1 t1 //pause
 pwi t1 pwi t
@@ -128,7 +131,7 @@ faccs3 ( n | rec )
 ' faccs3 find wdiss //pause
 faccs3 ( 7 ) dup p 5040 _assert 
 
-sp0
+sp
 
 int
 fac5 ( REG n  | REG facc ) 
@@ -143,7 +146,7 @@ fac5 ( REG n  | REG facc )
 }
 wdiss ( ' fac5 find ) ; 
 fac5 ( 7 ) dup p 5040 _assert 
-sp0
+sp
 int
 faccs ( REG n | REG rec ) 
 {
@@ -156,7 +159,7 @@ faccs ( REG n | REG rec )
 }
 ' faccs find wdiss
 faccs ( 7 ) dup p 5040 _assert 
-sp0
+sp
 int
 faccs1 ( REG n | REG rec ) 
 {
@@ -173,7 +176,7 @@ faccs1 ( REG n | REG rec )
 }
 ' faccs1 find wdiss
 faccs1 ( 7 ) dup p 5040 _assert 
-sp0
+sp
 int
 fac40 ( n  | facc ) 
 { 
@@ -198,7 +201,7 @@ fac5 ( REG n  | REG facc )
 }
 //wdiss ( ' fac5 find ) 
 fac5 ( 7 ) dup p 5040 _assert //pause
-sp0
+sp
 int
 faccs2 ( REG n | REG rec ) 
 {
@@ -210,7 +213,7 @@ faccs2 ( REG n | REG rec )
 }
 ' faccs2 find wdiss
 faccs2 ( 7 ) dup p 5040 _assert 
-sp0
+sp
 c_syntaxOff
 Locals User
 : fac ( n  | res ) 
@@ -224,7 +227,7 @@ Locals User
 interpret00
 
 : s1 ( j ) { stackDepth 20 > } { state regs nl "stackDepth = " ps stackDepth p nl hex { j stackDepth = } { j @ 0 > } { j -- } { p } for quit } if2 decimal ;
-sp0
+sp
 User
 //'dn 'dfnba find alias  
  optRegs
@@ -322,7 +325,7 @@ fibPTC2? ( REG n | REG fn, REG fn1, REG fn2 )
 c_syntaxOff
 C_Syntax User 
 ' fibPTC2? find wdiss
-fibPTC2? (20) dup p 6765 _assert sp0
+fibPTC2? (20) dup p 6765 _assert sp
 cOff
 //pause
 User
@@ -369,7 +372,7 @@ using
 "faccs2" ffx
 "fac5" ffx
 "fac40" ffx
-sp0
+sp
 //pause
 
  initRegs
@@ -416,7 +419,7 @@ c_syntaxOff
 Int
 "**" ffx2
 "pow_03" ffx2
-sp0
+sp
  
 optRegs
 C
@@ -435,8 +438,8 @@ _fibn0 ( n | fib )
     }
     return fib ;
 }
-//' _fibn0 find d: wdiss sp0 
-_fibn0 ( 20 ) dup p 6765 _assert //sp0
+//' _fibn0 find d: wdiss sp 
+_fibn0 ( 20 ) dup p 6765 _assert //sp
 int
 fibPTC? ( n ) 
 {
@@ -450,7 +453,7 @@ fibPTC? ( n )
     return fn ;
 } prefix
 ' fibPTC? find wdiss
-fibPTC? (20) dup p 6765 _assert sp0
+fibPTC? (20) dup p 6765 _assert sp
 //pause
 int
 fibPTC2? ( REG n | REG fn, REG fn1, REG fn2 )
@@ -464,7 +467,7 @@ fibPTC2? ( REG n | REG fn, REG fn1, REG fn2 )
     return fn ;
 }
 pwi fibPTC2? 
-fibPTC2? ( 20) dup p 6765 _assert sp0 //pause
+fibPTC2? ( 20) dup p 6765 _assert sp //pause
 "fibPTC?" ffx 
 "fibPTC2?" ffx 
 int
@@ -485,7 +488,7 @@ pwi fibPTC4?
 fibPTC4? (20) ; 
 c_syntaxOff
 "fibPTC4?" ffx 
-dup p 6765 _assert sp0 //pause
+dup p 6765 _assert sp //pause
 cOff scOn
 fOn
 : fibPTC5 ( REG n | REG fn REG fn1 REG fn2 )
@@ -506,12 +509,12 @@ fOff
 Combinators
 //"cfib_O3" ffx 
 "cfib2_O3" ffx 
-sp0
+sp
 
 : _fibn1 ( n ) { n @ 2 < } { n @ } { n -- n @ _fibn1 n -- n @  _fibn1 + } ifElse return tos ;
-' _fibn1 find wdiss 20 _fibn1 p // sp0
+' _fibn1 find wdiss 20 _fibn1 p // sp
 : _fib1 ( n ) { n @ 2 < } { n @ } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse ;
-sp0
+sp
 
 : _fib 
     dup 2 <  
@@ -540,7 +543,7 @@ sp0
 ;
 ' _fib4 find wdiss
 20 _fib4 dup p 6765 assert0 
-sp0
+sp
 
 Locals
 User
@@ -548,7 +551,7 @@ User
 C 
 
 
-'cfib2_O3 find wdiss //sp0
+'cfib2_O3 find wdiss //sp
 : fib  ( n ) 1 ti n @ _fib  p 1 time ;
 : fib2 ( n ) 1 ti n @ _fib2 p 1 time ;
 : fib3 ( n ) 1 ti n @ _fib3 p 1 time ;
@@ -571,7 +574,7 @@ C_Syntax C Interpreter
     "fibPTC?        : " ps n @ fibPTC nl
     "fibPTC2?       : " ps n @ fibPTC2 nl
 ;
-sp0
+sp
 15 tfib 30 tfib //40 tfib //45 tfib 
 stack //pause
 : tfib1 ( n | m )  
@@ -603,10 +606,10 @@ stack //pause
     "Cfib2_O3       : " ps 1 ti m 1 = { m @ n @ <= } { m @ cfib2_O3 p m ++ } while 1 time nl nl
 ;
 ' tfib3 find wdiss //pause
-//' tfib1 find d: wdiss sp0 pause
+//' tfib1 find d: wdiss sp pause
 30 tfib1
 30 tfib2
-92 tfib3 //sp0
+92 tfib3 //sp
 //: fibx ( n ) { n @ 0 >= } { n @ _fib p n -- } while ;
 //: fibx2 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib2 p m ++ } while ;
 // : fibx3 ( n | m ) "fibonacci" ps n @ p ":" ps m 0 = { m @ n @ < n @ <= } { m @ n @ < _fib3 p m ++ } while ;
@@ -614,10 +617,10 @@ stack //pause
 // ' _fib find wdiss
 ' _fib2 find wdiss
 // 40 fibx3 
-sp0
+sp
 //bnOn
 //pause
-sp0
+sp
 : tbn ( | n m ) n 0 = m 3 = n m @ += n m @ += n m @ += n @ p ; tbn nl "should be 9" ps
 : fibBN ( n | fn fn1 fn2 ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
@@ -632,17 +635,17 @@ sp0
 ;
 ' fibBN find wdiss
 20 fibBN dup 6765 _assert p 
-sp0
+sp
 : tfib3 ( n | m )  
     "locals fibBN : " ps 
     { m 1 = } { m @ n @ <= } { m 1 +=  } 
     { m @ dup p " : " _ps fibBN p { n @ m @ > } { "," _ps } if2 } 
     for
 ;
-//nl nl 47 tfib3 //sp0 pause
-nl nl 92 tfib3 //sp0 pause
+//nl nl 47 tfib3 //sp pause
+nl nl 92 tfib3 //sp pause
 nl 92 dup p fibBN p 
-20 fibBN dup p 6765 == { "ok" ps } { "error" ps } tf2 drop sp0
+20 fibBN dup p 6765 == { "ok" ps } { "error" ps } tf2 drop sp
 //pause
 : dbg _dbg ;
 //cOff
@@ -768,7 +771,7 @@ nl
 // verbosity 1 =
 namespaceTreeWithWords 
 Interpreter
-sp0
+sp
 
 bnOn cOn 
 void ctof0 ( c ) { c = c * 1.8 ; c = c + 32 ; nl ; p (c) ; } //ctof0 ( 11.41) ;
@@ -779,7 +782,7 @@ cOff
 bnOff
 : ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
 : ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
-sp0
+sp
 //ihalt002
 
 //tc demo lisp

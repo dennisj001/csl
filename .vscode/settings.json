@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/media/sda5/dennisj-a1/csl/bin",
+            "binaryPath": "/media/sda5/dennisj-a1/csl/bin/csl-gdb",
+            "binaryArgs": []
+        }
+    ]
+}
