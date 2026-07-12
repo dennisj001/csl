@@ -14,10 +14,10 @@ doDemo 1 =
 sp
 //dbgOff
 : demo0 "namespaces/test/initTest.csl" include ;
-doDemo @ { drop demo0 } if1  drop //stack pause
+//doDemo @ { drop demo0 } if1  
 sp
 Shell
-//if ( _doDemo drop ) demo0 endif 
+if ( _doDemo drop ) demo0 endif 
 shellOff
 lispOff
 bnOff
