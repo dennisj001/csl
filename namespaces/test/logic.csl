@@ -5,6 +5,8 @@ Logic Bits
 : sp ; //stack pause ;
 //verbosity 1 ( 1 4 << ) + =
 sp
+
+
 : lt 1 2 < dup p ; lt 1 _assert sp
 : lt2 1 2 > dup p ; lt2 0 _assert sp
 // ' lt2 find wdiss
@@ -386,6 +388,7 @@ C_Syntax
 pbAssert ( "\nn = 1\nn = 2\nn = 3\nn = 4\nn = 5\nn = 6" ) //pause 
 cOff 
 //pause
+//ihalt00
 2 + 7 assertStkChk sp // stack checking
 
 

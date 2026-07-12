@@ -324,8 +324,8 @@ typedef struct _Identifier // _Symbol
 #define W_TypeAttributes S_WordAttributes
 #define W_NumberOfPrefixedArgs S_NumberOfPrefixedArgs 
 #define W_AllocType S_WAllocType
-#define W_Filename W_WordData->Filename
-#define W_LineNumber W_WordData->LineNumber
+//#define W_Filename W_WordData->WD_Filename
+//#define W_LineNumber W_WordData->WD_LineNumber
 #define W_UseCount W_Attributes.T_UseCount
 #define CProp S_MorphismAttributes
 #define CProp2 S_ObjectAttributes
@@ -428,8 +428,8 @@ typedef struct _WordData
         byte * WD_Coding ; // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
         byte * WD_LogicCodingAfter ;
     } ;
-    byte * Filename ; // ?? should be made a part of a accumulated string table ??
-    int64 LineNumber ;
+    byte * WD_Filename ; // ?? should be made a part of a accumulated string table ??
+    int64 WD_LineNumber ;
     int64 TokenStart_LineIndex ;
     int64 NumberOfNonRegisterArgs ;
     int64 NumberOfNonRegisterLocals ;
@@ -493,6 +493,8 @@ typedef struct _WordData
     Identifier * CSLWord, * BaseObject ;
 } WordData ; // try to put all compiler related data here so in the future we can maybe delete WordData at runtime
 
+#define W_Filename W_WordData->WD_Filename
+#define W_LineNuber W_WordData->WD_LineNumber
 #if 0
 // to keep using existing code without rewriting ...
 #define CodeStart W_WordData->CodeStart // set at Word allocation 

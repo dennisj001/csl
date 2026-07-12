@@ -57,7 +57,11 @@ Compiler_CopyDuplicatesAndPush ( Word * word0, int64 tsrli, int64 scwi )
 byte *
 Compiler_IncrementCurrentAccumulatedOffset ( Compiler * compiler, int64 increment )
 {
-    if ( compiler->AccumulatedOffsetPointer ) ( *( int64* ) ( compiler->AccumulatedOffsetPointer ) ) += ( increment ) ;
+    if ( compiler->AccumulatedOffsetPointer ) 
+    {
+        d0 ( int32 accumulatedOffsetPointer = (*( int32* ) ( compiler->AccumulatedOffsetPointer ) ) ; )
+        ( *( int32* ) ( compiler->AccumulatedOffsetPointer ) ) += ( increment ) ;
+    }
     if ( compiler->AccumulatedOptimizeOffsetPointer ) ( *( int64* ) ( compiler->AccumulatedOptimizeOffsetPointer ) ) += ( increment ) ;
     //_Debugger_->PreHere = ( ( byte* ) compiler->AccumulatedOffsetPointer ) - 3 ; // 3 : sizeof add immediate insn with rex
     return ( byte* ) compiler->AccumulatedOffsetPointer ; // 3 : sizeof add immediate insn with rex

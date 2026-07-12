@@ -50,7 +50,7 @@ testc1 ()
 testc1 () ; 
 sp0
 #if 1
-C libc
+C libc 
 void
 interpret ( | atoken aword ) 
 {
@@ -99,7 +99,7 @@ User
 : heey1 hey1 hey1 hey1 ;
 nl heey1 
 
-ihalt 
+ihalt //pause
 sp0
 C
 sp
@@ -108,8 +108,9 @@ sp
 sp
 #endif
 
-
 c_syntaxOff 
+
+
 2 + 7 assertStkChk // stack checking
 //
 1 ? "hi" ps : "error" ps 

@@ -16,8 +16,37 @@ bnOff
 // optimizeOff inlineOff
 // verbosity 2 = 
 Compiler Logic Int C User 
-
 // tail recursion : http://c2.com/cgi/wiki?TailCallOptimization
+
+#if 0
+cOn
+void
+interpret002 ( | atoken aword ) 
+{
+    while ( 1 )
+    {   
+        atoken = token () ; 
+        oPrintf ( "\n\tinterpret002 : token = %s", atoken ) ; 
+        if ( ! atoken ) break ; 
+        if ( StringEqual ( atoken, "ihalt002" ) )        
+        { 
+            oPrintf ( "\n\n\ttoken = %s :: interpret002 exiting ...", atoken ) ; 
+            //ps ( "\nhi" ) ;
+            pause () ;
+            break ;
+        }        
+        else
+        {
+            aword = tokenToWord ( atoken ) ;
+            doWord ( aword ) ;
+        }
+    }
+}
+//pwi interpret002 //pause
+interpret002 
+cOff
+//ihalt002 
+#endif
 
 c_syntaxOn 
 #if 1
@@ -47,7 +76,6 @@ factoriali (7) ; dup p 5040 _assert sp0
 pwi factoriali //pause
 #endif
 //vb (3) ;
-
 int factoriali2 ( int8 REG n | REG res )
 {
     res = 1;
@@ -193,6 +221,7 @@ Locals User
 7 fac dup p 5040 _assert 
 // : bexp2 ( n | res ) { n @ 1 <= } { 1 } { n @ dup -- bexp2 * } ifElse ;
 
+interpret00
 
 : s1 ( j ) { stackDepth 20 > } { state regs nl "stackDepth = " ps stackDepth p nl hex { j stackDepth = } { j @ 0 > } { j -- } { p } for quit } if2 decimal ;
 sp0
@@ -751,7 +780,7 @@ bnOff
 : ctof ( c ) c 18 *=  c 10 /= c 32 += nl c @ p ; 
 : ftoc ( f ) f 32 -= f 10 *= f 18 /= f @ p ; //60 ftoc 
 sp0
-
+//ihalt002
 
 //tc demo lisp
 
@@ -847,6 +876,7 @@ te1 ( 3 ) ; //pause
 cOff
 #endif
 //mem pause
+//ihalt00 pause
 rdim 
 namespaces
 //"\n gcc version info \n" ps

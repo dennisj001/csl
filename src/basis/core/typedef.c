@@ -906,7 +906,7 @@ Object_PrintStructuredData ( byte * objectBits, Word * typedefWord ) //byte * ty
 
         byte * b = Buffer_DataCleared ( _CSL_->ScratchB4 ) ;
         snprintf ( b, BUFFER_IX_SIZE, "%s : <source code text>", typedefWord->Name ) ;
-        rl->Filename = b ; //(byte*) "<source code text>" ; //typedefWord->W_WordData->Filename ;
+        rl->Filename = b ; //(byte*) "<source code text>" ; //typedefWord->W_WordData->WD_Filename ;
         //rl->LineNumber = typedefWord->W_WordData->LineNumber ;
         Readline_Setup_OneStringInterpret ( rl, typedefString ) ; //typedefString ) ;
 

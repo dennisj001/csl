@@ -47,6 +47,7 @@ Interpreter
 C
 : ;; semi _prefix ; immediate syntactic
 
+
 Root 
 uksOn // UnknowStringIsErrorFlag
 ukspOn // UnknowStringPushedFlag
@@ -144,7 +145,7 @@ Debug
 'scOff 'dscOff find alias
 scOn 
 
-// === controls ===
+/ === controls ===
 
 "User" namespace 
 User
@@ -518,6 +519,31 @@ bnOff
 sp0
 #endif
 //: ash _sh ; prefix
+
+#if 0
+cOn
+void
+interpret ( | atoken aword ) 
+{
+    while ( 1 )
+    {   
+        atoken = token () ; 
+        if ( ! atoken ) break ; 
+        if ( StringEqual ( atoken, "ihalt" ) )        
+        { 
+            break ;
+        }        
+        else
+        {
+            aword = tokenToWord ( atoken ) ;
+            doWord ( aword ) ;
+        }
+    }
+}
+
+interpret 
+cOff
+#endif
 
 //================================================================================
 

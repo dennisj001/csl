@@ -430,46 +430,48 @@ pwi wtdInclude
 fw @ hp fw @ ->Definition hp fw @ ->S_Name @ ps sp0 
 
 cOn
-//#define W_Filename W_WordData->Filename 
-//#define Name S_Name
 
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
 oPrintf ( "\nTypeInfo.size = %d, DLNode.size = %d, dllist.size = %d, dlnode.size = %d", TypeInfo.size, DLNode.size, dllist.size, dlnode.size ) ; 
 #if 1 // some words are namespaces ?? 
+
 oPrintf ( "\nCSL.size = %d, OpenVmTil.size = %d, OMS.size = %d, TypeStatusInfo.size = %d", CSL.size, OpenVmTil.size, OMS.size, TypeStatusInfo.size ) ; 
 oPrintf ( "\nReadLiner.size = %d, Finder.size = %d", Readliner.size, Finder.size ) ; 
 oPrintf ( "\nLexer.size = %d, MachineCodePrimitive.size = %d, CPrimitive.size = %d, OVT_StaticMemSystem.size = %d, Exception.size = %d", 
     Lexer.size, MachineCodePrimitive.size, CPrimitive.size, OVT_StaticMemSystem.size, Exception.size ) ; 
 oPrintf ( "\nCompiler.size = %d, Interpreter.size = %d", Compiler.size, Interpreter.size ) ; 
+//stateAll
+//pause
 #endif
+
 C.Experimental 
 
 void tfw ( Word * w ) { hp ( w->Definition ) ; ps ( w->S_Name ) ; } 
 void tfw1 ( Word * w ) 
 { 
     hp ( w->Definition ) ; ps ( w->S_Name ) ; ps ( w->Name ) ; hp ( w->W_Filename ) ; 
-    ps ( w->W_Filename ) ; ps ( w->W_WordData->Filename  ) ; 
+    ps ( w->W_Filename ) ; ps ( w->W_WordData->WD_Filename  ) ; oPrintf ( ": linenumber = %d", w->W_WordData->WD_LineNumber  ) ; 
 } 
 pwi tfw1
 //wdiss ( 'tfw1 find ) 
-tfw ('tfw1 find) ; tfw1 ( 'tfw1 find ) ; sp0 
-stateAll
+tfw ('tfw1 find) ; nl tfw1 ( 'tfw1 find ) ; sp0 
 //pause
 'C_Syntax.tfw find wdiss 
 fw @ C_Syntax.tfw
+nl 'tfw find C_Syntax.tfw //pause
 cOff
 infixOn
-: ftfw1 ( Word * w ) nl w->Definition hp w->S_Name ps w->Name ps w->W_Filename ps w->W_Filename ps w->W_WordData->Filename ps ;
+: ftfw1 ( Word * w ) nl w->Definition hp w->S_Name ps w->Name ps w->W_Filename ps w->W_Filename ps w->W_WordData->WD_Filename ps ;
 //pwi ftfw1
-: ftfw2 ( Word * w ) nl w . Definition hp w . S_Name ps w . Name ps w . W_Filename ps w . W_Filename ps w . W_WordData . Filename ps ; 
+: ftfw2 ( Word * w ) nl w . Definition hp w . S_Name ps w . Name ps w . W_Filename ps w . W_Filename ps w . W_WordData . WD_Filename ps ; 
 fw @ ftfw2
 fw @ ->W_Filename ps sp0 
 fw @ W_Filename ps sp0 
 fw @ ftfw1
 sp0
-'wtdInclude find dup hex p 'C.Experimental.Word find wordStructPrint
 //pause
+'wtdInclude find dup hex p 'C.Experimental.Word find wordStructPrint
 cOn
 C.Experimental 
 oPrintf ( "\nIdentifier = %lx, Identifier.size = %d, WordData.size = %d, Stack.size = %d", Identifier, Identifier.size, Experimental.WordData.size, Stack.size ) ;
@@ -688,4 +690,4 @@ $cat node.txt
 2 + 7 assertStkChk // stack checking
 sp0
 //pause
-
+ihalt2 

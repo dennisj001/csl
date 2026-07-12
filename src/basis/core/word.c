@@ -251,7 +251,7 @@ Word_SetLocation ( Word * word )
     ReadLiner * rl = _Context_->ReadLiner0 ;
     if ( rl->InputStringOriginal )
     {
-        word->W_WordData->Filename = rl->Filename ;
+        word->W_WordData->WD_Filename = rl->Filename ;
         word->W_WordData->LineNumber = rl->LineNumber ;
         word->W_TokenStart_LineIndex = _Lexer_->TokenStart_ReadLineIndex ;
     }
@@ -322,7 +322,7 @@ byte *
 _Word_SourceCodeLocation_pbyte ( Word * word )
 {
     byte * b = Buffer_DataCleared ( _CSL_->ScratchB2 ) ;
-    if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %ld.%ld", word->ContainingNamespace->Name, word->Name, word->W_WordData->Filename,
+    if ( word ) sprintf ( ( char* ) b, "%s.%s : %s %ld.%ld", word->ContainingNamespace->Name, word->Name, word->W_WordData->WD_Filename,
         word->W_WordData->LineNumber, word->W_TokenStart_LineIndex ) ;
     return String_New ( b, TEMPORARY ) ;
 }

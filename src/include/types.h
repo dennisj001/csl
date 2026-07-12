@@ -307,7 +307,7 @@ typedef struct _Identifier // _Symbol
 #define W_TypeAttributes S_WordAttributes
 #define W_NumberOfPrefixedArgs S_NumberOfPrefixedArgs 
 #define W_AllocType S_WAllocType
-#define W_Filename W_WordData->Filename
+#define W_Filename W_WordData->WD_Filename
 #define W_LineNumber W_WordData->LineNumber
 #define W_UseCount W_Attributes.T_UseCount
 #define CProp S_MorphismAttributes
@@ -412,7 +412,7 @@ typedef struct _WordData
         byte * WD_Coding ; // nb : !! this field is set by the Interpreter and modified by the Compiler in some cases so we also need (!) CodeStart both are needed !!  
         byte * WD_LogicCodingAfter ;
     } ;
-    byte * Filename ; // ?? should be made a part of a accumulated string table ??
+    byte * WD_Filename ; // ?? should be made a part of a accumulated string table ??
     int64 LineNumber ;
     int64 TokenStart_LineIndex ;
     int64 NumberOfNonRegisterArgs ;

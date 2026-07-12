@@ -298,7 +298,7 @@ Debugger_GetDbgAddressFromRsp ( Debugger * debugger, Cpu * cpu )
         if ( word )
         {
             _List_PushNew_1Value ( retStackList, WORD_RECYCLING, 0, cpu->Rsp[i0] ) ;
-            if ( String_Equal ( word->Name, currentlyRunning->Name ) )
+            if ( currentlyRunning && String_Equal ( word->Name, currentlyRunning->Name ) )
                 break ;
         }
         else break ;

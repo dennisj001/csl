@@ -75,7 +75,7 @@ void
 _Compile_Write_Instruction_X64 ( Boolean rex, uint8 opCode0, uint8 opCode1, Boolean modRm, int16 controlFlags, Boolean sib,
     int64 disp, Boolean dispSize, int64 imm, Boolean immSize )
 {
-    d1 ( byte * here = Here ) ;
+    d0 ( byte * here = Here ) ;
     if ( rex ) _Compile_Int8 ( rex ) ;
     if ( opCode0 ) _Compile_Int8 ( ( byte ) opCode0 ) ;
     if ( opCode1 ) _Compile_Int8 ( ( byte ) opCode1 ) ;
@@ -83,11 +83,13 @@ _Compile_Write_Instruction_X64 ( Boolean rex, uint8 opCode0, uint8 opCode1, Bool
     if ( sib && ( controlFlags & SIB_B ) ) _Compile_Int8 ( sib ) ;
     if ( disp || ( controlFlags & DISP_B ) ) _Compile_ImmDispData ( disp, dispSize, 0 ) ;
     if ( imm || ( controlFlags & IMM_B ) ) _Compile_ImmDispData ( imm, immSize, ( controlFlags & IMM_B ) ) ;
+    d0 (
     if ( _DBI || ( _O_->Dbi > 1 ) )
     {
         //d1 ( Debugger_UdisOneInstruction ( _Debugger_, 0, here, ( byte* ) "", ( byte* ) "" ) ; ) ;
         d1 ( _Debugger_Disassemble ( _Debugger_, 0, ( byte* ) here, Here - here, 1 ) ) ;
     }
+    )
 }
 
 int64

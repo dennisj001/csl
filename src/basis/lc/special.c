@@ -325,6 +325,7 @@ LO_Cond ( )
     Compiler * compiler = _Context_->Compiler0 ;
     ListObject *condClause, *nextCondClause, * test, *sequence, * resultNode = nil, * result = nil, *testResult ;
     ListObject * idLo = _LC_->Lfirst, *locals = _LC_->Locals ;
+    int64 sd0 = Stack_Depth ( compiler->CombinatorBlockInfoStack ) ; //??
     if ( idLo )
     {
         int64 timt = 0 ; // timt : test is morphism type 
@@ -409,8 +410,8 @@ LO_Cond ( )
             while ( condClause ) ;
             if ( idLo->W_MorphismAttributes & COMBINATOR )
             {
-                d1 = Stack_Depth ( compiler->CombinatorBlockInfoStack ) ;
-                numBlocks = d1 - d0 ;
+                int64 sd1 = Stack_Depth ( compiler->CombinatorBlockInfoStack ) ; //??
+                numBlocks = sd1 - sd0 ; //??
                 CSL_CondCombinator ( numBlocks ) ;
             }
             else
