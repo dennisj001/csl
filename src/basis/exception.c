@@ -30,7 +30,7 @@ OVT_Throw ( ) //, Boolean pausedFlag )
     Exception *e = _O_->OVT_Exception ;
     sigjmp_buf * jb ;
     Word * eword ;
-    if ( e->Signal )
+    if ( e && e->Signal )
     {
         if ( ( e->Signal == SIGTERM ) || ( e->Signal == SIGKILL ) || ( e->Signal == SIGQUIT ) || ( e->Signal == SIGSTOP ) || ( e->Signal == SIGHUP ) ) OVT_Exit ( ) ;
         else if ( ( e->Signal == SIGSEGV ) || ( e->Signal == SIGBUS ) )
@@ -114,7 +114,7 @@ _OpenVmTil_ShowExceptionInfo ( )
     DebugOn ;
     //if ( _Context_->CurrentlyRunningWord ) CSL_Show_SourceCode_TokenLine ( _Context_->CurrentlyRunningWord, "",
     //    e->RestartCondition, _Context_->CurrentlyRunningWord->Name, "" ) ;
-    if ( ! e->ExceptionCode & ( STACK_ERROR | STACK_OVERFLOW | STACK_UNDERFLOW ) ) Debugger_Stack ( debugger ) ;
+    if ( e && e->ExceptionCode && ( ! ( e->ExceptionCode & ( STACK_ERROR | STACK_OVERFLOW | STACK_UNDERFLOW ) ) ) ) Debugger_Stack ( debugger ) ;
     if ( ! word )
     {
         word = Finder_Word_FindUsing ( _Finder_, e->ExceptionToken, 1 ) ;
@@ -432,7 +432,7 @@ CSL_Exception ( int64 exceptionCode, byte * message, int64 restartCondition )
     e->RestartCondition = restartCondition ;
     e->Location = _Context_ ? ( byte* ) c_gd ( Context_Location ( ) ) : ( byte* ) "" ;
     iPrintf ( "\n\nCSL_Exception at %s : %s\n", e->Location, message ? message : ( byte* ) "" ) ;
-    oPrintf ( "\nInputLineString : \'%s\'", c_u (String_RemoveEndWhitespace(_ReadLiner_->InputLineString)) ) ;
+    oPrintf ( "\nInputLineString : \'%s\'", c_u ( String_RemoveEndWhitespace ( _ReadLiner_->InputLineString ) ) ) ;
     switch ( exceptionCode )
     {
         case CASE_NOT_LITERAL_ERROR:
