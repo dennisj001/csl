@@ -30,6 +30,7 @@ OVT_Throw ( ) //, Boolean pausedFlag )
     Exception *e = _O_->OVT_Exception ;
     sigjmp_buf * jb ;
     Word * eword ;
+    
     if ( e && e->Signal )
     {
         if ( ( e->Signal == SIGTERM ) || ( e->Signal == SIGKILL ) || ( e->Signal == SIGQUIT ) || ( e->Signal == SIGSTOP ) || ( e->Signal == SIGHUP ) ) OVT_Exit ( ) ;
@@ -112,8 +113,6 @@ _OpenVmTil_ShowExceptionInfo ( )
     Word * word = e->ExceptionWord ;
     Debugger * debugger = _Debugger_ ;
     DebugOn ;
-    //if ( _Context_->CurrentlyRunningWord ) CSL_Show_SourceCode_TokenLine ( _Context_->CurrentlyRunningWord, "",
-    //    e->RestartCondition, _Context_->CurrentlyRunningWord->Name, "" ) ;
     if ( e && e->ExceptionCode && ( ! ( e->ExceptionCode & ( STACK_ERROR | STACK_OVERFLOW | STACK_UNDERFLOW ) ) ) ) Debugger_Stack ( debugger ) ;
     if ( ! word )
     {
@@ -222,10 +221,10 @@ OVT_Pause ( byte * prompt )
         byte *b, * buffer = Buffer_DataCleared ( _CSL_->StringInsertB4 ), *defaultPrompt =
             ( byte * ) "\n%s\n%s : at %s : %s:: <key>/(c)ontinue (d)ebugger s(t)ack '\\'/(i)interpret (q)uit e(x)it, <esc> cancel%s" ;
         b = String_RemoveFinalNewline ( _Context_->ReadLiner0->InputLine ) ;
-        snprintf ( ( char* ) buffer, BUFFER_IX_SIZE, prompt ? ( char* ) prompt : ( char* ) defaultPrompt,
+        snprintf ( ( char* ) buffer, 2 * BUFFER_IX_SIZE, prompt ? ( char* ) prompt : ( char* ) defaultPrompt,
             e->ExceptionMessage ? ( char* ) e->ExceptionMessage : "\r",
-            c_gd ( "pause" ), e->Location,
-            c_gd ( _Debugger_->ShowLine ? _Debugger_->ShowLine : b ),
+            c_gd ( "pause" ), Context_Location ( ), //e->Location,
+            c_gd ( strlen (_Debugger_->ShowLine) ? _Debugger_->ShowLine : b ),
             c_gd ( "\n-> " ) ) ;
         DebugColors ;
         int64 tlw = Strlen ( defaultPrompt ) ;
