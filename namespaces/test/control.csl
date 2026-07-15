@@ -1,6 +1,12 @@
 5
 #if 1
 Root 
+#if DEBUG_ON
+: sp stack pause ; 
+#else
+: sp ; //stack pause ; 
+#endif
+
 "Control" namespace
  Bits Control
 'x var
@@ -12,12 +18,12 @@ Root
 
 x 10 = 
 : abrkcon { { x @ 0 == } { break } { x @ p x dup @ 1 - = continue } ifElse 2 p } loop ;
-'abrkcon find wdiss sp0
+'abrkcon find wdiss sp
 abrkcon
 : abrk0 ( x ) { { x @ 0 == } { break } { x @ p x 1 -= continue } ifElse 2 p } loop ;
 pwi abrk0
 //pause
-nl 10 abrk0 sp0 
+nl 10 abrk0 sp 
 
 
 #if 0 // kbhit needs to be adjusted for these to work
@@ -28,7 +34,7 @@ nl 10 abrk0 sp0
 : abrk5 { { kbhit 0 > } { return } { continue } ifElse  } loop nl "ok" ps ;
 : abrk6 x 10 = nl "Hit any key : " ps { { kbhit 0 > } { { x @ 0 == } { break } { x 1 -= } ifElse decimal x @ p } { continue } ifElse  } loop nl "ok" ps ;
 #endif
-sp0
+sp
 : leaving ( str n j ) s "leaving" ps str @ ps "n =" ps n @ p "j = " ps j @ p s ;
 
 : ct00 ( n | j ) 
@@ -40,12 +46,13 @@ sp0
 ;
 'ct00 find wdiss
 17 ct00 
-sp0
+sp
 : ct0 ( n | j ) 
     nl "ct0 : " ps nl
     { 
         label: test1 
         "ct0 before goto/label works" ps nl 
+        //ps
         goto: leave 
     } _
     { j 1 = } { j @ n @ <= } { j ++ }
@@ -56,10 +63,11 @@ sp0
     for
     label: leave 
     "ct0" n @ j @ leaving
+    //drop
 ;
 'ct0 find wdiss //pause
 17 ct0 
-sp0
+sp
 : ct1 ( n | j ) 
     nl "ct1 : " ps nl
     { j 1 = } { j @ n @ <= } { j ++ }
@@ -68,11 +76,12 @@ sp0
        { n @ j @ == } { nl "testing ct1 : goto/label1 ->" ps goto: hi } { "continuing ct1" ps } ifElse
     }
     for
-    { { { label: hi "ct1 after nested goto/label1 works" ps nl return } _ } _ } _
+    { { { label: hi "ct1 after nested goto/label1 works" ps nl sp drop return } _ } _ } _
+    drop
 ;
 //'ct1 find wdiss
-17 ct1
-sp0
+17 ct1 //drop
+sp
 : ct2 
     nl "ct2 : " ps nl
     { nl "testing ct2 : goto/label2 ->" ps goto: hi } ix
@@ -86,10 +95,11 @@ ct2
     nl "hic2 : done " ps nl 
 ;
 'hic2 find wdiss
-3 hic2 //pause
+3 hic2 
+drop
 #if 1 //dbOn @ not
 7 hic2
-sp0
+sp
 #endif
 : maybePause ; //pause ;
 Compiler Logic User
@@ -107,7 +117,7 @@ Compiler Logic User
     //match ( n @ ) // either or ...
     n @ switch
 ; 
-sp0
+sp
 //' caseSwitchExample find wdiss
 'seven caseSwitchExample 
 '3 caseSwitchExample  
@@ -186,15 +196,15 @@ nl
 csMatchExWithReturn ( '77 ) ; p // should not match : string != int
 cOff
 maybePause
-sp0
+sp
 
 : t0 1 2 > if_ 1 p jmpHere 2 p ; 
 : t1 1 2 > if_ 1 p _else_ 2 p _fi ; 
 //: t2 1 2 > if_ 1 p jmp jmpHere 2 p _fi jmpHere ; 
 : t3 1 2 > if_ 1 p _else_ 2 p _fi ; 
 nl t0 t1 t3 
-"\nlast line should show : 2 2 2" ps sp0
+"\nlast line should show : 2 2 2" ps sp
 //pause
 #endif 
-sp0
+sp
 2 + 7 assertStkChk // stack checking

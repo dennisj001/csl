@@ -484,8 +484,8 @@ typedef struct _WordData
         int64 Index ; // used by Variable and LocalWord
         int64 WD_ArrayNumberOfDimensions ;
     } ;
-    dllist * SourceCodeWordList ;
-    int64 SourceCodeMemSpaceRandMarker ;
+    //dllist * SourceCodeWordList ;
+    //int64 SourceCodeMemSpaceRandMarker ;
     dllist * DebugWordList ;
     ThisWordNode * ThisWordUseNode ; // used for sorting word use
     int64 StartCharRlIndex ;
@@ -514,7 +514,7 @@ typedef struct _WordData
 #define NestedObjects W_WordData->NestedObjects // used by Variable and LocalWord
 #define ObjectCode W_WordData->Coding // used by objects/class words
 #define W_OurLocation W_WordData->OurLocation
-#define W_ThisWordUseNode W_WordData->ThisWordUseNode
+//#define W_ThisWordUseNode W_WordData->ThisWordUseNode
 #define StackPushRegisterCode W_WordData->StackPushRegisterCode // used by CO
 #define W_OriginalCodeText W_WordData->WD_OriginalCodeText 
 //#define W_TokenEnd_ReadLineIndex W_WordData->CursorEndPosition 
@@ -538,8 +538,8 @@ typedef struct _WordData
 #define W_SearchNumber W_Value2
 #define W_FoundMarker W_Value3
 #define WL_OriginalWord W_WordData->OriginalWord
-#define W_SC_WordList W_WordData->SourceCodeWordList 
-#define W_SC_MemSpaceRandMarker W_WordData->SourceCodeMemSpaceRandMarker
+//#define W_SC_WordList W_WordData->SourceCodeWordList 
+//#define W_SC_MemSpaceRandMarker W_WordData->SourceCodeMemSpaceRandMarker
 #define W_OpInsnCode W_WordData->OpInsnCode 
 #define W_OpInsnGroup W_WordData->OpInsnGroup
 #define W_OpNumOfParams W_WordData->OpNumOfParams

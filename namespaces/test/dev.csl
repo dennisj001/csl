@@ -224,7 +224,7 @@ Locals User
 7 fac dup p 5040 _assert 
 // : bexp2 ( n | res ) { n @ 1 <= } { 1 } { n @ dup -- bexp2 * } ifElse ;
 
-interpret00
+//interpret00
 
 : s1 ( j ) { stackDepth 20 > } { state regs nl "stackDepth = " ps stackDepth p nl hex { j stackDepth = } { j @ 0 > } { j -- } { p } for quit } if2 decimal ;
 sp

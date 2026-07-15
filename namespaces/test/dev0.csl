@@ -145,14 +145,14 @@ sp
 lcOff
 Compiler C 
 : _fib2 dup 2 < ? : dup -- _fib2 swap 2 - _fib2 + ; 
-' _fib2 find wdiss sp0
+' _fib2 find wdiss sp
 20 _fib2 nl dup p 6765 assert0 //pause
 : _fib1 ( n ) { n @ 2 < } { n @ } { n @ -- _fib1 n @ 2 - _fib1 + } ifElse return tos ;
-//pwi _fib1 sp0
+//pwi _fib1 sp
 20 _fib1 dup p 6765 _assert0 
 c_syntaxOn
 int _fib1c ( n ) { if ( n < 2 ) { n ; } else { _fib1c ( n - 1 ) + _fib1c ( n - 2 ) ; } }
-//pwi _fib1c sp0
+//pwi _fib1c sp
 _fib1c (20) dup p 6765 _assert0 
 c_syntaxOff
 : fibPTC? ( n | fn fn1 fn2 ) 

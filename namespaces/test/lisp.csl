@@ -5,11 +5,11 @@ bnOff
 "\nstarting lisp.csl\n" ddps
 //Lisp
 lcOn
-#if 0 // debug
-: sp stack pause ; sp
+#if DEBUG_ON
+: sp stack pause ; 
 #else
-: sp ; //stack pause ; sp
-#endif 
+: sp ; //stack pause ; 
+#endif
 //lcReset
 decimal
 "lambda" tick _lambda find alias immediate

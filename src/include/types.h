@@ -230,7 +230,6 @@ typedef struct _Identifier // _Symbol
     uint64 S_DObjectValue ; // nb! DynamicObject value can not be a union with S_SymbolList
     uint64 * S_PtrToValue ; // because we copy words with Compiler_PushCheckAndCopyDuplicates and we want the original value
     block Definition ;
-    //struct _Identifier * ContaingingStructNamespace ;
     union
     {
         uint64 S_Value ;
