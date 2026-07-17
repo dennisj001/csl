@@ -1,5 +1,5 @@
 5
-// nb. some of the testing code is attempting to see if it can cause an error it is not necessarily meant to be exemplary 
+// nb. old setup, not updated : some of the testing code was attempting to see if it can cause an error, it is not necessarily meant to be exemplary 
 verbosity 1 = 
 Root     
 #if DEBUG_ON

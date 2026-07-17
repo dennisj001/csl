@@ -12,14 +12,13 @@ sp
 doLisp 1 =
 doDemo 1 =
 sp
-//dbgOff
-#if 1
 : demo0 "namespaces/test/initTest.csl" include ;
+#if 0
 doDemo @ { demo0 } if1  
 sp
-#elif // problem with stack correcting?
+#elif 
 Shell
-if ( _doDemo d: drop ) demo0 endif 
+if ( doDemo @ ) demo0 endif 
 shellOff
 #endif
 lispOff

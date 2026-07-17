@@ -4,14 +4,14 @@ bnOff
 5
 "\nstarting lisp.csl\n" ddps
 Lisp
-#if 0 // debug
-: sp stack pause ; sp
+#if DEBUG_ON
+: sp stack pause ; 
 #else
-: sp ; //stack pause ; sp
-#endif 
+: sp ; //stack pause ; 
+#endif
+
 //lcReset
 decimal
-: sp ; //stack pause ; sp 
 "lambda" tick _lambda find alias immediate
 "/\" tick _lambda find alias
 "/." tick _lambda find alias

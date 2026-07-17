@@ -1,13 +1,12 @@
 5
 Root
-#if 0
-: sp0 stack pause ; 
-C
-: sp0 stack pause ; 
+#if DEBUG_ON
+: sp stack pause ; 
 #else
-: sp0 ; //stack pause ;
+: sp ; //stack pause ; 
 #endif
-sp0
+
+sp
 Int 
 C
 cOff
@@ -23,10 +22,10 @@ Combinators
     return fac @
 ;
 7 factorial dup p 5040 _assert
-pwi factorial sp0 
+pwi factorial sp 
 7 factorial dup p 5040 "factorial" _assert1 
 //verbosity 3 =
-sp0
+sp
 c_syntaxOn
 int 
 factorial ( n | rec )
@@ -39,8 +38,8 @@ factorial ( n | rec )
 } 
 c_syntaxOff
 pwi factorial
-7 factorial dup p 5040 _assert sp0 //pause
-sp0
+7 factorial dup p 5040 _assert sp //pause
+sp
 Combinators
 #if 0
 bnOff
@@ -62,28 +61,28 @@ c_syntaxOff
     return fac @
 ;
 7 factorial dup p 5040 _assert
-7 factorial p sp0
+7 factorial p sp
 //System //BigNum
 bnOn
 : qexp { dup 1 >= } { dup -- qexp * } { drop 1 } ifElse ;
 'qexp find wdiss //pause
-7 qexp p sp0
+7 qexp p sp
 "!" ' qexp find alias
 //"!" ' factorial find alias
 nl "3 ! = " ps 3 ! p nl 
 nl "64 ! = " ps 64 ! p nl 
 'x var
 x 1000 ! =
-nl "1000 ! = " ps x @ fprint nl sp0
+nl "1000 ! = " ps x @ fprint nl sp
 : aexp ( -t N.N ) { dup 1 <= } { drop 1 } { dup -- aexp * } ifElse ;
-'aexp find wdiss //sp0
+'aexp find wdiss //sp
 : bexp ( n ) { n @ 1 <= } { 1 } { n @ dup 1 - bexp * } ifElse return tos ; 
 : bexp0 ( n ) { n @ 1 <= } { 1 } { n @ dup -- bexp0 * } ifElse return tos ; 
 pwi bexp pwi bexp0
-7 bexp0 p sp0 
+7 bexp0 p sp 
 7 ! p 8 ! p 8 ! p
 nl 7 ! p
-nl "50 ! = " ps 50 ! fprint nl sp0
+nl "50 ! = " ps 50 ! fprint nl sp
 //pause
 //"!" ' qexp find alias
 //"!" ' aexp find alias
@@ -93,17 +92,17 @@ nl "50 ! = " ps 50 ! fprint nl sp0
 : !! ! p nl ;
 '!! find wdiss
 7 !! 8 !! 8 !!   
-sp0
+sp
 1000 ! p
-sp0
+sp
 1000 ! 
 x store
 x @ p 
-sp0
+sp
 : bexpl ( n ) { n @ 1 <= } { 1 } { n @ dup 1 - bexpl * } ifElse return tos ;
 pwi bexpl
 7 bexpl dup p 5040 _bassert
-sp0
+sp
 
 nl "starting BigNum" ps nl
 #if doBigNum
@@ -111,7 +110,7 @@ bnOn
 #endif    
 1 3 / fprint 
 3 sqrt dup fprint dup * fprint //pause
-sp0
+sp
 : tbn ( | n m ) n 0 = m 3 = n m @ += n m @ += n m @ += n @ p ; tbn " : should be 9" ps
 // 9 _assert //_assert won't work here, it is not compiled with BigNum
 : fibBN ( n | svn fn fn1 fn2 ) 
@@ -125,7 +124,7 @@ sp0
     //nl svn @ fprint ":" ps fn @ fprint 
     return fn @
 ;
-sp0
+sp
 nl 200 dup "\nfib" ps p "=" ps fibBN p //pause
 
 : tfib3 ( n | m )  
@@ -148,7 +147,7 @@ bnOff
 pwi ctof
 : ftoc ( f ) f 32 -= f 10 *= f 18 /= return ( f @ ) ; 53 ftoc dup p 11 _assert 
 pwi ftoc    
-sp0
+sp
 //pause
 
 
@@ -157,7 +156,7 @@ lcOn //(lcDbOn)
 "/\" tick _lambda find alias
 (define fibc2 ( lambda ( n ) ( ifElse ( < n 2 ) n ( + ( fibc2 ( - n 1 ) ) ( fibc2 ( - n 2 ) ) ) ) ) )
 pwi fibc2 
-(fibc2 20) sp0
+(fibc2 20) sp
 #if 0 // very slow recursive
 (define ( fibc21  n ) ( if ( < n 2 ) n ( + ( fibc21 ( - n 1 ) ) ( fibc21 ( - n 2 ) ) ) ) ) // recursive form ; very slow
 pwi fibc21 
@@ -214,10 +213,10 @@ bnOff
 // tick yfacc find wdiss
 (yfacc yfacc 10) nl
 (yfacc yfacc 7) nl
-sp0
+sp
 bnOff //pause
 
-//: sp0 s pause ; 
+//: sp s pause ; 
 (define yfac (lambda (yy n) (if (< n 2) 1 (* n (yy yy (- n 1)))))) // code from : http://www.newlisp.org/index.cgi?Y_Function
 tick yfac find wdiss
 (yfac yfac 10) nl //pause
@@ -246,7 +245,7 @@ tick yfac find wdiss
 (define ff ( lambda (n) (+ n 1)))
 ((/\ (x) (+ x 1)) 6 ) ((/\ (x) (+ x 1)) ((/\ (y) (+ y 2)) 4 ) ) //pause
 (ff 6)
-(sp0)
+(sp)
 (define h36 (lambda (a b) (a b a b a a b b)))
 (h36 n09 my6 ) 
 "\n should show : ( n09 my6 n09 my6 n09 n09 my6 my6 )\n" ps
@@ -254,7 +253,7 @@ tick yfac find wdiss
 (h36 n09 my6 )
 "\n should show : ( kl0 op9 kl0 op9 kl0 kl0 op9 op9 )\n" ps
 //pause
-sp0
+sp
 
 // macro experiments
 ( define id (lambda ( x y ) ( x x y y )) )
@@ -265,7 +264,7 @@ sp0
 ( swch 7 ( + 5 6 ) )
 //dbgOn
 ( macro swch2 ( lambda ( i2 b2 ) ( (swch b2 i2) (swch b2 i2 ) ) ) )
-( swch2 7 ( + 5 6 ) ) sp0
+( swch2 7 ( + 5 6 ) ) sp
 //dbgOff
 ( macro id2 ( lambda ( i2 b2 ) ( ( swch2 b2 i2 ) ( swch2 b2 i2 ) ) ) )
 ( id2 7 ( + 5 6 ) )
@@ -280,7 +279,7 @@ sp0
 (define x (swch 8 15) )  ( - @x) 
 (define x (swch 8 19) )  ( - @x) 
 (car ( 7 8 ) ) ( car 7 8 ) ( cdr ( 6 7 ) ) ( cdr 7 6 )
-sp0
+sp
 
 lcOff
 Root.List
@@ -290,7 +289,7 @@ _((lambda ( a b) (+ a b)) 3 4 ) dupList eval printList nl printList nl //pause
 nl _((lambda ( a b) (+ a b)) 3 4 ) dupList printList eval nl printList nl //pause
 nl _((lambda ( a b) (+ a b)) 3 4 ) eval printList nl //pause
 : bexp3 ( n ) { n @ 1 > } { n @ n @ -- bexp3 *  } { 1 } ifElse ;
-'bexp3 find wdiss 7 bexp3 p sp0
+'bexp3 find wdiss 7 bexp3 p sp
 c_syntaxOn
 int
 fac5 ( REG n  | REG facc ) 
@@ -307,17 +306,17 @@ fac5 ( REG n  | REG facc )
     return facc ;
 } prefix
 wdiss ( ' fac5 find ) 
-sp0
+sp
 fac5 ( 7 ) dup p 5040 _assert //pause
-sp0
+sp
 Root
 c_syntaxOn
 int cpow ( base power | out ) { for ( out = 1 ; power ; power -= 1 ) { out = out * base ; } return out } prefix
 //int cpow ( base power | out ) { d: for ( out = 1 ; power ; (power -= 1) ) { out *= base ; } return out ; }
-pwi cpow sp0 //pause
+pwi cpow sp //pause
 cpow (2 30 ) ; "2 ^ 30 : " ps dup p 1073741824 assert0 //pause
 c_syntaxOff 
-sp0
+sp
 : pow0 ( base power | out ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ; "II.I" typeSignature
 : pow ( base power | out ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out @ ; "II.I" typeSignature
 //: pow ( base power | out ) { out 1 = } { power @ 0 > } { power power @ 1 - = } { out out @ base @ * = } for return out ;
@@ -325,7 +324,7 @@ pwi pow0
 2 30 pow0 dup p 1073741824 assert0 //pause
 2 30 pow dup p 1073741824 assert0 //pause
 //scOff
-sp0
+sp
 Lisp
 #if doBigNum    
 bnOn
@@ -338,7 +337,7 @@ bnOff
 "\nyfac : 10 factorial = " ps (yfac yfac 10) 
 #endif    
 Lisp 
-sp0
+sp
 (define yfacc (lambda (yyy n1) (if (< n1 2) 1 (* n1 (yyy yyy (- n1 1)))))) 
 (yfacc yfacc 10) nl
 (yfacc yfacc 7) nl
@@ -355,9 +354,9 @@ Lisp //pause
 (yfacc yfacc 7) nl
 (define fib (lambda (n) ( ifElse (< n 2) n (+ (fib (- n 1)) (fib (- n 2))))))
 (define fib2 (lambda (n) (ifElse (< n 2) n (+ (fib2 (- n 1)) (fib2 (- n 2))))))
-sp0
+sp
 (fib 10) (fib2 10)
-sp0
+sp
 //(ld: )
 (define x "let") (define a "the") // 'let' is a special word
 (define x1 'let) (define a1 the)
@@ -372,10 +371,10 @@ sp0
 "testing unquote above line should show : ( Its a beautiful day don't x1 it get away )\n" ps 
 `( Its ,@a beautiful day don\'t ,@x it get away )
 `( Its a beautiful day don\'t ,@x1 it get away )
-sp0
+sp
 lispOff  
 //pause
-sp0  
+sp  
 
 #if 1 // REG testing
 bnOff
@@ -391,7 +390,7 @@ bnOff
     return fn @
 ;
 pwi fib01
-20 fib01 dup p 6765 _assert sp0
+20 fib01 dup p 6765 _assert sp
 : fib01 ( n | fn REG fn1 fn2 ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
     {   
@@ -404,7 +403,7 @@ pwi fib01
     return fn @
 ;
 pwi fib01
-20 fib01 dup p 6765 _assert sp0 //pause
+20 fib01 dup p 6765 _assert sp //pause
 : fib01 ( n | fn, REG fn1, REG fn2 ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
     {   
@@ -417,7 +416,7 @@ pwi fib01
     return fn @
 ;
 pwi fib01
-20 fib01 dup p 6765 _assert sp0
+20 fib01 dup p 6765 _assert sp
 
 : fib01 ( n | REG fn REG fn1 REG fn2 ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
@@ -431,7 +430,7 @@ pwi fib01
     return fn @
 ;
 pwi fib01
-20 fib01 dup p 6765 _assert sp0 //pause
+20 fib01 dup p 6765 _assert sp //pause
 scOn
 : fib01 ( REG n | fn fn1 REG fn2 ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
@@ -445,7 +444,7 @@ scOn
     return fn @
 ;
 pwi fib01 //pause
-20 fib01 dup p 6765 _assert sp0 //pause
+20 fib01 dup p 6765 _assert sp //pause
 : fib01 ( REG n | fn REG fn1 REG fn2 ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
     {   
@@ -458,7 +457,7 @@ pwi fib01 //pause
     return fn @
 ;
 pwi fib01
-20 fib01 dup p 6765 _assert sp0
+20 fib01 dup p 6765 _assert sp
 : fib01 ( REG n | fn fn1 REG fn2 ) 
     { fn 0 = fn1 0 = fn2 1 = } { n @ 0 > } { n 1 -= } 
     {   
@@ -471,10 +470,10 @@ pwi fib01
     return fn @
 ;
 pwi fib01 
-20 fib01 dup p 6765 _assert sp0
+20 fib01 dup p 6765 _assert sp
 #endif
 bigNumOff lispOff
 Int
-sp0
+sp
 2 + 7 assertStkChk // stack checking
 //pause
