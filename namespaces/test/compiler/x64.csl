@@ -738,8 +738,9 @@ asm: ndup
     "end" label // above jcc to Here
 ;asm
 
-    ' ndup find wdiss sp 
+' ndup find wdiss sp 
 s 7 7 'ndup find xt@ iax s 8 ndrop s
+//pause
 c_syntaxOn
 
 void

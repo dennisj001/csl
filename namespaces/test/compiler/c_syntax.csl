@@ -639,7 +639,7 @@ void node-p ( txt, poftxt )
     sprintf ( &buffer.buf, "node -p \" %s \" > %s", txt, poftxt ) ;
     ash ( buffer ) ;
 }
-node-p ( "1+33", "./node.txt") ; //, abuf ) ;
+node-p ( "1+41", "./node.txt") ; //, abuf ) ;
 cOff
 pwi node-p 
 $cat node.txt
@@ -651,7 +651,7 @@ void node-p1 ( txt, poftxt )
     printf ( "\n buffer.buf[3] = %s\n", buffer.buf [3] ) ;
     ash ( buffer1 ) ;
 }
-node-p1 ( "1+392", "./node.txt") ; //, abuf ) ;
+node-p1 ( "1+341", "./node.txt") ; //, abuf ) ;
 cOff
 pwi node-p1 
 $cat node.txt
